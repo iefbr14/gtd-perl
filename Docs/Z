@@ -1,0 +1,72 @@
+#
+# Hier lists
+#
+values
+visions
+roles
+goals
+projects
+
+#
+# Hier lists
+#
+aspect
+toplevel
+hierlist
+hier
+
+#
+# Task reports
+#
+actions => [ qw( +current +next ~done ~later ) ],
+nexts   => [ qw(          +next ~done ~later ) ],
+dones   => [ qw( +done ) ],   
+lates   => [ qw( +late ~done ) ],
+tickles => [ qw( +tickle ~done ) ],
+slow    => [ qw( +slow ~done ) ],
+ideas   => [ qw( +idea ~done ) ],
+due     => [ qw( +due ~done ~later ) ],
+someday => [ qw( +someday ~done ) ],
+future  => [ qw( +someday +tickle ~done ) ],
+
+
+actions
+nextactions
+someday
+tasks
+todo
+references
+checklists
+waiting
+inbox
+
+
+#
+# Other reports
+#
+
+cct
+
+#
+# Updaters
+#
+bulklist
+bulkload
+bulk
+clean
+delete
+doit
+done
+edit
+fixcct
+gui
+init
+list
+merge
+new.project
+newtodo
+planner
+renumber
+report
+search
+update

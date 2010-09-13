@@ -1,0 +1,355 @@
+#==============================================================================
+# FILE: ~/lib/Hier/Docs/Test-Plan.txt
+#==============================================================================
+# Test todo/gtd -R XXXX
+#==============================================================================
+[_] Document global options
+[_] Document meta-desc mode
+[_] Document meta-desc filtered meanings
+[_] Document sort-order options (NEW)
+[_] Document option hints(NEW)
+
+[_] [_] Test Global options:
+  [_] [_]     -x      -- turn Debug on.
+  [_] [_]     -m      -- update metadata
+  [_] [_] 
+  [_] [_]     -n ...  -- new tasks ...
+  [_] [_]     -e ...  -- edit tasks ...
+  [_] [_]     -d ...  -- done tasks ...
+  [_] [_]     -u ...  -- update tasks ...
+  [_] [_]     -D ...  -- delete tasks ...
+  [_] [_]     -R :    -- Run report : and exit (see -R reports for list)
+  [_] [_] 
+  [_] [_] x   -W      -- Wiki mode output
+  [_] [_] x   -H      -- Html mode output
+  [_] [_] 
+  [_] [_]     -a      -- all tasks but done
+  [_] [_]     -A      -- All includes done
+  [_] [_]     -Z :    -- gtd database group (default: test)
+  [_] [_] 
+  [_] [_]     -p :    -- set the priority (default 3; range 1..5)
+  [_] [_]     -c :    -- set the category (default '')
+  [_] [_]     -N :    -- set the note text
+  [_] [_]     -t :    -- set the task text
+  [_] [_] 
+  [_] [_]     -l :    -- limit to first : (default 10, * == all)
+  [_] [_]     -r      -- reverse sort
+
+[_] [_] Test meta-desc mode in todo/gtd
+  [_] [_]	@XXXX	cct context setting (sets hints as well)
+	[_] context
+	[_] category
+	[_] timeframe
+	[_] tag
+      [_]	^sort	  set ^sort^criter^bylist
+  [_] [_]	/XXXX	  search project/action (hier/todo) sets picks hint
+  [_] [_]	=DDDD	  use XXX as tid -- sets parent hint
+  [_] [_]	=XXXX	  search hier title -- sets parent hint
+  [_] [_]	*XXXX	  sets type hint
+  [_] [_]	X:	  use X as type (sets type hint)
+  [_] [_]	....	  passed to reports
+      [_]	%opt=val  sets opt to val
+      [_]   Picks (tid found via / or left on the command line)
+
+    [_] Test filtered meaning in gtd (~Exclude first, +Include next, default none)
+	[_] +done  
+	[_] +current 
+	[_] +next   
+	[_] +someday
+	[_] +waiting 
+	[_] +tickles 
+
+	[_] +late
+	[_] +due
+	[_] +slow   
+	[_] +idea
+
+	[_] +dink
+	[_] +duck
+	[_] +private
+	[_] +recur
+
+	[_] all     => (all of the above)
+
+	[_] live    => +current +next
+	[_] future  => +someday +tickle +waiting
+
+    [_] Add Debug to filters
+    [_] Add Debug to access.ini
+    [_] Add Options to access.ini
+    [_] Chain Options?
+    [_] Meta Groups?
+
+    [_] Options
+        [_] Debug = 0		# Debug code
+        [_] Debug_sub = 0	# Debug code in subsystem
+        [_] DB_Update = 1 	#
+        [_] Title = '' 		#
+        [_] Descrption = '' 	# Set description for new/update
+        [_] Result = '' 	# Set result for new/update
+        [_] Priority = '' 	# Set priorty for new/update
+        [_] Parent = '' 	# Set Parent for new/update
+        [_] Type = '' 		# Set Parent for new/update
+
+[_] Test sort meaning in gtd
+[X] [X] !. stopped.
+
+[_] Define task/hier filter syntax 
+[_] Fix task_filter vs hier_filter (Seperate Include/Exclude)
+[_] 
+#==============================================================================
+# Test gtd -R XXXX
+#==============================================================================
+# Hier walks
+[_]     aspect => hier roles
+[_] [_] hier
+  [_] walk (default: Project) sub-type's max-depth
+    [ ] Value
+    [ ] Vision
+    [ ] Role
+    [ ] Goal
+    [_] Project
+    [_] Action
+
+# Hier filters (review) also add action results for Hier reports
+          +---------- [_] aspect?
+          |   +------ [_] walk (not a simple list)
+          |   |
+         [_] [_] Cur     => +current
+         [_] [_] Next    => +next
+         [_] [_] Done    => +done
+         [_] [_] Late    => +late 
+         [_] [_] Tickle  => +tickle 
+         [_] [_] Someday => +someday 
+         [_] [_] Waiting => +waiting 
+
+         [_] [_] Slow    => +slow
+         [_] [_] Ideas   => +idea 
+         [_] [_] Due     => +due 
+         [_] [_] Live    => +current +next
+         [_] [_] Future  => +someday +tickle +waiting
+
+# Action reports 
+          +---------- [_] projects (not a simple list)
+          |   +------ [_] actions (not a simple list)
+          |   |
+         [_] [_] Cur     => +current
+         [_] [_] Next    => +next
+         [_] [_] Done    => +done
+         [_] [_] Late    => +late 
+         [_] [_] Tickle  => +tickle 
+         [_] [_] Someday => +someday 
+         [_] [_] Waiting => +waiting 
+
+         [_] [_] Due     => +due 
+         [_] [_] Slow    => +slow
+         [_] [_] Ideas   => +idea 
+
+         [_] [_] Live    => +current +next
+         [_] [_] Future  => +someday +tickle +waiting
+
+   [_] checklist -- by name can pick checklists or lists
+       [_] default -- lists of lists
+       [_] checklist-name 
+       [_] list-name
+
+# List details:
+    +--------------[_] records [All] 
+    |    +---------[_] dump (full record dump)
+    |   /   +------[_] list (list titles)
+    |   |   |   +--[_] items (titles/description/notes(results))
+    |   |   |   |
+   [_] [X] [_] [_] Value
+   [_] [X] [_] [_] Vision
+   [_] [X] [_] [_] Role
+   [_] [X] [_] [_] Goal
+   [_] [_] [_] [_] Project
+   [_] [_] [_] [_] Actions 
+   [_] [_] [_] [_] Inbox
+   [_] [_] [_] [_] Waiting 
+   [_] [_] [_] [_] Reference
+   [_] [_] [_] [_] List 
+   [_] [_] [_] [_] Checklist
+   [_] [_] [_] [_] Item
+
+
+# Special reports
+
+[_] [_] report -- lists reports that can be run
+[_] [_] help   -- gives help
+
+# Other reports
+[_] [_] status (gives view to selection system)
+[_] [_] cct -- category/conext/timeframe(tag)
+[_]     toplevel => hier list {Values,Visions,Goals}
+[_] [_] todo
+    [_] tasks
+[_] [_] hierlist -- grepable list of hier items
+[_] [_] checklist
+    [_] weekly  -- weekly review
+		(project +live
+		(actions ~cur +next
+		(projects +future
+    [_] monthly -- monthly review
+		(projects +live +future
+		(actions +live actions +future
+
+# Exporters
+[_] [_] planner
+[_] [_] taskjuggler
+
+# Updaters
+[_] [_] done (rename tagdone?)
+[_] [_] delete
+[_] [_] doit
+
+[_] [_] fixcct
+[_] [_] renumber
+[_] [_] addplans
+
+[_] [_] bulklist
+[_] [_] bulkload
+[_] [_] bulkedit
+
+[_] [_] clean -?
+    [_] load - load records (reads dumps)
+[_] [_] edit - edit records (dump/vi/update)
+[_] [_] init - create database structure
+[_] [_] merge - merge records
+[_] [_] new_project - prompts/adds a new project (other other hier)
+[_] [_] new_task - prompts/adds a new action/next/waiting
+[_] [_] search - used to find stuff anywhere
+[_] [_] update - commandline updater
+#==============================================================================
+# Option Hints
+#==============================================================================
+[_] *** Use ~/.Access.ini => to set defaults/max/min etc?
+[_] Debug
+[_] All
+[_] Report
+[_] Database
+	[_] host
+	[_] user
+	[_] pass
+	[_] db
+[_] Counts
+[_] Options=Value
+[_] Metadata-update
+[_] Output-format [text][pipe][term][html][wiki][tk][ps]
+[_] Default Values
+	[_] Priority
+	[_] Today
+	[_] Title
+	[_] Description
+	[_] Note (Result/Output)
+	[_] Category
+[_] Tags
+[_] Picks -- list of project/actions from /cmd-line
+[_] Sort
+	[_] Name
+	[_] Direction(s)
+[_] Limit
+[_] Lines (depth)
+[_] Column (width)
+[_] Color (support on term/ps/html/tk?)
+[_] Category
+[_] Context
+[_] Parent
+[_] Filters
+[_] Type (deduced by parent)
+[_] Listmode (-L)
+[_] pgm - $0 -- Command-name
+[_] cmd - Command running (Same as Report?)
+[_] sub - Sub-command (picked of command line
+#==============================================================================
+# Test gtd sorting
+#==============================================================================
+# by_Sort need to work
+[_] by_Sort
+[_] names are case insensetive.
+
+(lowercase only does what is needed)
+by_Sort does by what is wanted
+sort_by sets the sort criteria
+
+[_] by_activity	(doit)		^next ^doit [ by_doitdate ^doit]
+[_] by_age	(created)	^age
+[_] by_change	(modified)	^change
+[_] by_due	(due)		^due
+[_] by_goal_task		^goal
+[_] by_hier 			^hier (order by hier then by_name)
+[_] by_id			^id
+[_] by_priority			^pri or ^priority
+[_] by_status			^status
+[_] by_task (name)		^task
+
+# sort routines (neet to be in sort.pm)
+[_] by_age
+[_] by_change
+[_] by_due
+[_] by_doitdate
+[_] by_goal_task
+[_] by_hier
+[_] by_name
+[_] by_priority
+[_] by_status
+[_] by_task
+[_] by_id
+
+# sort calls (need fixing)
+[_] actions	by_task
+[_] addplans	by_goal_task
+[_] checklis	by_task
+[_] doit	by_doitdate
+[_] dump	by_priority
+[_] items	by_task
+[_] projects	by_goal_task
+[_] records	by_task
+[_] tasks	by_task
+[_] todo	by_priority
+[_] util	by_priority
+[_] walk	by_name
+
+#==============================================================================
+# Grep for Bug and fix
+#==============================================================================
+[_] header.pm:	###BUG### tag filtering
+[_] header.pm:	T_ORPHAN	=> 0x40,	# no parent ###BUG###
+[_] header.pm:	T_DUCK		=> 0x4000,	# parent not live ###BUG### 
+[_] sort.pm:	###BUG### make by_Sort an eval?
+[_] sort.pm:	###BUG### junk sub
+[_] sort.pm:	return -1 if $ac;	###BUG### not sure if 1 or -1
+[_] sort.pm:	###BUG### ac or bc not there?
+[_] sort.pm:	###BUG### ac or bc not there?
+[_] util.pm:sub by_priority($$) {		###BUG### use by_pri
+[_] walk.pm:	####BUG### for my $tid (sort by_name @top) {
+[_] Report/cct.pm:return;	###BUG### -- add tags
+[_] Report/doit.pm:my($List) = 0; ###BUG### should be an option
+[_] Report/doit.pm:my($Done) = 0; ###BUG### should be an option
+[_] Report/purge.pm:###BUG### walk forward stopping on excludes
+[_] Report/purge.pm:###BUG### walk backward keeping on includes
+#==============================================================================
+# Future
+#==============================================================================
+[_] addplan sub-options
+	[_] add plan for projects missing actions
+	[_] add list for projects done but have active actions
+	[_] add project verb checking
+	[_] add action  verb checking
+	[_] add actions for projects with bad verbs
+	[_] add actions for poor results in hier objects
+	[_] fix verbs in actions that are missing a verb
+	[_] how do add verbs to ~/Access.ini [project-verbs] [action-verbs?]
+	[_] promote actions to next actions (by pri,oldest first,limit 1)
+	[_] promote priority for actions (by rev-pri,oldest first,limit 1)
+	[_] add periodic actions support
+[_] add to clean done propigating
+[_] write purge
+[_] write help (lists helps)
+[_] document helps fixed
+	[_] add pithy saying to help.pm
+[_] copy Test-Plan.txt docuement to sdf docuement for documenting gtd
+#==============================================================================
+# Test gtd -R XXXX  under gui
+#==============================================================================
+gui

@@ -1,0 +1,1142 @@
+/*
+* This file is a TaskJuggler project template. It can be used as a
+* starting point for planning a rather large project. It is primary
+* designed for a product development project but can be easily
+* adapted to other types of projects. The structure of the project
+* plan was derived from the excellent book "Fundamentals of
+* Technology Project Managment" by Collen Carton with Erika
+* McCulloch.
+*
+* You can put your own templates in
+*
+* ${KDEHOME}/share/apps/taskjuggler/Templates/${LANG}/
+*
+* Permission to read, modify and distribute this file without any
+* restrictions is granted.
+*
+* Please see the TaskJuggler manual for a more detailed
+* description of the various syntax elements. You can find more
+* information about TaskJuggler at http://www.taskjuggler.org!
+*/
+project GTD "Get Things Done" "1.0" 2009-09-01 - 2011-12-31 {
+  # Hide the clock time. Only show the date.
+  timeformat "%Y-%m-%d"
+
+  # The currency for all money values is CAN
+  currency "CAN"
+  weekstartssunday
+
+  # We want to compare the baseline scenario, to one with a slightly
+  # delayed start.
+  scenario plan "Plan" {
+    scenario done "Done"
+  }
+}
+
+# Put your flag declarations here. You can flag task, resources and
+# accounts to use them as filter criteria when generating reports.
+# flags important, dontcare
+flags team
+
+# The daily default rate of all resources. This can be overriden for each
+# resource. We specify this, so that we can do a good calculation of
+# the costs of the project.
+rate 300.0
+
+# Put company holidays here
+# vacation "Holidays" 2005-12-24 - 2006-01-02
+
+# Put your resource definitions here:
+# resource dev "Developers" {
+#   resource dev1 "Paul Smith" { rate 330.0 }
+#   resource dev2 "Sébastien Bono"
+#   resource dev3 "Klaus Müller" { vacation 2005-02-01 - 2005-02-05 }
+# }
+# This resource does not do any work.
+# resource confRoom "Conference Room" {
+#   efficiency 0.0
+# }
+account costs "Costs" cost
+rate 20.0
+
+resource cc "CC Systems" {
+  rate 50.0
+  workinghours tue 10:00-16:00
+  workinghours fri 10:00-16:00
+
+  limits {
+    dailymax 3h
+    weeklymax 6h
+  }
+}
+resource ets "ETS" {
+  rate 50.0
+  workinghours wed 10:00-15:00
+  limits {
+    dailymax 4h
+    weeklymax 4h
+  }
+}
+resource casale "Casale" {
+  rate 120.0
+  workinghours thu 11:00-12:00
+  limits {
+    dailymax 1h
+    weeklymax 1h
+  }
+}
+resource support "Support" {
+  rate 20.0
+  workinghours mon 9:00-17:00
+  workinghours wed 9:00-17:00
+
+  limits {
+    dailymax 3h
+  }
+}
+resource personal "Personal" {
+  rate 10.0
+  workinghours sun-sat 17:00-21:00
+  limits {
+    dailymax 2h
+    weeklymax 6h
+  }
+}
+resource maint "Maintainence" {
+  rate 20.0
+  workinghours sun-sat 20:00-21:00
+  limits {
+    dailymax 3h
+    weeklymax 9h
+  }
+}
+resource reading "Reading" {
+  rate 1.0
+  workinghours sun-sat 22:00-23:00
+  limits {
+    dailymax 1h
+    weeklymax 5h
+  }
+}
+resource drew "Other" {
+  rate 15.0
+  limits {
+    dailymax 1h
+    weeklymax 5h
+  }
+}
+
+resource maureen "Maureen" {
+  rate 40.0
+  limits {
+    dailymax 4h
+    weeklymax 5h
+  }
+}
+
+# a task that contains sub tasks. These sub tasks are then broken down
+# into smaller tasks and so on. The innermost tasks describe the real
+# work and have resources allocated to them. Many attributes of tasks
+# are inherited from the enclosing task. This saves you a lot of
+# writing.
+
+
+
+# All work related costs will be booked to this account unless the
+# sub tasks specifies it differently.
+
+
+#-Using test in Access.ini
+#-Filter: +any
+#-Filter: +all
+#-Filter Sub:       .    .---
+#-Filter Add: X+=swt.L*SI.THL
+task t_11 "Home" {
+  start ${now}
+  allocate personal
+  task t_195 "Maintainence" {
+    allocate maint
+    task t_84 "Anual" {
+      task t_392 "Summer A/C" {
+        effort 3h
+      }
+      task t_1943 "Winter A/C" {
+        effort 3h
+      }
+    }
+    task t_69 "Organize" {
+      allocate maint
+      task t_1905 "Organize Fileing" {
+        effort 4h
+      }
+      task t_1901 "Organize Filesystem" {
+        effort 4h
+      }
+      task t_1900 "Organize House" {
+        effort 4h
+      }
+      task t_137 "Organize Media" {
+        effort 4h
+      }
+    }
+    task t_93 "Repair" {
+      allocate maint
+      task t_1614 "Mastercraft Tools" {
+        effort 1h
+      }
+      task t_278 "Plant Shelf" {
+        effort 1h
+      }
+    }
+  }
+  task t_60 "Renovation" {
+    allocate maint
+    task t_193 "Backyard" {
+      task t_405 "Gazeebo" {
+        effort 5h
+      }
+      task t_433 "Landscaping" {
+        effort 5h
+      }
+      task t_1941 "Pond Upgrade" {
+        effort 4h
+      }
+    }
+    task t_172 "Dream Home" {
+      task t_282 "2nd story" {
+        effort 1h
+      }
+    }
+    task t_89 "Rebuild" {
+      task t_314 "Organize reno data." {
+        effort 2h
+      }
+      task t_469 "Start Plan" {
+        effort 8h
+      }
+      task t_446 "Start Requirements list" {
+        effort 2h
+      }
+    }
+    task t_78 "Renovation" {
+      task t_461 "100 amp service" {
+        effort 1h
+      }
+      task t_455 "Basement" {
+        effort 2h
+      }
+      task t_290 "Bathroom" {
+        effort 1h
+      }
+      task t_302 "Build Area" {
+        effort 8h
+      }
+      task t_397 "Curtains" {
+        effort 1h
+      }
+      task t_484 "Electrical" {
+        effort 5h
+      }
+      task t_380 "Garden Tools Home" {
+        effort 1h
+      }
+      task t_318 "Radio" {
+        effort 2h
+      }
+      task t_422 "Serviette Holder" {
+        effort 1h
+      }
+      task t_332 "Theatre Screw Box" {
+        effort 1h
+      }
+      task t_352 "Trailer" {
+        effort 8h
+      }
+      task t_347 "Tree" {
+        effort 2h
+      }
+      task t_474 "Wood Working" {
+        effort 1h
+      }
+      task t_351 "Workroom" {
+        effort 9h
+      }
+      task t_360 "XMAS lights" {
+        effort 2h
+      }
+    }
+  }
+  task t_1879 "Repair" {
+    task t_1880 "Fix chess set" {
+      effort 1h
+    }
+  }
+}
+
+task t_15 "Personal" {
+  allocate drew
+  start ${now}
+  task t_138 "Entertainment" {
+    task t_1850 "Drinking" {
+      task t_1841 "Liquor Stock" {
+        effort 1h
+      }
+    }
+    task t_98 "Games" {
+      priority 100
+
+      task t_395 "CIV CTP" {
+        effort 1h
+      }
+      task t_420 "Facebook Games" {
+        effort 1h
+      }
+      task t_325 "Pack Rat" {
+        effort 1h
+      }
+      task t_447 "Ubuntu game." {
+        effort 1h
+      }
+    }
+    task t_96 "Media" {
+      priority 200
+      task t_339 "Book Catalog" {
+        effort 6h
+      }
+      task t_371 "Music" {
+        effort 20h
+      }
+      task t_250 "Music Backup" {
+        effort 1h
+      }
+      task t_408 "Music laptop" {
+        effort 2h
+      }
+      task t_307 "TV" {
+        effort 1h
+      }
+      task t_315 "VCR Tapes" {
+        effort 2h
+      }
+      task t_453 "Video System" {
+        effort 5h
+      }
+      task t_373 "viewMaster" {
+        effort 5h
+      }
+    }
+    task t_83 "Reading List" {
+      task t_377 "Create Reading list." {
+        effort 1h
+      }
+    }
+    task t_101 "Video" {
+      task t_416 "Video-db" {
+        effort 1h
+      }
+    }
+    task t_53 "Web" {
+      task t_419 "Computer Related" {
+        effort 1h
+      }
+    }
+  }
+  task t_66 "Projects" {
+    task t_82 "Genealogy" {
+      task t_362 "Select Genealogy Software" {
+        effort 1h
+      }
+    }
+    task t_80 "Health" {
+      task t_418 "Blood Donor" {
+        effort 1h
+      }
+      task t_476 "Exercise" {
+        effort 1h
+      }
+      task t_413 "Health Card" {
+        effort 3h
+      }
+    }
+    task t_68 "Wine" {
+
+      task t_489 "Wine History" {
+        effort 5h
+      }
+      task t_454 "Wine Plan" {
+        effort 1h
+      }
+      task t_297 "Wine Racks" {
+        effort 3h
+      }
+      task t_1026 "Wine Storage" {
+        effort 1h
+      }
+    }
+    task t_72 "Woodwork" {
+      task t_312 "Band saw for unit." {
+        priority 100
+        effort 3h
+      }
+      task t_460 "Bench" {
+        effort 2h
+      }
+      task t_435 "Chop Saw" {
+        effort 3h
+      }
+      task t_387 "Coffee Station" {
+        effort 1h
+      }
+      task t_355 "Enter woodwork projects." {
+        effort 11h
+      }
+    }
+  }
+  task t_183 "Theatre" {
+    task t_141 "Arcadia" {
+      task t_415 "Arcadia Build" {
+        effort 1h
+      }
+    }
+    task t_1935 "Theatre Workshop" {
+      task t_1936 "Theatre workshop mailing list" {
+        effort 12h
+      }
+      task t_1937 "Theatre workshop notify" {
+        effort 4h
+      }
+    }
+    task t_168 "Unit" {
+      task t_345 "Enter Current Projects" {
+        effort 2h
+      }
+    }
+    task t_324 "Update build list." {
+      effort 1h
+    }
+  }
+}
+
+
+task t_3 "Love" {
+  task t_13 "Social" {
+    start ${now}
+    allocate personal
+
+    task t_56 "Habbits" {
+      task t_64 "Annoucements" {
+        task t_384 "Plan Annoucement proceedures." {
+          effort 3h
+        }
+      }
+      task t_128 "Wardrobe" {
+        task t_365 "Coat" {
+          effort 1h
+        }
+      }
+    }
+    task t_79 "P.D." {
+      task t_1708 "Book: Making someone fall in love" {
+        effort 8h
+        allocate reading
+      }
+      task t_1709 "Enter dating books" {
+        allocate reading
+        effort 1h
+      }
+      task t_1707 "Meeting People" {
+        allocate reading
+        effort 8h
+      }
+      task t_1938 "P.D. Reading" {
+        task t_1939 "Getting Things Done" {
+          allocate reading
+          effort 3h
+        }
+        task t_1940 "The 'Now' Habit" {
+          allocate reading
+          effort 6h
+        }
+      }
+      task t_59 "Relationship" {
+        task t_295 "Fall In Love" {
+          allocate reading
+          effort 8h
+        }
+        task t_374 "Meeting People" {
+          allocate reading
+          effort 8h
+        }
+        task t_305 "Plan Dating books projects" {
+
+        }
+        task t_341 "USS - Undercover Sex Signals" {
+          effort 8h
+        }
+      }
+      task t_63 "Shy" {
+        effort 8h
+      }
+    }
+  }
+  task t_48 "Xit" {
+    start ${now}
+
+
+    allocate personal
+    task t_77 "BDSM" {
+      task t_292 "BDSM skills" {
+        task t_330 "Needle Kit" {
+          effort 1d
+        }
+      }
+      task t_62 "Events (BDSM project plan)" {
+        task t_306 "BDSM Toys" {
+          effort 20h
+        }
+        task t_486 "BDSM Toys" {
+          effort 20h
+        }
+        task t_316 "BDSM info" {
+          effort 2h
+        }
+        task t_477 "BDSM paperwork" {
+          effort 2h
+        }
+        task t_459 "Eros Dating Site" {
+          effort 60h
+        }
+        task t_349 "Locate all dating sites" {
+          effort 8h
+        }
+        task t_1844 "Play parties" {
+          effort 6h
+        }
+        task t_274 "Profiles" {
+          effort 12h
+        }
+      }
+      task t_55 "People" {
+        task t_279 "Plan BDSM People" {
+          effort 4h
+        }
+      }
+      task t_85 "Skills" {
+        task t_277 "Plan BDSM Skills" {
+          effort 1h
+        }
+      }
+    }
+    task t_102 "Dating" {
+      task t_52 "Profile" {
+        task t_481 "Update profiles." {
+          effort 8h
+        }
+      }
+      task t_197 "Project plan" {
+        task t_410 "Eros web site. Merge with other project" {
+          effort 12h
+        }
+      }
+      task t_61 "Sites" {
+        task t_426 "Facebook" {
+          effort 3h
+        }
+        task t_344 "Mingle 2" {
+          effort 8h
+        }
+        task t_439 "Plenty Of Fish" {
+          effort 8h
+        }
+        task t_1746 "Profile Update" {
+          effort 8h
+        }
+        task t_346 "Review BDSM dating sites." {
+          effort 8h
+        }
+        task t_368 "Review dating site list." {
+          effort 8h
+        }
+        task t_299 "Zoosk" {
+          effort 8h
+        }
+      }
+      task t_86 "Women" {
+        task t_348 "E-Mail new person." {
+          effort 4h
+        }
+        task t_276 "Lynda R" {
+          effort 1h
+        }
+        task t_309 "Mary" {
+          effort 1h
+        }
+        task t_428 "Megs" {
+          effort 1h
+        }
+      }
+    }
+    task t_188 "Dating" {
+      task t_463 "Dating Sites" {
+        effort 1d
+      }
+      task t_431 "Dating-Books" {
+        effort 20h
+        allocate reading
+      }
+      task t_386 "Overcoming Procratination" {
+        effort 20h
+        allocate reading
+      }
+      task t_336 "Profile Update" {
+        effort 1d
+      }
+    }
+  }
+}
+
+
+
+
+task t_12 "Admin" {
+  start ${now}
+  allocate drew
+  task t_65 "Accounting" {
+
+    task t_174 "Billing" {
+      priority 600
+      task t_303 "Billing Casale" {
+        effort 1h
+      }
+      task t_396 "ETS Billing" {
+        effort 1h
+      }
+    }
+    task t_91 "Budget" {
+      task t_328 "Bills" {
+        effort 1h
+      }
+      task t_390 "Loans" {
+        effort 1h
+      }
+      task t_367 "RRSP for taxes" {
+        priority 700
+        effort 4h
+      }
+    }
+    task t_1954 "Client Project Review" {
+      effort 1h
+    }
+    task t_90 "Divorce" {
+      task t_189 "Divorce Papers" {
+      }
+    }
+    task t_76 "Insurance" {
+      task t_430 "Car Insurance" {
+        effort 1d
+      }
+      task t_1894 "Life Insurance" {
+        effort 1d
+      }
+    }
+    task t_71 "Retirement" {
+      task t_363 "RRSP" {
+        effort 4h
+      }
+    }
+    task t_51 "Taxes" {
+      task t_425 "Accounts Receivable" {
+        effort 1h
+      }
+      task t_1944 "Car Millage" {
+        effort 12h
+      }
+      task t_440 "GST" {
+        effort 5h
+      }
+    }
+    task t_452 "sac" {
+      effort 5h
+    }
+  }
+}
+
+task t_133 "Support" {
+  start ${now}
+  allocate support
+  task t_97 "Amicus" {
+    task t_205 "FOH" {
+      effort 2h
+    }
+    task t_449 "Migrate to Mailman." {
+      effort 12h
+    }
+  }
+
+  task t_95 "Kit" {
+    task t_296 "Web Site." {
+      effort 18h
+    }
+  }
+
+  task t_92 "Mygenie" {
+    task t_379 "Fix Mygenie  DNS" {
+      effort 2h
+    }
+    task t_441 "Mail Routing." {
+      effort 2h
+    }
+    task t_412 "Update Web Site." {
+      effort 1h
+    }
+  }
+  task t_134 "PIM" {
+    task t_444 "Blogging." {
+      effort 4h
+    }
+    task t_331 "Calendar" {
+      effort 12h
+    }
+    task t_417 "Contacts." {
+      effort 60h
+    }
+    task t_293 "Define requirements." {
+      effort 5h
+    }
+    task t_319 "GTD" {
+      effort 20h
+    }
+    task t_366 "Hier" {
+      effort 5h
+    }
+    task t_300 "Palm" {
+      effort 12h
+    }
+    task t_283 "Project Management." {
+      effort 20h
+    }
+    task t_465 "Task Manangement." {
+      effort 20h
+    }
+    task t_432 "Todo tracking" {
+      effort 20h
+    }
+    task t_1888 "hier" {
+      effort 5h
+    }
+    task t_391 "simplegtd" {
+      effort 1h
+    }
+    task t_321 "tasko" {
+      effort 3h
+    }
+  }
+  task t_88 "SS" {
+    task t_356 "DNS" {
+      effort 4h
+    }
+    task t_333 "Database => salt" {
+      effort 5h
+    }
+    task t_323 "Enter Somday projects." {
+      effort 4h
+    }
+    task t_343 "Rim" {
+      effort 3h
+    }
+    task t_421 "SS:Email Cleanup." {
+      effort 6h
+    }
+    task t_378 "Web on Salt." {
+      effort 4h
+    }
+  }
+  task t_350 "SS-Tools" {
+    task t_320 "RPM SS-Tools" {
+      effort 8h
+    }
+    task t_358 "Yum-Server" {
+      effort 5h
+    }
+  }
+  task t_149 "Services-External" {
+    task t_322 "Eros Website" {
+      effort 12h
+    }
+    task t_1956 "NTP Cleanup" {
+      effort 5h
+    }
+    task t_451 "Watchdog:Backup" {
+      effort 5h
+    }
+    task t_288 "Web Sites" {
+      effort 12h
+    }
+  }
+  task t_130 "Services-Internal" {
+    task t_470 "Coal" {
+      effort 4h
+    }
+    task t_1929 "Hard Drive Identification" {
+      effort 3h
+    }
+    task t_483 "Mail" {
+      effort 12h
+    }
+    task t_291 "Replicated File System" {
+      effort 20h
+    }
+    task t_398 "RockSalt" {
+      effort 20h
+    }
+    task t_468 "Salt" {
+      effort 4h
+    }
+    task t_281 "Toner Cartriges" {
+      effort 2h
+    }
+    task t_285 "UPS" {
+      effort 3h
+    }
+    task t_201 "VOIP" {
+      effort 1h
+    }
+    task t_478 "VPN" {
+      effort 1h
+    }
+    task t_472 "Watchdog" {
+      effort 20h
+    }
+
+    task t_361 "firewall" {
+      effort 20h
+    }
+  }
+  task t_58 "Sturdynet" {
+    task t_402 "Firewall wifi" {
+      effort 1h
+    }
+    task t_467 "Install Eitzchaim Firewall." {
+      effort 5h
+    }
+    task t_450 "Update DSL to new firewall" {
+      effort 20h
+    }
+    task t_409 "Update firewall image." {
+      effort 3h
+    }
+  }
+  task t_171 "TLUG" {
+    task t_1957 "TLUG Web Migration" {
+      effort 12h
+    }
+    task t_485 "TLUG Webserver" {
+      effort 4h
+    }
+    task t_1958 "Wiki Dump Page" {
+      effort 2h
+    }
+    task t_1959 "Wiki Load Page" {
+      effort 2h
+    }
+  }
+
+}
+
+
+
+
+
+task t_132 "CC-Systems" {
+  start ${now}
+  allocate cc
+   task t_400 "CC:Replication" {
+    priority 800
+    effort 12h
+  }
+  task t_480 "CC Filing" {
+    effort 4h
+  }
+  task t_382 "CC Unicode" {
+    depends !t_400
+    effort 20h
+  }
+  task t_487 "CC-Efy Coating Bug" {
+    effort 1h
+  }
+  task t_423 "CC-High Availabilty" {
+    effort 60h
+  }
+  task t_1913 "CC: near-far" {
+    effort 5h
+  }
+  task t_284 "CC:Backup" {
+    effort 4h
+  }
+  task t_329 "CC:Clean-up Drugs." {
+    effort 1h
+  }
+  task t_438 "CC:Cosx/RX" {
+    effort 3h
+  }
+  task t_424 "CC:Database Cleanup" {
+    effort 20h
+  }
+  task t_369 "CC:Drugs upgrade" {
+    effort 4h
+  }
+  task t_404 "CC:Efy" {
+    effort 20h
+  }
+  task t_388 "CC:Email cleanup" {
+    effort 60h
+  }
+  task t_407 "CC:FTP Transport" {
+    effort 5h
+  }
+  task t_376 "CC:HL7 (Medical Manager)" {
+    effort 1h
+  }
+  task t_458 "CC:I-File" {
+    effort 1h
+  }
+  task t_334 "CC:Job Management" {
+    effort 60h
+  }
+  task t_313 "CC:Lab Acount Creation." {
+    effort 5h
+  }
+  task t_399 "CC:Lab Mail Routing" {
+    effort 1h
+  }
+  task t_482 "CC:MFS" {
+    effort 1h
+  }
+  task t_304 "CC:Mail Server Migration" {
+    effort 20h
+  }
+  task t_1916 "CC:Mail Status" {
+    effort 1h
+  }
+  task t_385 "CC:Migration" {
+    effort 1h
+  }
+  task t_364 "CC:NDB Cluster" {
+    effort 20h
+  }
+  task t_411 "CC:OO-Web" {
+    effort 5h
+  }
+  task t_406 "CC:Optical-Online Admin" {
+    effort 20h
+  }
+  task t_429 "CC:Optical-Online Java" {
+    effort 1h
+  }
+  task t_301 "CC:Print Ticket" {
+    effort 8h
+  }
+  task t_427 "CC:RDT Retirement" {
+    effort 12h
+  }
+  task t_353 "CC:RXI Support" {
+    effort 4h
+  }
+
+  task t_456 "CC:Review Files" {
+    effort 6h
+  }
+  task t_338 "CC:Review Folders" {
+    effort 6h
+  }
+  task t_287 "CC:Revision Control" {
+    effort 6h
+  }
+  task t_443 "CC:Server Update" {
+    effort 8h
+  }
+  task t_317 "CC:Status Cleanup" {
+    effort 4h
+  }
+  task t_372 "CC:Tasks" {
+    effort 3h
+  }
+  task t_464 "CC:Test Labs" {
+    effort 3h
+  }
+  task t_389 "CC:Transport map" {
+    effort 6h
+  }
+  task t_466 "CC:User Accounts" {
+    effort 6h
+  }
+  task t_437 "CC:Visionweb future" {
+    effort 6h
+  }
+  task t_359 "CC:Visionweb reports" {
+    effort 1h
+  }
+  task t_1915 "CC:Vtun" {
+    effort 4h
+  }
+  task t_275 "CC:Web Transport" {
+    effort 3h
+  }
+  task t_488 "CC:Web-rx" {
+    effort 12h
+  }
+  task t_308 "CC:fail2ban" {
+    effort 4h
+  }
+  task t_326 "CC:rx-mail-order" {
+    effort 4h
+  }
+  task t_475 "Certificate" {
+    effort 2h
+  }
+}
+task t_94 "Comspec" {
+  start ${now}
+  allocate casale
+  task t_327 "Cacti" {
+    effort 3h
+  }
+  task t_1918 "Comspec:Mail Server" {
+    effort 3h
+  }
+  task t_1953 "Comspec:Zone cleanup" {
+    effort 3h
+  }
+}
+task t_54 "Corrie" {
+  start ${now}
+  allocate drew
+  task t_457 "Corrie Server" {
+    effort 1d
+  }
+}
+task t_70 "ETS" {
+  start ${now}
+  allocate ets
+  task t_1891 "MultiRun" {
+    effort 2h
+  }
+  task t_436 "New ETS Work" {
+    effort 4h
+  }
+  task t_479 "Watchdog merge with other" {
+    effort 12h
+  }
+}
+task t_1892 "Interlink" {
+  start ${now}
+  allocate drew
+  task t_1893 "Interlink Services" {
+    effort 2h
+  }
+  task t_1917 "Mail Server Upgrade" {
+    effort 8h
+  }
+}
+
+task t_67 "Telepoll" {
+  start ${now}
+  allocate drew
+  task t_471 "Telepoll: Backup" {
+    effort 8h
+  }
+  task t_1904 "Telepoll: Backup Monitoring" {
+    effort 4h
+  }
+  task t_1903 "Telepoll: Space Monitoring" {
+    effort 4h
+  }
+}
+
+
+
+
+
+# A traditional Gantt Chart for the TaskJugglerUI
+taskreport "Gantt Chart" {
+  headline "Project Gantt Chart"
+  columns hierarchindex, name, start, end, effort, duration, chart
+  # For this report we like to have the abbreviated weekday in front
+  # of the date. %a is the tag for this.
+  timeformat "%a %Y-%m-%d"
+  loadunit days
+  hideresource 1
+}
+
+# A list of tasks showing the resources assigned to each task.
+taskreport "Task Usage" {
+  headline "Task Usage Report"
+  columns hierarchindex, name, start, end, effort { title "Work" }, duration,
+  cost, revenue
+  timeformat "%Y-%m-%d"
+  loadunit days
+  hideresource 0
+}
+
+# A list of all tasks with the percentage complete for each task
+taskreport "Tracking Gantt" {
+  headline "Tracking Gantt Chart"
+  columns hierarchindex, name, start, end, effort { title "Work" }, duration,
+  completed, chart
+  timeformat "%a %Y-%m-%d"
+  loadunit days
+  hideresource 1
+}
+
+# A graph showing resource allocation. It identifies whether each
+# resource is under- or over-allocated for.
+resourcereport "Resource Graph" {
+  headline "Resource Allocation Graph"
+  columns no, name, rate, utilization, freeload, chart
+  loadunit days
+  hidetask 1
+}
+
+# A list of all project resources, both human and material resources,
+# together with the costs for each.
+resourcereport "Resource Sheet" {
+  headline "Resource Sheet"
+  columns no, name, efficiency, id, maxeffort, rate
+  loadunit days
+  hidetask 1
+}
+
+# A list of resources and each task associated with each resource.
+resourcereport "Resource Usage" {
+  headline "Resource Usage Report"
+  columns no, name, utilization, freeload, cost
+  loadunit days
+  hidetask 0
+}
+
+# This report looks like a regular calendar that shows the tasks by
+# their dates.
+htmlweeklycalendar "Calendar.html" {
+}
+
+# This report is a status report for the current week. It also
+# provides an outlook for the next week.
+htmlstatusreport "Status-Report.html" {
+}
+
+# A P&L report for the project.
+htmlaccountreport "Accounting.html" {
+  # Besides the number of the account and the name we have a column
+  # with the total values (at the end of the project) and the values
+  # for each month of the project.
+  columns no, name, scenario, total, monthly
+  headline "P&L for the Project"
+  caption "The table shows the profit and loss
+  analysis as well as the cashflow situation of the Accounting
+  Software Project."
+  # Since this is a cashflow calculation we show accumulated values
+  # per account.
+  accumulate
+  scenarios plan, done
+}
+

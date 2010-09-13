@@ -1,0 +1,60 @@
+package Hier::Report::hierlist;
+
+use strict;
+use warnings;
+
+BEGIN {
+	use Exporter   ();
+	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
+
+	# set the version for version checking
+	$VERSION     = 1.00;
+	@ISA         = qw(Exporter);
+	@EXPORT      = qw(&Report_hierlist);
+}
+
+use Hier::util;
+use Hier::Tasks;
+
+sub Report_hierlist {	#-- List all top level item (Project and above)
+	my($tid, $pref, $cnt, $parent, $cat, $name, $desc);
+	my(@row);
+
+	add_filters('+live');
+	meta_desc(@ARGV);
+
+print <<"EOF";
+-Gtd -Par Cnt Category  Parent       Name         Description
+==== ==== === ========= ============ =========== ==============================
+EOF
+
+format HIER   =
+@>>> @>>> @>> @<<<<<<<< @<<<<<<<<<<< @<<<<<<<<<< ^<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+$tid, $pid,$cnt,$cat,     $parent,     $name,      $desc
+.
+	$~ = "HIER";	# set STDOUT format name to HIER
+
+	for my $ref (Hier::Tasks::sorted('^title')) {
+		$tid = $ref->get_tid();
+
+		next if $ref->filtered();
+
+		$cnt = $ref->count_actions() || '';
+		
+		$cat = $ref->get_category() || '';
+		$name = $ref->get_task() || '';
+		$desc = $ref->get_description() || '';
+
+		$pref = $ref->get_parent();
+		if (defined $pref) {
+			$parent = $pref->get_tid();
+		} else {
+			$parent = 'fook';
+		}
+
+		write;
+	}
+}
+
+
+1;  # don't forget to return a true value from the file
