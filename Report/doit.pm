@@ -24,17 +24,11 @@ my $Priority = 0;
 my $Limit = 2;
 
 my($List) = 0; ###BUG### should be an option
-my($Done) = 0; ###BUG### should be an option
 
 sub Report_doit {	#-- List top level next actions
 
 	$List = option('List', 0);
-	$Done = option('Done', 0);
-
-	if ($Done) {
-	}
-
-	$Limit = option('Limit');
+	$Limit = option('Limit', 2);
 
 	$= = lines();
 	add_filters('+active', '+next');
@@ -90,6 +84,7 @@ sub Report_doit {	#-- List top level next actions
 		}
 		if ($arg =~ /limit\D+(\d+)/) {
 			$Limit = $1;
+			set_option('Limit', $Limit);
 			next;
 		}
 		print "Unknown option: $arg (ignored) (try option help)\n";
@@ -181,7 +176,8 @@ $tid,  $pri, $cat,       $doit,    $desc
 	$~ = "DOIT";	# set STDOUT format name to HIER
 
 	foreach my $ref (@_) {
-		last if --$Limit <= 0;
+		last if $Limit-- <= 0;
+
 
 		$tid = $ref->get_tid();
 
@@ -235,7 +231,7 @@ $tid,  $pri, $cat,       $doit,    $desc
 
 			write;
 		}
-		last if $- < 10;
+#		last if $- < 10;
 	}
 }
 
@@ -257,10 +253,10 @@ now     -- set them to from someday
 
 Options: 
 
-pri:    -- Set priority
+pri :    -- Set priority
+limit :  -- Set the doit limit to this number of items
 
 EOF
-#limit:  -- Set the doit limit to this number of items
 }
 
 1;  # don't forget to return a true value from the file

@@ -18,9 +18,15 @@ use Hier::Walk;
 use Hier::Resource;
 use Hier::Tasks;
 
+my $ToOld;
+my $ToFuture;
+
 sub Report_taskjuggler {	#-- Hiericial List of Values/Visions/Roles...
 	my(@criteria) = @_;
 	my($tid, $task, $cat, $ins, $due, $desc);
+
+	$ToOld = today(-180);	# don't care about done items > 6months
+	$ToFuture = today(180);	# don't care about start more > 6months
 
 	add_filters('+any', '+all', @criteria);
 	my($planner) = new Hier::Walk;
@@ -87,7 +93,11 @@ sub hier_detail {
 
 	$role = $resource->resource($ref);
 
-	if ($done && $done lt '2010-') {
+	if ($done && $done lt $ToOld) {
+		$planner->{want}{$tid} = 0;
+		return;
+	}
+	if ($start && $start gt $ToFuture) {
 		$planner->{want}{$tid} = 0;
 		return;
 	}
@@ -127,7 +137,7 @@ warn "depend: $depend dep_path $dep_path\n";
 	print {$fd} $indent, qq(  effort $effort\n) if $effort;
 	print {$fd} $indent, qq(  priority $tj_pri\n) if $tj_pri != 500;
 	
-#	print {$fd} $indent, qq(  start $start\n) if $start;
+	print {$fd} $indent, qq(  start $start\n) if $start;
 	print {$fd} $indent, qq(  end   $we\n)   if $we;
 	print {$fd} $indent, qq(  complete  100\n)   if $done;
 }

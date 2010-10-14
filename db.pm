@@ -32,45 +32,48 @@ my $Debug = 0;
 my $MetaFix = 1;
 
 # how to handle key
-# 0 => 
-# 1 => 
-# 2 => use youngest
-# 3 => used oldest
+# x1 => normal
+# x2 => use youngest
+# x3 => used oldest
+# 0x => virtual
+# 1x => in todo
+# 2x => in gtd
+# 3x => in both
 my(%Key_type) = (
-	todo_id     => 1,
-	category    => 1,
-	task        => 1,
-	children    => 1,
-	priority    => 1,
-	depends     => 1,
-	description => 1,
-	note        => 1,
-	owner       => 1,
-	private     => 1,
+	todo_id         => 0x31,
+	category        => 0x31,
+	task            => 0x31,
+	children        => 0x01,
+	priority        => 0x11,
+	description     => 0x31,
+	note            => 0x31,
+	owner           => 0x11,
+	private         => 0x11,
 
-	created     => 2,	# youngest
-	modified    => 3,	# oldest
+	created         => 0x32,	# youngest
+	modified        => 0x33,	# oldest
 
-	due         => 2,	# youngest
-	completed   => 3,	# oldest
+	due             => 0x32,	# youngest
+	completed       => 0x33,	# oldest
 
-	palm_id     => 1,
-	type        => 1,
+	recur		=> 0x21,
+	recurdesc	=> 0x21,
 
-	recur		=> 1,
-	recurdesc	=> 1,
+	_gtd_category	=> 0x21,
+	_gtd_timeframe	=> 0x21,
+	isSomeday	=> 0x21,
+	nextaction	=> 0x21,
+	tickledate	=> 0x21,
+	timeframe	=> 0x21,
+	context		=> 0x31,
+	_gtd_context	=> 0x21,
 
-	_gtd_category	=> 1,
-	_gtd_timeframe	=> 1,
-	isSomeday	=> 1,
-	nextaction	=> 1,
-	tickledate	=> 1,
-	timeframe	=> 1,
-	context		=> 1,
-	_gtd_context	=> 1,
-	effort		=> 1,
-	doit		=> 1,
-	resource	=> 1,
+	palm_id         => 0x11,
+	type            => 0x31,
+	doit            => 0x11,
+	effort		=> 0x11,
+	resource	=> 0x11,
+	depends         => 0x11,
 );
 
 sub load_meta {
@@ -340,7 +343,7 @@ sub gtdmap {
 		print "Hard Need Create $val\n";
 		$Current_ref = Hier::Tasks->new($val);
 		$Current_ref->{_todo_only} = 0x03;
-		sac_create($val);
+		sac_create($val, {});
 		return;
 	}
 
@@ -356,7 +359,8 @@ sub cset {
 	# no value defined, skip update/creation of field
 	return unless defined $val;
 
-	unless ($Key_type{$key}) {
+	my($key_type) = $Key_type{$key} & 0x0F;
+	unless ($key_type) {
 		warn "Unknown key: $key\n";
 		$Key_type{$key} = 1;
 
@@ -370,7 +374,7 @@ sub cset {
 	}
 
 	# keep youngest (smaller value)
-	if ($Key_type{$key} == 2) {
+	if ($key_type == 2) {
 		return if $val eq ''; # no new value
 
 		my($current_value) = $ref->{$key};
@@ -387,7 +391,7 @@ sub cset {
 	}
 
 	# keep oldest (bigger value)
-	if ($Key_type{$key} == 3) {
+	if ($key_type == 3) {
 		return if $val eq ''; # no new value
 
 		my($current_value) = $ref->{$key};
@@ -406,7 +410,7 @@ sub gtd_insert {
 	my($ref, $mode) = @_;
 
 	my($tid) = $ref->get_tid();
-	sac_create($tid);
+	sac_create($tid, $ref);
 
 	gtd_fix_maps($ref);
 	gset_insert($ref, 'itemstatus');
@@ -532,41 +536,6 @@ sub gset_update {
 	G_sql($sql, @vals);
 }
 
-sub sac_update {
-	my $ref = shift @_;
-
-	my(%map_val) = (
-		todo_id     => 1,
-		category    => 1,
-		task        => 1,
-		priority    => 1,
-		description => 1,
-		note        => 1,
-		owner       => 1,
-		private     => 1,
-		created     => 1,
-		modified    => 1,
-		due         => 1,
-		completed   => 1,
-		palm_id     => 1,
-		type        => 1,
-		doit        => 1,
-		effort      => 1,
-		resource    => 1,
-		depends     => 1,
-	);
-
-	my($tid) = $ref->{todo_id};
-	for my $fld (keys %map_val) {
-		next unless defined $ref->{$fld};
-		return unless $map_val{$fld};
-		next unless $ref->get_dirty($fld);	# don't update clean fields
-
-		my($sql) = "update todo set $fld = ? where todo_id = ?";
-		G_sql($sql, $ref->{$fld}, $tid);
-	}
-}
-
 sub gtd_delete {
 	my($tid) = @_;
 
@@ -585,10 +554,35 @@ sub gset_delete {
 	G_sql($sql, $tid);
 }
 
+sub sac_update {
+	my $ref = shift @_;
+
+	my($tid) = $ref->{todo_id};
+	for my $fld (keys %Key_type) {
+		next unless $Key_type{$fld} & 0x10;		# in todo db
+		next unless defined $ref->{$fld};
+		next unless $ref->get_dirty($fld);
+
+		my($sql) = "update todo set $fld = ? where todo_id = ?";
+		G_sql($sql, $ref->{$fld}, $tid);
+	}
+}
+
 sub sac_create {
-	my($tid) = @_;
+	my($tid, $ref) = @_;
 
 	G_sql("insert into todo(todo_id) values(?)", $tid);
+	
+	for my $fld (keys %Key_type) {
+		next if $fld eq 'todo_id';
+		next unless $Key_type{$fld} & 0x10;	# in todo db
+		next unless defined $ref->{$fld};
+
+		next unless $ref->get_dirty($fld);
+
+		my($sql) = "update todo set $fld = ? where todo_id = ?";
+		G_sql($sql, $ref->{$fld}, $tid);
+	}
 }
 
 sub sac_delete {

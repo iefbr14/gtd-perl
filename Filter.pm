@@ -33,11 +33,11 @@ sub get_today {
 sub filtered {
 	my ($ref) = @_;
 
-	return 1 if cct_filtered($ref);
+	return 'h' if $ref->hier_filtered();
+	return 't' if $ref->task_filtered();
+	return 'l' if $ref->list_filtered();
 
-	return 1 if $ref->hier_filtered();
-	return 1 if $ref->task_filtered();
-	return 1 if $ref->list_filtered();
+	return 'c' if cct_filtered($ref);
 
 	return 0;
 }

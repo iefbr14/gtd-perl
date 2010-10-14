@@ -75,14 +75,7 @@ sub disp {
 	my($ref) = @_;
 	my($tid) = $ref->get_tid();
 
-	my($key) = '[ ]';
-
-	$key = '[_]' if $ref->get_nextaction() eq 'y';
-	$key = '[*]' if $ref->get_completed();
-
-	$key =~ s/.(.)./($1)/ 	if $ref->get_isSomeday() eq 'y';
-	$key =~ s/.{.}./($1)/ 	if $ref->get_tickledate();
-	$key =~ s/(.)./$1w/ 	if $ref->get_type() eq 'w';
+	my($key) = action_disp($ref);
 
 	my $pri = $ref->get_priority() || 3;
 	my $type = uc($ref->get_type());

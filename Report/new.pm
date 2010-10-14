@@ -16,30 +16,55 @@ BEGIN {
 use Hier::Tasks;
 use Hier::util;
 
-my $Category;
+my $First = '';
 
+
+#
+# there are two paths here.  The first is the command line
+# where everything is on the command line and is a one shot
+# the other is the prompter version with defaults
+#
 sub Report_new {	#-- create a new action or project
-        my($name) = shift @ARGV;
-        my($title) = meta_desc(@ARGV);
+	unless (@ARGV) {
+		new_inbox('i', meta_desc(@ARGV));
+		return;
+	}
+		
+        my($type) = shift @ARGV;
+	my($name) = '';
 
-        if ($name) {
-                my($want) = type_val($name);
-		unless ($want) {
-			print "**** Can't understand Type $name\n";
-			exit 1;
-		}
-                if (is_type_hier($want)) {
-                        new_project($want, $name, $title);
-                        return;
-                }
-                if (is_type_action($want)) {
-                        new_action($want, $name, $title);
-                        return;
-                }
-		print "**** Don't know how to create $name\n";
-		print "Creating an inbox item\n";
-        }
-	new_inbox('i', join(' ', $name, $title));
+	my($want) = type_val($type);
+	# prompt path
+        if ($want) {
+		$name = shift @ARGV if @ARGV;
+	} else {
+		$name = $want;
+		$want = 'i';
+	}
+
+	# command line path
+	if (@ARGV) {
+		new_task('i', $name, meta_desc(@ARGV));
+		return;
+	}
+
+	my($title) = meta_desc(@ARGV);
+
+	print "new: type=$type($want) name=$name title=$title\n";
+
+	if (is_type_hier($want)) {
+		new_project($want, $name, $title);
+		return;
+	}
+	if ($want eq 'i') {
+		new_inbox('i', $name, $title);
+		return;
+	}
+	if (is_type_action($want)) {
+		new_action($want, $name, $title);
+		return;
+	} 
+	die "Can't happen, don't know how to handle request\n";
 }
 
 sub is_type_hier {
@@ -57,30 +82,51 @@ sub is_type_action {
 }
 
 
+# command line version
+sub new_task {
+	my($type, $task, $title) = @_;
+
+	my($pri, $category, $note, $desc, $line);
+
+	$task     = option("Task") || $task;
+	$pri      = option('Priority') || 3;
+	$desc     = option("Title") || $title;
+
+	$category = option('Category') || '';
+	$note     = option('Note'); 
+
+	my $ref = Hier::Tasks->new(undef);
+
+	$ref->set_priority($pri);
+	$ref->set_category($category);
+	$ref->set_title($task);
+	$ref->set_description($desc);
+	$ref->set_note($note);
+
+	$ref->set_type($type);
+
+	$ref->set_nextaction('y') if $pri < 3;
+	$ref->set_isSomeday('y') if $pri > 3;
+
+	$ref->insert();
+
+	print "Created: ", $ref->get_tid(), "\n";
+}
+
 sub new_inbox {
 	my($type, $task, $title) = @_;
 
 	###BUG### make this fast and simple.
 	my($pri, $category, $note, $desc, $line);
 
-	print "Enter Task, Priority, Desc, palm Category, Notes...\n";
-	print "  enter ^D to stop, entry not added\n";
-	print "  use '.' to stop adding notes.\n";
+	first("Enter Item, Desc, Category, Notes...");
 	for (;;) {
-		while ($task eq '') {
-			$task = prompt("Add Task:     ");
-		}
-		$pri      =     option('Priority') || 3;
-		$desc     =     prompt("Add Desc:     ");
+		$task     = prompt("Task", $task);
+		$pri      = option('Priority') || 3;
+		$desc     = prompts("Desc", $title);
 
-		print "Palm Category, and notes....\n";
-		$category =     prompt("Add Category: ", option('Category'));
-		$line     =     prompt("Add Note:     "); 
-		for ($note=''; $line; $line= prompt("+ ")) {
-			last if $line eq '.';
-			$note .= $line . "\n";
-		}
-		chomp $note;
+		$category = prompt("Category", option('Category'));
+		$note     = prompts("Note", option('Note')); 
 
 		my $ref = Hier::Tasks->new(undef);
 
@@ -90,7 +136,7 @@ sub new_inbox {
 		$ref->set_description($desc);
 		$ref->set_note($note);
 
-		$ref->set_type('a'); # action
+		$ref->set_type($type);
 		$ref->set_nextaction('y') if $pri > 3;
 
 		$ref->set_isSomeday('y') if $pri < 3;
@@ -102,28 +148,19 @@ sub new_inbox {
 }
 
 sub new_action {
-	my($type, $task) = @_;
+	my($type, $task, $desc) = @_;
 
-	my($pri, $category, $note, $desc, $line);
+	my($pri, $category, $note, $line);
 
-	print "Enter Task, Priority, Desc, palm Category, Notes...\n";
-	print "  enter ^D to stop, entry not added\n";
-	print "  use '.' to stop adding notes.\n";
+	first("Enter Action, Priority, Desc, palm Category, Notes...");
+
 	for (;;) {
-		while ($task eq '') {
-			$task = prompt("Add Task:     ");
-		}
-		$pri      =     prompt("Add Priority: ", option('Priority') || 3);
-		$desc     =     prompt("Add Desc:     ");
+		$task     = prompt("Task", $task);
+		$pri      = prompt("Priority", option('Priority')) || 3;
+		$desc     = prompts("Desc", $desc);
 
-		print "Palm Category, and notes....\n";
-		$category =     prompt("Add Category: ", option('Category'));
-		$line     =     prompt("Add Note:     "); 
-		for ($note=''; $line; $line= prompt("+ ")) {
-			last if $line eq '.';
-			$note .= $line . "\n";
-		}
-		chomp $note;
+		$category = prompt("Category", option('Category'));
+		$note     = prompts("Note", option('Note')); 
 
 		my $ref = Hier::Tasks->new(undef);
 
@@ -147,24 +184,32 @@ sub new_action {
 
 
 sub new_project {
-	my($type, $name, $title) = @_;
+	my($type, $title, $desc) = @_;
 
-	my($pri, $category, $parent, $desc, $note);
+	my($pri, $category, $parent, $note);
 
-	print "Enter $name Category, Description, Outcome...\n";
-	print "  enter ^D to stop, entry not added\n";
+	my($type_name) = type_name($type);
+
+	first("Enter $type_name, Category, Description, Outcome...");
+
 	for (;;) {
-		$category = prompt("Add Category:    ", option('Category'));
-		$title    = prompt("Add Title:       ") unless $title;
-		$desc     = prompt("Add Description: ");
-		$note     = prompt("Add Outcome:     ");
+		$category = prompt("Category", option('Category'));
+		$title    = prompt("Title", $title);
+		$pri      = option('Priority') || 3;
+		if ($desc) {
+			$note = option('Note');
+		} else {
+			$desc     = prompts("Description", $desc);
+			$note     = prompts("Outcome", option('Note'));
+		}
 
 		my $ref = Hier::Tasks->new(undef);
 
 		$ref->set_type($type); 
 
+		$ref->set_priority($pri);
 		$ref->set_category($category);
-		$ref->set_title($name);
+		$ref->set_title($title);
 		$ref->set_description($desc);
 		$ref->set_note($note);
 
@@ -174,17 +219,46 @@ sub new_project {
 	}
 }
 
+sub first {
+	my($text) = @_;
+	$First = "$text\n" .
+	 "  enter ^D to stop, entry not added\n" . 
+	 "  use '.' to stop adding notes.\n";
+}
+sub prompts {
+	my($prompt, $default) = @_;
+
+	return $default if $default;
+	my($text) = '';
+
+	my($line) = prompt($prompt);
+	for ($text=''; $line; $line=prompt("+ ")) {
+		last if $line eq '.';
+		$text .= $line . "\n";
+	}
+	chomp $text;
+	return $text;
+}
+
 sub prompt {
 	my($prompt, $default) = @_;
-	local($|) = 1;
 
-	$default ||= '';
+	return $default if defined $default && $default ne '';
+
+	if ($prompt =~ /^[A-Z]/) {
+		$prompt = sprintf("Add %-10s", $prompt . ':');
+	}
+
+	local($|) = 1;
+	if ($First) {
+		print $First;
+		$First = '';
+	}
+
 
 	print $prompt;
 	if (defined($_ = <STDIN>)) {
 		chomp;
-
-		$_ = $default if $_ eq '';
 
 		return $_;
 	}

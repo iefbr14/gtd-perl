@@ -14,7 +14,7 @@ BEGIN {
 		&type_name &type_val &type_depth
 		&report_header &summary_line
 		&dump_task 
-		&meta_desc &type_disp
+		&meta_desc &type_disp &action_disp
 		&add_filters &cct_filtered
 		&lines &columns &today
 		&option &set_option
@@ -81,7 +81,8 @@ sub type_depth {
 		'g' => 4,
 		'p' => 5,
 
-		'a' => 6,		# task(s)
+		'n' => 6,		# next actions
+		'a' => 6,		# actions (tasks)
 		'i' => 7,
 		'w' => 7,
 	);
@@ -101,6 +102,21 @@ sub type_disp {
 	return "{$type\}" if $ref->get_isSomeday() eq 'y';
 	return "[$type\]" if $ref->get_nextaction() eq 'y';
 	return "($type\)";
+}
+
+sub action_disp {
+	my($ref) = @_;
+
+	my($key) = '[ ]';
+
+	$key = '[_]' if $ref->get_nextaction() eq 'y';
+	$key = '[*]' if $ref->get_completed();
+
+	$key =~ s/.(.)./($1)/ 	if $ref->get_isSomeday() eq 'y';
+	$key =~ s/.{.}./($1)/ 	if $ref->get_tickledate();
+	$key =~ s/(.)./$1w/ 	if $ref->get_type() eq 'w';
+
+	return $key;
 }
 
 #==============================================================================
@@ -261,7 +277,7 @@ my $Filter_Category;
 my $Filter_Context;
 my $Filter_Timeframe;
 my %Filter_Tags;
-my $Filter_Parent;
+my @Filter_Parents;
 
 sub meta_argv {
 	local($_);
@@ -291,9 +307,9 @@ sub meta_argv {
 			for my $ref (Hier::Tasks::hier()) {
 				my($title) = $ref->get_title();
 				if ($title =~ /$pat/i) {
-					$Filter_Parent = $ref->get_tid();
-					print "Parent($Filter_Parent): $title\n";
-					last;
+					my($tid) = $ref->get_tid();
+					push(@Filter_Parents, $tid);
+					print "Parent($tid): $title\n";
 				}
 			}
 			next;
@@ -305,33 +321,39 @@ sub meta_argv {
 				my $pref = Hier::Tasks::find($tid);
 				if (defined $pref) {
 					$title = $pref->get_title();
-					$Filter_Parent = $pref->get_tid();
+					push(@Filter_Parents, $tid);
 
-					print "Parent($Filter_Parent): $title\n";
+					print "Parent($tid): $title\n";
 					next;
 				}
 				print "Unknown project: $tid\n";
+				next;
 			}
+
+			my($found) = 0;
 			my $pat = $_;	# first by case match
 
 			for my $ref (Hier::Tasks::hier()) {
 				$title = $ref->get_title();
 
 				if ($title eq $pat) {
-					$Filter_Parent = $ref->get_tid();
-					print "Parent($Filter_Parent): $title\n";
-					last;
+					my($tid) = $ref->get_tid();
+					push(@Filter_Parents, $tid);
+					print "Parent($tid): $title\n";
+					$found = 1;
 				}
 			}
-			next if $Filter_Parent;
+			next if $found;		# got at least one
+
 			$pat = lc($_);		# ok try case insensative.
 
 			for my $ref (Hier::Tasks::hier()) {
 				$title = lc($ref->get_title());
 
 				if ($title eq $pat) {
-					$Filter_Parent = $ref->get_tid();
-					print "Parent($Filter_Parent): $title\n";
+					my($tid) = $ref->get_tid();
+					push(@Filter_Parents, $tid);
+					print "Parent($tid): $title\n";
 					last;
 				}
 			}
@@ -450,8 +472,11 @@ sub meta_find_context {
 sub cct_filtered {
 	my ($ref) = @_;
 
-	if ($Filter_Parent) {
-		return 1 unless $ref->has_parent_id($Filter_Parent);
+	if (@Filter_Parents) {
+		foreach my $tid (@Filter_Parents) {
+			return 0 if ($ref->has_parent_id($tid));
+		}
+		return 1;
 	}
 
 	if (%Filter_Tags) {
@@ -484,15 +509,67 @@ sub add_filters {
 
 #==============================================================================
 my %Options;
+my %Option_keys = (
+	'Debug'       => 1,
+	'MetaFix'     => 1,
+	'Mask'        => 1,
 
+	'Title'       => 1,
+	'Subject'     => 'Title',
+	'Task'        => 1,
+	'Desc'        => 'Task',
+	'Description' => 'Task',
+	'Note'        => 1,
+	'Result'      => 'Result',
+
+	'Category'    => 1,
+	'Priority'    => 1,
+	'Tag'         => 1,
+	'Tags'        => 'Tag',
+
+
+	'Limit'       => 1,
+	'Reverse'     => 1,
+
+	'List'        => 1,	# tab seperated list format
+	'Wiki'        => 1,	# media wiki format
+	'Html'        => 1,	# html text format
+);
+
+sub option_key {
+	my($key) = @_;
+
+	my($newkey) = $Option_keys{$key};
+	unless ($newkey) {
+		warn "Unknown option: $key\n";
+		$Option_keys{$key} = 1;
+		$newkey = 1;
+	}
+	if ($newkey =~ /^[A-Z]/) {
+		$key = $newkey;
+	}
+	return $key;
+}
+	
 sub set_option {
 	my($key, $val) = @_;
 
-	$Options{$key} = $val;
+	$Options{option_key($key)} = $val;
 }
 
 sub option {
-	my($key) = @_;
+	my($key, $default) = @_;
+
+	$key = option_key($key);
+
+	unless (defined $Options{$key}) {
+		print "Fetch Option $key == undef\n" if $Debug;
+		if (defined $default) {
+			$Options{$key} = $default;
+		}
+	} else {
+		print "Fetch Option $key => $Options{$key}\n" if $Debug;
+	}
 
 	return $Options{$key};
 }

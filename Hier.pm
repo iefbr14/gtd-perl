@@ -159,9 +159,10 @@ sub parent_id {
 sub has_parent_id {
 	my($self, $check_parent_id) = @_;
 
-	foreach my $parent ($self->parent_refs()) {
-		return 1 if $check_parent_id == $parent->get_tid();
+	foreach my $parent ($self->parent_ids()) {
+		return 1 if $check_parent_id == $parent;
 	}
+	return 0;
 }
 
 #------------------------------------------------------------------------------

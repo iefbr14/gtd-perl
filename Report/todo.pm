@@ -16,15 +16,15 @@ BEGIN {
 use Hier::util;
 use Hier::Tasks;
 
-my $List = 0;
 
 sub Report_todo {	#-- List top level next actions
-	my($limit) = option('Limit') || 10;
+	my($limit) = option('Limit', 10);
+	my($list)  = option('List', 0);
 
 	add_filters('+live');
 	my($title) = meta_desc(@ARGV);
 
-	my($tid, $pri, $task, $cat, $created, $modified, $due, $desc);
+	my($tid, $key, $pri, $task, $cat, $created, $modified, $due, $desc);
 
 print <<"EOF";
   Id   Pri Category  Due         Task/Description: $title
@@ -32,18 +32,16 @@ print <<"EOF";
 EOF
 
 format STDOUT =
-@>>> [_] @ @<<<<<<<< @<<<<<<<<<< ^<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-$tid,  $pri, $cat,        $due,    $task
+@>>> @<< @ @<<<<<<<< @<<<<<<<<<< ^<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+$tid,$key,$pri, $cat,        $due,    $task
 ~~                               ^<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                                                   $desc
 .
 
 	my($count) = 0;
 	for my $ref (Hier::Tasks::sorted('^pri')) {
-		
-		next unless $ref->is_ref_task();
-		next if $ref->filtered();
-		next if parent_filtered($ref);
+		next unless $ref->is_ref_task();	# only actions
+		next if $ref->filtered();		# other filterings
 
 		$tid       = $ref->get_tid();
 		$pri       = $ref->get_priority();
@@ -55,7 +53,9 @@ $tid,  $pri, $cat,        $due,    $task
 		$due       = $ref->get_due();
 		$desc      = $ref->get_description() || '';
 
-		if ($List) {
+		$key       = action_disp($ref);
+
+		if ($list) {
 			$desc =~ s/\n.*//s;
 			print join("\t", $tid, $pri, $cat, $task, $due, $desc), "\n";
 		} else {
