@@ -14,6 +14,7 @@ my(@Criteria);
 my(%Criteria) = (
 	tid	 => \&by_tid,
 	task	 => \&by_task,
+	title	 => \&by_task,
 	hier	 => \&by_hier,
 	status	 => \&by_status,
 	pri	 => \&by_pri,

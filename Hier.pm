@@ -65,6 +65,7 @@ sub add_child {
 
 	rel_add($child, parent => $parent);
 	rel_add($parent, child => $child);
+	$child->set_dirty('parents');
 }
 
 sub orphin_child {
@@ -72,6 +73,7 @@ sub orphin_child {
 
 	rel_del($child, parent => $parent);
 	rel_del($parent, child => $child);
+	$child->set_dirty('parents');
 }
 
 #------------------------------------------------------------------------------
@@ -190,13 +192,11 @@ sub set_parents_ids {
 		} else {
 			# disown parent
 			$ref->orphin_child($self);
-			$ref->set_dirty('parents');
 		}
 	}
 	# for my new parents add self as thier child
 	for my $pref (values %pid) {
 		add_child($pref, $self);
-		$pref->set_dirty('parents');
 	}
 }
 

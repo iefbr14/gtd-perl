@@ -13,7 +13,7 @@ BEGIN {
 	@EXPORT      = qw(&Report_udpate);
 }
 
-use Hier::utils;
+use Hier::util;
 use Hier::Tasks;
 
 sub Report_update {	#-- Command line update of an action/project
@@ -40,13 +40,15 @@ sub Report_update {	#-- Command line update of an action/project
 	}
 
 	if ($val = option('Note')) {
-		$ref->set_note($val):
+		$ref->set_note($val);
 	}
+
 	if ($val = option('Priority')) {
-		$ref->set_priority($val):
+		$ref->set_priority($val);
 	}
+
 	if ($val = option('Description')) {
-		$ref->set_description($val):
+		$ref->set_description($val);
 	}
 
 	$ref->update();

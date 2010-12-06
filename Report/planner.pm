@@ -17,13 +17,17 @@ use Hier::util;
 use Hier::Walk;
 use Hier::Resource;
 use Hier::Tasks;
+use Hier::CCT;
 
 my $Today = `date +%04Y%02m%02dT080000Z`; chomp $Today;
 
 my %Pred;
 my $Pred_id = 0;
 
-sub Report_planner {	#-- Hiericial List of Values/Visions/Roles...
+my %Alloc_resource = ( 999 => 'Drew');
+my %Alloc_tasks = ();
+
+sub Report_planner {	#-- Create a planner file from gtd db
 	my($criteria) = @_;
 	my($tid, $pri, $task, $cat, $ins, $due, $desc);
 	my(@row);
@@ -33,10 +37,18 @@ sub Report_planner {	#-- Hiericial List of Values/Visions/Roles...
 	$planner->set_depth('a');
 	$planner->filter();
 
+	planner_project();
+	planner_calendar();
+
 	bless $planner;
 	print "<tasks>\n";
 	$planner->walk();
 	print "</tasks>\n";
+
+	planner_resource();
+	planner_allocations();
+	print "</project>\n";
+
 }
 
 sub header {
@@ -73,6 +85,7 @@ sub hier_detail {
 	$done = pdate($ref->get_completed());
 	$start = pdate($ref->get_created());
 
+
 	if ($done && $done lt '2010-') {
 		$planner->{want}{$tid} = 0;
 		return;
@@ -102,6 +115,18 @@ sub hier_detail {
 				$indent, "  </predecessors>\n",
 		}
 		$Pred{$role} = $tid;
+		
+	
+		my($context) = $ref->get_context();
+		my($cid);
+		if ($context) {
+			my($cref) = Hier::CCT->use('Context');
+			$cid = $cref->get($context);
+			$Alloc_resource{$cid} = $context;
+		} else {
+			$cid = 999;
+		}
+		$Alloc_tasks{$tid} = $cid;
 	}
 }
 
@@ -169,4 +194,60 @@ sub fix_effort {
 	}
 	return $effort;
 }
+
+
+sub planner_project() {
+	print <<"EOF";
+<?xml version="1.0"?>
+<project name="" company="" manager="" phase="" project-start="$Today" mrproject-version="2" calendar="1">
+  <properties/>
+  <phases/>
+EOF
+}
+
+sub planner_calendar() {
+	print <<"EOF";
+  <calendars>
+    <day-types>
+      <day-type id="0" name="Working" description="A default working day"/>
+      <day-type id="1" name="Nonworking" description="A default non working day"/>
+      <day-type id="2" name="Use base" description="Use day from base calendar"/>
+    </day-types>
+    <calendar id="1" name="Default">
+      <default-week mon="0" tue="0" wed="0" thu="0" fri="0" sat="1" sun="1"/>
+      <overridden-day-types>
+        <overridden-day-type id="0">
+          <interval start="0800" end="1200"/>
+          <interval start="1300" end="1700"/>
+        </overridden-day-type>
+      </overridden-day-types>
+      <days/>
+    </calendar>
+  </calendars>
+EOF
+}
+
+sub planner_resource() {
+	my($who);
+
+	print "  <resource-groups/>\n";
+	print "  <resources>\n";
+	foreach my $id (sort {$a <=> $b } keys %Alloc_resource) {
+		$who = $Alloc_resource{$id};
+		print qq(    <resource id="$id" name="$who" short-name="" type="1" units="0" email="" note="" std-rate="0"/>\n);
+	}
+	print "  </resources>\n";
+}
+
+sub planner_allocations() {
+	my($who);
+
+	print "  <allocations>\n";
+	foreach my $id (sort {$a <=> $b } keys %Alloc_tasks) {
+		$who = $Alloc_tasks{$id};
+		print qq(    <allocation task-id="$id" resource-id="$who" units="100"/>\n);
+	}
+	print "  </allocations>\n";
+}
+
 1;  # don't forget to return a true value from the file

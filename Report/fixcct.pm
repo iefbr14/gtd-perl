@@ -19,9 +19,9 @@ sub Report_fixcct {	#-- Fix Categories/Contexts/Time Frames
 	my($new_id, $id);
 
 	report_header("Categories");
-	for my $key (sort keys %Categories) {
-		next if $key =~ /^\d+$/;
-		$id = $Categories{$key} || '';
+	my($Category) = Hier::CCT->use('Category');
+	for my $key (sort $Category->keys()) {
+		$id = $Category->get($key);
 
 		next unless $key =~ s/^(\d+)://;
 		$new_id =  $1;
@@ -29,9 +29,9 @@ sub Report_fixcct {	#-- Fix Categories/Contexts/Time Frames
 		sql_fix_cct('category', $id, $new_id, $key);
 	}
 	report_header("Contexts");
-	for my $key (sort keys %Contexts) {
-		next if $key =~ /^\d+$/;
-		$id = $Contexts{$key} || '';
+	my($Context) = Hier::CCT->use('Context');
+	for my $key (sort $Context->keys()) {
+		$id = $Context->get($key);
 
 		next unless $key =~ s/^(\d+)://;
 		$new_id =  $1;
@@ -40,9 +40,9 @@ sub Report_fixcct {	#-- Fix Categories/Contexts/Time Frames
 	}
 	print "\n";
 	report_header("Time Frames");
-	for my $key (sort keys %Timeframes) {
-		next if $key =~ /^\d+$/;
-		$id = $Timeframes{$key} || '';
+	my($Timeframe) = Hier::CCT->use('Timeframe');
+	for my $key (sort $Timeframe->keys()) {
+		$id = $Timeframe->get($key) || '';
 
 		next unless $key =~ s/^(\d+)://;
 		$new_id =  $1;

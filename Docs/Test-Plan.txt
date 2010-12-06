@@ -9,45 +9,45 @@
 [_] Document sort-order options (NEW)
 [_] Document option hints(NEW)
 
-[_] [_] Test Global options:
-  [_] [_]     -x      -- turn Debug on.
-  [_] [_]     -m      -- update metadata
-  [_] [_] 
-  [_] [_]     -n ...  -- new tasks ...
-  [_] [_]     -e ...  -- edit tasks ...
-  [_] [_]     -d ...  -- done tasks ...
-  [_] [_]     -u ...  -- update tasks ...
-  [_] [_]     -D ...  -- delete tasks ...
-  [_] [_]     -R :    -- Run report : and exit (see -R reports for list)
-  [_] [_] 
-  [_] [_] x   -W      -- Wiki mode output
-  [_] [_] x   -H      -- Html mode output
-  [_] [_] 
-  [_] [_]     -a      -- all tasks but done
-  [_] [_]     -A      -- All includes done
-  [_] [_]     -Z :    -- gtd database group (default: test)
-  [_] [_] 
-  [_] [_]     -p :    -- set the priority (default 3; range 1..5)
-  [_] [_]     -c :    -- set the category (default '')
-  [_] [_]     -N :    -- set the note text
-  [_] [_]     -t :    -- set the task text
-  [_] [_] 
-  [_] [_]     -l :    -- limit to first : (default 10, * == all)
-  [_] [_]     -r      -- reverse sort
+[_] Test Global options:
+  [_]     -x      -- turn Debug on.
+  [_]     -m      -- update metadata
+  [_] 
+  [_]     -n ...  -- new tasks ...
+  [_]     -e ...  -- edit tasks ...
+  [_]     -d ...  -- done tasks ...
+  [_]     -u ...  -- update tasks ...
+  [_]     -D ...  -- delete tasks ...
+  [_]     -R :    -- Run report : and exit (see -R reports for list)
+  [_] 
+  [_] x   -W      -- Wiki mode output
+  [_] x   -H      -- Html mode output
+  [_] 
+  [_]     -a      -- all tasks but done
+  [_]     -A      -- All includes done
+  [_]     -Z :    -- gtd database group (default: test)
+  [_] 
+  [_]     -p :    -- set the priority (default 3; range 1..5)
+  [_]     -c :    -- set the category (default '')
+  [_]     -N :    -- set the note text
+  [_]     -t :    -- set the task text
+  [_] 
+  [_]     -l :    -- limit to first : (default 10, * == all)
+  [_]     -r      -- reverse sort
 
-[_] [_] Test meta-desc mode in todo/gtd
-  [_] [_]	@XXXX	cct context setting (sets hints as well)
+[_] Test meta-desc mode in todo/gtd
+  [_]	@XXXX	cct context setting (sets hints as well)
 	[_] context
 	[_] category
 	[_] timeframe
 	[_] tag
       [_]	^sort	  set ^sort^criter^bylist
-  [_] [_]	/XXXX	  search project/action (hier/todo) sets picks hint
-  [_] [_]	=DDDD	  use XXX as tid -- sets parent hint
-  [_] [_]	=XXXX	  search hier title -- sets parent hint
-  [_] [_]	*XXXX	  sets type hint
-  [_] [_]	X:	  use X as type (sets type hint)
-  [_] [_]	....	  passed to reports
+      [_]	/XXXX	  search project/action (hier/todo) sets picks hint
+      [_]	=DDDD	  use XXX as tid -- sets parent hint
+      [_]	=XXXX	  search hier title -- sets parent hint
+      [_]	*XXXX	  sets type hint
+      [_]	X:	  use X as type (sets type hint)
+      [_]	....	  passed to reports
       [_]	%opt=val  sets opt to val
       [_]   Picks (tid found via / or left on the command line)
 
@@ -155,8 +155,8 @@
 
 # List details:
     +--------------[_] records [All] 
-    |    +---------[_] dump (full record dump)
-    |   /   +------[_] list (list titles)
+    |   +----------[_] dump (full record dump)
+    |   |   +------[_] list (list titles)
     |   |   |   +--[_] items (titles/description/notes(results))
     |   |   |   |
    [_] [X] [_] [_] Value
@@ -179,13 +179,13 @@
 [_] [_] help   -- gives help
 
 # Other reports
-[_] [_] status (gives view to selection system)
-[_] [_] cct -- category/conext/timeframe(tag)
+[_] status (gives view to selection system)
+[_] cct -- category/conext/timeframe(tag)
 [_]     toplevel => hier list {Values,Visions,Goals}
-[_] [_] todo
-    [_] tasks
-[_] [_] hierlist -- grepable list of hier items
-[_] [_] checklist
+[_] todo
+[_] tasks
+[_] hierlist -- grepable list of hier items
+[_] checklist
     [_] weekly  -- weekly review
 		(project +live
 		(actions ~cur +next
@@ -195,31 +195,31 @@
 		(actions +live actions +future
 
 # Exporters
-[_] [_] planner
-[_] [_] taskjuggler
+[_] planner
+[_] taskjuggler
 
 # Updaters
-[_] [_] done (rename tagdone?)
-[_] [_] delete
-[_] [_] doit
+[_] done (rename tagdone?)
+[_] delete
+[_] doit
 
-[_] [_] fixcct
-[_] [_] renumber
-[_] [_] addplans
+[_] fixcct
+[_] renumber
+[_] addplans
 
-[_] [_] bulklist
-[_] [_] bulkload
-[_] [_] bulkedit
+[_] bulklist
+[_] bulkload
+[_] bulkedit
 
-[_] [_] clean -?
-    [_] load - load records (reads dumps)
-[_] [_] edit - edit records (dump/vi/update)
-[_] [_] init - create database structure
-[_] [_] merge - merge records
-[_] [_] new_project - prompts/adds a new project (other other hier)
-[_] [_] new_task - prompts/adds a new action/next/waiting
-[_] [_] search - used to find stuff anywhere
-[_] [_] update - commandline updater
+[_] clean -?
+[_] load - load records (reads dumps)
+[_] edit - edit records (dump/vi/update)
+[_] init - create database structure
+[_] merge - merge records
+[_] new_project - prompts/adds a new project (other other hier)
+[_] new_task - prompts/adds a new action/next/waiting
+[_] search - used to find stuff anywhere
+[_] update - commandline updater
 #==============================================================================
 # Option Hints
 #==============================================================================

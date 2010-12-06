@@ -37,7 +37,7 @@ my %Types = (
 use Hier::util;
 use Hier::Tasks;
 
-sub Report_status {	#-- List all projects with actions
+sub Report_status {	#-- report status of projects/actions
 	add_filters("+live");	# counts use it and it give a context
 
 	my $desc = meta_desc(@ARGV);
@@ -47,14 +47,15 @@ sub Report_status {	#-- List all projects with actions
 	my $task = count_task();
 	my $next = count_next();
 
-	print "Options:\n";
+#	print "Options:\n";
 #	for my $option (qw(pri debug db title report)) {
 #		printf "%10s %s\n", $option, get_info($option);
 #	}
-	print "\n";
+#	print "\n";
 
 	print "For: $desc " if $desc;
-	print "Would find hier:$hier, proj:$proj, actions:$task, next:$next\n";
+	my($total) = $task + $next;
+	print "hier: $hier, projects: $proj, next/actions: $next/$task = $total\n";
 }
 
 sub count_hier {

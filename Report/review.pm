@@ -192,7 +192,7 @@ sub mode_projects {
 sub by_goal_task {
 	return $a->get_parent->get_title() cmp $b->get_parent->get_title()
 	    or $a->get_title() cmp $b->get_title()
-	    or $a->get_id() <=> $b->get_id();
+	    or $a->get_tid() <=> $b->get_tid();
 }
 
 sub get_status {
@@ -270,7 +270,7 @@ sub get_status {
 use Hier::util;
 use Hier::Tasks;
 
-sub Report_doit {	#-- List top level next actions
+sub _report_doit {	
 
 	$List = option('List', 0);
 	$Done = option('Done', 0);

@@ -31,6 +31,8 @@ my $Table;
 my $Debug = 0;
 my $MetaFix = 1;
 
+my($Category, $Context, $Timeframe, $Tags);
+
 # how to handle key
 # x1 => normal
 # x2 => use youngest
@@ -41,7 +43,7 @@ my $MetaFix = 1;
 # 3x => in both
 my(%Key_type) = (
 	todo_id         => 0x31,
-	category        => 0x31,
+	category        => 0x11,
 	task            => 0x31,
 	children        => 0x01,
 	priority        => 0x11,
@@ -60,12 +62,12 @@ my(%Key_type) = (
 	recurdesc	=> 0x21,
 
 	_gtd_category	=> 0x21,
-	_gtd_timeframe	=> 0x21,
 	isSomeday	=> 0x21,
 	nextaction	=> 0x21,
 	tickledate	=> 0x21,
-	timeframe	=> 0x21,
-	context		=> 0x31,
+	timeframe	=> 0x01,
+	_gtd_timeframe	=> 0x21,
+	context		=> 0x01,
 	_gtd_context	=> 0x21,
 
 	palm_id         => 0x11,
@@ -156,12 +158,10 @@ sub load_gtd {
 | description | text             | YES  | MUL | NULL    |                |
 +-------------+------------------+------+-----+---------+----------------+
 EOF
-#	my($cct) = Hier::CCT->use('Categories');
+	$Category = Hier::CCT->use('Category');
 	my($sth) = G_select('categories');
 	while ($row = $sth->fetchrow_hashref()) {
-#		$category->define($row->{categoryId}, $row->{category});
-		$Categories{$row->{categoryId}} = $row->{category};
-		$Categories{$row->{category}} = $row->{categoryId};
+		$Category->define($row->{category}, $row->{categoryId});
 	}
 
 	$XXX = <<'EOF';
@@ -173,10 +173,10 @@ EOF
 | description | text             | YES  | MUL | NULL    |                |
 +-------------+------------------+------+-----+---------+----------------+
 EOF
+	$Context = Hier::CCT->use('Context');
 	$sth = G_select('context');
 	while ($row = $sth->fetchrow_hashref()) {
-		$Contexts{$row->{contextId}} = $row->{name};
-		$Contexts{$row->{name}} = $row->{contextId};
+		$Context->define($row->{name}, $row->{contextId});
 	}
 
 	$XXX = <<'EOF';
@@ -189,12 +189,11 @@ EOF
 | type        | enum('vogpa')     | NO   | MUL | a       |                |
 +-------------+-------------------+------+-----+---------+----------------+
 EOF
+	$Timeframe = Hier::CCT->use('Timeframe');
 	$sth = G_select('timeitems');
 	while ($row = $sth->fetchrow_hashref()) {
-		$Timeframes{$row->{timeframe}} = $row->{timeframeId};
-		$Timeframes{$row->{timeframeId}} = $row->{timeframe};
+		$Timeframe->define($row->{timeframe}, $row->{timeframeId});
 	}
-
 
 	$XXX = <<'EOF';
 +---------------+----------------------+------+-----+-------------------+
@@ -233,9 +232,9 @@ EOF
 		gtdmap($row, tickledate     => 'tickledate');
 
 		$ref = $Current_ref;
-		cset($ref, category  => $Categories{$row->{categoryId}});
-		cset($ref, context   => $Contexts{$row->{contextId}});
-		cset($ref, timeframe => $Timeframes{$row->{timeframeId}});
+		cset($ref, category  => $Category->name($row->{categoryId}));
+		cset($ref, context   => $Context->name($row->{contextId}));
+		cset($ref, timeframe => $Timeframe->name($row->{timeframeId}));
 	}
 	G_default('isSomeday', 'n');
 
@@ -276,8 +275,8 @@ EOF
 EOF
 	$sth = G_select('lookup');
 	while ($row = $sth->fetchrow_hashref()) {
-		next if $row->{parentId} == 0;	# we are buggered up
-		next if $row->{itemId} == 0;	# we are buggered up
+		next if $row->{parentId} == 0;	# handle buggered up data
+		next if $row->{itemId} == 0;	# to non-objects
 
 		add_relationship($row->{parentId}, $row->{itemId});
 
@@ -290,8 +289,10 @@ EOF
 | tagname | text             | NO   | PRI | NULL    |       |
 +---------+------------------+------+-----+---------+-------+
 EOF
+	my($tags_ref) = Hier::CCT->use('Tag');
 	my($tag);
 	$sth = G_select('tagmap');
+	my($tag_id) = 0;
 	while ($row = $sth->fetchrow_hashref) {
 		$tid = $row->{itemId};
 		$tag = $row->{tagname};
@@ -300,7 +301,7 @@ EOF
 
 		$ref->{_tags}{$tag}++;
 
-		$Tags{lc($tag)}++;
+		$tags_ref->define($tag, ++$tag_id);
 	}
 
 	foreach my $ref (Hier::Tasks::all()) {
@@ -340,7 +341,7 @@ sub gtdmap {
 		unless ($val) {
 			die "Can't create todo whith todo_id=$val for table $Table\n";
 		}
-		print "Hard Need Create $val\n";
+		print "Hard Need Create $val\n" if $Debug;
 		$Current_ref = Hier::Tasks->new($val);
 		$Current_ref->{_todo_only} = 0x03;
 		sac_create($val, {});
@@ -466,9 +467,10 @@ sub gset_insert {
 sub gtd_update {
 	my($ref) = @_;
 
+	gtd_fix_maps($ref);
+
 	sac_update($ref);
 
-	gtd_fix_maps($ref);
 	gset_update($ref, 'itemstatus');
 	gset_update($ref, 'items');
 
@@ -486,16 +488,39 @@ sub gtd_fix_maps {
 	set($ref, 'modified', $today);
 	set($ref, '_gtd_modified', $today);
 
-	my($cat) = $ref->{category};
-	if ($cat) {
-		my($cat_id) = $Categories{$cat};
-		if ($cat_id) {
-			$ref->{categoryId} = $cat_id;
-			$ref->set_dirty('categoryId');
-		} else {
-			warn "undefined category: $ref->{category}";
+	_fix_map($ref, 'category',  '_gtd_category',  $Category);
+	_fix_map($ref, 'context',   '_gtd_context',   $Context);
+	_fix_map($ref, 'timeframe', '_gtd_timeframe', $Timeframe);
+
+#	_fix_map($ref, 'tags', 'timeframeId', \%Timeframes);
+}
+
+sub _fix_map {
+	my($ref, $type, $index, $master) = @_;
+
+	return unless $ref->is_dirty($type);
+
+	my($val_id) = 0;
+	my($val) = $ref->{$type};
+	if (!defined $val) {
+			warn "undefined $type";
+			###BUG### we need to create it?
+			return;
+	}
+
+	if ($val ne '') {
+		$val_id = $master->get($val);
+		if (!defined $val_id) {
+			warn "unmapped $type: $val";
+			###BUG### we need to create it?
+			return;
 		}
 	}
+
+	return if $ref->{$index} == $val_id;
+	$ref->{$index} = $val_id;
+
+	$ref->set_dirty($index);
 }
 
 sub gset_update {
@@ -517,7 +542,7 @@ sub gset_update {
 		$fld = $map->{$key};
 
 		next unless defined $ref->{$key};
-		next unless $ref->{$key};
+#		next unless $ref->{$key};
 
 		push(@keys, $fld);
 		push(@vals, $ref->{$key});
@@ -529,8 +554,8 @@ sub gset_update {
 
 
 	$qmark =~ s/^,//;
-	$sql = "update $table set " . join('= ?, ', @keys) .
-	                          " = ? where itemId = ?";
+	$sql = "update $table set " . join('=?, ', @keys) .
+	                          "=? where itemId=?";
 	push(@vals, $ref->{todo_id});
 
 	G_sql($sql, @vals);
@@ -599,6 +624,7 @@ END {
 		my $tid = $ref->get_tid();
 
 		print "Dirty: $tid\n";
+		$ref->update();
 	}
 }
 
@@ -732,6 +758,23 @@ sub G_default_val {
 	my($key) = @_;
 
 	return $GTD_default->{$key};
+}
+
+sub G_renumber {
+	my($ref, $tid, $new) = @_;
+
+        my(@list) = qw(items itemstatus tagmap);
+        print "Setting TID $tid => $new\n";
+
+        G_sql("update gtd_lookup set itemId=$new where itemId=$tid");
+        G_sql("update gtd_lookup set parentId=$new where parentId=$tid");
+        G_sql("update gtd_tagmap set itemId=$new where itemId=$tid");
+
+	G_sql("update todo set todo_id = ? where todo_id = ?", $new, $tid);
+
+        for my $table (@list) {
+                G_sql("update gtd_$table set itemId=$new where itemId=$tid");
+        }
 }
 
 1;  # don't forget to return a true value from the file

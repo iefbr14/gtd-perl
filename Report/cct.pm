@@ -79,9 +79,11 @@ sub report_counts {
 
 	my($id, $dup, $cnt, $sk);
 
+	my($cct_ref) = Hier::CCT->use($cct);
 	print "Val  Vis  Role Goal Proj Action Total Id: Name\n";
 	for my $key (@keys) {
-		$id = Hier::CCT::get_id($cct, $key) || '0';
+		$id = $cct_ref->get($key) || '0';
+
 		$dup = $Dups{lc($key)}++ ? '*' : ':';
 		$cnt = $Count{$cct}{$key} || 0;
 

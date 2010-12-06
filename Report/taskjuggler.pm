@@ -21,7 +21,7 @@ use Hier::Tasks;
 my $ToOld;
 my $ToFuture;
 
-sub Report_taskjuggler {	#-- Hiericial List of Values/Visions/Roles...
+sub Report_taskjuggler {	#-- generate taskjuggler file from gtd db
 	my(@criteria) = @_;
 	my($tid, $task, $cat, $ins, $due, $desc);
 

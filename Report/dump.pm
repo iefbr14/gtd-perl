@@ -49,7 +49,7 @@ my @Order = (qw(
 .
 ) );
 
-sub Report_dump {	#-- List all projects with actions
+sub Report_dump {	#-- dump records in edit format
 	add_filters('+all', '+any');	# everybody into the pool
 
 	my($name) = ucfirst(meta_desc(@ARGV));	# some out

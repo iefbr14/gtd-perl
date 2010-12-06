@@ -13,11 +13,13 @@ BEGIN {
 	@EXPORT      = qw(&Report_search);
 }
 
-use Hier::utils;
+use Hier::util;
 use Hier::Tasks;
 
 sub Report_search {	#-- Search for items
 	my($found) = 0;
+
+	my($tid);
 
 	add_filters('+live');
 	meta_desc(@ARGV);
@@ -34,4 +36,13 @@ sub Report_search {	#-- Search for items
 	}
 	exit $found ? 0 : 1;
 }
+
+sub match_desc {
+	my($ref, $desc) = @_;
+
+	return 1 if $ref->get_task() =~ m/$desc/i;
+	return 1 if $ref->get_description() =~ m/$desc/i;
+	return 0;
+}
+
 1;  # don't forget to return a true value from the file

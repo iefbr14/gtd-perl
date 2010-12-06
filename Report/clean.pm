@@ -18,6 +18,7 @@ use Hier::Tasks;
 sub Report_clean {	#-- clean unused categories
 	die "###ToDo -- write clean categories\n";
 
+	my($done, $tickle);
 	
 	for my $ref (Hier::Tasks::all()) {
 		$done = $ref->get_completed();

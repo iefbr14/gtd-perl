@@ -17,16 +17,18 @@ use Hier::Tasks;
 
 sub Report_merge { #-- Merge Projects (first list is receiver)
 	for my $slave_id (@ARGV) {
-		die "Unknown project $slave\n" unless 
-			defined $Hier::Tasks::find{$slave_id};
+		die "Unknown project $slave_id\n" unless 
+			defined Hier::Tasks::find($slave_id);
 	}
 	my $master_id = shift @ARGV;
 	die "No projects to merge\n" unless @ARGV;
-	my $master = $Hier::Tasks::find{$master_id};
+	my $master = Hier::Tasks::find($master_id);
 
 	for my $slave_id (@ARGV) {
-		my $slave = $Hier::Tasks::find{$slave_id};
+		my $slave = Hier::Tasks::find($slave_id);
 		merge_project($master, $slave);
+		$master->update();
+		$slave->delete();
 	}
 }
 
@@ -36,7 +38,7 @@ sub merge_project {
 	my $sep = 0;
 
 #print "Merge: $master\n"; dump_task($ref);
-#print "With:  $slave\n"; dump_task($child);
+#print "With:  $slave\n"; dump_task($slave);
 
 ###	Merge: type
 	if (!$master->is_ref_hier()		# actions/lists
@@ -49,30 +51,31 @@ sub merge_project {
 ###	Merge: description
 	my($desc) = $master->get_description();
 	chomp $desc; chomp $desc;
-	if ($master->get_task() ne $child->{task}) {
+	if ($master->get_task() ne $slave->get_task()) {
 		if ($desc) {
 			$desc .= "\n" . '-'x30;
 		}
-		$desc .= "\n" . $child->{task} ."\n";
+		$desc .= "\n" . $slave->get_task() ."\n";
 		$sep = 1;
 	}
-	if ($child->{description}) {
+	if ($slave->get_description()) {
 		unless ($sep) {
 			$desc .= "\n" . '-'x30 . "\n";
 		}
-		$desc .= $child->{description};
+		$desc .= $slave->get_description();
 	}
 	chomp $desc; chomp $desc;
 	$master->set_description($desc);
 
 ###	Merge: desiredOutcome
 	my($note) = $master->get_note(); chomp $note;
-	if ($child->{note} and $child->{note} ne $note) {
+	my($snote) = $slave->get_note();
+	if ($snote && ($snote ne $note)) {
 		chomp $note; chomp $note;
-		unless ($note) {
+		if ($note) {
 			$note .= "\n" . '-'x30 . "\n";
 		}
-		$note .= $child->{note};
+		$note .= $snote;
 		chomp $note; chomp $note;
 		$master->set_note($note);
 	}
@@ -80,66 +83,115 @@ sub merge_project {
 ###	Merge: category
 ###	Merge: context
 ###	Merge: timeframe
-	merge_cct($master, $child, 'category');
-	merge_cct($master, $child, 'context');
-	merge_cct($master, $child, 'timeframe');
+	merge_cct($master, $slave, 'category');
+	merge_cct($master, $slave, 'context');
+	merge_cct($master, $slave, 'timeframe');
 
 ###	Merge: dateCreated
 ###	Merge: dateCompleted
 ###	Merge: deadline
 ###	Merge: tickledate
-	merge_date($master, $child, 'dateCreated');
+	merge_date($master, $slave, 'dateCreated');
 	$master->set_completed('');
-	merge_date($master, $child, 'deadline');
-	merge_date($master, $child, 'tickledate');
+	merge_date($master, $slave, 'deadline');
+	merge_date($master, $slave, 'tickledate');
 
 ###	Merge: nextaction
 ###	Merge: isSomeday
-	merge_yn($master, $child, 'nextaction', 'y');
-	merge_yn($master, $child, 'isSomeday', 'n');
+	merge_yn($master, $slave, 'nextaction', 'y');
+	merge_yn($master, $slave, 'isSomeday', 'n');
+
+
+###	Merge: priority
+	merge_date($master, $slave, 'doit');
+	merge_first($master, $slave, 'owner');
+	merge_first($master, $slave, 'private');
+	merge_first($master, $slave, 'palm_id');
+
+	$master->set_effort(
+		($master->get_effort() || 0) +
+		($slave->get_effort() || 0)
+	);
+		
+	merge_first($master, $slave, 'resource');
+	merge_tag($master, $slave, 'depends');
+	merge_tag($master, $slave, 'tags');
 
 ###	Merge: parentId
 	re_parent($master, $slave);
+
 }
 
 #TODO change to using values, not the reference
 sub merge_cct {					# learn new key
-	my($master, $child, $key) = @_;
+	my($master, $slave, $key) = @_;
 
 	my $val = $master->get_KEY($key);
-	return unless $val
+	return if $val;
 
-	$master->set_KEY($key, $child->get_KEY{$key});
+	$master->set_KEY($key, $slave->get_KEY($key));
 }
 
 #TODO change to using values, not the reference
 sub merge_date {				# keep earliest date
-	my($ref, $child, $key) = @_;
+	my($ref, $slave, $key) = @_;
 
 	my($date) = $ref->get_KEY($key);
 	return unless $date;
 
-	return if $date le $child->get_KEY{$key};
-	$ref->set_KEY($key, $child->get_KEY{$key});
+	return if $date le $slave->get_KEY($key);
+	$ref->set_KEY($key, $slave->get_KEY($key));
 }
 
 #TODO change to using values, not the reference
 sub merge_yn {					# update item's importance
-	my($ref, $child, $key, $want) = @_;
+	my($ref, $slave, $key, $want) = @_;
 
 	my($val) = $ref->get_KEY($key);
-	return unless $child->get_KEY{$key};
-	return if $val eq $child->{$key};
+	return unless $slave->get_KEY($key);
+	return if $val eq $slave->get_KEY($key);
 	return if $val eq $want;
 
-	$ref->set_KEY($key, $child->get_KEY($key);
+	$ref->set_KEY($key, $slave->get_KEY($key));
+}
+
+#TODO change to using values, not the reference
+sub merge_first {				# update item's importance
+	my($ref, $slave, $key) = @_;
+
+	my($val) = $ref->get_KEY($key);
+
+	return if $val;		# master has a value keep it
+
+	$val = $slave->get_KEY($key);
+
+	return unless $val;	# slave doesn't have a value ... done
+
+	$ref->set_KEY($key, $val);	# slave has a value, set it
+}
+
+#TODO change to using values, not the reference
+sub merge_tag {				# update item's importance
+	my($ref, $slave, $key) = @_;
+
+	my($sval) = $slave->get_KEY($key);
+
+	return unless $sval;	# slave doesn't have a value ... done
+
+	my($mval) = $ref->get_KEY($key);
+
+	if ($mval) {
+		$ref->set_KEY($key, "$mval,$sval");	# both have vals
+	} else {
+		$ref->set_KEY($key, $sval);	# slave only has a value
+	}
 }
 
 # find all children of slave and give them a new master.
 sub re_parent {
 	my($master, $slave) = @_;
 
-	for my $child ($slave->children()) {
+	for my $child ($slave->get_children()) {
 		$slave->orphin_child($child);
 		$master->add_child($child);
 	}

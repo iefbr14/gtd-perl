@@ -123,7 +123,6 @@ sub get_tid          { my($self) = @_; return $self->{todo_id}; }
 
 sub get_actions      { my($self) = @_; return default($self->{_actions}, undef); }
 sub get_category     { my($self) = @_; return default($self->{category}, ''); }
-sub get_categoryId   { my($self) = @_; return default($self->{categoryId}, 0); }
 sub get_completed    { my($self) = @_; return default($self->{completed}, ''); }
 sub get_context      { my($self) = @_; return default($self->{context}, ''); }
 sub get_created      { my($self) = @_; return default($self->{created}, ''); }
@@ -131,7 +130,7 @@ sub get_depends      { my($self) = @_; return default($self->{depends}, ''); }
 sub get_description  { my($self) = @_; return default($self->{description}, ''); }
 sub get_doit         { my($self) = @_; return default($self->{doit}, ''); }
 sub get_due          { my($self) = @_; return default($self->{due}, ''); }
-sub get_effort       { my($self) = @_; return default($self->{effort}, '?'); }
+sub get_effort       { my($self) = @_; return default($self->{effort}, ''); }
 sub get_isSomeday    { my($self) = @_; return default($self->{isSomeday}, 'n'); }
 sub get_later        { my($self) = @_; return default($self->{later}, ''); }
 sub get_live         { my($self) = @_; return default($self->{live}, 1); }
@@ -150,7 +149,6 @@ sub get_type         { my($self) = @_; return default($self->{type}, '?'); }
 sub get_resource     { my($self) = @_; return default($self->{resource}, ''); }
 
 sub set_category     {return dset('category', @_); }
-sub set_categoryId   {return dset('categoryId', @_); }
 sub set_completed    {return dset('completed', @_); }
 sub set_context      {return dset('context', @_); }
 sub set_created      {return dset('created', @_); }
@@ -171,12 +169,31 @@ sub set_priority     {return dset('priority', @_); }
 sub set_title        {return dset('task', @_); }
 sub set_tickledate   {return dset('tickledate', @_); }
 sub set_timeframe    {return dset('timeframe', @_); }
-sub set_tid          {return dset('todo_id', @_); }
 sub set_todo_only    {return dset('_todo_only', @_); }
 sub set_type         {return dset('type', @_); }
 
 sub set_resource     {return dset('resource', @_); }
 sub hint_resource    {return clean_set('resource', @_); }
+
+sub set_tid          {
+	my($ref, $new) = @_;
+
+	my $tid = $ref->get_tid();
+
+	if (defined $Task{$new}) {
+		die "Can't rename tid $tid => $new (already exists)\n";
+	}
+
+	if ($ref->is_dirty()) {
+		# make sure the rest of the object is clean
+		$ref->update();		
+	}
+
+	Hier::db::G_renumber($ref, $tid, $new);
+
+        $Task{$new} = $Task{$tid};
+        delete $Task{$tid};
+}
 
 sub clean_set {
 	my($field, $ref, $val) = @_;
@@ -184,6 +201,7 @@ sub clean_set {
 	unless (defined $val) {
 		die "Won't set $field to undef\n";
 	}
+
 
 	$ref->{$field} = $val;
 	return $ref;

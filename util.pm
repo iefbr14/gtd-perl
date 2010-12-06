@@ -222,6 +222,8 @@ sub today {
 }
 
 sub report_header {
+	return if option('List');
+
 	my($title) = option('Title') || '';
 	if (@_) {
 		my($desc) = join(' ', @_) || '';
@@ -235,9 +237,15 @@ sub report_header {
 
 	my($cols) = columns() - 2;
 
-	print '#',"=" x $cols, "\n";
-	print "#== $title\n";
-	print '#',"=" x $cols, "\n";
+	if (option('Html')) {
+		print "<h1>$title</h1>\n";
+	} elsif (option('Wiki')) {
+		print "== $title ==\n";
+	} else {
+		print '#',"=" x $cols, "\n";
+		print "#== $title\n";
+		print '#',"=" x $cols, "\n";
+	}
 }
 
 sub lines {
@@ -410,24 +418,27 @@ sub match_desc {
 
 sub meta_find_context {
 	my($cct) = @_;
+	my($Category) = Hier::CCT->use('Category');
+	my($Context) = Hier::CCT->use('Context');
+	my($Timeframe) = Hier::CCT->use('Timeframe');
 
 	# match case sensative first
-	if (defined $Contexts{$cct}) {
+	if ($Context->get($cct)) {
 		print "#-Set space context:  $cct\n" if $Debug;
 		$Filter_Context = $cct;
 		return;
 	}
-	if (defined $Timeframes{$cct}) {
+	if (defined $Timeframe->get($cct)) {
 		print "#-Set time context:   $cct\n" if $Debug;
 		$Filter_Timeframe = $cct;
 		return;
 	}
-	if (defined $Categories{$cct}) {
+	if (defined $Category->get($cct)) {
 		print "#-Set category:       $cct\n" if $Debug;
 		$Filter_Category = $cct;
 		return;
 	}
-	for my $key (keys %Tags) {
+	for my $key (Hier::CCT::keys('Tag')) {
 		next unless $key eq $cct;
 
 		print "#-Set tag:            $key\n" if $Debug;
@@ -436,28 +447,28 @@ sub meta_find_context {
 	}
 
 	# match case insensative next
-	for my $key (keys %Contexts) {
+	for my $key ($Context->keys()) {
 		next unless lc($key) eq lc($cct);
 
 		print "#-Set space context:  $key\n" if $Debug;
 		$Filter_Context = $key;
 		return;
 	}
-	for my $key (keys %Timeframes) {
+	for my $key ($Timeframe->keys()) {
 		next unless lc($key) eq lc($cct);
 
 		print "#-Set time context:   $key\n" if $Debug;
 		$Filter_Timeframe = $key;
 		return;
 	}
-	for my $key (keys %Categories) {
+	for my $key ($Category->keys()) {
 		next unless lc($key) eq lc($cct);
 
 		print "#-Set category:       $key\n" if $Debug;
 		$Filter_Category = $key;
 		return;
 	}
-	for my $key (keys %Tags) {
+	for my $key (Hier::CCT::keys('Tag')) {
 		next unless lc($key) eq lc($cct);
 
 		print "#-Set tag:            $key\n" if $Debug;

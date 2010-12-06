@@ -17,7 +17,7 @@ use Hier::util;
 use Hier::Tasks;
 
 sub Report_hierlist {	#-- List all top level item (Project and above)
-	my($tid, $pref, $cnt, $parent, $cat, $name, $desc);
+	my($tid, $pid, $pref, $cnt, $parent, $cat, $name, $desc);
 	my(@row);
 
 	add_filters('+live');
@@ -47,9 +47,11 @@ $tid, $pid,$cnt,$cat,     $parent,     $name,      $desc
 
 		$pref = $ref->get_parent();
 		if (defined $pref) {
-			$parent = $pref->get_tid();
+			$parent = $pref->get_task();
+			$pid = $pref->get_tid();
 		} else {
-			$parent = 'fook';
+			$parent = 'orphined';
+			$pid = '--';
 		}
 
 		write;

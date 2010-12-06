@@ -10,13 +10,7 @@ BEGIN {
 	# set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
-	@EXPORT      = qw(
-		&Report_tasks
-		&Report_nexts
-		&Report_dones
-		&Report_lates
-		&Report_tickles
-	);
+	@EXPORT      = qw( &Report_tasks );
 }
 
 use Hier::util;
@@ -35,7 +29,7 @@ my(%Filter_map) = (
 	Future	=> [ qw( +someday +tickle ~done ) ],
 );
 
-sub Report_tasks {	#-- List all projects with actions
+sub Report_tasks {	#-- quick List by various methods
 	my($p) = shift;
 	if ($p) {
 		$p = ucfirst($p);

@@ -28,6 +28,9 @@ use warnings;
 
 use Hier::Tasks;
 
+my $Parent;
+my $Type;
+
 sub Report_bulkload { #-- Create Projects/Actions items from a file
 	my($pid);
 
@@ -117,8 +120,9 @@ sub find_hier {
 		next unless $ref->get_task() eq $goal;
 	
 		my($type) = $ref->get_type();
+		my($tid) = $ref->get_tid();
 		warn "Found: something close($type) $tid: $goal\n";
-		return $ref->get_tid();
+		return $tid;
 	}
 	die "Can't find a hier item for '$goal' let alone a $type.\n";
 }

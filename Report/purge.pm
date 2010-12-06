@@ -26,12 +26,11 @@ my %Depth = (
 	'action'  => 6,
 );
 
-sub Report_purge {	#-- Hiericial List of Values/Visions/Roles...
+sub Report_purge {	#-- interactive purge completed work
 die;
 	add_filters('+all', '+any');
 
 	my($criteria) = meta_desc(@ARGV);
-	my(%Keys) = %Hier;
 
 	my($walk) = new Hier::Walk();
 	bless $walk;	# take ownership

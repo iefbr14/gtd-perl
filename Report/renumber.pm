@@ -16,11 +16,32 @@ BEGIN {
 use Hier::Tasks;
 
 sub Report_renumber { #-- Renumber task Ids 
+	if (@ARGV) {
+		foreach my $pair (@ARGV) {
+			renumber_pair($pair);
+		}
+	} else {
+		renumber_all();
+	}
+}
+
+sub renumber_all { #-- Renumber task Ids 
 	renumb(\&is_value,       1,    9, 'Values');
 	renumb(\&is_vision,     10,   50, 'Vision');
 	renumb(\&is_goals,      50,  199, 'Goals/Roles');
 	renumb(\&is_project,   200,  999, 'Projects');
 	renumb(\&is_task,     1000, 9999, 'Actions');
+}
+
+sub renumber_pair {
+	my($pair) = @_;
+	if ($pair =~ m/^(\d+)=(\d+)/) {
+		my($to, $tid) = ($1, $2);
+
+		renumber_task($tid, $to);
+	} else {
+		print "Can't yet renumber singletons($pair), use TO=FROM syntax\n";
+	}
 }
 
 sub is_value {
@@ -69,13 +90,13 @@ sub renumb {
 			$inuse{$tid} = 1;
 		}
 		if ($tid < $min) {
-			if (&$test($Task{$tid})) {
+			if (&$test($ref)) {
 				push(@try, $tid);
 				next;
 			}
 		}
 		if ($tid > $max) {
-			if (&$test($Task{$tid})) {
+			if (&$test($ref)) {
 				push(@try, $tid);
 				next;
 			}
@@ -104,23 +125,13 @@ sub renumb {
 
 sub renumber_task {
 	my($tid, $new) = @_;
-die;
-	my(@list) = qw(itemattributes items itemstatus tagmap);
+
+	my $ref = Hier::Tasks::find($tid);
+
+	die "Can't renumber task $tid (doesn't exists)\n" unless $ref;
+
 	print "$tid => $new\n";
-	for my $table (@list) {
-		G_sql("update gtd_$table set itemId=$new where itemId=$tid");
-	}
-	G_sql("update gtd_lookup set itemId=$new where itemId=$tid");
-	G_sql("update gtd_lookup set parentId=$new where parentId=$tid");
-	G_sql("update gtd_tagmap set itemId=$new where itemId=$tid");
-
-	my $ref = Hier::Tasks::find($tid):
-
-	$ref->set_KEY(todo_id => $new, 1);
-	$ref->clean();	# lie like a rug
-
-	$Task{$new} = $Task{$tid};
-	delete $Task{$tid};
+	$ref->set_tid($new);
 }
 
 

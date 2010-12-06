@@ -5,7 +5,7 @@ use warnings;
 
 use Hier::Tasks;
 
-sub Report_bulklist { #-- List project for use in bulk load
+sub Report_bulklist { #-- Bulk List project for use in bulk load
 	die;
 }
 
@@ -36,9 +36,16 @@ use strict;
 use warnings;
 
 use Hier::Tasks;
+use Hier::util;
+use Hier::Walk;
+use Hier::Resource;
 
-sub Report_bulklist { #-- Create Projects/Actions items from a file
+my($Parent);
+my($Type);
+
+sub old_bulkload { 
 	my($pid);
+	my($action, $parents, $desc);
 
 		next if /^#/;
 
@@ -86,7 +93,6 @@ sub Report_bulklist { #-- Create Projects/Actions items from a file
 			next;
 		}
 		$desc .= "\n" . $_;
-	}
 	&$action($parents, $desc);
 }
 
@@ -110,8 +116,9 @@ sub find_hier {
 		next unless $ref->get_task() eq $goal;
 	
 		my($type) = $ref->get_type();
+		my($tid) = $ref->get_tid();
 		warn "Found: something close($type) $tid: $goal\n";
-		return $ref->get_tid();
+		return $tid;
 	}
 	die "Can't find a hier item for '$goal' let alone a $type.\n";
 }
@@ -163,26 +170,7 @@ sub add_action {
 }
 
 
-package Hier::Report::hier;
-
-use strict;
-use warnings;
-
-BEGIN {
-	use Exporter   ();
-	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
-
-	# set the version for version checking
-	$VERSION     = 1.00;
-	@ISA         = qw(Exporter);
-	@EXPORT      = qw(&Report_hier);
-}
-
-use Hier::util;
-use Hier::Walk;
-use Hier::Tasks;
-
-sub Report_hier {	#-- Hiericial List of Values/Visions/Roles...
+sub _report_hier {	
 	add_filters('+live');
 
 	my($criteria) = meta_desc(@ARGV);
@@ -201,12 +189,8 @@ sub Report_hier {	#-- Hiericial List of Values/Visions/Roles...
 	$walk->walk();
 }
 
-use Hier::util;
-use Hier::Walk;
-use Hier::Resource;
-use Hier::Tasks;
 
-sub Report_taskjuggler {	#-- Hiericial List of Values/Visions/Roles...
+sub _report_taskjuggler {	
 	my(@criteria) = @_;
 	my($tid, $task, $cat, $ins, $due, $desc);
 
@@ -366,7 +350,7 @@ sub dep_path {
 use Hier::util;
 use Hier::Tasks;
 
-sub Report_actions {	#-- List all projects with actions
+sub _report_actions {	
 	add_filters('+active', '+next');
 	report_actions(1, 'Actions', meta_desc(@ARGV));
 }

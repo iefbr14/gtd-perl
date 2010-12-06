@@ -25,7 +25,7 @@ my $Limit = 2;
 
 my($List) = 0; ###BUG### should be an option
 
-sub Report_doit {	#-- List top level next actions
+sub Report_doit {	#-- doit tracks which projects/actions have had movement
 
 	$List = option('List', 0);
 	$Limit = option('Limit', 2);

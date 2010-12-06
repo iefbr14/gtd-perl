@@ -16,7 +16,9 @@ BEGIN {
 use Hier::util;
 use Hier::Tasks;
 
-sub Report_projects {	#-- List all projects with actions
+my %Meta_key;
+
+sub Report_projects {	#-- List projects -- live, plan or someday
 	add_filters('+live');
 	my $desc = meta_desc(@ARGV);
 
@@ -66,24 +68,37 @@ sub report_projects {
 
 	my($g_id) = 0;
 	my($prev_goal) = 0;
+
+	my($r_id) = 0;
 	my($prev_role) = 0;
-	my($pid, $g_ref);
+
+	my($pid, $g_ref, $r_ref);
+
 	for my $ref (sort by_goal_task values %wanted) {
 		$pid = $ref->get_tid();
 
 		$g_ref = $ref->get_parent();
 		$g_id  = $g_ref->get_tid();
 
-		if ($g_id != $prev_goal) {
-			print '#', "=" x $cols, "\n" if $prev_goal != 0;
-			print "$g_id:\tG:", $g_ref->get_title();
+		$r_ref = $g_ref->get_parent();
+		$r_id  = $r_ref->get_tid();
 
-			my $r_ref = $g_ref->get_parent();
-			my $r_id = $r_ref->get_tid();
-			print " [** R:$r_id: ", $r_ref->get_title(), " **]\n";
+		#print "$r_id\t$g_id\t$pid\t$Meta_key{$pid}\n";next;
+
+		if ($r_id != $prev_role) {
+			print '#', "=" x $cols, "\n" if $prev_role != 0;
+			print " [*** Role $r_id: ", $r_ref->get_title(), " ***]\n";
+			print '#', "-" x $cols, "\n";
+
+			$prev_role = $r_id;
+			$prev_goal = 0;
+		}
+
+		if ($g_id != $prev_goal) {
+			print '#', "-" x $cols, "\n" if $prev_goal != 0;
+			print "$g_id:\tG:", $g_ref->get_title(), "\n";
+
 			$prev_goal = $g_id;
-		} else {
-#			print '#', "-" x $cols, "\n";
 		}
 
 		$counted{$pid} = 0 unless defined $counted{$pid};
@@ -97,9 +112,25 @@ sub report_projects {
 }
 
 sub by_goal_task {
-	return $a->get_parent->get_title() cmp $b->get_parent->get_title()
-	    or $a->get_title() cmp $b->get_title()
-	    or $a->get_id() <=> $b->get_id();
+	return Meta_key($a) cmp Meta_key($b);
+}
+
+sub Meta_key {
+	my($ref) = @_;
+
+	my($tid) = $ref->get_tid();
+
+	my($val) = $Meta_key{$tid};
+	return $val  if defined $val;
+
+	$val = join("\t",  
+	    $ref->get_parent->get_parent->get_title(),
+	    $ref->get_parent->get_title(),
+	    $ref->get_title(),
+	    $ref->get_tid(),
+	);
+	$Meta_key{$tid} = $val;
+	return $val;
 }
 
 1;  # don't forget to return a true value from the file

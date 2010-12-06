@@ -17,7 +17,7 @@ use Hier::util;
 use Hier::Tasks;
 
 
-sub Report_todo {	#-- List top level next actions
+sub Report_todo {	#-- List high priority next actions
 	my($limit) = option('Limit', 10);
 	my($list)  = option('List', 0);
 
