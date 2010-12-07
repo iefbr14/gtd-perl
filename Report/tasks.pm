@@ -15,6 +15,7 @@ BEGIN {
 
 use Hier::util;
 use Hier::Tasks;
+use Hier::Filter;
 
 my(%Filter_map) = (
 	Action 	=> [ qw( +current +next ~done ~later ) ],
@@ -61,7 +62,7 @@ sub list_tasks {
 	report_header($head, $desc);
 
 	# find all projects (next actions?)
-	for my $ref (Hier::Tasks::all()) {
+	for my $ref (Hier::Tasks::selected()) {
 		next unless $ref->is_ref_task();
 		next if $ref->filtered();
 

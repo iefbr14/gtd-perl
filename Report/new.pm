@@ -15,6 +15,7 @@ BEGIN {
 
 use Hier::Tasks;
 use Hier::util;
+use Hier::Option;
 
 my $First = '';
 

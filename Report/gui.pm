@@ -23,6 +23,7 @@ use Tk::Text;
 use Hier::util;
 use Hier::Walk;
 use Hier::Tasks;
+use Hier::Filter;
 
 use Hier::Report::reports;
 

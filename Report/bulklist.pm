@@ -39,6 +39,8 @@ use Hier::Tasks;
 use Hier::util;
 use Hier::Walk;
 use Hier::Resource;
+use Hier::Option;
+use Hier::Filter;
 
 my($Parent);
 my($Type);
@@ -363,7 +365,7 @@ sub report_actions {
 	my($tid, $pid, $pref, $proj, %active, $title);
 
 	# find all projects (next actions?)
-	for my $ref (Hier::Tasks::all()) {
+	for my $ref (Hier::Tasks::selected()) {
 		next unless $ref->is_ref_task();
 		next if $ref->filtered();
 

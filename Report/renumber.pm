@@ -83,7 +83,7 @@ sub renumb {
 	print "Processing $who range: $min $max\n";
 	my(%inuse, $tid, @try);
 
-	for my $ref (Hier::Tasks::all()) {
+	for my $ref (Hier::Tasks::selected()) {
 		$tid = $ref->get_tid();
 
 		if ($min <= $tid && $tid <= $max) {

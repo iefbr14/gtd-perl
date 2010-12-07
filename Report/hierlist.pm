@@ -15,6 +15,7 @@ BEGIN {
 
 use Hier::util;
 use Hier::Tasks;
+use Hier::Filter;
 
 sub Report_hierlist {	#-- List all top level item (Project and above)
 	my($tid, $pid, $pref, $cnt, $parent, $cat, $name, $desc);

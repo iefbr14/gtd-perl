@@ -15,6 +15,7 @@ BEGIN {
 
 use Hier::util;
 use Hier::Tasks;
+use Hier::Option;
 
 sub Report_update {	#-- Command line update of an action/project
 	my($task, $desc) = @_;

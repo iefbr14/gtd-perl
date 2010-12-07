@@ -3,17 +3,63 @@ package Hier::Tasks;
 use strict;
 use warnings;
 
-our $VERSION     = 1.00;
+my %Task;		# all Todo items (including Hier)
+my @Selected;
 
-use base qw(Hier::Hier Hier::Fields Hier::Filter);
+sub find {
+	my($tid) = @_;
 
-use Hier::db;
+	return unless defined $Task{$tid};
+	return $Task{$tid};
+}
+
+sub all {
+	return values %Task;
+}
+
+sub hier {
+	return grep { $_->is_ref_hier() } selected();
+}
+
+sub selected {
+	if (@Selected == 0) {
+		@Selected = all();
+	}
+	return @Selected;
+}
+
+sub XXfiltered {
+	if (@Selected == 0) {
+		foreach my $ref (selected()) {
+#			next if $ref->filtered();
+			push(@Selected, $ref);
+		}
+	}
+
+	return @Selected;
+}
+
+sub sorted {
+	if (@Selected == 0) {
+		@Selected = XXfiltered();
+	}
+	@Selected = Hier::Sort::sorter($_[0], \@Selected);
+	return @Selected;
+}
+
+sub matching_type {
+	my($type) = @_;
+
+	return grep { $_->get_type() eq $type } selected();
+}
+
+
+use base qw(Hier::Hier Hier::Fields Hier::Filter Hier::Selection);
+
 use Hier::Hier;
-use Hier::CCT;
 use Hier::Sort;
 
 my $Max_todo = 0; 	# Last todo id (unique for all tables)
-my %Task;		# all Todo items (including Hier)
 my $Debug = 1; 
 
 sub new {
@@ -44,33 +90,8 @@ sub insert {
 	gtd_insert($self);
 }
 
-sub find {
-	my($tid) = @_;
-
-	return unless defined $Task{$tid};
-	return $Task{$tid};
-}
-
 sub max {
 	return $Max_todo;
-}
-
-sub all {
-	return values %Task;
-}
-
-sub hier {
-	return grep { $_->is_ref_hier() } values %Task;
-}
-
-sub sorted {
-	return Hier::Sort::sorted(@_);
-}
-
-sub matching_type {
-	my($type) = @_;
-
-	return grep { $_->get_type() eq $type } values %Task;
 }
 
 
@@ -252,9 +273,7 @@ sub dset {
 sub update {
 	my($self) = @_;
 
-	gtd_update($self);
+	Hier::db::gtd_update($self);
 }
 
 1;  # don't forget to return a true value from the file
-
-

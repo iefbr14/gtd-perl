@@ -16,10 +16,12 @@ BEGIN {
 
 use Hier::util;
 use Hier::Tasks;
+use Hier::Option;
+use Hier::Filter;
 
 my @Lines;
-my $Today = today();
-my $Later = today(+7);
+my $Today = get_today(0);
+my $Later = get_today(+7);
 my $Priority = 0;
 my $Limit = 2;
 

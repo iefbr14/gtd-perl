@@ -5,8 +5,6 @@ use warnings;
 
 our $VERSION     = 1.00;
 
-use Hier::util;
-
 use constant {
 	VALUE		=> 'm',		# hier
 	VISION		=> 'v',

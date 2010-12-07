@@ -5,6 +5,7 @@ use warnings;
 
 use Hier::util;
 use Hier::Tasks;
+use Hier::Option;
 
 BEGIN {
 	use Exporter   ();

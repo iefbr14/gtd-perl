@@ -13,7 +13,7 @@ BEGIN {
 	@EXPORT      = qw(&Report_done);
 }
 
-use Hier::util;
+use Hier::Option;
 use Hier::Tasks;
 
 sub Report_done {	#-- Tag listed projects/actions as done
@@ -24,7 +24,7 @@ sub Report_done {	#-- Tag listed projects/actions as done
 			print "Task $tid not found to tag done\n";
 			next;
 		}
-		$ref->set_completed(today());
+		$ref->set_completed(get_today());
 		$ref->update();
 	}
 }

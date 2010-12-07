@@ -3,32 +3,26 @@ package Hier::Filter;
 use strict;
 use warnings;
 
-our $Version = 1.0;
+BEGIN {
+	use Exporter   ();
+	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
-use POSIX qw(strftime);
-use Hier::util;
+	# set the version for version checking
+	$VERSION     = 1.00;
+	@ISA         = qw(Exporter);
+	@EXPORT      = qw( &add_filters &cct_filtered );
+}
+
 use Hier::Tasks;
+use Hier::Option;
 
-my $Today = _today();
-my $Soon  = _today(+7);
+my $Filter_Category;
+my $Filter_Context;
+my $Filter_Timeframe;
+my %Filter_Tags;
 
-sub _today {
-        my($later) = @_;
-        $later = 0 unless $later;
-
-        my($now) = time();
-        my($when) = $now + 60*60*24 * $later; # 7 days
-
-	return strftime("%04Y-%02m-%02d \%T", gmtime($when));
-}
-
-sub get_today {
-	if (@_) {
-		return _today(@_);
-	}
-	return $Today;
-}
-
+my $Today = get_today();
+my $Soon  = get_today(+7);
 
 sub filtered {
 	my ($ref) = @_;
@@ -38,6 +32,7 @@ sub filtered {
 	return 'l' if $ref->list_filtered();
 
 	return 'c' if cct_filtered($ref);
+	return 'p' if Hier::Selection::parent_filtered($ref);
 
 	return 0;
 }
@@ -133,7 +128,7 @@ use constant {
 	P_DONE		=> 0x20_0000,	# is done
 };
 
-sub add_filter {
+sub add_filters {
 	my(@rules) = @_;
 
 	unless ($Walked++) {
@@ -271,7 +266,7 @@ sub task_filter {
 }
 
 sub task_mask {
-	my ($ref) = @_;
+	my($ref) = @_;
 
 	return $ref->{_mask} if defined $ref->{_mask};
 
@@ -327,7 +322,7 @@ sub task_mask {
 sub task_mask_disp {
 	my($ref) = @_;
 
-	return dispflags($ref->task_mask());
+	return dispflags(task_mask($ref));
 }
 
 sub task_filtered {
@@ -335,7 +330,7 @@ sub task_filtered {
 
         return 0 unless $ref->is_ref_task();
 
-	my($mask) = $ref->task_mask();
+	my($mask) = task_mask($ref);
 
 	return 1 if $mask & (A_MASK|TYPEMASK|ATTRMASK) & $Exclude;
 	return 0 if $mask & (A_MASK|TYPEMASK|ATTRMASK) & $Include;
@@ -348,7 +343,7 @@ sub hier_filtered {
 
         return 0 unless $ref->is_ref_hier();
 
-	my($mask) = $ref->task_mask();
+	my($mask) = task_mask($ref);
 	
 	return 1 if $mask & (P_MASK|TYPEMASK) & $Exclude;
 	return 0 if $mask & (P_MASK|TYPEMASK) & $Include;
@@ -361,7 +356,7 @@ sub list_filtered {
 
         return 0 unless $ref->is_ref_list();
 
-	my($mask) = $ref->task_mask();
+	my($mask) = task_mask($ref);
 
 	return 1 if $mask & TYPEMASK & $Exclude;
 	return 0 if $mask & TYPEMASK & $Include;
@@ -372,7 +367,7 @@ sub list_filtered {
 sub do_walk {
 	my($ref) = @_;
 
-	my($mask) = $ref->task_mask();
+	my($mask) = task_mask($ref);
 
 	if ($ref->is_ref_hier()) {
 		if ($ref->get_completed()) {
@@ -394,7 +389,7 @@ sub do_walk {
 sub set_attribute {
 	my($ref, $val) = @_;
 
-	my($mask) = $ref->task_mask();
+	my($mask) = task_mask($ref);
 	return if $mask & P_MASK;	# sub-attributes done
 
 	$mask |= $val;
@@ -427,7 +422,7 @@ sub set_attribute {
 sub find_attribute {
 	my($ref) = @_;
 
-	my($mask) = $ref->task_mask();	# sets low level masks;
+	my($mask) = task_mask($ref);	# sets low level masks;
 
 	# we know the result.
 	if ($mask & P_MASK) {
@@ -467,6 +462,105 @@ sub find_attribute {
 #	return P_PLAN;
 	$val = P_PLAN unless $val;
 	return $val;
+}
+
+sub meta_find_context {
+	my($cct) = @_;
+	my($Category) = Hier::CCT->use('Category');
+	my($Context) = Hier::CCT->use('Context');
+	my($Timeframe) = Hier::CCT->use('Timeframe');
+
+	# match case sensative first
+	if ($Context->get($cct)) {
+		print "#-Set space context:  $cct\n" if $Debug;
+		$Filter_Context = $cct;
+		return;
+	}
+	if (defined $Timeframe->get($cct)) {
+		print "#-Set time context:   $cct\n" if $Debug;
+		$Filter_Timeframe = $cct;
+		return;
+	}
+	if (defined $Category->get($cct)) {
+		print "#-Set category:       $cct\n" if $Debug;
+		$Filter_Category = $cct;
+		return;
+	}
+	for my $key (Hier::CCT::keys('Tag')) {
+		next unless $key eq $cct;
+
+		print "#-Set tag:            $key\n" if $Debug;
+		$Filter_Tags{$key}++;
+		return;
+	}
+
+	# match case insensative next
+	for my $key ($Context->keys()) {
+		next unless lc($key) eq lc($cct);
+
+		print "#-Set space context:  $key\n" if $Debug;
+		$Filter_Context = $key;
+		return;
+	}
+	for my $key ($Timeframe->keys()) {
+		next unless lc($key) eq lc($cct);
+
+		print "#-Set time context:   $key\n" if $Debug;
+		$Filter_Timeframe = $key;
+		return;
+	}
+	for my $key ($Category->keys()) {
+		next unless lc($key) eq lc($cct);
+
+		print "#-Set category:       $key\n" if $Debug;
+		$Filter_Category = $key;
+		return;
+	}
+	for my $key (Hier::CCT::keys('Tag')) {
+		next unless lc($key) eq lc($cct);
+
+		print "#-Set tag:            $key\n" if $Debug;
+		$Filter_Tags{$key}++;
+		return;
+	}
+
+	print "Defaulted category: $cct\n";
+	$Filter_Category = $cct;
+}
+
+sub cct_filtered {
+	my ($ref) = @_;
+
+	if (%Filter_Tags) {
+		for my $tag ($ref->get_tags()) {
+			return 0 if exists $Filter_Tags{$tag}
+			         &&        $Filter_Tags{$tag};
+		}
+		return 1;
+	}
+
+	if ($ref->get_type() eq 'p' or $ref->is_ref_task()) {
+		if ($Filter_Context) {
+			return 1 unless $ref->get_context() eq $Filter_Context;
+		}
+	}
+	if ($Filter_Timeframe) {
+		return 1 unless $ref->get_timeframe() eq $Filter_Timeframe;
+	}
+	if ($Filter_Category) {
+		return 1 unless $ref->get_category() eq $Filter_Category;
+	}
+
+
+	return 0;
+}
+
+sub add_filter_tags {
+	if (option('Tag')) {
+		foreach my $tag (split(',', option('Tag'))) {
+			$Filter_Tags{$tag}++;
+		}
+	}
 }
 
 1;

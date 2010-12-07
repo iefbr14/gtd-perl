@@ -1,10 +1,5 @@
 package Hier::CCT;
 
-use strict;
-use warnings;
-use Carp;
-
-
 BEGIN {
         use Exporter   ();
         our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
@@ -16,10 +11,12 @@ BEGIN {
 
         # your exported package globals go here,
         # as well as any optionally exported functions
-        @EXPORT = qw(
-                %Categories  %Contexts   %Timeframes   %Tags
-        );
+        @EXPORT = qw( );
 }
+
+use strict;
+use warnings;
+use Carp;
 
 #
 #

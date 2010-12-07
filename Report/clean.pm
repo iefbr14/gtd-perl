@@ -20,7 +20,7 @@ sub Report_clean {	#-- clean unused categories
 
 	my($done, $tickle);
 	
-	for my $ref (Hier::Tasks::all()) {
+	for my $ref (Hier::Tasks::selected()) {
 		$done = $ref->get_completed();
 		if ($done) {
 			# clean next action

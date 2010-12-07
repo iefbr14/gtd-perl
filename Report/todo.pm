@@ -15,6 +15,8 @@ BEGIN {
 
 use Hier::util;
 use Hier::Tasks;
+use Hier::Option;
+use Hier::Filter;
 
 
 sub Report_todo {	#-- List high priority next actions

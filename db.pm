@@ -22,8 +22,8 @@ use Config::YAML;
 use Data::Dumper;
 
 use Hier::CCT;
-use Hier::util;
 use Hier::Tasks;
+use Hier::Option;
 
 my $Current_ref;	# current gtd mapped item
 
@@ -481,7 +481,7 @@ sub gtd_update {
 sub gtd_fix_maps {
 	my($ref) = @_;
 
-	my($today) = today();
+	my($today) = get_today(0);	# uncached version
 	unless (defined $ref->{created}) {
 		set($ref, 'created', $today);
 	}
@@ -503,8 +503,7 @@ sub _fix_map {
 	my($val_id) = 0;
 	my($val) = $ref->{$type};
 	if (!defined $val) {
-			warn "undefined $type";
-			###BUG### we need to create it?
+			## timeframe never set
 			return;
 	}
 

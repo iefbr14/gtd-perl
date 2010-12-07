@@ -3,12 +3,9 @@ package Hier::Sort;
 use strict;
 use warnings;
 
-use base qw(Hier::Tasks);
+use Hier::Option;
 
 our $Version = 1.0;
-
-use Hier::util;
-use Hier::Tasks;
 
 my(@Criteria);
 my(%Criteria) = (
@@ -20,12 +17,14 @@ my(%Criteria) = (
 	pri	 => \&by_pri,
 	priority => \&by_pri,
 	doitdate => \&by_doitdate,
+	age      => \&by_age,
+	change   => \&by_change
 );
 
-sub sorted {
-	my($by) = @_;
+my %Sort_cache;
 
-	my(@ref) = Hier::Tasks::all();
+sub sorter {
+	my($by, $itemlist) = @_;
 
 	###BUG### fetch command line option sort override
 	if ($by =~ s/^\^// and !defined $Criteria{$by}) {
@@ -34,9 +33,9 @@ sub sorted {
 
 	my $doby = $Criteria{$by};
 	if (option('Reverse')) {
-		return reverse sort { &$doby } @ref;
+		return reverse sort { &$doby } @$itemlist;
 	} else {
-		return sort { &$doby } @ref;
+		return sort { &$doby } @$itemlist;
 	}
 }
 
@@ -120,6 +119,29 @@ sub by_doitdate {
         my($bd) = $b->get_doit() || sprintf("-%06d", $b->get_tid());
 
         return $ad cmp $bd;
+}
+
+
+sub by_goal {
+	return sort_goal($a) cmp sort_goal($b);
+}
+
+sub sort_goal {
+	my($ref) = @_;
+
+	my($tid) = $ref->get_tid();
+
+	return $Sort_cache{$tid} if defined $Sort_cache{$tid};
+
+	my($pref) = $ref->get_parent();
+	my($gref) = get_goal($pref);
+
+	$Sort_cache{$tid} = join("\0", 
+		$gref->get_title(), $gref->get_tid(),
+		$pref->get_title(), $pref->get_tid(),
+		$ref->get_title(), $tid);
+
+	return $Sort_cache{$tid};
 }
 
 1;

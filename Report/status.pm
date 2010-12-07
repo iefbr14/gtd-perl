@@ -35,7 +35,10 @@ my %Types = (
 
 
 use Hier::util;
+use Hier::Filter;
 use Hier::Tasks;
+use Hier::Option;
+use Hier::Filter;
 
 sub Report_status {	#-- report status of projects/actions
 	add_filters("+live");	# counts use it and it give a context
@@ -101,7 +104,7 @@ sub count_task {
 	my($count) = 0;
 
 	# find all records.
-	foreach my $ref (Hier::Tasks::all()) {
+	foreach my $ref (Hier::Tasks::selected()) {
 		next unless $ref->is_ref_task();
 
 		next if $ref->filtered();
@@ -117,7 +120,7 @@ sub count_next {
 	my($count) = 0;
 
 	# find all records.
-	foreach my $ref (Hier::Tasks::all()) {
+	foreach my $ref (Hier::Tasks::selected()) {
 		next unless $ref->is_ref_task();
 
 		next if $ref->filtered();
@@ -135,7 +138,7 @@ sub count_tasklive {
 	my($count) = 0;
 
 	# find all records.
-	foreach my $ref (Hier::Tasks::all()) {
+	foreach my $ref (Hier::Tasks::selected()) {
 
 		next unless $ref->is_ref_task();
 

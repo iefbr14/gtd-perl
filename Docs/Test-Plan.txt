@@ -45,8 +45,9 @@
       [_]	/XXXX	  search project/action (hier/todo) sets picks hint
       [_]	=DDDD	  use XXX as tid -- sets parent hint
       [_]	=XXXX	  search hier title -- sets parent hint
+      [_]	=T:XXXX	  search hier title with type T -- sets parent hint
       [_]	*XXXX	  sets type hint
-      [_]	X:	  use X as type (sets type hint)
+      [_]	T:	  use T as type (sets type hint)
       [_]	....	  passed to reports
       [_]	%opt=val  sets opt to val
       [_]   Picks (tid found via / or left on the command line)
@@ -84,7 +85,7 @@
         [_] Debug = 0		# Debug code
         [_] Debug_sub = 0	# Debug code in subsystem
         [_] DB_Update = 1 	#
-        [_] Title = '' 		#
+        [_] Title = '' 		# Set title (task name)
         [_] Descrption = '' 	# Set description for new/update
         [_] Result = '' 	# Set result for new/update
         [_] Priority = '' 	# Set priorty for new/update
@@ -92,7 +93,7 @@
         [_] Type = '' 		# Set Parent for new/update
 
 [_] Test sort meaning in gtd
-[X] [X] !. stopped.
+[X] !. stopped.
 
 [_] Define task/hier filter syntax 
 [_] Fix task_filter vs hier_filter (Seperate Include/Exclude)
@@ -102,7 +103,7 @@
 #==============================================================================
 # Hier walks
 [_]     aspect => hier roles
-[_] [_] hier
+[_] hier
   [_] walk (default: Project) sub-type's max-depth
     [ ] Value
     [ ] Vision
@@ -298,12 +299,12 @@ sort_by sets the sort criteria
 
 # sort calls (need fixing)
 [_] actions	by_task
-[_] addplans	by_goal_task
-[_] checklis	by_task
+[_] addplans	by_goal
+[_] checklist	by_task
 [_] doit	by_doitdate
 [_] dump	by_priority
 [_] items	by_task
-[_] projects	by_goal_task
+[_] projects	by_goal
 [_] records	by_task
 [_] tasks	by_task
 [_] todo	by_priority
@@ -313,21 +314,27 @@ sort_by sets the sort criteria
 #==============================================================================
 # Grep for Bug and fix
 #==============================================================================
-[_] header.pm:	###BUG### tag filtering
-[_] header.pm:	T_ORPHAN	=> 0x40,	# no parent ###BUG###
-[_] header.pm:	T_DUCK		=> 0x4000,	# parent not live ###BUG### 
-[_] sort.pm:	###BUG### make by_Sort an eval?
-[_] sort.pm:	###BUG### junk sub
-[_] sort.pm:	return -1 if $ac;	###BUG### not sure if 1 or -1
-[_] sort.pm:	###BUG### ac or bc not there?
-[_] sort.pm:	###BUG### ac or bc not there?
-[_] util.pm:sub by_priority($$) {		###BUG### use by_pri
-[_] walk.pm:	####BUG### for my $tid (sort by_name @top) {
-[_] Report/cct.pm:return;	###BUG### -- add tags
-[_] Report/doit.pm:my($List) = 0; ###BUG### should be an option
-[_] Report/doit.pm:my($Done) = 0; ###BUG### should be an option
-[_] Report/purge.pm:###BUG### walk forward stopping on excludes
-[_] Report/purge.pm:###BUG### walk backward keeping on includes
+[_] CCT.pm:	warn "###BUG### Can't insert $key => $val\n";
+[_] CCT.pm:	warn "###BUG### Can't update $key => $val\n";
+[_] CCT.pm: 	###BUG### $CCT->name is horibly expensive
+[_] CCT.pm: 	die "###BUG### Can't rename $key => $newname\n";
+[_] db.pm:	###BUG### we need to create it?
+[_] db.pm:	###BUG### we need to create it?
+[_] Sort.pm:	###BUG### fetch command line option sort override
+[_] Sort.pm:	###BUG### make by_Sort an eval?
+[_] Sort.pm:	###BUG### junk sub need to walk to hier
+
+[_] Report/actions.pm:	###BUG### should walk down from here via get_children
+[_] Report/actions.pm:	###BUG### rather walk up in has_parent
+[_] Report/doit.pm:	my($List) = 0; ###BUG### should be an option
+[_] Report/dump.pm:	###BUG### handle missing keys from @Ordered
+[_] Report/edit.pm:	###BUG### handle missing keys from @Ordered (see Report/dump.pm)
+[_] Report/new.pm:	###BUG### make this fast and simple.
+[_] Report/purge.pm:	###BUG### walk forward stopping on excludes
+[_] Report/purge.pm:	###BUG### walk backward keeping on includes
+[_] Report/review.pm: my($List) = 0; ###BUG### should be an option
+[_] Report/review.pm: my($Done) = 0; ###BUG### should be an option
+
 #==============================================================================
 # Future
 #==============================================================================

@@ -15,6 +15,7 @@ BEGIN {
 
 use Hier::util;
 use Hier::Tasks;
+use Hier::Filter;
 
 sub Report_items {	#-- list titles for any filtered class (actions/projects etc)
 	add_filters('+any', '+all');	# everybody into the pool

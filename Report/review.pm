@@ -15,6 +15,8 @@ BEGIN {
 
 use Hier::util;
 use Hier::Tasks;
+use Hier::Option;
+use Hier::Filter;
 
 my $Mode = 'p';	# project, doit, next-actions, actions, someday
 
@@ -306,19 +308,19 @@ sub _report_doit {
 sub doit_later {
 	my($ref, $delay) = @_;
 
-	$ref->set_doit(today($delay));
+	$ref->set_doit(get_today($delay));
 	$ref->update();
 }
 sub doit_next {
 	my($ref) = @_;
 
-	$ref->set_doit(today());
+	$ref->set_doit(get_today(0));
 	$ref->update();
 }
 sub doit_done {
 	my($ref) = @_;
 
-	$ref->set_completed(today());
+	$ref->set_completed(get_today(0));
 	$ref->update();
 }
 
@@ -326,7 +328,7 @@ sub doit_someday {
 	my($ref) = @_;
 
 	$ref->set_isSomeday('y');
-	$ref->set_doit(today(+7));
+	$ref->set_doit(get_today(+7));
 	$ref->update();
 }
 
@@ -334,7 +336,7 @@ sub doit_now {
 	my($ref) = @_;
 
 	$ref->set_isSomeday('n');
-	$ref->set_doit(today());
+	$ref->set_doit(get_today(0));
 	$ref->update();
 }
 

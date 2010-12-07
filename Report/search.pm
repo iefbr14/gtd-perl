@@ -15,6 +15,7 @@ BEGIN {
 
 use Hier::util;
 use Hier::Tasks;
+use Hier::Filter;
 
 sub Report_search {	#-- Search for items
 	my($found) = 0;

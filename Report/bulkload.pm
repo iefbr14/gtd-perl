@@ -27,6 +27,7 @@ use strict;
 use warnings;
 
 use Hier::Tasks;
+use Hier::Option;
 
 my $Parent;
 my $Type;

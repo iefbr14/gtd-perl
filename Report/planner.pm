@@ -18,6 +18,7 @@ use Hier::Walk;
 use Hier::Resource;
 use Hier::Tasks;
 use Hier::CCT;
+use Hier::Filter;
 
 my $Today = `date +%04Y%02m%02dT080000Z`; chomp $Today;
 

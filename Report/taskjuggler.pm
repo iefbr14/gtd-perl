@@ -17,6 +17,7 @@ use Hier::util;
 use Hier::Walk;
 use Hier::Resource;
 use Hier::Tasks;
+use Hier::Filter;
 
 my $ToOld;
 my $ToFuture;
@@ -25,8 +26,8 @@ sub Report_taskjuggler {	#-- generate taskjuggler file from gtd db
 	my(@criteria) = @_;
 	my($tid, $task, $cat, $ins, $due, $desc);
 
-	$ToOld = today(-180);	# don't care about done items > 6months
-	$ToFuture = today(180);	# don't care about start more > 6months
+	$ToOld = get_today(-180);	# don't care about done items > 6months
+	$ToFuture = get_today(180);	# don't care about start more > 6months
 
 	add_filters('+any', '+all', @criteria);
 	my($planner) = new Hier::Walk;

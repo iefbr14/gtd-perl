@@ -15,8 +15,9 @@ BEGIN {
 
 use Hier::util;
 use Hier::Tasks;
+use Hier::Option;
+use Hier::Filter;
 
-my %Goal;
 my $Projects;
 my %Active;
 
@@ -47,7 +48,7 @@ sub report_select {
 	}
 
 	# find all projects (next actions?)
-	for my $ref (Hier::Tasks::all()) {
+	for my $ref (Hier::Tasks::selected()) {
 		next unless $ref->is_ref_task();
 		next if $top && !has_parent($ref, $top);
 
@@ -162,7 +163,7 @@ sub report_actions {
 
 		my $tasks = $Projects->{$pid};
 
-		for my $ref (sort by_task values %$tasks) {
+		for my $ref (sort by_goal values %$tasks) {
 			next if $ref->filtered();
 
 			$tid = $ref->get_tid();
@@ -175,29 +176,6 @@ sub report_actions {
 		}
 	}
 }
-
-sub by_task {
-	return sort_goal($a) cmp sort_goal($b);
-}
-
-sub sort_goal {
-	my($ref) = @_;
-
-	my($tid) = $ref->get_tid();
-
-	return $Goal{$tid} if defined $Goal{$tid};
-
-	my($pref) = $ref->get_parent();
-	my($gref) = get_goal($pref);
-
-	$Goal{$tid} = join("\0", 
-		$gref->get_title(), $gref->get_tid(),
-		$pref->get_title(), $pref->get_tid(),
-		$ref->get_title(), $tid);
-
-	return $Goal{$tid};
-}
-
 sub bulk_display {
 	my($tag, $text) = @_;
 
@@ -226,7 +204,7 @@ sub get_goal {
 sub find_in_hier {
 	my($title) = @_;
 
-	for my $ref (Hier::Tasks::all()) {
+	for my $ref (Hier::Tasks::selected()) {
 		next unless $ref->is_ref_hier();
 		next if $ref->get_title() ne $title;
 

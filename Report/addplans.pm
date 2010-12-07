@@ -15,6 +15,7 @@ BEGIN {
 
 use Hier::util;
 use Hier::Tasks;
+use Hier::Filter;
 
 sub Report_addplans {	#-- add plan action items to unplaned projects
 	add_filters('+plan', '+live');
@@ -32,7 +33,7 @@ sub report_addplans {
 	my(%want_child);
 
 	# find all next actions and remember there projects
-	for my $ref (Hier::Tasks::all()) {
+	for my $ref (Hier::Tasks::selected()) {
 		next unless $ref->is_ref_task();
 		next unless $ref->filtered();
 

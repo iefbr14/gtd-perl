@@ -15,6 +15,8 @@ BEGIN {
 
 use Hier::util;
 use Hier::Tasks;
+use Hier::Filter;
+use Hier::Selection;
 
 sub Report_records {	#-- detailed list all records for a type
 	add_filters('+all', '+any');	# everybody into the pool
@@ -37,7 +39,7 @@ sub list_records {
 
 	report_header($typename);
 
-	my($tid, $proj, $type, $f, $kids, $acts);
+	my($tid, $proj, $type, $f, $reason, $kids, $acts);
 	my($Dates) = '';
 
 	# find all records.
@@ -49,11 +51,14 @@ sub list_records {
 
 		next if $want_type && $type ne $want_type;
 
-		my($flags) = $ref->task_mask_disp();
+		my($flags) = $ref->Hier::Filter::task_mask_disp();
 
 		$f = '';
-		$f = 'X' if $ref->filtered();
+		if ($reason = $ref->filtered()) {
+			$f = 'X' . uc($reason);
+		}
 
+		$f .= 'p' if parent_filtered($ref);
 		$f .= 'c' if cct_filtered($ref);
 		$f .= 'h' if $ref->hier_filtered();
 		$f .= 'a' if $ref->task_filtered();

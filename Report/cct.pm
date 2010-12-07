@@ -38,7 +38,7 @@ sub cct_crosstab {	#-- List Categories/Contexts/Time Frames
 }
 
 sub count_items {
-	foreach my $ref (Hier::Tasks::all()) {
+	foreach my $ref (Hier::Tasks::selected()) {
 		my $type = $ref->get_type();
 
 		count_item('category',  $type, $ref->get_category());

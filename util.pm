@@ -12,18 +12,17 @@ BEGIN {
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw(
 		&type_name &type_val &type_depth
-		&report_header &summary_line
-		&dump_task 
+		&report_header &summary_line &dump_task 
 		&meta_desc &type_disp &action_disp
-		&add_filters &cct_filtered
-		&lines &columns &today
-		&option &set_option
+		&lines &columns
 	);
 }
 
 use Hier::Tasks;
+use Hier::Selection;
 use Hier::Filter;
 use Hier::CCT;
+use Hier::Option;
 
 use POSIX qw(strftime);
 
@@ -217,10 +216,6 @@ sub min_key {
 	return $list[0];
 }
 
-sub today {
-	return Hier::Filter::get_today(@_);
-}
-
 sub report_header {
 	return if option('List');
 
@@ -281,23 +276,12 @@ sub summary_line {
 #==============================================================================
 #==== filter setup and processing
 
-my $Filter_Category;
-my $Filter_Context;
-my $Filter_Timeframe;
-my %Filter_Tags;
-my @Filter_Parents;
-
 sub meta_argv {
 	local($_);
 
 	my(@ret);
 
-	if (option('Tag')) {
-		foreach my $tag (split(',', option('Tag'))) {
-			$Filter_Tags{$tag}++;
-		}
-	}
-
+	Hier::Filter::add_filter_tags();
 	while (scalar(@_)) {
 		$_ = shift @_;
 		if ($_ eq '!.') {
@@ -306,65 +290,16 @@ sub meta_argv {
 		}
 
 		if (s/^\@//) {
-			meta_find_context($_);
+			Hier::Filter::meta_find_context($_);
 			next;
 		}
 		if (s=^\/==) {				# pattern match
-			my $pat = $_; $pat =~ s=/$==;	# remove trailing /
-
-			for my $ref (Hier::Tasks::hier()) {
-				my($title) = $ref->get_title();
-				if ($title =~ /$pat/i) {
-					my($tid) = $ref->get_tid();
-					push(@Filter_Parents, $tid);
-					print "Parent($tid): $title\n";
-				}
-			}
+			add_pattern($_);
 			next;
 		}
+
 		if (s/^\=//) {				# search for.
-			my($title);
-			if (m/^\d+$/) {
-				my $tid = $_;
-				my $pref = Hier::Tasks::find($tid);
-				if (defined $pref) {
-					$title = $pref->get_title();
-					push(@Filter_Parents, $tid);
-
-					print "Parent($tid): $title\n";
-					next;
-				}
-				print "Unknown project: $tid\n";
-				next;
-			}
-
-			my($found) = 0;
-			my $pat = $_;	# first by case match
-
-			for my $ref (Hier::Tasks::hier()) {
-				$title = $ref->get_title();
-
-				if ($title eq $pat) {
-					my($tid) = $ref->get_tid();
-					push(@Filter_Parents, $tid);
-					print "Parent($tid): $title\n";
-					$found = 1;
-				}
-			}
-			next if $found;		# got at least one
-
-			$pat = lc($_);		# ok try case insensative.
-
-			for my $ref (Hier::Tasks::hier()) {
-				$title = lc($ref->get_title());
-
-				if ($title eq $pat) {
-					my($tid) = $ref->get_tid();
-					push(@Filter_Parents, $tid);
-					print "Parent($tid): $title\n";
-					last;
-				}
-			}
+			add_selection($_);
 			next;
 		}
 		if (s/^\*//) {
@@ -384,7 +319,7 @@ sub meta_argv {
 		}
 
 		if (m/^[+~]/) {		# add include/exclude
-			add_filters($_);
+			Hier::Filter::add_filters($_);
 			next;
 		}
 #		if ($Title) {
@@ -400,190 +335,5 @@ sub meta_argv {
 sub meta_desc {
 	return join(' ', meta_argv(@_));
 }
-
-sub match_desc {
-	my($ref, $pattern) = @_;
-
-	return 0 unless defined $ref;
-	return 0 unless defined $ref->get_title();
-
-	return 1 if $ref->get_title() =~ /$pattern/i;
-	return 1 if $ref->get_description() =~ /$pattern/i;
-
-	if ($Filter_Category) {
-		return 1 if $ref->get_category() =~ /$Filter_Category/i;
-	}
-	return 0;
-}
-
-sub meta_find_context {
-	my($cct) = @_;
-	my($Category) = Hier::CCT->use('Category');
-	my($Context) = Hier::CCT->use('Context');
-	my($Timeframe) = Hier::CCT->use('Timeframe');
-
-	# match case sensative first
-	if ($Context->get($cct)) {
-		print "#-Set space context:  $cct\n" if $Debug;
-		$Filter_Context = $cct;
-		return;
-	}
-	if (defined $Timeframe->get($cct)) {
-		print "#-Set time context:   $cct\n" if $Debug;
-		$Filter_Timeframe = $cct;
-		return;
-	}
-	if (defined $Category->get($cct)) {
-		print "#-Set category:       $cct\n" if $Debug;
-		$Filter_Category = $cct;
-		return;
-	}
-	for my $key (Hier::CCT::keys('Tag')) {
-		next unless $key eq $cct;
-
-		print "#-Set tag:            $key\n" if $Debug;
-		$Filter_Tags{$key}++;
-		return;
-	}
-
-	# match case insensative next
-	for my $key ($Context->keys()) {
-		next unless lc($key) eq lc($cct);
-
-		print "#-Set space context:  $key\n" if $Debug;
-		$Filter_Context = $key;
-		return;
-	}
-	for my $key ($Timeframe->keys()) {
-		next unless lc($key) eq lc($cct);
-
-		print "#-Set time context:   $key\n" if $Debug;
-		$Filter_Timeframe = $key;
-		return;
-	}
-	for my $key ($Category->keys()) {
-		next unless lc($key) eq lc($cct);
-
-		print "#-Set category:       $key\n" if $Debug;
-		$Filter_Category = $key;
-		return;
-	}
-	for my $key (Hier::CCT::keys('Tag')) {
-		next unless lc($key) eq lc($cct);
-
-		print "#-Set tag:            $key\n" if $Debug;
-		$Filter_Tags{$key}++;
-		return;
-	}
-
-	print "Defaulted category: $cct\n";
-	$Filter_Category = $cct;
-}
-
-sub cct_filtered {
-	my ($ref) = @_;
-
-	if (@Filter_Parents) {
-		foreach my $tid (@Filter_Parents) {
-			return 0 if ($ref->has_parent_id($tid));
-		}
-		return 1;
-	}
-
-	if (%Filter_Tags) {
-		for my $tag ($ref->get_tags()) {
-			return 0 if exists $Filter_Tags{$tag}
-			         &&        $Filter_Tags{$tag};
-		}
-		return 1;
-	}
-
-	if ($ref->get_type() eq 'p' or $ref->is_ref_task()) {
-		if ($Filter_Context) {
-			return 1 unless $ref->get_context() eq $Filter_Context;
-		}
-	}
-	if ($Filter_Timeframe) {
-		return 1 unless $ref->get_timeframe() eq $Filter_Timeframe;
-	}
-	if ($Filter_Category) {
-		return 1 unless $ref->get_category() eq $Filter_Category;
-	}
-
-
-	return 0;
-}
-
-sub add_filters {
-	Hier::Filter::add_filter(@_);
-}
-
-#==============================================================================
-my %Options;
-my %Option_keys = (
-	'Debug'       => 1,
-	'MetaFix'     => 1,
-	'Mask'        => 1,
-
-	'Title'       => 1,
-	'Subject'     => 'Title',
-	'Task'        => 1,
-	'Desc'        => 'Task',
-	'Description' => 'Task',
-	'Note'        => 1,
-	'Result'      => 'Result',
-
-	'Category'    => 1,
-	'Priority'    => 1,
-	'Tag'         => 1,
-	'Tags'        => 'Tag',
-
-
-	'Limit'       => 1,
-	'Reverse'     => 1,
-
-	'List'        => 1,	# tab seperated list format
-	'Wiki'        => 1,	# media wiki format
-	'Html'        => 1,	# html text format
-);
-
-sub option_key {
-	my($key) = @_;
-
-	my($newkey) = $Option_keys{$key};
-	unless ($newkey) {
-		warn "Unknown option: $key\n";
-		$Option_keys{$key} = 1;
-		$newkey = 1;
-	}
-	if ($newkey =~ /^[A-Z]/) {
-		$key = $newkey;
-	}
-	return $key;
-}
-	
-sub set_option {
-	my($key, $val) = @_;
-
-	$Options{option_key($key)} = $val;
-}
-
-sub option {
-	my($key, $default) = @_;
-
-	$key = option_key($key);
-
-	unless (defined $Options{$key}) {
-		print "Fetch Option $key == undef\n" if $Debug;
-		if (defined $default) {
-			$Options{$key} = $default;
-		}
-	} else {
-		print "Fetch Option $key => $Options{$key}\n" if $Debug;
-	}
-
-	return $Options{$key};
-}
-#==============================================================================
 
 1; # <=============================================================
