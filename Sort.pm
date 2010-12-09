@@ -3,6 +3,18 @@ package Hier::Sort;
 use strict;
 use warnings;
 
+BEGIN {
+	use Exporter   ();
+	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
+
+	# set the version for version checking
+	$VERSION     = 1.00;
+	@ISA         = qw(Exporter);
+	@EXPORT      = qw( by_task by_goal );
+}
+
+use Carp;
+use Hier::Tasks;
 use Hier::Option;
 
 our $Version = 1.0;
@@ -56,12 +68,15 @@ sub by_Sort {
 }
 
 sub by_tid {
+	my($a, $b) = @_;
+
 	return $a->get_tid() <=> $a->get_tid();
 }
 
 sub By_hier {
-die;
-	return By_hier() || By_task();
+	my($a, $b) = @_;
+
+	return By_hier($a, $b) || By_task($a, $b);
 }
 
 sub by_hier {
@@ -72,6 +87,8 @@ die;
 }
 
 sub by_status {
+	my($a, $b) = @_;
+
 	my $ac = $a->get_completed();
 	my $bc = $b->get_completed();
 
@@ -86,22 +103,31 @@ sub by_status {
 }
 
 sub by_change {
+	my($a, $b) = @_;
+
 	return $a->get_modified() cmp $b->get_modified();
 }
 
 sub by_age {
+	my($a, $b) = @_;
+
 	return $a->get_created() cmp $b->get_created();
 }
 
 sub by_Task {
+	my($a, $b) = @_;
+
 	return by_task($a,$b) || by_tid($a,$b);
 }
 
 sub by_task {
+	my($a, $b) = @_;
+
 	return $a->get_task() cmp $b->get_task();
 }
 
 sub by_pri {
+	my($a, $b) = @_;
 
 	# order by priority $order, created $order, due $order 
 
@@ -113,7 +139,7 @@ sub by_pri {
 }
 
 sub by_doitdate {
-#       my($a, $b) = @_;
+	my($a, $b) = @_;
 
         my($ad) = $a->get_doit() || sprintf("-%06d", $a->get_tid());
         my($bd) = $b->get_doit() || sprintf("-%06d", $b->get_tid());
@@ -123,6 +149,7 @@ sub by_doitdate {
 
 
 sub by_goal {
+	my($a, $b) = @_;
 	return sort_goal($a) cmp sort_goal($b);
 }
 
@@ -133,13 +160,15 @@ sub sort_goal {
 
 	return $Sort_cache{$tid} if defined $Sort_cache{$tid};
 
-	my($pref) = $ref->get_parent();
-	my($gref) = get_goal($pref);
-
-	$Sort_cache{$tid} = join("\0", 
-		$gref->get_title(), $gref->get_tid(),
-		$pref->get_title(), $pref->get_tid(),
-		$ref->get_title(), $tid);
+	my(@list);
+	for (;;) {
+		unshift(@list, $ref->get_title(), $tid);
+		last if $ref->get_type() eq 'g';
+		$ref = $ref->get_parent;
+		last if !defined $ref;
+	}
+	
+	$Sort_cache{$tid} = join("\t", @list);
 
 	return $Sort_cache{$tid};
 }

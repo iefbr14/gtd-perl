@@ -17,6 +17,7 @@ use Hier::util;
 use Hier::Tasks;
 use Hier::Option;
 use Hier::Filter;
+use Hier::Sort;
 
 my $Projects;
 my %Active;
@@ -57,7 +58,7 @@ sub report_select {
 		$pref = $ref->get_parent();
 		next unless defined $pref;
 
-	#	next if $pref->filtered();
+		next if $pref->filtered();
 
 		$pid = $pref->get_tid();
 		$Active{$pid} = $pref;
@@ -82,8 +83,7 @@ sub report_list {
 
 	my($last_goal) = 0;
 	my($last_proj) = 0;
-	for my $pref (sort by_task values %Active) {
-
+	for my $pref (sort { by_goal($a, $b) } values %Active) {
 		next if $pref->filtered();
 
 		$pid = $pref->get_tid();
@@ -94,7 +94,7 @@ sub report_list {
 		my $tasks = $Projects->{$pid};
 
 		my($task_cnt) = 0;
-		for my $ref (sort by_task values %$tasks) {
+		for my $ref (sort { by_task($a, $b) } values %$tasks) {
 			next if $ref->filtered();
 
 			$tid = $ref->get_tid();
@@ -136,7 +136,7 @@ sub report_actions {
 
 	my($last_goal) = 0;
 	my($last_proj) = 0;
-	for my $pref (sort by_task values %Active) {
+	for my $pref (sort { by_goal($a, $b) } values %Active) {
 		next if $pref->filtered();
 
 		$pid = $pref->get_tid();
@@ -160,10 +160,11 @@ sub report_actions {
 
 		bulk_display('+', $pref->get_description());
 		bulk_display('=', $pref->get_note());
+		print "\n";
 
 		my $tasks = $Projects->{$pid};
 
-		for my $ref (sort by_goal values %$tasks) {
+		for my $ref (sort { by_task($a, $b) } values %$tasks) {
 			next if $ref->filtered();
 
 			$tid = $ref->get_tid();
