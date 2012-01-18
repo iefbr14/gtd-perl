@@ -1,0 +1,47 @@
+* Tags:
+
+	[ ]	Next action
+	< >	Completed
+	( )	action
+	{ }	someday
+	> <	?
+	} {	later
+
+#==============================================================================
+# code from util.pm
+#==============================================================================
+sub type_disp {
+        my($ref) = @_;
+        my($type) = uc($ref->get_type());
+
+        return '<X>'     if $ref->is_ref_task() && $ref->get_completed();
+        $type = '_'      if $ref->is_ref_task();
+
+        return "<$type\>" if $ref->get_completed();
+
+        return "}$type\{" if $ref->get_later();
+        return "{$type\}" if $ref->get_isSomeday() eq 'y';
+        return "[$type\]" if $ref->get_nextaction() eq 'y';
+        return "($type\)";
+}
+
+sub action_disp {
+        my($ref) = @_;
+
+        my($key) = '[ ]';
+
+        $key = '[_]' if $ref->get_nextaction() eq 'y';
+        $key = '[*]' if $ref->get_completed();
+
+        $key =~ s/.(.)./($1)/   if $ref->get_isSomeday() eq 'y';
+        $key =~ s/.{.}./($1)/   if $ref->get_tickledate();
+        $key =~ s/(.)./$1w/     if $ref->get_type() eq 'w';
+
+        return $key; 
+}
+
+#==============================================================================
+
+
+[_] Need to review all Report to use type_disp or action_display
+[_] Need to support type disp in bulkload

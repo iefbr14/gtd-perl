@@ -1,0 +1,23 @@
+2010-July-02
+
+	RPMs in /var/rpm/git
+	Now look to DAG for RPMS
+
+Server:
+
+	pim package
+	gtd package
+	gtdphp package
+
+[_] salt:/u/git/gtd.git
+[_] salt:/u/git/pim.git
+[_] use git.staff on rocksalt
+[_] create git.ss.org => salt
+[_] gittosis (sp?)
+[_] setup ~/lib/Hier => git:gdt.git
+[_] setup ~/lib/Pim => git:pim.git
+
+[_] migrate git.git to pim
+[_] incorporate gtdphp
+
+[_] upgrade gtdphp

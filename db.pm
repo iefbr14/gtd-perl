@@ -23,6 +23,7 @@ use Data::Dumper;
 
 use Hier::CCT;
 use Hier::Tasks;
+use Hier::Hier;
 use Hier::Option;
 
 my $Current_ref;	# current gtd mapped item
@@ -76,6 +77,7 @@ my(%Key_type) = (
 	effort		=> 0x11,
 	resource	=> 0x11,
 	depends         => 0x11,
+	percent         => 0x11,
 );
 
 sub load_meta {
@@ -96,6 +98,47 @@ sub load_meta {
 	}
 }
 
+# post process after loading tables;
+sub metafix {
+	my($tid, $pid, $p, $name, $only);
+
+	# Process Tasks (non-hier) items
+	for my $ref (Hier::Tasks::all()) {
+		$tid = $ref->get_tid();
+
+		$only = $ref->{_todo_only};
+		if ($only == 1) {	# only in todo (gtd deleted it)
+			warn "Need delete: $tid\n" if $Debug;
+			dump_task($ref);
+			$ref->delete();
+			next;
+
+		} elsif ($only == 2) {	# only in gtd (we fucked up somewhere)
+			warn "Need create: $tid\n" if $Debug;
+			dump_task($ref);
+
+		} elsif ($only == 3) {	# in both (happyness)
+
+		} else {
+			dump_task($ref);
+			die "We buggered up: $tid\n";
+		}
+	}
+}
+
+sub dump_task {
+	my ($ref) = @_;
+
+	return unless $Debug;
+
+	my($val);
+	for my $key (sort keys %$ref) {
+		$val = $ref->{$key} || '';
+		$val =~ s/\n.*/.../m;
+		warn "$key:\t$val\n";
+	}
+}
+
 sub set {
 	my($ref, $field, $value, $issafe) = @_;
 
@@ -106,7 +149,7 @@ sub set {
 	}
 
 	if (defined($ref->{$field}) and $ref->{$field} eq $value) {
-		print "Opps $tid: $field is already $value\n" . trace(undef,undef,1);
+		warn "Opps $tid: $field is already $value\n";
 		return;
 	}
 
@@ -328,7 +371,7 @@ sub gtdmap {
 
 	G_learn($t_key, $g_key);
 
-	my($val) = $db->{$g_key};
+	my($val) = html_clean( $db->{$g_key} );
 
 	# New master key
 	if ($t_key eq 'todo_id') {
@@ -341,7 +384,7 @@ sub gtdmap {
 		unless ($val) {
 			die "Can't create todo whith todo_id=$val for table $Table\n";
 		}
-		print "Hard Need Create $val\n" if $Debug;
+		warn "Hard Need Create $val\n" if $Debug;
 		$Current_ref = Hier::Tasks->new($val);
 		$Current_ref->{_todo_only} = 0x03;
 		sac_create($val, {});
@@ -349,6 +392,33 @@ sub gtdmap {
 	}
 
 	cset($Current_ref, $t_key, $val);
+}
+
+sub html_clean {
+	my($val) = @_;
+
+	return undef unless defined $val;
+
+	return $val unless $val =~ m/&[a-z]+;/;
+	my %map = (
+		lt	=> '<',
+		gt	=> '>',
+		amp	=> '&',
+		quote	=> "'",
+		dquote	=> '"',
+	);
+
+	my($to) = '';
+	while ($val =~ s/^(.*)&([A-Za-z]+);//) {
+		if (defined $map{lc($2)}) {
+			$to .= $1 . $map{lc($2)};
+		} else {
+			$to .= $1 . '&' . $2 . ';'; # put it back
+			warn "No & XXX ; mapping for $2\n";
+		}
+	}
+
+	return $to . $val;
 }
 
 #
@@ -516,7 +586,9 @@ sub _fix_map {
 		}
 	}
 
-	return if $ref->{$index} == $val_id;
+	if (defined $ref->{$index}) {
+		return if $ref->{$index} == $val_id;
+	}
 	$ref->{$index} = $val_id;
 
 	$ref->set_dirty($index);
@@ -537,7 +609,7 @@ sub gset_update {
 	for my $key (keys %$map) {
 		next unless $ref->get_dirty($key);	# don't update clean fields
 
-		print "Mapping: $key => $map->{$key}\n" if $Debug;
+		warn "Mapping: $key => $map->{$key}\n" if $Debug;
 		$fld = $map->{$key};
 
 		next unless defined $ref->{$key};
@@ -615,17 +687,6 @@ sub sac_delete {
 	G_sql("delete from todo where todo_id = ?", $tid);
 }
 
-END {
-	foreach my $ref (Hier::Tasks::all()) {
-
-		next unless $ref->is_dirty();
-
-		my $tid = $ref->get_tid();
-
-		print "Dirty: $tid\n";
-		$ref->update();
-	}
-}
 
 ##############################################################################
 ##############################################################################
@@ -644,7 +705,7 @@ sub DB_init {
 	$MetaFix = option('MetaFix');
 
 	if ($confname) {
-		print "#-Using $confname in Access.ini\n" if $Debug;
+		warn "#-Using $confname in Access.ini\n" if $Debug;
 	} else {
 		$confname = 'gtd';
 #		$confname = 'gtdtest';
@@ -663,7 +724,7 @@ sub DB_init {
 		die "Can't fine section $confname in ~/.todo/Access.ini\n";
 	}
 
-	print Dumper($dbconf) if $Debug;
+	warn Dumper($dbconf) if $Debug;
 
 	$dbname = $dbconf->{'dbname'};
 	$host   = $dbconf->{'host'};
@@ -680,15 +741,14 @@ sub DB_init {
 	$GTD = DBI->connect("dbi:mysql:dbname=$dbname;host=$host", $user, $pass);
 	die "confname=$confname;dbname=$dbname;host=$host;user=$user;pass=$pass\n" unless $GTD;
 
-#print "Start ".localtime()."\n";
+#warn "Start ".localtime()."\n";
 	load_meta();
-#print "Mid   ".localtime()."\n";
+#warn "Mid   ".localtime()."\n";
 	load_gtd();
-#print "End   ".localtime()."\n";
+#warn "End   ".localtime()."\n";
 
-	Hier::util::metafix();
-	Hier::util::metacount();
-#print "Done  ".localtime()."\n";
+	metafix();
+#warn "Done  ".localtime()."\n";
 }
 
 sub G_table {
@@ -709,12 +769,15 @@ sub T_select {
 sub G_sql {
 	my($sql) = shift @_;
 
-	print "gtd-sql: $sql: @_\n" if $Debug;
+	warn "gtd-sql: $sql: @_\n" if $Debug;
 
-	return unless $MetaFix;
+	unless ($MetaFix) {
+		warn "Skipped: $sql\n";
+		return;
+	}
 
 	my($rv) = $GTD->do($sql, undef, @_);
-	print "-> $rv\n" if $Debug;
+	warn "-> $rv\n" if $Debug;
 	return $rv;
 }
 
@@ -763,7 +826,7 @@ sub G_renumber {
 	my($ref, $tid, $new) = @_;
 
         my(@list) = qw(items itemstatus tagmap);
-        print "Setting TID $tid => $new\n";
+        warn "Setting TID $tid => $new\n";
 
         G_sql("update gtd_lookup set itemId=$new where itemId=$tid");
         G_sql("update gtd_lookup set parentId=$new where parentId=$tid");

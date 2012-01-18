@@ -14,19 +14,22 @@ BEGIN {
 }
 
 use Hier::util;
-use Hier::Tasks;
+use Hier::Meta;
 
-use Hier::Report::dump;
+use Hier::Format;
 
 sub Report_edit {	#-- Edit listed actions/projects
 	my($cnt) = 0;
 	my($key, $val, $changed);
 
 	umask(0077);
+
+	display_mode('odump');	# *** need ordered dump ***
+
     {
 	open(my $fd, '>', "/tmp/todo.$$") or die;
 	for my $tid (@_) {
-		my $ref = Hier::Tasks::find($tid);
+		my $ref = meta_find($tid);
 
 		unless (defined $ref) {
 			print "No item $tid\n";
@@ -35,7 +38,7 @@ sub Report_edit {	#-- Edit listed actions/projects
 		}
 		++$cnt;
 
-		dump_ordered_ref($fd, $ref);
+		display_fd_task($fd, $ref);
 	}
 	close($fd);
    }
@@ -81,7 +84,7 @@ sub Report_edit {	#-- Edit listed actions/projects
 sub save {
 	my($changed) = @_;
 	my($tid) = $changed->{todo_id};
-	my $ref = Hier::Tasks::find($tid);
+	my $ref = meta_find($tid);
 
 	my($Changed) = "Saving $tid - $changed->{task} ...\n";
 

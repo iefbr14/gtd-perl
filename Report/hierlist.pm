@@ -14,14 +14,14 @@ BEGIN {
 }
 
 use Hier::util;
-use Hier::Tasks;
+use Hier::Meta;
 use Hier::Filter;
 
 sub Report_hierlist {	#-- List all top level item (Project and above)
 	my($tid, $pid, $pref, $cnt, $parent, $cat, $name, $desc);
 	my(@row);
 
-	add_filters('+live');
+	meta_filter('+p:live', 'title', 'simple');
 	meta_desc(@ARGV);
 
 print <<"EOF";
@@ -35,12 +35,12 @@ $tid, $pid,$cnt,$cat,     $parent,     $name,      $desc
 .
 	$~ = "HIER";	# set STDOUT format name to HIER
 
-	for my $ref (Hier::Tasks::sorted('^title')) {
+	for my $ref (meta_sorted('^title')) {
 		$tid = $ref->get_tid();
 
 		next if $ref->filtered();
 
-		$cnt = $ref->count_actions() || '';
+		$cnt = $ref->count_children() || '';
 		
 		$cat = $ref->get_category() || '';
 		$name = $ref->get_task() || '';

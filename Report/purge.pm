@@ -15,7 +15,7 @@ BEGIN {
 
 use Hier::util;
 use Hier::Walk;
-use Hier::Tasks;
+use Hier::Meta;
 use Hier::Filter;
 
 my %Depth = (
@@ -29,14 +29,14 @@ my %Depth = (
 
 sub Report_purge {	#-- interactive purge completed work
 die;
-	add_filters('+all', '+any');
+	meta_filter('+dead', '^tid', 'simple');
 
 	my($criteria) = meta_desc(@ARGV);
 
 	my($walk) = new Hier::Walk();
 	bless $walk;	# take ownership
 
-	$walk->walk();
+	$walk->walk('m');
 }
 
 sub hier_detail {

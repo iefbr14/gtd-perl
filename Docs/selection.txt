@@ -1,0 +1,23 @@
+By default the whole database is selected.  By specifiing a part of the
+database all the records below the selected part are logical added for processing.
+If more than one slice is selected then they are added in the order you specify.
+This is important because it can effect the default (first) parent.
+
+The selection criteria is done by prefixing the request with a slash or =.
+
+ /pattern
+ =tid
+ =title
+ =T:title
+
+The /pattern form searches both the title and the description for the pattern.
+It adds only the matched items and doesn't include any children that are not actions
+
+The = form adds all children under the specified criteria.
+
+The =tid uses the tid (Task ID number) as the toplevel and adds all the children to the selection.
+
+The =title takes the title and first searches case sensative then case insensative.
+
+The last form =T:title  restricts the title search to only those with type 'T'
+   (v,r,g,p) = Value/Vision, Role, Goal, Project

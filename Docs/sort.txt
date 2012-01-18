@@ -1,0 +1,47 @@
+Sorting is the last stage of the prefiltering.  All reports support
+sorting, but it doesn't make sense for some to sort by anything but
+the reports default criteria.  For example the action reports group the
+output by goal/project and will produce a less readable output if the
+sort criteria is changed.
+
+        tid          => by Task ID
+        task,title   => by task title
+        hier         => by full hierarchy title
+        goal         => by hierachy from goal by title
+        status       => by completed status
+        priority     => by priority
+        doitdate     => by doitdate,
+        change       => by last update to item
+        age          => by creation date
+
+
+# by_Sort need to work
+[_] by_Sort
+
+# sort routines (in sort.pm)
+[_] by_age
+[_] by_change
+[_] by_doitdate
+[_] by_goal_task
+[_] by_hier
+[_] by_name
+[_] by_pri
+[_] by_pri,
+[_] by_priority
+[_] by_status
+[_] by_task
+[_] by_tid
+
+# sort calls (need fixing)
+[_] actions	by_task
+[_] addplans	by_goal_task
+[_] checklis	by_task
+[_] doit	by_doitdate
+[_] dump	by_priority
+[_] items	by_task
+[_] projects	by_goal_task
+[_] records	by_task
+[_] tasks	by_task
+[_] todo	by_priority
+[_] util	by_priority
+[_] walk	by_name

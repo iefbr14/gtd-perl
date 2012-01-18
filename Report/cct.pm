@@ -14,7 +14,8 @@ BEGIN {
 }
 
 use Hier::util;
-use Hier::Tasks;
+use Hier::Format;
+use Hier::Meta;
 
 use Hier::CCT;		# DIRECT access to interals (Bleck)
 
@@ -38,7 +39,7 @@ sub cct_crosstab {	#-- List Categories/Contexts/Time Frames
 }
 
 sub count_items {
-	foreach my $ref (Hier::Tasks::selected()) {
+	foreach my $ref (meta_selected()) {
 		my $type = $ref->get_type();
 
 		count_item('category',  $type, $ref->get_category());

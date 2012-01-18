@@ -1,0 +1,8 @@
+#!/bin/sh
+
+D=gtd
+M="mysql -h rock -u root --password=time-warp"
+
+echo 'show tables;'| $M --skip-column-names $D | 
+	sed 's/.*/drop table &;/' | $M $D
+	

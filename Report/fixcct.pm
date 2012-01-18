@@ -13,7 +13,7 @@ BEGIN {
 	@EXPORT      = qw(&Report_fixcct);
 }
 
-use Hier::Tasks;
+use Hier::Meta;
 
 sub Report_fixcct {	#-- Fix Categories/Contexts/Time Frames
 	my($new_id, $id);

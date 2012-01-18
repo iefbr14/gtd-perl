@@ -36,12 +36,13 @@ my %Types = (
 
 use Hier::util;
 use Hier::Filter;
-use Hier::Tasks;
+use Hier::Meta;
 use Hier::Option;
 use Hier::Filter;
 
 sub Report_status {	#-- report status of projects/actions
-	add_filters("+live");	# counts use it and it give a context
+	# counts use it and it give a context
+	meta_filter("+a:live", '^tid', 'none');	
 
 	my $desc = meta_desc(@ARGV);
 	
@@ -65,8 +66,8 @@ sub count_hier {
 	my($count) = 0;
 
 	# find all hier records
-	foreach my $ref (Hier::Tasks::hier()) {
-		
+	foreach my $ref (meta_all()) {
+		next unless $ref->is_hier();
 		next if $ref->filtered();
 
 		++$count;
@@ -78,7 +79,7 @@ sub count_proj {
 	my($count) = 0;
 
 	# find all projects
-	foreach my $ref (Hier::Tasks::matching_type('p')) {
+	foreach my $ref (meta_matching_type('p')) {
 		next if $ref->filtered();
 
 		++$count;
@@ -90,7 +91,7 @@ sub count_liveproj {
 	my($count) = 0;
 
 	# find all projects
-	foreach my $ref (Hier::Tasks::matching_type('p')) {
+	foreach my $ref (meta_matching_type('p')) {
 		next if $ref->filtered();
 
 		next unless project_live($ref);
@@ -104,8 +105,8 @@ sub count_task {
 	my($count) = 0;
 
 	# find all records.
-	foreach my $ref (Hier::Tasks::selected()) {
-		next unless $ref->is_ref_task();
+	foreach my $ref (meta_selected()) {
+		next unless $ref->is_task();
 
 		next if $ref->filtered();
 
@@ -120,14 +121,14 @@ sub count_next {
 	my($count) = 0;
 
 	# find all records.
-	foreach my $ref (Hier::Tasks::selected()) {
-		next unless $ref->is_ref_task();
+	foreach my $ref (meta_selected()) {
+		next unless $ref->is_task();
 
 		next if $ref->filtered();
 
 		next unless project_live($ref);
 
-		next unless $ref->get_nextaction() eq 'y';
+		next unless $ref->is_nextaction();
 
 		++$count;
 	}
@@ -138,9 +139,9 @@ sub count_tasklive {
 	my($count) = 0;
 
 	# find all records.
-	foreach my $ref (Hier::Tasks::selected()) {
+	foreach my $ref (meta_selected()) {
 
-		next unless $ref->is_ref_task();
+		next unless $ref->is_task();
 
 		next if $ref->filtered();
 		next unless project_live($ref);
@@ -157,12 +158,12 @@ sub project_live {
 
 	my($type) = $ref->get_type();
 
-	if ($ref->is_ref_task()) {
+	if ($ref->is_task()) {
 		$ref->get_live() = ! task_filtered($ref);
 		return $ref->get_live();
 	}
 
-	if ($ref->is_ref_hier()) {
+	if ($ref->is_hier()) {
 		foreach my $pref ($ref->get_parents()) {
 			$ref->get_live() |= project_live($pref);
 		}

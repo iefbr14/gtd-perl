@@ -14,15 +14,16 @@ BEGIN {
 }
 
 use Hier::util;
+use Hier::Color;
 use Hier::Walk;
-use Hier::Tasks;
+use Hier::Meta;
 use Hier::Option;
-use Hier::Filter;
+use Hier::Format;
 
 my $Mask = 0;
 
 sub Report_hier {	#-- Hiericial List of Values/Visions/Roles...
-	add_filters('+live');
+	meta_filter('+p:live', '^title', 'none');
 
 	$Mask  = option('Mask');
 	my($criteria) = meta_desc(@ARGV);
@@ -30,30 +31,24 @@ sub Report_hier {	#-- Hiericial List of Values/Visions/Roles...
 	my($walk) = new Hier::Walk();
 	$walk->filter();
 
+	my($top) = 'm';
+
 	if ($criteria) {
-		my($type) = type_val($criteria);
-		if ($type) {
-			$walk->set_depth($type);
+		if ($criteria =~ /^\d+$/) {
+			$top = $criteria;
 		} else {
-			die "unknown type $criteria\n";
+			my($type) = type_val($criteria);
+			if ($type) {
+				$walk->set_depth($type);
+			} else {
+				die "unknown type $criteria\n";
+			}
 		}
 	}
 
 	bless $walk;	# take ownership and walk the tree
 
-	$walk->walk();
-}
-
-sub hier_header {
-	my($walk, $ref) = @_;
-
-	my($tid) = $ref->get_tid();
-	my($task) = $ref->get_task();
-
-	return unless $walk->{want}{$tid};
-
-	print "===== $tid -- $task ====================\n";
-	return;
+	$walk->walk($top);
 }
 
 sub hier_detail {
@@ -61,30 +56,43 @@ sub hier_detail {
 
 	my $level = $self->{level};
 
+	my $tid  = $ref->get_tid();
+	my $name = $ref->get_task() || '';
+
 	if ($level == 0) {
-		hier_header($self, $ref);
+		color($ref);
+		print "===== $tid -- $name ====================";
+		nl();
+		return;
+	}
+	if ($level == 1) {
+		color($ref);
+		print "----- $tid -- $name --------------------";
+		nl();
 		return;
 	}
 
-	my $tid  = $ref->get_tid();
-	my $name = $ref->get_task() || '';
 	my $cnt  = $ref->count_actions() || '';
 	my $pri  = $ref->get_priority() || 3;
 	my $desc = summary_line($ref->get_description(), '');
-	my $type = $ref->get_type() || '';
 	my $done = $ref->get_completed() || '';
+
+	color($ref);
 
 	printf "%5s %3s ", $tid, $cnt;
 	printf "%-15s", $ref->task_mask_disp() if $Mask;
 
-	print "|  " x $level, "+-($type)-";
+	print "|  " x ($level-2), '+-', type_disp($ref). '-';
 	if ($name eq $desc or $desc eq '') {
-		printf "%.50s\n",  $name;
+		printf "%.50s",  $name;
 	} else {
-		printf "%.50s\n",  $name . ': ' . $desc;
+		printf "%.50s",  $name . ': ' . $desc;
 	}
+	nl();
 }
 sub task_detail {
+	return hier_detail(@_);
+
 	my($self, $ref) = @_;
 
 	my $level = $self->{level};
@@ -96,6 +104,8 @@ sub task_detail {
 	my $desc = summary_line($ref->get_description(), '');
 	my $type = $ref->get_type() || '';
 	my $done = $ref->get_completed() || '';
+
+	color($ref);
 
 	printf "%5s %3s ", $tid, $cnt;
 	printf "%-15s", $ref->task_mask_disp() if $Mask;
@@ -104,10 +114,11 @@ sub task_detail {
 	substr($dots, 1, 6) = '(done)' if $done;
 	print $dots, "...";
 	if ($name eq $desc or $desc eq '') {
-		printf "%.50s\n",  $name;
+		printf "%.50s",  $name;
 	} else {
-		printf "%.50s\n",  $name . ': ' . $desc;
+		printf "%.50s",  $name . ': ' . $desc;
 	}
+	nl();
 }
 
 sub end_detail {

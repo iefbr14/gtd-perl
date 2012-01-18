@@ -1,0 +1,10 @@
+2010-July-02
+
+* GTD running on drugs
+- Prove install (Bundle::Test)
+- Mysql install
+- GTD && GTD test databases
+- GTD db <=> replicated to rock
+- gtdtest db <=> replicated to rock
+- test suite defined
+

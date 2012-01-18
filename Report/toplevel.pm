@@ -18,7 +18,7 @@ use Hier::Report::list;
 sub Report_toplevel {	#-- List Values/Visions/Roles
 	Report_list('Values');
 	Report_list('Visions');
-	Report_list('Goals');
+	Report_list('Roles');
 }
 
 

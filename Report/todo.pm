@@ -14,72 +14,28 @@ BEGIN {
 }
 
 use Hier::util;
-use Hier::Tasks;
+use Hier::Meta;
 use Hier::Option;
-use Hier::Filter;
-
+use Hier::Format;
 
 sub Report_todo {	#-- List high priority next actions
 	my($limit) = option('Limit', 10);
 	my($list)  = option('List', 0);
 
-	add_filters('+live');
-	my($title) = meta_desc(@ARGV);
+	meta_filter('+p:live', '^priority', 'priority');
+	my($title) = meta_desc(@ARGV) || 'ToDo Tasks';
 
-	my($tid, $key, $pri, $task, $cat, $created, $modified, $due, $desc);
-
-print <<"EOF";
-  Id   Pri Category  Due         Task/Description: $title
-==== === = ========= =========== ==============================================
-EOF
-
-format STDOUT =
-@>>> @<< @ @<<<<<<<< @<<<<<<<<<< ^<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-$tid,$key,$pri, $cat,        $due,    $task
-~~                               ^<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                                                  $desc
-.
+	report_header($title);
 
 	my($count) = 0;
-	for my $ref (Hier::Tasks::sorted('^pri')) {
-		next unless $ref->is_ref_task();	# only actions
+	for my $ref (meta_sorted('^pri')) {
+		next unless $ref->is_task();	# only actions
 		next if $ref->filtered();		# other filterings
 
-		$tid       = $ref->get_tid();
-		$pri       = $ref->get_priority();
+		display_task($ref);
 
-		$task      = $ref->get_task() || $ref->get_context() || '';
-		$cat       = $ref->get_category() || '';
-		$created   = $ref->get_created();
-		$modified  = $ref->get_modified() || $created;
-		$due       = $ref->get_due();
-		$desc      = $ref->get_description() || '';
-
-		$key       = action_disp($ref);
-
-		if ($list) {
-			$desc =~ s/\n.*//s;
-			print join("\t", $tid, $pri, $cat, $task, $due, $desc), "\n";
-		} else {
-			write;
-		}
 		last if ++$count >= $limit;
 	}
-}
-
-sub parent_filtered {
-	my($ref) = @_;
-
-	my($filtered) = 0; # asssume not filtered by default
-
-	for my $pref ($ref->get_parents()) {
-		if ( $pref->filtered() ) {
-			$filtered++;
-		} else {
-			return 0; # some parent not filtered.
-		}
-	}
-	return $filtered; # only 1 if all parents filtered.
 }
 
 1;  # don't forget to return a true value from the file

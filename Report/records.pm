@@ -14,12 +14,15 @@ BEGIN {
 }
 
 use Hier::util;
-use Hier::Tasks;
+use Hier::Meta;
 use Hier::Filter;
 use Hier::Selection;
 
 sub Report_records {	#-- detailed list all records for a type
-	add_filters('+all', '+any');	# everybody into the pool
+	# everybody into the pool
+	meta_filter('+any', '^tid', 'record');
+
+	my($desc) = join(' ', @ARGV);
 
 	my($name) = ucfirst(meta_desc(@ARGV));	# some out
 	if ($name) {
@@ -28,10 +31,10 @@ sub Report_records {	#-- detailed list all records for a type
 			print "**** Can't understand Type $name\n";
 			exit 1;
 		}
-		list_records($want, $name);
+		list_records($want, $name.' '.$desc);
 		return;
 	}
-	list_records('', 'All');
+	list_records('', 'All '.$desc);
 }
 
 sub list_records {
@@ -43,32 +46,23 @@ sub list_records {
 	my($Dates) = '';
 
 	# find all records.
-	for my $ref (Hier::Tasks::sorted('^tid')) {
+	for my $ref (meta_sorted('^tid')) {
 		$tid  = $ref->get_tid();
 		$type = $ref->get_type();
-		$kids = $ref->count_children();
-		$acts = $ref->count_actions();
 
 		next if $want_type && $type ne $want_type;
 
 		my($flags) = $ref->Hier::Filter::task_mask_disp();
 
-		$f = '';
 		if ($reason = $ref->filtered()) {
-			$f = 'X' . uc($reason);
+			$f = "X $type $reason";
+		} elsif ($reason = $ref->filtered_reason()) {
+			$f = "+ $type $reason";
+		} else {
+			$f = "  $type";
 		}
 
-		$f .= 'p' if parent_filtered($ref);
-		$f .= 'c' if cct_filtered($ref);
-		$f .= 'h' if $ref->hier_filtered();
-		$f .= 'a' if $ref->task_filtered();
-		$f .= 'l' if $ref->list_filtered(); 
-
-		printf ("%-6s %-4s %6d %s ", $f, $type, $tid, $flags);
-
-
-		print " k:$kids" if $kids;
-		print " a:$acts" if $acts;
+		printf ("%-15s %6d %s ", $f, $tid, $flags);
 
 		print "\t", $ref->get_task(), "\n";
 	}

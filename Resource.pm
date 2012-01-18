@@ -52,6 +52,11 @@ sub calc_resource {
 	my($category) = $ref->get_category();
 	my($desc) = $ref->get_description();
 
+	###BUG### Need to YAML suck in these context,role,category => resource 
+	if ($context eq 'Maureen') {
+		return 'maureen';
+	}
+
 	if ($desc =~ /^allocate:(\S+)$/) {
 		###TODO verify $1 in resource list
 		return $1;
@@ -79,7 +84,8 @@ sub effort {
 	my($desc) = $ref->get_description();
 
 	if ($desc =~ /^pages:(\d+)$/m) {
-		$effort =  int($1 / 30) . "h # $1 pages";
+#		$effort =  int($1 / 30) . "h # $1 pages";
+		$effort =  "1h # $1 pages";
 	}
 	if ($desc =~ /^effort:(\d+[hd])$/m) {
 		$effort = $1;
@@ -104,21 +110,7 @@ sub effort {
 		}
 	}
 
-#	my $a = $ref->count_actions();
-#	my $c = $ref->count_children();
-#	print "# t=$type a=$a c=$c e=$effort\n";
-
 	if ($type eq 'a') {
-		return $effort;
-	}
-
-	if ($type eq 'p') {
-		if ($ref->count_actions() > 0) {
-			return;
-		}
-		if ($ref->count_children() > 0) {
-			return;
-		}
 		return $effort;
 	}
 
@@ -127,6 +119,24 @@ sub effort {
 	}
 
 	return;
+}
+
+sub hours {
+	my($self, $ref) = @_;
+
+	my($effort) = $self->effort($ref);
+	return 0 unless $effort;
+
+	if ($effort =~ m/^([.\d]+)h.*$/) {
+		return $1;
+	}
+	if ($effort =~ m/^([.\d]+)d.*$/) {
+		return $1 * 4;
+	}
+	return $effort;
+}
+
+sub complete {
 }
 
 # for each action, grouped by resource, sorted by priority/hier.task-id

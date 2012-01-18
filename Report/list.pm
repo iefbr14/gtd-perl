@@ -14,13 +14,16 @@ BEGIN {
 }
 
 use Hier::util;
-use Hier::Tasks;
+use Hier::Meta;
+use Hier::Sort;
 use Hier::Filter;
+use Hier::Option;
+use Hier::Format;
 
 sub Report_list {	#-- list titles for any filtered class (actions/projects etc)
-	add_filters('+live');	# everybody into the pool
+	meta_filter('+live', '^title', 'title');
 
-	my($name) = meta_desc(@ARGV);
+	my($name) = meta_desc(@_);
 	if ($name) {
 		my($want) = type_val($name);
 		if ($want) {
@@ -39,14 +42,14 @@ sub list_desc {	#-- List projects with waiting-fors
 	report_header($typename);
 
         my(@list);
-        for my $ref (Hier::Tasks::matching_type($type)) {
+        for my $ref (meta_matching_type($type)) {
 		next if $ref->filtered($ref);
 
-                push(@list, $ref->get_task());
+                push(@list, $ref);
         }
 
-	for my $item (sort @list) {
-		print $item, "\n";
+	for my $ref (sort_tasks @list) {
+		display_task($ref);
 	}
 }
 

@@ -14,7 +14,7 @@ BEGIN {
 }
 
 use Hier::util;
-use Hier::Tasks;
+use Hier::Meta;
 
 my $Debug = 0;
 
@@ -45,7 +45,7 @@ sub find_list {
 	my($Dates) = '';
 
 	# find all records.
-	for my $ref (Hier::Tasks::all()) {
+	for my $ref (meta_all()) {
 		$tid = $ref->get_tid();
 		$type = $ref->get_type();
 
@@ -78,7 +78,7 @@ sub list_records {
 sub disp_list {
 	my ($record_type, $owner) = @_;
 
-	for my $ref (Hier::Tasks::matching_type($record_type)) {
+	for my $ref (meta_matching_type($record_type)) {
 		my $tid = $ref->get_tid();
 		my $pid = $ref->get_parent()->get_tid();
 		my $title = $ref->get_title();
@@ -101,14 +101,7 @@ sub disp {
 
 	my($tid) = $ref->get_tid();
 
-	my($key) = '[ ]';
-
-	$key = '[_]' if $ref->get_nextaction() eq 'y';
-	$key = '[*]' if $ref->get_completed();
-
-	$key =~ s/.(.)./($1)/ 	if $ref->get_isSomeday() eq 'y';
-	$key =~ s/.{.}./($1)/ 	if $ref->get_tickledate();
-	$key =~ s/(.)./$1w/ 	if $ref->get_type() eq 'w';
+	my($key) = action_disp($ref);
 
 	my $pri = $ref->get_priority() || 3;
 	my $type = uc($ref->get_type());

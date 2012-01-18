@@ -14,10 +14,11 @@ BEGIN {
 }
 
 use Hier::util;
-use Hier::Tasks;
+use Hier::Meta;
 use Hier::Option;
 use Hier::Filter;
 use Hier::Sort;
+use Hier::Format;
 
 my $Projects;
 my %Active;
@@ -27,7 +28,8 @@ my %Want;
 sub Report_actions {	#-- Detailed list of projects with (next) actions
 	my($list) = option('List', 0);
 
-	add_filters('+live');
+	meta_filter('+a:next', '^focus', 'detail');
+
 	my($desc) = meta_desc(@ARGV);
 	report_select($desc);
 	if ($list) {
@@ -49,14 +51,15 @@ sub report_select {
 	}
 
 	# find all projects (next actions?)
-	for my $ref (Hier::Tasks::selected()) {
-		next unless $ref->is_ref_task();
+	for my $ref (meta_selected()) {
+		next unless $ref->is_task();
 		next if $top && !has_parent($ref, $top);
-
+next unless $ref->is_nextaction();
 		next if $ref->filtered();
 
 		$pref = $ref->get_parent();
 		next unless defined $pref;
+next unless $pref->is_active();
 
 		next if $pref->filtered();
 
@@ -83,7 +86,7 @@ sub report_list {
 
 	my($last_goal) = 0;
 	my($last_proj) = 0;
-	for my $pref (sort { by_goal($a, $b) } values %Active) {
+	for my $pref (sort_tasks values %Active) {
 		next if $pref->filtered();
 
 		$pid = $pref->get_tid();
@@ -94,7 +97,7 @@ sub report_list {
 		my $tasks = $Projects->{$pid};
 
 		my($task_cnt) = 0;
-		for my $ref (sort { by_task($a, $b) } values %$tasks) {
+		for my $ref (sort_tasks values %$tasks) {
 			next if $ref->filtered();
 
 			$tid = $ref->get_tid();
@@ -136,7 +139,7 @@ sub report_actions {
 
 	my($last_goal) = 0;
 	my($last_proj) = 0;
-	for my $pref (sort { by_goal($a, $b) } values %Active) {
+	for my $pref (sort_tasks values %Active) {
 		next if $pref->filtered();
 
 		$pid = $pref->get_tid();
@@ -156,36 +159,15 @@ sub report_actions {
 			print '#', "-" x $cols, "\n";
 			$last_proj = $pid;
 		} 
-		print "$pid:\t", type_disp($pref), ' ', $pref->get_title(),"\n";
 
-		bulk_display('+', $pref->get_description());
-		bulk_display('=', $pref->get_note());
-		print "\n";
-
+		display_task($pref);
 		my $tasks = $Projects->{$pid};
 
-		for my $ref (sort { by_task($a, $b) } values %$tasks) {
+		for my $ref (sort_tasks values %$tasks) {
 			next if $ref->filtered();
 
-			$tid = $ref->get_tid();
-			$title = $ref->get_title();
-
-			print "$tid:\t     ", type_disp($ref), " $title\n";
-			bulk_display('+', $ref->get_description());
-			bulk_display('=', $ref->get_note());
-			print "\n";
+			display_task($ref);
 		}
-	}
-}
-sub bulk_display {
-	my($tag, $text) = @_;
-
-	return unless defined $text;
-	return if $text eq '';
-	return if $text eq '-';
-
-	for my $line (split("\n", $text)) {
-		print "$tag\t$line\n";
 	}
 }
 
@@ -196,7 +178,7 @@ sub get_goal {
 	my($gref) = $pref->get_parent();
 
 	while ($gref->get_type() eq 'p') {
-#print join(' ', "up:", $gref->get_tid(), $gref->get_title), "\n";
+#warn join(' ', "up:", $gref->get_tid(), $gref->get_title), "\n";
 		$gref = $gref->get_parent();
 	}
 	return $gref;
@@ -205,8 +187,8 @@ sub get_goal {
 sub find_in_hier {
 	my($title) = @_;
 
-	for my $ref (Hier::Tasks::selected()) {
-		next unless $ref->is_ref_hier();
+	for my $ref (meta_selected()) {
+		next unless $ref->is_hier();
 		next if $ref->get_title() ne $title;
 
 		add_children($ref);
@@ -221,7 +203,7 @@ sub find_in_hier {
 sub add_children {
 	my($ref) = @_;
 
-	## print "w tid: ", $ref->get_tid, " ", $ref->get_title, "\n";
+	## warn "w tid: ", $ref->get_tid, " ", $ref->get_title, "\n";
 	$Want{$ref->get_tid()} = 1;
 	foreach my $cref ($ref->get_children()) {
 		add_children($cref);
@@ -232,7 +214,7 @@ sub has_parent {
 	my($ref, $top) = @_;
 
 	my($tid) = $ref->get_tid();
-	## print "o tid: ", $tid, " ", $ref->get_title, "\n" if $Want{$tid};
+	## warn "o tid: ", $tid, " ", $ref->get_title, "\n" if $Want{$tid};
 	return $Want{$tid};
 }
 

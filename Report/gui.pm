@@ -22,15 +22,15 @@ use Tk::Text;
 
 use Hier::util;
 use Hier::Walk;
-use Hier::Tasks;
+use Hier::Meta;
 use Hier::Filter;
 
 use Hier::Report::reports;
 
+my $Load_Unplanned = 1;
 my $Load_Project = 1;
 my $Load_Someday = 0;
 my $Load_Waiting = 0;
-my $Load_Childless = 1;
 my $Load_Next_Actions = 1;
 my $Load_Actions = 1;
 my $Load_Completed = 0;
@@ -76,7 +76,7 @@ sub init {
 		"Include", [
                         "Refresh",              [ \&walk_tree, $pkg ],
 			'-',
-			"Childless",	\$Load_Childless,
+			"Unplanned",	\$Load_Unplanned,
 			"Projects",	\$Load_Project,
 			"Somedays",	\$Load_Someday,
 			"Waiting",	\$Load_Waiting,
@@ -130,14 +130,14 @@ sub walk_tree {
 	my($tree) = $pkg->{tree};
 	$tree->delete('all');
 
-	add_filters('+any', '+all');
+	meta_filter('+all', 'tid', 'simple');
 	my($walk) = new Hier::Walk;
 	$walk->set_depth('a');
 	$walk->filter();
 
 	bless $walk;
 	$walk->{tree} = $tree;
-	$walk->walk();
+	$walk->walk('m');
 warn "Walked\n";
 	$tree->autosetmode;
         return $pkg;
@@ -154,36 +154,37 @@ sub task_detail {
 
 sub hier_detail {
 	my($walk, $ref) = @_;
-	my($tid, $sid, $name, $cnt, $desc, $pri, $type, $done, $someday);
+	my($tid, $sid, $name, $cnt,$plan, $desc, $pri, $type, $done);
 
 	my (%opt);
 
 	my $level = $walk->{level};
 	my $tree = $walk->{tree};
 
+
 	$tid  = $ref->get_tid() || '';
 	$name = $ref->get_title() || '';
 	$cnt  = $ref->count_actions() || '';
+#	$plan = $ref->get_planned() || '';
+	$plan = '';
 	$pri  = $ref->get_priority() || 3;
 	$desc = summary_line($ref->get_description(), '');
 	$type = $ref->get_type() || '';
 	$done = $ref->get_completed() || '';
 
-	$someday = $ref->get_isSomeday() || '';
-
 	my($pdesc,$path, $ptext);
 
 	if ($Load_Completed && $done) {
 		# Don't do completed items
-	} elsif ($Load_Childless == 0 && $ref->count_actions() == 0 && $ref->count_children() == 0) {
-		# Don't do hier items with no children
+	} elsif ($Load_Unplanned == 0 && $plan == 0) {
+		# Don't do project 
 	} elsif ($Load_Project == 0 && $type eq 'p') {
 		# Don't do project 
 	} elsif ($Load_Next_Actions == 0 && $type eq 'n') {
 		# Don't
 	} elsif ($Load_Actions == 0 && $type eq 'a') {
 		# Don't 
-	} elsif ($Load_Someday == 0 && $someday eq 'y') {
+	} elsif ($Load_Someday == 0 && $ref->is_someday()) {
 		# Don't do someday unless -A
 	} else {
 		$pdesc = $name; $pdesc =~ s/[^a-zA-Z]/_/g;
@@ -191,7 +192,7 @@ sub hier_detail {
 
 		$ptext .= sprintf "%5s %3s ", $tid, $cnt;
 
-		if ($ref->is_ref_hier()) {
+		if ($ref->is_hier()) {
 			$ptext .= "-($type)-";
 		} 
 
@@ -358,7 +359,7 @@ print "Run: $report\n";
 sub dep_path {
         my($tid) = @_;
 
-        my($ref) = Hier::Tasks::find($tid);
+        my($ref) = meta_find($tid);
         return unless $ref;
 
         my($path) = $ref->get_type() . '_' . $tid;

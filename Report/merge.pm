@@ -13,19 +13,19 @@ BEGIN {
 	@EXPORT      = qw(&Report_merge);
 }
 
-use Hier::Tasks;
+use Hier::Meta;
 
 sub Report_merge { #-- Merge Projects (first list is receiver)
 	for my $slave_id (@ARGV) {
 		die "Unknown project $slave_id\n" unless 
-			defined Hier::Tasks::find($slave_id);
+			defined meta_find($slave_id);
 	}
 	my $master_id = shift @ARGV;
 	die "No projects to merge\n" unless @ARGV;
-	my $master = Hier::Tasks::find($master_id);
+	my $master = meta_find($master_id);
 
 	for my $slave_id (@ARGV) {
-		my $slave = Hier::Tasks::find($slave_id);
+		my $slave = meta_find($slave_id);
 		merge_project($master, $slave);
 		$master->update();
 		$slave->delete();
@@ -41,8 +41,8 @@ sub merge_project {
 #print "With:  $slave\n"; dump_task($slave);
 
 ###	Merge: type
-	if (!$master->is_ref_hier()		# actions/lists
-	and  $slave->is_ref_hier()) {		# can't be parents
+	if (!$master->is_hier()		# actions/lists
+	and  $slave->is_hier()) {		# can't be parents
 		warn "item $slave would fook $master\n";
 		return;
 	}
@@ -87,20 +87,24 @@ sub merge_project {
 	merge_cct($master, $slave, 'context');
 	merge_cct($master, $slave, 'timeframe');
 
-###	Merge: dateCreated
-###	Merge: dateCompleted
-###	Merge: deadline
-###	Merge: tickledate
-	merge_date($master, $slave, 'dateCreated');
-	$master->set_completed('');
-	merge_date($master, $slave, 'deadline');
+###	Merge: created (dateCreated)
+###	Merge: due (deadline)
+###	Merge: tickledate (tickleDate)
+	merge_date($master, $slave, 'created');
+	merge_date($master, $slave, 'due');
 	merge_date($master, $slave, 'tickledate');
+
+###	Merge: completed (dateCompleted)
+	merge_completed($master, $slave);
 
 ###	Merge: nextaction
 ###	Merge: isSomeday
 	merge_yn($master, $slave, 'nextaction', 'y');
 	merge_yn($master, $slave, 'isSomeday', 'n');
 
+
+###	Merge: recur
+###	Merge: recurdesc
 
 ###	Merge: priority
 	merge_date($master, $slave, 'doit');
@@ -136,11 +140,55 @@ sub merge_cct {					# learn new key
 sub merge_date {				# keep earliest date
 	my($ref, $slave, $key) = @_;
 
-	my($date) = $ref->get_KEY($key);
-	return unless $date;
+	my($sdate) = $slave->get_KEY($key);	# grab slave date
+print "S $key = $sdate\n";
+	return unless $sdate;			# no date in slave
+	return if $sdate =~ m/^0000/;		# bogus date prefix
 
-	return if $date le $slave->get_KEY($key);
-	$ref->set_KEY($key, $slave->get_KEY($key));
+	my($mdate)  = $ref->get_KEY($key);	# grab master date
+print "M $key = $mdate\n";
+	$mdate = '' if $mdate =~ m/^0000/;	# bogus date prefix
+
+	unless ($mdate) {			# no master, use slave
+		$ref->set_KEY($key, $sdate);
+		print "Date for $key set to $sdate (was missing)\n";
+		return;
+	}
+
+	# both master and slave exists, keep earlier (lesser)
+	return if $mdate le $sdate; # master lesser, just keep it
+
+	$ref->set_KEY($key, $sdate); # slave lesser, set it
+	print "Date for $key set to $sdate (was $mdate)\n";
+}
+
+#TODO change to using values, not the reference
+sub merge_completed {				# keep earliest date
+	my($ref, $slave) = @_;
+
+	my($mdate) = $ref->get_completed();	# grab master date
+	$mdate = '' if $mdate =~ m/^0000/;	# bogus date prefix
+
+	return unless $mdate;			# no master completed date
+
+print "M done = $mdate\n";
+
+	my($sdate) = $slave->get_completed();	# grab slave date
+	$sdate = '' if $sdate =~ m/^0000/;	# bogus date prefix
+
+print "S done = $sdate\n";
+
+	unless ($sdate) {			# no master, use slave
+		$ref->set_completed('');
+		print "Done Date removed (was $mdate)\n";
+		return;
+	}
+
+	# both master and slave exists, later (greater)
+	return if $mdate ge $sdate; # master greater, just keep it
+
+	$ref->set_completed($sdate); # slave greater, set it
+	print "Done Date set to $sdate (was $mdate)\n";
 }
 
 #TODO change to using values, not the reference
@@ -192,6 +240,8 @@ sub re_parent {
 	my($master, $slave) = @_;
 
 	for my $child ($slave->get_children()) {
+		my($cid) = $child->get_tid();
+		print "move S child $cid\n";
 		$slave->orphin_child($child);
 		$master->add_child($child);
 	}

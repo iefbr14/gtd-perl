@@ -6,6 +6,9 @@ use warnings;
 use Hier::util;
 use Hier::Tasks;
 use Hier::Option;
+use Hier::Sort;
+use Hier::Meta;
+use Hier::Format;
 
 BEGIN {
 	use Exporter   ();
@@ -14,7 +17,7 @@ BEGIN {
 	# set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
-	@EXPORT      = qw(&walk &slice &detail);
+	@EXPORT      = qw(&walk &detail);
 }
 
 my $Debug;
@@ -36,16 +39,24 @@ sub new {
 }
 
 sub walk {
-	my($self) = @_;
+	my($self, $toptype) = @_;
 
-	my(@top) = Hier::Tasks::matching_type('m');
+	$toptype ||= 'm';
 
-	for my $ref (sort by_name @top) {
-		$self->hier_detail($ref);
-		$self->{level}++;
-		$self->slice($ref);
-		$self->{level}--;
-		$self->end_detail($ref);
+	if ($toptype =~ /^\d+/) {
+		my($ref) = meta_find($toptype);
+		if ($ref) {
+			$self->detail($ref);
+		} else {
+			warn "No such task: $toptype\n";
+		}
+		return;
+	}
+
+	my(@top) = meta_matching_type($toptype);
+
+	for my $ref (sort_tasks @top) {
+		$self->detail($ref);
 	}
 	return;
 }
@@ -58,19 +69,6 @@ sub set_depth {
 	return;
 }
 
-sub slice {
-	my($walk, $parent) = @_;
-
-	my $tid = $parent->get_tid();
-	print "in slice($tid)\n" if $Debug;
-
-	foreach my $child (sort by_name $parent->get_children()) {
-		print "$tid => detail($child)\n" if $Debug;
-
-		$walk->detail($child);
-	}
-	return;
-}
 
 sub by_name {
 	return $a->get_title() cmp $b->get_title()
@@ -83,8 +81,10 @@ sub filter {
 	my($tid, $type);
 	foreach my $ref (Hier::Tasks::all()) {
 		$tid = $ref->get_tid;
-		$walk->{want}{$tid} = 0;
+		$walk->{want}{$tid} = 1;
+		$walk->{want}{$tid} = 0 if $ref->filtered();
 	}
+	return;
 
 	foreach my $ref (Hier::Tasks::all()) {
 		$tid = $ref->get_tid();
@@ -133,40 +133,42 @@ sub detail {
 
 	return if $walk->{seen}{$tid}++;
 
-	return if $ref->is_ref_list();
+	return if $ref->is_list();
 	return if $ref->filtered();
 
 	if ($walk->{want}{$tid} == 0) {
 		# we are global filtered
-		print "< detail($tid} filtered\n" if $Debug;
+		warn "< detail($tid} filtered\n" if $Debug;
 		return;
 	}
 
 	if (type_depth($type) > $depth) {
-		print "+ detail($tid}\n" if $Debug;
+		warn "+ detail($tid}\n" if $Debug;
 		return;
 	}
 
-	my $disp = 0;
-
-	if ($ref->is_ref_hier()) {
-		$walk->hier_detail($ref);
-		$disp = 1;
-	} else {
+	if ($ref->is_task()) {
 		if ($ref->filtered()) {
 			# we are item filtered
-			print "< detail($tid} filtered\n" if $Debug;
+			warn "< detail($tid} filtered\n" if $Debug;
 			return;
 		} 
 		$walk->task_detail($ref);
+		return;
 	}
 
-	if ($ref->is_ref_hier()) {
-		$walk->{level}++;
-		$walk->slice($ref);
-		$walk->{level}--;
+	$walk->hier_detail($ref);
+	$walk->{level}++;
+
+	foreach my $child (sort_tasks $ref->get_children()) {
+		warn "$tid => detail($child)\n" if $Debug;
+
+		$walk->detail($child);
 	}
-	$walk->end_detail($ref) if $disp;
+
+	$walk->{level}--;
+	
+	$walk->end_detail($ref);
 }
 
 1;  # don't forget to return a true value from the file

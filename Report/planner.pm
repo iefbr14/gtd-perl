@@ -9,14 +9,14 @@ BEGIN {
 
 	# set the version for version checking
 	$VERSION     = 1.00;
-	@ISA         = qw(Exporter Hier::Walk);
+	@ISA         = qw(Exporter);
 	@EXPORT      = qw(&Report_planner);
 }
 
 use Hier::util;
 use Hier::Walk;
 use Hier::Resource;
-use Hier::Tasks;
+use Hier::Meta;
 use Hier::CCT;
 use Hier::Filter;
 
@@ -33,7 +33,8 @@ sub Report_planner {	#-- Create a planner file from gtd db
 	my($tid, $pri, $task, $cat, $ins, $due, $desc);
 	my(@row);
 
-	add_filters('+any', '+all');
+	meta_filter('+all', '^tid', 'none');
+	meta_argv(@ARGV);
 	my($planner) = new Hier::Walk;
 	$planner->set_depth('a');
 	$planner->filter();
@@ -43,19 +44,13 @@ sub Report_planner {	#-- Create a planner file from gtd db
 
 	bless $planner;
 	print "<tasks>\n";
-	$planner->walk();
+	$planner->walk('m');
 	print "</tasks>\n";
 
 	planner_resource();
 	planner_allocations();
 	print "</project>\n";
 
-}
-
-sub header {
-	my($self) = shift @_;
-
-	$self->detail(@_);
 }
 
 sub task_detail {
@@ -86,14 +81,13 @@ sub hier_detail {
 	$done = pdate($ref->get_completed());
 	$start = pdate($ref->get_created());
 
+#	if ($done && $done lt '2010-') {
+#		$planner->{want}{$tid} = 0;
+#		return;
+#	}
 
-	if ($done && $done lt '2010-') {
-		$planner->{want}{$tid} = 0;
-		return;
-	}
-
-	my($effort) = $resource->effort($ref);
-	$work  = fix_effort($effort); # number of hours/days => min
+	# number of hours/days => min
+	$work  = $resource->hours($ref) * 60;
 	$ws    = $due;
 	$end   = $ws;
 
@@ -180,20 +174,6 @@ sub indent {
 	return '' if $level <= 0;
 
 	return '  ' x $level;
-}
-
-sub fix_effort {
-	my($effort) = @_;
-
-	return 0 unless $effort;
-
-	if ($effort =~ m/^([.\d]+)h.*$/) {
-		return $1 * 60*60;
-	}
-	if ($effort =~ m/^([.\d]+)d.*$/) {
-		return $1 * 4*60*60;
-	}
-	return $effort;
 }
 
 

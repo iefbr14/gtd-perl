@@ -14,24 +14,33 @@ BEGIN {
 }
 
 use Hier::util;
-use Hier::Tasks;
-use Hier::Filter;
+use Hier::Format;
+use Hier::Meta;
 
 sub Report_search {	#-- Search for items
 	my($found) = 0;
 
-	my($tid);
+	my($tid, $title, $type);
 
-	add_filters('+live');
+	meta_filter('+all', '^title', 'simple');
 	meta_desc(@ARGV);
-	for my $name (split(/,/, $ARGV[0])) {
-		for my $ref (Hier::Tasks::hier()) {
-			$tid = $ref->get_tid();
+# type filtering?
+#	if ($name) {
+#		my($want) = type_val($name);
+#		if ($want) {
+#			list_desc($want, $name);
+#			return;
+#		}
+#		print "**** Can't understand Type $name\n";
+#		exit 1;
+#	}
+#	print "No items requested\n";
 
-			next if $ref->filtered();
+	for my $name (split(/,/, $ARGV[0])) {
+		for my $ref (meta_sorted()) {
 			next unless match_desc($ref, $name);
 			
-			print $tid, "\n";
+			display_task($ref);
 			$found = 1;
 		}
 	}
@@ -43,6 +52,7 @@ sub match_desc {
 
 	return 1 if $ref->get_task() =~ m/$desc/i;
 	return 1 if $ref->get_description() =~ m/$desc/i;
+	return 1 if $ref->get_note() =~ m/$desc/i;
 	return 0;
 }
 

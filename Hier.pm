@@ -96,25 +96,23 @@ sub children_ids {
 }
 
 #------------------------------------------------------------------------------
-# these are counted in metacount in db.pm
-# (ugly hack, we should keep this info ourselfs or create it as needed)
-
-# count the number of hier children (not actions)
-sub count_children {
-	my ($self) = @_;
-
-	return $self->{_child};
-}
-
-# count the number of actions (not hier children)
-sub count_actions {
-	my ($self) = @_;
-
-	return $self->{_actions};
-}
-
-#------------------------------------------------------------------------------
 # helper routines they do useful things, but don't know interals
+sub count_children {
+	my(@children) = get_children(@_);
+
+	return scalar @children;
+}
+
+sub count_actions {
+	my(@children) = get_children(@_);
+
+	my($count) = 0;
+	foreach my $child (get_children(@_)) {
+		++$count if $child->get_type() eq 'a';
+	}
+	return $count;
+}
+
 sub get_parent {
 	my($self) = @_;
 

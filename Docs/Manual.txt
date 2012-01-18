@@ -1,0 +1,114 @@
+Perl GTD
+========
+Drew Sullivan <drew@ss.org>
+v0.0, November 2011
+
+[dedication]
+Dedication
+==================
+Thankyou too all the open source developers before me.
+David Allen for gidence on why I need to do it.
+PHP gtd for a graphical interface and database structure
+todo.txt for a simple command line interface
+
+[preface]
+Preface
+================
+The optional book preface goes here at section level zero.
+
+Preface Sub-section
+~~~~~~~~~~~~~~~~~~~
+NOTE: Preface and appendix subsections start out of sequence at level
+2 (level 1 is skipped). This only applies to multi-part book
+documents.
+
+:leveloffset: 1
+
+include::Readme.txt[]
+
+include::gtd.txt[]
+
+include::git.txt[]
+
+include::local.txt[]
+
+include::report.txt[]
+
+include::selection.txt[]
+
+include::sort.txt[]
+
+include::Test-Plan.txt[]
+
+include::type-tags.txt[]
+
+include::Verbs.txt[]
+
+:leveloffset: 0
+
+:numbered!:
+
+[appendix]
+Example Appendix
+================
+One or more optional appendixes go here at section level zero.
+
+Appendix Sub-section
+~~~~~~~~~~~~~~~~~~~
+NOTE: Preface and appendix subsections start out of sequence at level
+2 (level 1 is skipped).  This only applies to multi-part book
+documents.
+
+
+
+[bibliography]
+Bibliography
+====================
+The bibliography list is a style of AsciiDoc bulleted list.
+
+[bibliography]
+- [[[taoup]]] Eric Steven Raymond. 'The Art of Unix
+  Programming'. Addison-Wesley. ISBN 0-13-142901-9.
+- [[[walsh-muellner]]] Norman Walsh & Leonard Muellner.
+  'DocBook - The Definitive Guide'. O'Reilly & Associates. 1999.
+  ISBN 1-56592-580-7.
+
+
+[glossary]
+Glossary
+================
+Glossaries are optional. Glossaries entries are an example of a style
+of AsciiDoc labeled lists.
+
+[glossary]
+A glossary term::
+  The corresponding (indented) definition.
+
+A second glossary term::
+  The corresponding (indented) definition.
+
+
+[colophon]
+Colophon
+========
+This book is built using asciidoc
+
+This document is an AsciiDoc multi-part book skeleton containing
+briefly annotated element placeholders plus a couple of example index
+entries and footnotes. Books are normally used to generate DocBook
+markup and the preface, appendix, bibliography, glossary and index
+section titles are significant ('specialsections').
+
+NOTE: Multi-part books differ from all other AsciiDoc document formats
+in that top level sections (dedication, preface, book parts,
+appendices, bibliography, glossary, index) must be level zero headings
+(not level one).
+
+
+[index]
+Index
+=====
+////////////////////////////////////////////////////////////////
+The index is normally left completely empty, it's contents are
+generated automatically by the DocBook toolchain.
+////////////////////////////////////////////////////////////////

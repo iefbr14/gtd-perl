@@ -26,7 +26,7 @@ package Hier::Report::bulkload;
 use strict;
 use warnings;
 
-use Hier::Tasks;
+use Hier::Meta;
 use Hier::Option;
 
 my $Parent;
@@ -104,20 +104,20 @@ sub Report_bulkload { #-- Create Projects/Actions items from a file
 sub find_hier {
 	my($type, $goal) = @_;
 
-	for my $ref (Hier::Tasks::hier()) {
+	for my $ref (meta_hier()) {
 		next unless $ref->get_type() eq $type;
 		next unless $ref->get_task() eq $goal;
 
 		return $ref->get_tid();
 	}
-	for my $ref (Hier::Tasks::hier()) {
+	for my $ref (meta_hier()) {
 		next unless $ref->get_type() eq $type;
 		next unless lc($ref->get_task()) eq lc($goal);
 
 		return $ref->get_tid();
 	}
 
-	for my $ref (Hier::Tasks::hier()) {
+	for my $ref (meta_hier()) {
 		next unless $ref->get_task() eq $goal;
 	
 		my($type) = $ref->get_type();

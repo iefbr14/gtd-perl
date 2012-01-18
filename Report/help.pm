@@ -15,7 +15,7 @@ BEGIN {
 	our $OurPath = __FILE__;
 }
 
-use Hier::Tasks;
+use Hier::Meta;
 
 our $OurPath;
 

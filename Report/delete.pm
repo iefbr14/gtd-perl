@@ -14,13 +14,13 @@ BEGIN {
 }
 
 
-use Hier::Tasks;
+use Hier::Meta;
 
 sub Report_delete {	#-- Delete listed actions/projects (will orphine items)
 	my($ref, $tid);
 
 	foreach my $task (@_) {
-		$ref = Hier::Tasks::find($task);
+		$ref = meta_find($task);
 
 		unless (defined $ref) {
 			print "Task $task doesn't exists\n";

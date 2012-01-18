@@ -1,0 +1,159 @@
+#!/usr/bin/perl -w
+# todo -p 3 . "Billing due $R"
+
+use strict;
+use warnings;
+use Getopt::Std;
+
+use Hier::util;
+use Hier::db;
+
+sub usage {
+	die <<"EOF";
+usage: $0 [options] cmd [sub-options]
+   used to set/query task in the todo database.
+global options:
+    -x      -- turn Debug on.
+    -m      -- update metadata
+
+    -n ...  -- new tasks ...
+    -e ...  -- edit tasks ...
+    -d ...  -- done tasks ...
+x   -u ...  -- update tasks ...
+    -D ...  -- delete tasks ...
+    -R :    -- Run report : and exit (see -R reports for list)
+
+x   -W      -- Wiki mode output
+x   -H      -- Html mode output
+    -L      -- list format
+
+    -a      -- all tasks but done
+    -A      -- All includes done
+    -Z :    -- gtd database group (default: test)
+
+    -p :    -- set the priority (default 3; range 1..5)
+    -c :    -- set the category (default )
+    -s :    -- set the title (subject) text 
+    -t :    -- set the task (description) text
+    -N :    -- set the note (result) text
+    -T :    -- set the tag
+
+    -o :    -- set option eg(Mask)
+
+    -l :    -- limit to first : (default 10)
+    -r      -- reverse sort
+
+Meta Info:
+	\@Category or \@Context (Space or Time) or \@Tag
+	/title/ ==> maps to list of tids for actions
+	P:Project G:Goal R:Roal (Sets parents)
+	=Project -- Sets parents
+	NNNN (Project id) -- Sets parents
+	*Type (Sets type)
+	^sort^criteria	
+	+ or ~ attributes for filters
+EOF
+}
+
+my %Opt;
+
+my($Hier) = $0 =~ /hier$/ ? 1 : 0;
+
+my($Both) = 'xmeduDR:WHLnaAZ:o:T:';
+if ($Hier) {
+	&getopts("${Both}", \%Opt) or usage();
+} else {
+	&getopts("${Both}p:c:N:s:t:l:r", \%Opt) or usage();
+}
+
+my $Zname = $Opt{Z} || 'gtd';
+my $Report   = $Opt{R} || 0;
+
+set_option(Title    => $Opt{s} || '');
+set_option(Task     => $Opt{t} || '');
+set_option(Note     => $Opt{N} || '');
+
+set_option(Category => $Opt{c} || '');
+set_option(Priority => $Opt{p} || 0);
+set_option(MetaFix  => $Opt{m} || 0);
+set_option(Limit    => $Opt{l}); 	# reports set own defaults
+set_option(Reverse  => $Opt{r} || 0);
+set_option(Debug    => $Opt{x} || 0);
+set_option(Tag      => $Opt{T} || '');
+if ($Opt{o}) {
+	set_option($Opt{o}, 1);
+}
+
+add_filters('+future') if $Opt{a};
+add_filters('+done')   if $Opt{A};
+
+my $Done     = $Opt{d} || 0;
+my $Delete   = $Opt{D} || 0;
+
+set_option(Wiki     => $Opt{W} || 0);
+set_option(Html     => $Opt{H} || 0);
+set_option(List     => $Opt{L} || 0);
+
+$Report = 'doit' if $0 =~ /doit$/;
+
+DB_init($Zname);
+
+if ($Opt{n}) {
+	if ($Hier) {
+		report('new','project');
+	} else {
+		report('new','action');
+	}
+}
+
+if ($Report) {
+	report($Report);
+}
+
+if ($Opt{e}) {
+	report('edit');
+}
+if ($Done) {
+	report('done');
+}
+
+if ($Delete) {
+	report('delete');
+}
+
+if (@ARGV && $ARGV[0] =~ /^\w+$/) {
+	report(shift @ARGV);
+}
+
+if ($Hier) {
+	report('hier');
+} else {
+	report('todo');
+}
+exit 0;
+
+
+sub report {
+	my($report) = shift @_;
+
+	eval "use Hier::Report::$report";
+	if ($@) {
+		my($error) = "Report compile: $@\n";
+		if ($error =~ /Can't locate Hier.Report.$report/) {
+			print "Unknown command $report\n";
+			print "try:  $0 reports # for a list of reports\n";
+			exit 1;
+		}
+		print "Report compile failed: $@\n";
+		exit 1;
+	}
+	if (@_) {
+		unshift(@ARGV, @_);
+	}
+	eval "Report_$report(\@ARGV);";	# call report with argv
+	if ($@) {
+		print "Report $report failed: $@";
+		exit 2;
+	}
+	exit 0;
+}

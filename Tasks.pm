@@ -3,8 +3,11 @@ package Hier::Tasks;
 use strict;
 use warnings;
 
+use Hier::Option;
+
+use base qw(Hier::Hier Hier::Fields Hier::Filter Hier::Format);
+
 my %Task;		# all Todo items (including Hier)
-my @Selected;
 
 sub find {
 	my($tid) = @_;
@@ -16,48 +19,6 @@ sub find {
 sub all {
 	return values %Task;
 }
-
-sub hier {
-	return grep { $_->is_ref_hier() } selected();
-}
-
-sub selected {
-	if (@Selected == 0) {
-		@Selected = all();
-	}
-	return @Selected;
-}
-
-sub XXfiltered {
-	if (@Selected == 0) {
-		foreach my $ref (selected()) {
-#			next if $ref->filtered();
-			push(@Selected, $ref);
-		}
-	}
-
-	return @Selected;
-}
-
-sub sorted {
-	if (@Selected == 0) {
-		@Selected = XXfiltered();
-	}
-	@Selected = Hier::Sort::sorter($_[0], \@Selected);
-	return @Selected;
-}
-
-sub matching_type {
-	my($type) = @_;
-
-	return grep { $_->get_type() eq $type } selected();
-}
-
-
-use base qw(Hier::Hier Hier::Fields Hier::Filter Hier::Selection);
-
-use Hier::Hier;
-use Hier::Sort;
 
 my $Max_todo = 0; 	# Last todo id (unique for all tables)
 my $Debug = 1; 
@@ -87,7 +48,7 @@ sub new {
 sub insert {
 	my($self) = @_;
 
-	gtd_insert($self);
+	Hier::db::gtd_insert($self);
 }
 
 sub max {
@@ -137,12 +98,21 @@ sub delete {
 
 #------------------------------------------------------------------------------
 
-sub default { my($val, $default) = @_; return $val if defined $val; return $default; }
+sub default {
+	my($val, $default) = @_;
+
+	return $default unless defined $val;
+
+	return '' if $val eq '0000-00-00';
+	return '' if $val eq '0000-00-00 00:00:00';
+
+	return $val;
+}
+
 sub get_KEY { my($self, $key) = @_;  return default($self->{$key}, ''); }
 
 sub get_tid          { my($self) = @_; return $self->{todo_id}; }
 
-sub get_actions      { my($self) = @_; return default($self->{_actions}, undef); }
 sub get_category     { my($self) = @_; return default($self->{category}, ''); }
 sub get_completed    { my($self) = @_; return default($self->{completed}, ''); }
 sub get_context      { my($self) = @_; return default($self->{context}, ''); }
@@ -159,7 +129,7 @@ sub get_mask         { my($self) = @_; return default($self->{mask}, undef); }
 sub get_modified     { my($self) = @_; return default($self->{modified}, ''); }
 sub get_nextaction   { my($self) = @_; return default($self->{nextaction}, 'n'); }
 sub get_note         { my($self) = @_; return default($self->{note}, ''); }
-sub get_priority     { my($self) = @_; return default($self->{priority}, 3); }
+sub get_priority     { my($self) = @_; return default($self->{priority}, 4); }
 sub get_title        { my($self) = @_; return default($self->{task}, ''); }
 sub get_task         { my($self) = @_; return default($self->{task}, ''); }
 sub get_tickledate   { my($self) = @_; return default($self->{tickledate}, ''); }
@@ -265,7 +235,7 @@ sub dset {
 
 	$ref->{$field} = $val;
 
-	print "Dirty $field => $val\n" if $Debug;
+	warn "Dirty $field => $val\n" if $Debug;
 
 	return $ref;
 }
@@ -275,5 +245,58 @@ sub update {
 
 	Hier::db::gtd_update($self);
 }
+
+END {
+	foreach my $ref (Hier::Tasks::all()) {
+
+		next unless $ref->is_dirty();
+
+		my $tid = $ref->get_tid();
+
+		warn "Dirty: $tid\n";
+		$ref->update();
+	}
+}
+
+
+sub is_later {
+	my($ref) = @_;
+
+	my($tickle) = $ref->get_tickledate();
+
+	return 0 unless $tickle;
+	return 0 if $tickle lt get_today();	# tickle is after today
+
+	return 1;
+}
+
+sub is_someday {
+	my($ref) = @_;
+
+	return 1 if $ref->is_later();
+	return 1 if $ref->get_isSomeday() eq 'y';
+
+	return 0;
+}
+
+sub is_active {
+	my($ref) = @_;
+
+	return 0 if $ref->is_someday();
+	return 0 if $ref->get_completed();
+
+	return 1;
+}
+
+sub is_nextaction {
+	my($ref) = @_;
+
+	return 0 if $ref->is_someday();
+	return 0 if $ref->get_completed();
+	return 1 if $ref->get_nextaction() eq 'y';
+
+	return 0;
+}
+
 
 1;  # don't forget to return a true value from the file

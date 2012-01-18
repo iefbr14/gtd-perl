@@ -3,8 +3,6 @@ package Hier::Report::bulklist;  # assumes Some/Module.pm
 use strict;
 use warnings;
 
-use Hier::Tasks;
-
 sub Report_bulklist { #-- Bulk List project for use in bulk load
 	die;
 }
@@ -35,12 +33,13 @@ sub Report_bulklist { #-- Bulk List project for use in bulk load
 use strict;
 use warnings;
 
-use Hier::Tasks;
+use Hier::Meta;
 use Hier::util;
 use Hier::Walk;
 use Hier::Resource;
 use Hier::Option;
 use Hier::Filter;
+use Hier::util;
 
 my($Parent);
 my($Type);
@@ -101,20 +100,20 @@ sub old_bulkload {
 sub find_hier {
 	my($type, $goal) = @_;
 
-	for my $ref (Hier::Tasks::hier()) {
+	for my $ref (meta_hier()) {
 		next unless $ref->get_type() eq $type;
 		next unless $ref->get_task() eq $goal;
 
 		return $ref->get_tid();
 	}
-	for my $ref (Hier::Tasks::hier()) {
+	for my $ref (meta_hier()) {
 		next unless $ref->get_type() eq $type;
 		next unless lc($ref->get_task()) eq lc($goal);
 
 		return $ref->get_tid();
 	}
 
-	for my $ref (Hier::Tasks::hier()) {
+	for my $ref (meta_hier()) {
 		next unless $ref->get_task() eq $goal;
 	
 		my($type) = $ref->get_type();
@@ -173,7 +172,7 @@ sub add_action {
 
 
 sub _report_hier {	
-	add_filters('+live');
+	meta_filter('+a:live', '^title', 'bulk');
 
 	my($criteria) = meta_desc(@ARGV);
 
@@ -188,22 +187,9 @@ sub _report_hier {
 			die "unknown type $criteria\n";
 		}
 	}
-	$walk->walk();
+	$walk->walk('m');
 }
 
-
-sub _report_taskjuggler {	
-	my(@criteria) = @_;
-	my($tid, $task, $cat, $ins, $due, $desc);
-
-	add_filters('+any', '+all', @criteria);
-	my($planner) = new Hier::Walk;
-	bless $planner;
-
-	$planner->set_depth('a');
-	$planner->filter();
-	$planner->walk();
-}
 
 sub header {
 	hier_detail(@_);
@@ -250,8 +236,7 @@ sub hier_detail {
 
 	# pri 1=>200 and 5=>1000 so tj 1=>900 and 5=>100
 	my $tj_pri = 1100 - $pri * 200;
-	$tj_pri -= 100 if $ref->get_isSomeday() eq 'y';
-#	$tj_pri += $ref->count_actions();
+	$tj_pri -= 100 if $ref->is_someday();
 	$tj_pri = 1 if $tj_pri <= 0;
 
 
@@ -333,7 +318,7 @@ sub parent_role {
 sub dep_path {
 	my($tid) = @_;
 
-	my($ref) = Hier::Tasks::find($tid);
+	my($ref) = meta_find($tid);
 	return unless $ref;
 
 	my($path) = $ref->get_type() . '_' . $tid;
@@ -353,7 +338,7 @@ use Hier::util;
 use Hier::Tasks;
 
 sub _report_actions {	
-	add_filters('+active', '+next');
+	meta_filter('+live');
 	report_actions(1, 'Actions', meta_desc(@ARGV));
 }
 
@@ -365,8 +350,8 @@ sub report_actions {
 	my($tid, $pid, $pref, $proj, %active, $title);
 
 	# find all projects (next actions?)
-	for my $ref (Hier::Tasks::selected()) {
-		next unless $ref->is_ref_task();
+	for my $ref (meta_selected()) {
+		next unless $ref->is_task();
 		next if $ref->filtered();
 
 		$pref = $ref->get_parent();
@@ -417,24 +402,9 @@ sub report_actions {
 
 			$tid = $ref->get_tid();
 			$title = $ref->get_title();
+			my($type) = disp_type($ref);
 
-			if ($ref->get_completed()) {
-				print "$tid:\t     [X] $title\n";
-				next;
-			}
-			if ($ref->get_later()) {
-				print "$tid:\t     <_] $title\n";
-				next;
-			}
-			if ($ref->get_isSomeday() eq 'y') {
-				print "$tid:\t     [_> $title\n";
-				next;
-			}
-			if ($ref->get_nextaction() eq 'y') {
-				print "$tid:\t     [_] $title\n";
-			} else {
-				print "$tid:\t     [ ] $title\n";
-			}
+			print "$tid:\t     $type $title\n";
 			bulk_display('+', $ref->get_description());
 			bulk_display('=', $ref->get_note());
 			print "\n";

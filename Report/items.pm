@@ -14,11 +14,15 @@ BEGIN {
 }
 
 use Hier::util;
-use Hier::Tasks;
+use Hier::Meta;
 use Hier::Filter;
+use Hier::Format;
+use Hier::Option;
+use Hier::Sort;
 
 sub Report_items {	#-- list titles for any filtered class (actions/projects etc)
-	add_filters('+any', '+all');	# everybody into the pool
+	# everybody into the pool by name
+	meta_filter('+any', '^title', 'item');	
 
 	my($name) = meta_desc(@ARGV);
 	if ($name) {
@@ -39,23 +43,14 @@ sub list_items {	#-- List projects with waiting-fors
 	report_header($typename);
 
         my($tid, $title, $desc, @list);
-        for my $ref (Hier::Tasks::matching_type($type)) {
+        for my $ref (meta_matching_type($type)) {
 		next if $ref->filtered();
 
                 push(@list, $ref);
         }
-        for my $ref (sort by_task @list) {
-		$tid = $ref->get_tid();
-		$title = $ref->get_title();
-                $desc = summary_line($ref->get_description(), ' -- ');
-                print "$tid\t  [_] $title$desc\n";
+        for my $ref (sort_tasks @list) {
+		display_task($ref);
         }
-        print "\n";
-}
-
-sub by_task {
-	return $a->get_title() cmp $b->get_title()
-	||     $a->get_tid()   <=> $b->get_tid();
 }
 
 1;  # don't forget to return a true value from the file

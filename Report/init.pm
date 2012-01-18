@@ -13,8 +13,6 @@ BEGIN {
 	@EXPORT      = qw(&Report_goals);
 }
 
-use Hier::Tasks;
-
 sub Report_init {	#-- Init ~/.todo structure
 	my($home) = $ENV{HOME};
 

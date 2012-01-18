@@ -3,7 +3,7 @@ package Hier::Report::bulkedit;
 use strict;
 use warnings;
 
-use Hier::Tasks;
+use Hier::Meta;
 
 #------------------------------------------------------------------------------
 sub Report_bulk { #-- Create Bulk create Projects/Actions items from a file

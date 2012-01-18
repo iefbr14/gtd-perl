@@ -13,7 +13,9 @@ BEGIN {
 	@EXPORT      = qw(&Report_renumber);
 }
 
-use Hier::Tasks;
+use Hier::Meta;
+
+my %Dep_map;
 
 sub Report_renumber { #-- Renumber task Ids 
 	if (@ARGV) {
@@ -26,11 +28,12 @@ sub Report_renumber { #-- Renumber task Ids
 }
 
 sub renumber_all { #-- Renumber task Ids 
-	renumb(\&is_value,       1,    9, 'Values');
-	renumb(\&is_vision,     10,   50, 'Vision');
-	renumb(\&is_goals,      50,  199, 'Goals/Roles');
-	renumb(\&is_project,   200,  999, 'Projects');
-	renumb(\&is_task,     1000, 9999, 'Actions');
+	renumb(\&is_value,       1,    4, 'Values');
+	renumb(\&is_vision,      5,    9, 'Vision');
+	renumb(\&is_roles,      10,   29, 'Roles');
+	renumb(\&is_goals,      30,   99, 'Goals');
+	renumb(\&is_project,   100,  999, 'Projects');
+	renumb(\&is_action,   1000, 9999, 'Actions');
 }
 
 sub renumber_pair {
@@ -56,10 +59,15 @@ sub is_vision {
 	return 1 if $ref->get_type() eq 'v';	# Vision
 	return 0;
 }
-sub is_goals {
+sub is_roles {
 	my($ref) = @_;
 
 	return 1 if $ref->get_type() eq 'o';	# Role
+	return 0;
+}
+sub is_goals {
+	my($ref) = @_;
+
 	return 1 if $ref->get_type() eq 'g';	# Goal
 	return 0;
 }
@@ -71,10 +79,10 @@ sub is_project {
 	return 0;
 }
 
-sub is_task {
+sub is_action {
 	my($ref) = @_;
 
-	return $ref->is_ref_task();
+	return $ref->is_task();
 }
 
 sub renumb {
@@ -83,7 +91,7 @@ sub renumb {
 	print "Processing $who range: $min $max\n";
 	my(%inuse, $tid, @try);
 
-	for my $ref (Hier::Tasks::selected()) {
+	for my $ref (meta_selected()) {
 		$tid = $ref->get_tid();
 
 		if ($min <= $tid && $tid <= $max) {
@@ -126,12 +134,37 @@ sub renumb {
 sub renumber_task {
 	my($tid, $new) = @_;
 
-	my $ref = Hier::Tasks::find($tid);
+	my $ref = meta_find($tid);
 
 	die "Can't renumber task $tid (doesn't exists)\n" unless $ref;
 
+	die "Can't renumber task $tid (has depedencies)\n" if dependent($ref);
 	print "$tid => $new\n";
 	$ref->set_tid($new);
+}
+
+sub dependent {
+	my($ref) = @_;
+
+	my($id) = $ref->get_tid();
+
+	unless (%Dep_map) {
+		return $Dep_map{$id};
+	}
+	warn "Building Dep_map\n";
+		
+	my($pref, $pid, $depends);
+	foreach my $pref ( meta_all()) {
+		$depends = $pref->get_depends();
+		$pid = $pref->get_tid();
+
+		foreach my $depend (split(/[ ,]/, $depends)) {
+			$Dep_map{$depend} .= ','.$pid;
+		}
+	}
+
+	
+	return $Dep_map{$id};
 }
 
 

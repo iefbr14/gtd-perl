@@ -13,6 +13,7 @@ BEGIN {
 	@EXPORT      = qw(&Report_new);
 }
 
+use Hier::Meta;
 use Hier::Tasks;
 use Hier::util;
 use Hier::Option;

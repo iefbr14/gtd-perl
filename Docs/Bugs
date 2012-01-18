@@ -1,0 +1,29 @@
+../db.pm:		next if $row->{parentId} == 0;	# we are buggered up
+../db.pm:		next if $row->{itemId} == 0;	# we are buggered up
+../db.pm:			###BUG### we need to create it?
+../db.pm:		print "#-Using $confname in Access.ini\n" if $Debug;
+../Filter.pm:		print "#-Filter: $rule\n" if $Debug;
+../Filter.pm:	print "#-Filter Sub: ", dispflags($Exclude), "\n" if $Debug;
+../Filter.pm:	print "#-Filter Add: ", dispflags($Include), "\n" if $Debug;
+../Sort.pm:	###BUG### fetch command line option sort override
+../Sort.pm:	###BUG### make by_Sort an eval?
+../Sort.pm:	###BUG### junk sub need to walk to hier
+../util.pm:		print "#-Set space context:  $cct\n" if $Debug;
+../util.pm:		print "#-Set time context:   $cct\n" if $Debug;
+../util.pm:		print "#-Set category:       $cct\n" if $Debug;
+../util.pm:		print "#-Set tag:            $key\n" if $Debug;
+../util.pm:		print "#-Set space context:  $key\n" if $Debug;
+../util.pm:		print "#-Set time context:   $key\n" if $Debug;
+../util.pm:		print "#-Set category:       $key\n" if $Debug;
+../util.pm:		print "#-Set tag:            $key\n" if $Debug;
+../Report/actions.pm:		###BUG### should walk down from here vi get_children
+../Report/actions.pm:		###BUG### rather walk up in has_parent
+../Report/doit.pm:my($List) = 0; ###BUG### should be an option
+../Report/dump.pm:	###BUG### handle missing keys from @Ordered
+../Report/edit.pm:		###BUG### handle missing keys from @Ordered (see Report/dump.pm)
+../Report/new.pm:	###BUG### make this fast and simple.
+../Report/purge.pm:###BUG### walk forward stopping on excludes
+../Report/purge.pm:###BUG### walk backward keeping on includes
+../Report/review.pm:my($List) = 0; ###BUG### should be an option
+../Report/review.pm:my($Done) = 0; ###BUG### should be an option
+../Report/status.pm:#	for my $option (qw(pri debug db title report)) {

@@ -15,11 +15,12 @@ BEGIN {
 
 
 use Hier::util;
-use Hier::Tasks;
+use Hier::Meta;
+use Hier::Sort;
 use Hier::Option;
 use Hier::Filter;
+use Hier::Format;
 
-my @Lines;
 my $Today = get_today(0);
 my $Later = get_today(+7);
 my $Priority = 0;
@@ -27,19 +28,25 @@ my $Limit = 2;
 
 my($List) = 0; ###BUG### should be an option
 
+
+
+### rethink totally
+### REWRITE --- scan list for \d+ and put in work list
+### if work list is empty  
+
 sub Report_doit {	#-- doit tracks which projects/actions have had movement
 
 	$List = option('List', 0);
 	$Limit = option('Limit', 2);
 
 	$= = lines();
-	add_filters('+active', '+next');
+	meta_filter('+a:live', '^doitdate', 'simple');
 	my($target) = 0;
 	my($action) = \&doit_list;
 
-	foreach my $arg (Hier::util::meta_argv(@ARGV)) {
+	foreach my $arg (meta_argv(@ARGV)) {
 		if ($arg =~ /^\d+$/) {
-			my($ref) = Hier::Tasks::find($arg);
+			my($ref) = meta_find($arg);
 
 			unless (defined $ref) {
 				warn "$arg doesn't exits\n";
@@ -54,8 +61,11 @@ sub Report_doit {	#-- doit tracks which projects/actions have had movement
 			next;
 		}
 		if ($arg eq 'list') {
-			list_all();
-			$target = 1;
+			display_mode('d_lst');
+			next;
+		}
+		if ($arg eq 'task') {
+			display_mode('task');
 			next;
 		}
 		if ($arg eq 'later') {
@@ -89,10 +99,10 @@ sub Report_doit {	#-- doit tracks which projects/actions have had movement
 			set_option('Limit', $Limit);
 			next;
 		}
-		print "Unknown option: $arg (ignored) (try option help)\n";
+		print "Unknown option: $arg (ignored) (try help)\n";
 	}
 	if ($target == 0) {
-		list_all();
+		list_all($action);
 	}
 }
 
@@ -145,103 +155,34 @@ sub doit_priority {
 }
 
 sub list_all {
+	my($action) = @_;
 	my(@list);
 
-	for my $ref (Hier::Tasks::sorted('^doitdate')) {
-		next unless $ref->is_ref_task();
+	for my $ref (meta_sorted()) {
+		next unless $ref->is_task();
 		next if $ref->filtered();
 
 		my $pref = $ref->get_parent();
 		next unless defined $pref;
 		next if $pref->filtered();
 		push(@list, $ref);
+
+		last if (scalar @list >= $Limit);
 	}
-	doit_list(@list);
+
+	&$action(@list);
 }
 
 		
 sub doit_list {
-	my($tid, $ref, $pri, $task, $cat, $created, $modified,
-		$doit, $desc, $note, @desc);
-
-print <<"EOF" unless $List;
-  Id   Pri Category  Doit        Task/Description
-==== === = ========= =========== ==============================================
-EOF
-
-format DOIT =
-@>>> [_] @ @<<<<<<<< @<<<<<<<<<< ^<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-$tid,  $pri, $cat,       $doit,    $desc
-~~                               ^<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                                   $desc
-.
-	$~ = "DOIT";	# set STDOUT format name to HIER
-
 	foreach my $ref (@_) {
+		display_task($ref);
+
 		last if $Limit-- <= 0;
-
-
-		$tid = $ref->get_tid();
-
-		$pri       = $ref->get_priority();
-
-		$task      = $ref->get_task() || $ref->get_context() || '';
-		$cat       = $ref->get_category() || '';
-		$created   = $ref->get_created();
-		$modified  = $ref->get_modified() || $created;
-		$doit      = $ref->get_doit() || '';
-		$desc      = $ref->get_description();
-		$note      = $ref->get_note();
-
-		my($pid, $pref, $pname, $pdesc);
-
-		$pref     = $ref->get_parent();
-		next unless defined $pref;
-
-		$pid      = $pref->get_tid();
-		$pname    = $pref->get_title();
-		$pdesc    = $pref->get_description();
-
-		my($gid, $gref, $gname);
-		$gref      = $pref->get_parent();
-		next unless defined $gref;
-
-		$gid      = $gref->get_tid();
-		$gname    = $gref->get_title();
-
-#		next if $gref->hier_filtered();
-
-		if ($List) {
-			$desc =~ s/\n.*//s;
-			print join("\t", $tid, $pri, $cat, $doit, $pname, $task, $desc), "\n";
-		} else {
-			chomp $gname;
-			chomp $pname;
-			chomp $pdesc;
-			chomp $task;
-			chomp $desc;
-			chomp $note;
-			$note = "Outcome: $note" if $note;
-
-			$desc = join("\r", "G[$gid]: $gname",
-				  "P[$pid]: $pname", 
-					split("\n", $pdesc),
-				  "*[$tid] $task",
-					split("\n", $desc),
-					split("\n", $note)
-			);
-
-			write;
-		}
-#		last if $- < 10;
 	}
+
 }
 
-sub next_line {
-	my($v) =  shift(@Lines);
-	$v ||= '';
-	return $v;
-}
 
 sub doit_help {
 	print <<'EOF';

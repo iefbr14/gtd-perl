@@ -22,7 +22,7 @@ use constant {
 	ITEM		=> 'T',
 };
 
-sub is_ref_task {
+sub is_task {
 	my ($ref) = @_;
 
 	return 0 unless $ref;
@@ -37,7 +37,7 @@ sub is_ref_task {
 	return 0;
 }
 
-sub is_ref_hier {
+sub is_hier {
 	my ($ref) = @_;
 
 	return 0 unless $ref;
@@ -54,7 +54,7 @@ sub is_ref_hier {
 	return 0;
 }
 
-sub is_ref_list {
+sub is_list {
 	my ($ref) = @_;
 
 	return 0 unless $ref;

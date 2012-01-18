@@ -14,17 +14,18 @@ BEGIN {
 }
 
 use Hier::util;
-use Hier::Tasks;
+use Hier::Meta;
 use Hier::Option;
 use Hier::Filter;
+use Hier::Format;
+use Hier::Sort;
 
 my $Mode = 'p';	# project, doit, next-actions, actions, someday
 
 my($List) = 0; ###BUG### should be an option
-my($Done) = 0; ###BUG### should be an option
 
 sub Report_review {	#-- Review all projects with actions
-	add_filters('+live');
+	meta_filter('+p:live', '^doitdate', 'simple');
 	my $desc = meta_desc(@ARGV);
 
 	$Mode = 'p';
@@ -36,13 +37,9 @@ sub Report_review {	#-- Review all projects with actions
 		$Mode = 'a';
 	} elsif (lc($desc) eq 'project') {
 		$Mode = 'p';
-	} elsif (lc($desc) eq 'plan') {
-		add_filters('=plan');
-	} elsif (lc($desc) eq 'someday') {
-		add_filters('=later');
 	} elsif (lc($desc) eq 'waiting') {
 		$Mode = 'w';
-		add_filters('=wait');
+		meta_filter('+wait');
 	} else {
 		$desc = "= $desc =";
 	}
@@ -53,14 +50,14 @@ sub Report_review {	#-- Review all projects with actions
 sub reload {
 	if ($Mode eq 'p') {
 		mode_projects(1, 'Projects', meta_desc(@ARGV));
-	} elsif ($Mode eq 's') {
-		mode_someday();
-	} elsif ($Mode eq 'a') {
-		mode_action();
 	} elsif ($Mode eq 'd') {
 		mode_doit();
+	} elsif ($Mode eq 's') {
+		mode_type('s');
+	} elsif ($Mode eq 'a') {
+		mode_type('a');
 	} elsif ($Mode eq 'w') {
-		mode_waiting();
+		mode_type('a');
 	} else {
 		die "Unknown mode: $Mode (Projects, Someday, Next, Actions, Doit, Waiting\n";
 	}
@@ -69,58 +66,31 @@ sub reload {
 sub mode_doit {
 	my(@list);
 
-	for my $ref (Hier::Tasks::sorted('^doitdate')) {
-		next unless $ref->is_ref_task();
-		next if $ref->filtered();
-
-		my $pref = $ref->get_parent();
-		next unless defined $pref;
-		next if $pref->filtered();
-
-		doit_list($ref);
-		get_status($ref);
+	for my $ref (meta_sorted('^doitdate')) {
+		lookat($ref);
 	}
 }
 
-sub mode_actions {
-	for my $ref (Hier::Tasks::matching_type('a')) {
-		next unless $ref->is_ref_task();
-		next if $ref->filtered();
+sub lookat {
+	my($ref) = @_;
 
-		my $pref = $ref->get_parent();
-		next unless defined $pref;
-		next if $pref->filtered();
+	return unless $ref->is_task();
+	next if $ref->filtered();
+	next if $ref->is_later();
 
-		doit_list($ref);
-		get_status($ref);
-	}
+	my $pref = $ref->get_parent();
+	next unless defined $pref;
+	next if $pref->filtered();
+
+	display_task($ref);
+	get_status($ref);
 }
 
-sub mode_next {
-	for my $ref (Hier::Tasks::matching_type('n')) {
-		next unless $ref->is_ref_task();
-		next if $ref->filtered();
+sub mode_type {
+	my($type) = @_;
 
-		my $pref = $ref->get_parent();
-		next unless defined $pref;
-		next if $pref->filtered();
-
-		doit_list($ref);
-		get_status($ref);
-	}
-}
-
-sub mode_waiting {
-	for my $ref (Hier::Tasks::matching_type('w')) {
-		next unless $ref->is_ref_task();
-		next if $ref->filtered();
-
-		my $pref = $ref->get_parent();
-		next unless defined $pref;
-		next if $pref->filtered();
-
-		doit_list($ref);
-		get_status($ref);
+	for my $ref (sort_tasks meta_matching_type($type)) {
+		lookat($ref);
 	}
 }
 
@@ -134,67 +104,19 @@ sub mode_projects {
 	my($ref, $proj, %wanted, %counted, %actions);
 
 	# find all next and remember there projects
-	for my $ref (Hier::Tasks::matching_type('p')) {
+	for my $ref (sort_tasks meta_matching_type('p')) {
 		next if $ref->filtered();
+		next if $ref->is_later();
 
-		my $pid = $ref->get_tid();
-		$wanted{$pid} = $ref;
-		$counted{$pid} = 0;
-		$actions{$pid} = 0;
-
-		for my $child ($ref->get_children()) {
-			$counted{$pid}++ unless $child->filtered();
-			$actions{$pid}++;
-
-			$work_load++ unless $child->filtered();
-		}
-	}
-
-### format:
-### ==========================
-### Value Vision Role
-### -------------------------
-### 99	Goal 999 Project
-	my($cols) = columns() - 2;
-
-	my($g_id) = 0;
-	my($prev_goal) = 0;
-	my($prev_role) = 0;
-	my($pid, $g_ref);
-	for my $ref (sort by_goal_task values %wanted) {
-		$pid = $ref->get_tid();
-
-		$g_ref = $ref->get_parent();
-		$g_id  = $g_ref->get_tid();
-
-		if ($g_id != $prev_goal) {
-			print '#', "=" x $cols, "\n" if $prev_goal != 0;
-			print "$g_id:\tG:", $g_ref->get_title();
-
-			my $r_ref = $g_ref->get_parent();
-			my $r_id = $r_ref->get_tid();
-			print " [** R:$r_id: ", $r_ref->get_title(), " **]\n";
-			$prev_goal = $g_id;
-		} else {
-#			print '#', "-" x $cols, "\n";
-		}
-
-		$counted{$pid} = 0 unless defined $counted{$pid};
-		print "$pid:\tP:", $ref->get_title(), 
-			' (', $counted{$pid}, '/', $actions{$pid}, ')',
-			"\n";
+		my($work, $counts) = count_children($ref);
+		$work_load += $work;
+		display_rgpa($ref, $counts);
 		++$proj_cnt;
 
 		get_status($ref);
 
 	}
 	print "***** Work Load: $proj_cnt Projects, $work_load action items\n";
-}
-
-sub by_goal_task {
-	return $a->get_parent->get_title() cmp $b->get_parent->get_title()
-	    or $a->get_title() cmp $b->get_title()
-	    or $a->get_tid() <=> $b->get_tid();
 }
 
 sub get_status {
@@ -269,25 +191,17 @@ sub get_status {
    }
 }
 
-use Hier::util;
-use Hier::Tasks;
 
 sub _report_doit {	
 
-	$List = option('List', 0);
-	$Done = option('Done', 0);
-
-	if ($Done) {
-	}
-
 	$= = lines();
-	add_filters('+active', '+next');
+	meta_filter('+live', '^doit', 'doit');
 	my($target) = 0;
 	my($action) = \&doit_list;
 
 	foreach my $arg (Hier::util::meta_argv(@ARGV)) {
 		if ($arg =~ /^\d+$/) {
-			my($ref) = Hier::Tasks::find($arg);
+			my($ref) = meta_find($arg);
 
 			unless (defined $ref) {
 				warn "$arg doesn't exits\n";
@@ -451,5 +365,4 @@ EOF
 #limit:  -- Set the doit limit to this number of items
 }
 
-1;  # don't forget to return a true value from the file
 1;  # don't forget to return a true value from the file

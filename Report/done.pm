@@ -14,11 +14,11 @@ BEGIN {
 }
 
 use Hier::Option;
-use Hier::Tasks;
+use Hier::Meta;
 
 sub Report_done {	#-- Tag listed projects/actions as done
 	for my $tid (@_) {
-		my $ref = Hier::Tasks::find($tid);
+		my $ref = meta_find($tid);
 
 		unless (defined $ref) {
 			print "Task $tid not found to tag done\n";

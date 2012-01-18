@@ -14,23 +14,18 @@ BEGIN {
 }
 
 use Hier::util;
-use Hier::Tasks;
+use Hier::Meta;
 use Hier::Filter;
+use Hier::Sort;
+use Hier::Option;
+use Hier::Format;
 
 my %Meta_key;
 
 sub Report_projects {	#-- List projects -- live, plan or someday
-	add_filters('+live');
-	my $desc = meta_desc(@ARGV);
+	#meta_filter('+next', '^focus', 'rgpa');
+	meta_filter('+p:next', '^focus', 'simple');
 
-	if (lc($desc) eq 'plan') {
-		add_filters('=plan');
-	} elsif (lc($desc) eq 'someday') {
-		add_filters('=later');
-	} else {
-		$desc = "= $desc =";
-	}
-		
 	report_projects(1, 'Projects', meta_desc(@ARGV));
 }
 
@@ -44,7 +39,7 @@ sub report_projects {
 	my($ref, $proj, %wanted, %counted, %actions);
 
 	# find all next and remember there projects
-	for my $ref (Hier::Tasks::matching_type('p')) {
+	for my $ref (meta_matching_type('p')) {
 		next if $ref->filtered();
 
 		my $pid = $ref->get_tid();
@@ -73,65 +68,19 @@ sub report_projects {
 	my($r_id) = 0;
 	my($prev_role) = 0;
 
-	my($pid, $g_ref, $r_ref);
+	my($pid, $title, $g_ref, $r_ref);
 
 	for my $ref (sort by_goal_task values %wanted) {
-		$pid = $ref->get_tid();
 
-		$g_ref = $ref->get_parent();
-		$g_id  = $g_ref->get_tid();
+		my($work, $counts) = count_children($ref);
+		$work_load += $work;
+		display_rgpa($ref, $counts);
+#		display_task($ref, $counts);
 
-		$r_ref = $g_ref->get_parent();
-		$r_id  = $r_ref->get_tid();
-
-		#print "$r_id\t$g_id\t$pid\t$Meta_key{$pid}\n";next;
-
-		if ($r_id != $prev_role) {
-			print '#', "=" x $cols, "\n" if $prev_role != 0;
-			print " [*** Role $r_id: ", $r_ref->get_title(), " ***]\n";
-			print '#', "-" x $cols, "\n";
-
-			$prev_role = $r_id;
-			$prev_goal = 0;
-		}
-
-		if ($g_id != $prev_goal) {
-			print '#', "-" x $cols, "\n" if $prev_goal != 0;
-			print "$g_id:\tG:", $g_ref->get_title(), "\n";
-
-			$prev_goal = $g_id;
-		}
-
-		$counted{$pid} = 0 unless defined $counted{$pid};
-		print "$pid:\tP:", $ref->get_title(), 
-			' (', $counted{$pid}, '/', $actions{$pid}, ')',
-			"\n";
 		++$proj_cnt;
 
 	}
 	print "***** Work Load: $proj_cnt Projects, $work_load action items\n";
-}
-
-sub by_goal_task {
-	return Meta_key($a) cmp Meta_key($b);
-}
-
-sub Meta_key {
-	my($ref) = @_;
-
-	my($tid) = $ref->get_tid();
-
-	my($val) = $Meta_key{$tid};
-	return $val  if defined $val;
-
-	$val = join("\t",  
-	    $ref->get_parent->get_parent->get_title(),
-	    $ref->get_parent->get_title(),
-	    $ref->get_title(),
-	    $ref->get_tid(),
-	);
-	$Meta_key{$tid} = $val;
-	return $val;
 }
 
 1;  # don't forget to return a true value from the file

@@ -10,17 +10,21 @@ BEGIN {
 	# set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
-	@EXPORT      = qw(&Report_udpate);
+	@EXPORT      = qw(&Report_update);
 }
 
 use Hier::util;
-use Hier::Tasks;
+use Hier::Meta;
 use Hier::Option;
 
 sub Report_update {	#-- Command line update of an action/project
 	my($task, $desc) = @_;
 
-	my $ref = Hier::Tasks::find($task);
+	unless (defined $task) {
+		print "NO task specified to update\n";
+		return;
+	}
+	my $ref = meta_find($task);
 	unless (defined $ref) {
 		print "Task $task not found to update\n";
 		return;
@@ -45,6 +49,10 @@ sub Report_update {	#-- Command line update of an action/project
 	}
 
 	if ($val = option('Priority')) {
+		$ref->set_priority($val);
+	}
+
+	if ($val = option('Complete')) {
 		$ref->set_priority($val);
 	}
 

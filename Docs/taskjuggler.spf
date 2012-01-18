@@ -1,0 +1,35 @@
+
+task p-100 "P.D." {
+# p	type
+# 100	tid
+# P.D.	title
+
+	effort		3d
+	depends		p-201
+	allocate 	reading
+	priority	500
+	complete	50
+
+# effort - Resource::effort
+# depends - tid => tj::hier
+# allocate - Resource::person -- role or resource for object
+# priority - Resource::priority -- 1-999 mapped via someday + pri
+# complete - Resource::work
+
+special hunts in description field
+
+pages=		(book pages for reading)
+requires=	(for dependencies)
+
+
+* priority calculations
+
+take existing priority (1 to 5)
+	scale to 1 to 999
+	add offset for someday/maybe (-100)
+
+Need to re-write database/code to map priority in TJ numbers
+and have otherthings map from them.
+
+	1 to 5 == (5 - tjpri / 200)
+

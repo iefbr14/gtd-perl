@@ -16,7 +16,7 @@ BEGIN {
 }
 
 use Hier::util;
-use Hier::Tasks;
+use Hier::Meta;
 
 our $OurPath;
 

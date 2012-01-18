@@ -14,42 +14,48 @@ BEGIN {
 }
 
 use Hier::util;
-use Hier::Tasks;
+use Hier::Meta;
+use Hier::Sort;
 use Hier::Filter;
+use Hier::Format;
+use Hier::Option;
 
 sub Report_addplans {	#-- add plan action items to unplaned projects
-	add_filters('+plan', '+live');
 	report_addplans(1, 'Projects needing planing', meta_desc(@ARGV));
 }
 
 sub report_addplans {
 	my($all, $head, $desc) = @_;
 
+	meta_filter('+all', '^focus', 'simple');
+	#meta_filter('+p:plan', '^focus', 'simple');
+
 	report_header($head, $desc);
 
-	my($pid, $proj);
+	my($proj);
 
 	my(%has_children);
 	my(%want_child);
 
 	# find all next actions and remember there projects
-	for my $ref (Hier::Tasks::selected()) {
-		next unless $ref->is_ref_task();
+	for my $ref (meta_selected()) {
+		next unless $ref->is_task();
 		next unless $ref->filtered();
 
 		my $pref = $ref->get_parent();
 		next unless defined $pref;
 
-		$pid = $pref->get_tid();
+		my($pid) = $pref->get_tid();
 
 		$has_children{$pid}++;
 	}
 
-	for my $ref (Hier::Tasks::matching_type('p')) {
-		$pid = $ref->get_tid();
+	for my $ref (meta_matching_type('p')) {
+		my($pid) = $ref->get_tid();
 
 		next if $has_children{$pid};
 		next if $ref->filtered($ref);
+		next if $ref->get_completed();
 
 		$want_child{$pid} = $ref;
 	}
@@ -65,24 +71,25 @@ sub report_addplans {
 	my($last_parent) = 0;
 	my($g_ref);
 	for my $ref (sort by_goal_task values %want_child) {
+		my($pid) = $ref->get_tid();
+		my($title) = $ref->get_tid();
+
 		$g_ref = $ref->get_parent();
+		unless ($g_ref) {
+			warn "Parent of $pid ($title) is undefined!\n";
+			next;
+		}
 		$g_id  = $g_ref->get_tid();
 
 		if ($g_id != $last_parent) {
 			print '#', "=" x $cols, "\n" if $last_parent;
-			print "$g_id:\tG:", $g_ref->get_title(), "\n";
+			print type_disp($g_ref), " $g_id: ",
+				$g_ref->get_title(), "\n";
 			$last_parent = $g_id;
 		}
 
-		print "$pid:\tP:", $ref->get_title(), "\n";
-
+		display_task($ref);
 	}
-}
-
-sub by_goal_task {
-	return $a->get_parent()->get_tid() <=> $b->get_parent()->get_tid()
-	    or $a->get_title() cmp $b->get_title()
-	    or $a->get_tid() <=> $b->get_tid();
 }
 
 1;  # don't forget to return a true value from the file

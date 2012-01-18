@@ -1,0 +1,304 @@
+Filters:
+* Kind
+	any	- returns + Type
+	all	- returns + for non lists
+	list	- returns +|- for lists
+* Walk
+	has	- return +|- if item or child of item +|-
+		  (used with those below)
+	is	- resticts to just this item
+* Cct	
+	category  - return +|- if is category
+	context   - return +|- if is context
+	timeframe - return +|- if is timeframe
+	tag	  - return +|- if has this tag
+* Task
+	children
+	next
+	done	- return +|- if done
+	someday - return +|- if done
+	late
+
+* Hier
+	plan
+	live
+	dead
+
+Direction:
+	=	effect only current element
+	!	not effect only current element
+	>	propicate effect to all children
+	<	propicate effect to all parents
+
+###======================================================================
+### Default Filters
+###======================================================================
+	all
+	any
+	dead
+	live
+	next
+	plan
+	wait
+
+###======================================================================
+### Record info
+###======================================================================
+# todo_id:        1889				id/type
+# type:           a			[ ]
+# nextaction:     n			[_]
+# isSomeday:      n			(_)
+
+# category:       Admin				context
+# context:        Office
+# timeframe:      Hour
+
+# created:        2009-05-23			create/modified
+# modified:       2009-05-23 16:02:04
+
+
+# priority:       1				order/priority
+# doit:           0000-00-00 00:00:00
+# nexttask:	  1
+
+# due:					[_]	due/done/delay
+# completed:				[*]
+# tickledate:				[~]
+
+# task:           Billing			descriptions
+# description:    Update billing
+# note:
+
+# recur:					repeats
+# recurdesc:
+
+# parent_id:      0				hier parents
+# Parents:        425
+
+# owner:					palm info
+# palm_id:
+# private:
+
+###======================================================================
+### Filter Words/meanings
+###======================================================================
+
++active|next
++any|all
++all
++plan
++live		next|action|
++wait
+
+filter for task:
+	a
+	
+
+filter for project and above:
+
+
+#
+# task filters:
+#
+use constant {
+	KINDMASK	=> 0xF000_0000,	# type of filter
+	K_INCLUDE	=> 0x1000_0000,	# include these attributes
+	K_EXCLUDE	=> 0x2000_0000,	# exclude these attributes
+
+	ATTRMASK	=> 0x0000_0F1F,	# attribute mask
+	A_MASK		=> 0x0000_F080,	# action mask
+	P_MASK		=> 0x00FF_0000,	# project mask
+
+	TYPEMASK	=> 0x0F00_0000,	# type mask
+	T_TASK		=> 0x0100_0000,	# object is some kind of action
+	T_LIST		=> 0x0200_0000,	# object is some kind of list
+	T_HIER		=> 0x0400_0000,	# object is some kind of parent
+
+# tasks (actions) meaning
+	T_NEXT		=> 0x10,
+	T_TICKLE	=> 0x08,
+	T_SOMEDAY	=> 0x04,	# someday/maybe
+	T_WAITING	=> 0x02,
+	T_DONE		=> 0x01,
+
+# timeframe hints
+	T_LATE		=> 0x0100,	# priority == 1
+					# or Due < today
+
+	T_DUE           => 0x0200,	# priority == 2
+					# or Due < week
+
+	T_SLOW		=> 0x0400,	# priority == 4
+	T_IDEA		=> 0x0800,	# priority == 5
+
+# action states
+	A_NEXT		=> 0x1000,
+	A_ACTION	=> 0x2000,
+	A_LATER		=> 0x4000,	# someday/maybe
+	A_WAIT		=> 0x8000,	# someday/maybe
+	A_DONE		=> 0x0080,
+
+# project hints
+	P_PLAN		=> 0x01_0000,	# has no actions (needs plans)
+	P_WAIT		=> 0x02_0000,	# only has waits
+	P_ACTION	=> 0x04_0000,	# only has actions (no next)
+	P_NEXT		=> 0x08_0000,	# has next actions
+# topdown implies
+	P_FUTURE	=> 0x10_0000,	# is someday/maybe/tickled
+	P_DONE		=> 0x20_0000,	# is done
+};
+
+sub map_keyword {
+	my($word) = @_;
+
+	return T_DONE		if $word =~ /^t_done/i;
+	return T_NEXT		if $word =~ /^t_next/i;
+	return T_SOMEDAY	if $word =~ /^t_some/i;
+	return T_WAITING	if $word =~ /^t_wait/i;
+	return T_TICKLE		if $word =~ /^t_tickle/i;
+
+	return T_LATE		if $word =~ /^late$/i;
+	return T_DUE		if $word =~ /^due/i;
+	return T_SLOW		if $word =~ /^slow/i;
+	return T_IDEA		if $word =~ /^idea/i;
+
+	return T_TASK		if $word =~ /^task/i;
+	return T_LIST		if $word =~ /^list/i;
+	return T_HIER		if $word =~ /^hier/i;
+
+	return T_TASK|T_LIST|T_HIER
+				if $word =~ /^any/i;
+
+	return 0xFFFF		if $word =~ /^all/i;
+
+	return A_ACTION		if $word =~ /^cur/i;
+	return A_NEXT		if $word =~ /^next/i;
+	return A_LATER		if $word =~ /^some/i;
+	return A_LATER		if $word =~ /^maybe/i;
+	return A_WAIT		if $word =~ /^wait/i;
+	return A_DONE		if $word =~ /^done/i;
+
+	return P_NEXT|P_ACTION|P_PLAN
+	     | A_NEXT|A_ACTION	if $word =~ /^live/i;
+
+	return A_LATER|A_WAIT|A_DONE|P_DONE	
+	     | P_FUTURE|P_WAIT	if $word =~ /^dead/i;	# not live :-)
+
+	return P_FUTURE|P_WAIT|A_WAIT|A_LATER
+				if $word =~ /^later/i;	
+
+	return P_DONE		if $word =~ /^complete/i;
+	return P_ACTION		if $word =~ /^current/i;
+	return P_NEXT	 	if $word =~ /^active/i;
+	return P_FUTURE		if $word =~ /^future/i;
+	return P_WAIT		if $word =~ /^hold/i;
+	return P_PLAN		if $word =~ /^plan/i;
+
+	return 0;
+}
+
+sub task_mask {
+	my($ref) = @_;
+
+	return $ref->{_mask} if defined $ref->{_mask};
+
+	my($mask) = 0x0000;
+
+	my($done) = $ref->get_completed();
+	my($due)  = $ref->get_due();
+	my($type) = $ref->get_type();
+
+	$mask |= T_DONE		if $done;  # step on next/somday/tickle
+	$mask |= T_NEXT		if $ref->get_nextaction() eq 'y';
+	$mask |= T_SOMEDAY	if $ref->get_isSomeday() eq 'y';
+	$mask |= T_TICKLE	if $ref->get_tickledate() gt $Today;
+	$mask |= T_WAITING	if $type eq 'w';
+
+	my($pri) = $ref->{priority} || 3;
+	$mask |= T_LATE	if $pri == 1;
+	$mask |= T_DUE	if $pri == 2;
+	$mask |= T_SLOW	if $pri == 4;
+	$mask |= T_IDEA	if $pri >= 5;
+
+	if ($done) {
+		$mask |= T_LATE	if $due && $due lt $done;
+	}
+	if ($due) {
+		$mask |= T_LATE	if $due lt $Today;
+		$mask |= T_DUE	if $due ge $Today and $due le $Soon;
+	}
+
+	$mask |= T_HIER	if $type =~ /[mvogp]/;
+	$mask |= T_TASK	if $type =~ /[aiw]/;
+	$mask |= T_LIST	if $type =~ /[rLCT]/;
+
+	if ($mask & T_TASK) {
+		my($some) = $mask & (T_SOMEDAY|T_TICKLE);
+		my($next) = $mask & T_NEXT;
+		my($wait) = $mask & T_WAITING;
+
+		$mask |= 
+			$done ? A_DONE   :
+			$some ? A_LATER  :
+			$wait ? A_WAIT   :
+			$next ? A_NEXT   :
+			        A_ACTION ;
+	}
+
+	$ref->{_mask} = $mask;
+
+#	print "Filter: $ref->{todo_id} == ", dispflags($filter), "\n";
+	return $mask;
+}
+
+
+******************************************************************************
+******************************************************************************
+******************************************************************************
+******************************************************************************
+******************************************************************************
+
+Two kinds of filters:  is and has 
+
+Tasks and Hier -- Only Hier items uses has. for Tasks:
+
+Task State (one of)
+
+[_] t_done
+[_] t_next
+[_] t_action (not next action) 
+[_] t_someday
+[_] t_waiting 
+[_] t_tickles 
+
+Tasks can also be time based
+[_] late 
+[_] due
+
+Tasks have a priority (do later)
+[_] slow   
+[_] idea
+
+Tasks have union sets:
+[_] future  => someday tickle waiting
+
+# Hier filters (review) also add action results for Hier reports
+  +---------- [_] is
+  |   +------ [_] has
+  |   |  #is#       #has#
+ [_] [_] done    => inprogress
+ [_] [_] late    => haslate 
+ [_] [_] tickle  => future
+ [_] [_] someday => maybe
+ [_] [_] waiting => stalled
+ [_] [_] due     => priority
+
+# Hier filters that walk down that are special
+     [_] Live    => +action +next
+ [_] [_] Future  => +someday +tickle +waiting
+
+# also some Hier have others filters
+ 
+[_] active  == has children that are next or action
+[_] plan    == no children
+[_] planned == (children and a child that is next)
