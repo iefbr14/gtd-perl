@@ -324,6 +324,8 @@ sub bulk_display {
 sub disp_bulklist {
 }
 
+sub disp_rpga {
+}
 
 ### format:
 ### 99	P:Title	[_] A:Title
