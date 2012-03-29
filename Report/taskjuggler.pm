@@ -52,9 +52,15 @@ sub Report_taskjuggler {	#-- generate taskjuggler file from gtd db
 	$planner->walk('o');
 }
 
+sub calc_est {
+	return 180;
+}
+
 sub tj_header {
+	my $est = calc_est();
+	my $projection = pdate(get_today($est));	
 print <<"EOF";
-project GTD "Get Things Done" "1.0" $ToOld - $ToFuture {
+project GTD "Get Things Done" "1.0" $ToOld - $projection {
   # Hide the clock time. Only show the date.
   timeformat "%Y-%m-%d"
 
