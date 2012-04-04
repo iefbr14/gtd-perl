@@ -39,7 +39,7 @@ sub Report_focus {	#-- List focus -- live, plan or someday
 
 	my(@list) = meta_pick($pick, @_);
 	if (@list == 0) {
-		@list = meta_pick($pick, 'Vision');
+		@list = meta_pick($pick, 'Role');
 	}
 
 	report_header(join(' ', "Focus", @_));
@@ -80,15 +80,15 @@ sub display_cond {
 		++$Proj_cnt;
 
 		if ($ref->get_type() eq 'a') {
-				display_hier($p_ref, $counts);
-				display_task($ref);
-				return 1;
+			display_hier($p_ref, $counts);
+			display_task($ref);
+			return 1;
 		}
 	}
 
 	return 1 if display_cond($ref);
-	return 0;
    }
+   return 0;
 }
 
 
