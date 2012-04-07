@@ -60,6 +60,12 @@ sub Report_status {	#-- report status of projects/actions
 	print "For: $desc " if $desc;
 	my($total) = $task + $next;
 	print "hier: $hier, projects: $proj, next/actions: $next/$task = $total\n";
+
+	my($t_p) = '-';
+	my($t_n) = '-';
+	my($t_a) = '-';
+	my($time) = '?';
+	print "time: $time, projects: $t_p, next/actions: $t_n/$t_a\n";
 }
 
 sub count_hier {
@@ -103,6 +109,7 @@ sub count_liveproj {
 
 sub count_task {
 	my($count) = 0;
+	my($time) = 0;
 
 	# find all records.
 	foreach my $ref (meta_selected()) {
@@ -119,6 +126,7 @@ sub count_task {
 
 sub count_next {
 	my($count) = 0;
+	my($time) = 0;
 
 	# find all records.
 	foreach my $ref (meta_selected()) {
@@ -137,6 +145,7 @@ sub count_next {
 
 sub count_tasklive {
 	my($count) = 0;
+	my($time) = 0;
 
 	# find all records.
 	foreach my $ref (meta_selected()) {

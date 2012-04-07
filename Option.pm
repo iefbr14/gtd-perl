@@ -38,6 +38,7 @@ my %Option_keys = (
 	'Limit'       => 1,
 	'Reverse'     => 1,	# reverse sort
 
+	'Header'      => 1,	# Header routine
 	'Format'      => 1,	# Formating routine
 	'Sort'        => 1,	# Sortting routine
 

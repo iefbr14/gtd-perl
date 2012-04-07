@@ -22,8 +22,7 @@ use Hier::Option;
 
 
 my $Display = \&disp_simple;
-my $Group   = \&group_none;
-my $Header  = \&header_report;
+my $Header  = undef;
 
 my @Order = (qw(
 	todo_id
@@ -91,6 +90,7 @@ sub display_mode {
 		'd_csv'    => \&disp_doit_csv,
 		'd_lst'    => \&disp_doit_list,
 
+		'rpga'     => \&disp_rgpa,
 		'rgpa'     => \&disp_rgpa,
 		'hier'     => \&disp_hier,
 		'priority' => \&disp_priority,
@@ -102,23 +102,43 @@ sub display_mode {
 		'odump'    => \&disp_ordered_dump,
 	);
 
-	my(%group) = (
-		'rgpa'     => \&group_rgpa,
-	);
 	my(%report) = (
-		'tid'      => \&header_none,
-		'list'     => \&header_none,
+		'none'     => 'none',
 
-		'title'    => \&header_report,
-		'simple'   => \&header_report,
-		'summary'  => \&header_report,
-		'detail'   => \&header_report,
+		'tid'      => 'report',
+		'list'     => 'report',
+		'title'    => 'report',
+		'item'     => 'report',
+		'simple'   => 'report',
+		'summary'  => 'report',
+		'detail'   => 'report',
+		'task'     => 'report',
 
+		'doit'     => 'report',
+		'html'     => 'html',
+		'wiki'     => 'wiki',
+
+		'd_csv'    => 'report',
+		'd_lst'    => 'report',
+
+		'rpga'     => 'rgpa',
+		'rgpa'     => 'rgpa',
+		'hier'     => 'hier',
+		'priority' => 'report',
+
+		'dump'     => 'none',
+
+		'udump'    => 'none',
+		'sdump'    => 'none',
+		'odump'    => 'none',
+	);
+	my(%header) = (
+		'none'     => \&header_none,
+		'report'   => \&header_report,
 		'html'     => \&header_html,
 		'wiki'     => \&header_wiki,
-
 		'rgpa'     => \&header_rgpa,
-		'priority' => \&header_priority,
+		'hier'     => \&header_hier,
 	);
 
 	$mode = 'simple' if $mode eq '';
@@ -127,6 +147,7 @@ sub display_mode {
 		$mode = 'tid' if option('List', 0);
 	}
 
+	# process header modes
 	unless (defined $mode{$mode}) {
 		warn "Unknown display mode: $mode\n";
 		return;
@@ -134,8 +155,10 @@ sub display_mode {
 
 	$Display = $mode{$mode};
 
-	$Header = $report{$mode} if defined $report{$mode};
-	$Group  = $group{$mode} if defined $group{$mode};
+	$mode = option('Header', $mode);
+
+	$mode = $report{$mode} if defined $report{$mode};
+	$Header = $header{$mode} if defined $header{$mode};
 	# pick sorting?
 	return;
 
@@ -153,6 +176,10 @@ sub report_header {
 		} elsif ($title eq '') {
 			$title = $desc;
 		}
+	}
+
+	unless ($Header) {
+		display_mode('simple');
 	}
 	&$Header(\*STDOUT, @_);
 }
@@ -184,15 +211,6 @@ sub summary_line {
 }
 
 #==============================================================================
-sub display_group {
-}
-
-sub group_none {
-}
-
-sub group_rgpa {
-}
-
 sub display_header {
 	&$Header(\*STDOUT, @_);
 }

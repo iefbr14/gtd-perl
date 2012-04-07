@@ -27,20 +27,13 @@ my($Work_load) = 0;
 my($Proj_cnt) = 0;
 
 sub Report_focus {	#-- List focus -- live, plan or someday
-
 	my($cnt) = 0;
 
-	meta_filter('+p:next', '^focus', 'simple');
-
-	my($pick) = {
-		doit => \&display_mode,
-		detail => \&display_mode,
-	};
-
-	my(@list) = meta_pick($pick, @_);
+	my(@list) = meta_pick(@_);
 	if (@list == 0) {
-		@list = meta_pick($pick, 'Role');
+		@list = meta_pick('Role');
 	}
+	meta_filter('+p:next', '^focus', 'simple');
 
 	report_header(join(' ', "Focus", @_));
 

@@ -30,7 +30,7 @@ sub Report_walk {	#-- Command line walk of a hier
 	my($action) = \&noop;
 	my($val) = '';
 
-	display_mode(option('Format', 'simple'));
+	display_mode('simple');
 
 	while (@_) {
 		my($task) = shift @_;

@@ -185,8 +185,6 @@ sub meta_desc {
 }
 
 sub meta_pick {
-	my($action) = shift @_;
-
 	my(@list) = ();
 
 	foreach my $arg (meta_argv(@_)) {
@@ -201,18 +199,20 @@ sub meta_pick {
                         next;
                 }
 
-		if (defined $action->{$arg}) {
-			my($fn) = $action->{$arg};
-			$fn->($arg);
-			next;
-		}
-
                 if ($arg =~ /pri\D+(\d+)/) {
 			set_option('Priority', $1);
                         next;
                 }
                 if ($arg =~ /limit\D+(\d+)/) {
                         set_option('Limit', $1);
+                        next;
+                }
+                if ($arg =~ /format\s(\S+)/) {
+                        set_option('Format', $1);
+                        next;
+                }
+                if ($arg =~ /header\s(\S+)/) {
+                        set_option('Header', $1);
                         next;
                 }
 

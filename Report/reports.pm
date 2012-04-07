@@ -17,6 +17,7 @@ BEGIN {
 
 use Hier::util;
 use Hier::Meta;
+use Hier::Format;
 
 our $OurPath;
 
