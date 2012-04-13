@@ -81,9 +81,10 @@ sub display_mode {
 		'simple'   => \&disp_simple,
 		'summary'  => \&disp_summary,
 		'detail'   => \&disp_detail,
-		'task'     => \&disp_task,
 
-		'doit'     => \&disp_doit,
+		'task'     => \&disp_task,
+		'doit'     => \&disp_task,
+
 		'html'     => \&disp_html,
 		'wiki'     => \&disp_wiki,
 
@@ -345,26 +346,6 @@ sub disp_bulklist {
 sub disp_rpga {
 }
 
-### format:
-### 99	P:Title	[_] A:Title
-sub disp_task {
-	my($fd, $ref) = @_;
-
-	my($tid) = $ref->get_tid();
-
-	my($key) = action_disp($ref);
-
-	my $pri = $ref->get_priority() || 3;
-	my $type = uc($ref->get_type());
-
-	$type = 'N' if $ref->is_nextaction();
-	$type = 'S' if $ref->is_someday();
-	$type = 'T' if $ref->is_later();
-
-	my $title = $ref->get_title();
-
-	print {$fd} "$type:$tid $key <$pri> $title\n";
-}
 
 sub disp_ordered_dump {
 	my($fd, $ref) = @_;
@@ -533,7 +514,7 @@ sub disp_wiki {
 	print {$fd} "\n";
 }
 
-sub disp_doit {
+sub disp_task {
 	my($fd, $ref) = @_;
 
 	my($pri, $type, $context, $project, $action);
@@ -556,7 +537,11 @@ sub disp_doit {
 	$action = $ref->get_task();
 	my($tid) = '['.$ref->get_tid().']';
 
-	$pri = chr(ord('A') + ($ref->get_priority() || '4') - 1);
+	if ($ref->is_nextaction()) {
+		$pri = chr(ord('A') + ($ref->get_priority() || '4') - 1);
+	} else {
+		$pri = chr(ord('C') + ($ref->get_priority() || '4') - 1);
+	}
 
 	$pri = 'S' if $ref->get_isSomeday() eq 'y';
 	$pri = 'X' if $ref->get_completed();

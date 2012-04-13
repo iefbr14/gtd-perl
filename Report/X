@@ -1,0 +1,28 @@
+actions.pm:	meta_filter('+a:next',	'^focus',	'detail');
+bulklist.pm:	meta_filter('+a:live',	'^title',	'bulk');
+dump.pm:	meta_filter('+any',	'tid',		'dump');	
+items.pm:	meta_filter('+any',	'^title',	'item');	
+list.pm:	meta_filter('+live',	'^title',	'title');
+
+projects.pm:	#meta_filter('+next',	'^focus',	'rgpa');
+records.pm:	meta_filter('+any',	'^tid',		'record');
+review.pm:	meta_filter('+live',	'^doit',	'doit');
+tasks.pm:	meta_filter('+a:live',	'title',	'task');
+todo.pm:	meta_filter('+p:live',	'^priority',	'priority');
+
+addplans.pm:	meta_filter('+all',	'^focus',	'simple');
+addplans.pm:	#meta_filter('+p:plan',	'^focus',	'simple');
+doit.pm:	meta_filter('+a:live',	'^doitdate',	'simple');
+focus.pm:	meta_filter('+p:next',	'^focus',	'simple');
+hierlist.pm:	meta_filter('+p:live',	'title',	'simple');
+noop.pm:	meta_filter('+any',	'tid',		'simple');
+projects.pm:	meta_filter('+p:next',	'^focus',	'simple');
+purge.pm:	meta_filter('+dead',	'^tid',		'simple');
+review.pm:	meta_filter('+p:live',	'^doitdate',	'simple');
+search.pm:	meta_filter('+all',	'^title',	'simple');
+
+hier.pm:	meta_filter('+p:live',	'^title',	'none');
+nextactions.pm:	meta_filter('+a:next',	'^title',	'none');
+oocalc.pm:	meta_filter('+a:live',	'tid',		'none');
+planner.pm:	meta_filter('+all',	'^tid',		'none');
+status.pm:	meta_filter("+a:live",	'^tid',		'none');	
