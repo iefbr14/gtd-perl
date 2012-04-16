@@ -26,6 +26,10 @@ my($Format) = \&focus_summary;
 my($Work_load) = 0;
 my($Proj_cnt) = 0;
 
+my($Dep) = '';   # Project depends on string
+
+my($Debug) = 0;
+
 sub Report_focus {	#-- List focus -- live, plan or someday
 	my($cnt) = 0;
 
@@ -39,8 +43,9 @@ sub Report_focus {	#-- List focus -- live, plan or someday
 
 	# find all next and remember there focus
 	for my $r_ref (sort_tasks @list) {
+		$Dep = 'PLAN';
 		unless (display_cond($r_ref)) {
-			display_task($r_ref, '(PLAN)');
+			display_task($r_ref, "($Dep)");
 		}
 	}
 	print "***** Work Load: $Proj_cnt Projects, $Work_load action items\n";
@@ -60,28 +65,51 @@ sub report_task {
 
 sub display_cond {
 	my($p_ref) = @_;
+	my($dep);
 
-    foreach my $ref (sort_tasks $p_ref->get_children()) {
-	next unless $ref->is_nextaction();
-	next if $ref->get_completed();
-	next if $ref->filtered();
+	printf "X %d %s\n", $p_ref->get_tid(), $p_ref->get_title() if $Debug;
 
-	my($work, $counts);
-	if ($p_ref->get_type() eq 'p') {
-		($work, $counts) = count_children($p_ref);
-		$Work_load += $work;
-		++$Proj_cnt;
+	if ($dep = $p_ref->get_depends()) {	# can't be focus
+		for my $dep (split(' ', $dep)) {
+			return 1 if display_depends($dep);
+		}
+		return if $Dep ne 'PLAN';
+
+		$Dep = sprintf("Depends %d: %s", $dep, '(GTD bug lookup id)');
+		printf "Deps %d on %s\n", $p_ref->get_tid(), $Dep if $Debug;
+		return 0;
+	}
+
+	foreach my $ref (sort_tasks $p_ref->get_children()) {
+		next unless $ref->is_nextaction();
+		next if $ref->get_completed();
+	#	next if $ref->filtered();
+
+		my($work, $counts);
+		if ($ref->get_type() eq 'p') {
+			($work, $counts) = count_children($p_ref);
+			$Work_load += $work;
+			++$Proj_cnt;
+		}
 
 		if ($ref->get_type() eq 'a') {
 			display_hier($p_ref, $counts);
 			display_task($ref);
 			return 1;
 		}
-	}
 
-	return 1 if display_cond($ref);
-   }
-   return 0;
+		return 1 if display_cond($ref);
+	}
+	return 0;
+}
+
+sub display_depends {
+	my($id) = @_;
+
+	my($ref) = Hier::Tasks::find(@_);
+	return unless $ref;
+
+	return display_cond($ref);
 }
 
 
