@@ -546,8 +546,13 @@ sub disp_task {
 	$pri = 'S' if $ref->get_isSomeday() eq 'y';
 	$pri = 'X' if $ref->get_completed();
 	$pri = 'V' if $type =~ /[mv]/;
-	$pri = 'R' if $type eq 'o';
+
 	$pri = 'I' if $type eq 'i';
+
+	$pri = 'R' if $type eq 'o';
+	$pri = 'S' if $type eq 'g';
+	$pri = 'T' if $type eq 'p';
+
 	$pri = 'L' if $type =~ /[rLCT]/;
 
 
