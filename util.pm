@@ -101,7 +101,7 @@ sub action_disp {
 
 	return  '<*>' if $ref->get_completed();
 
-	my($key) = '[ ]';
+	my($key) = '(_)';
 	$key = '[_]' if $ref->is_nextaction();
 
 	$key =~ s/.(.)./\}$1\{/	if $ref->is_later();

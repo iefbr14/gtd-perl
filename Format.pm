@@ -550,8 +550,8 @@ sub disp_task {
 	$pri = 'I' if $type eq 'i';
 
 	$pri = 'R' if $type eq 'o';
-	$pri = 'S' if $type eq 'g';
-	$pri = 'T' if $type eq 'p';
+	$pri = 'Q' if $type eq 'g';
+	$pri = 'P' if $type eq 'p';
 
 	$pri = 'L' if $type =~ /[rLCT]/;
 
