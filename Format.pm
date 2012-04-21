@@ -553,6 +553,7 @@ sub disp_task {
 	$pri = 'Q' if $type eq 'g';
 	$pri = 'P' if $type eq 'p';
 
+	$pri = 'T' if $ref->get_tickledate();
 	$pri = 'L' if $type =~ /[rLCT]/;
 
 

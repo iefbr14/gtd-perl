@@ -33,6 +33,8 @@ my($Debug) = 0;
 sub Report_focus {	#-- List focus -- live, plan or someday
 	my($cnt) = 0;
 
+	$Debug = option('Debug', 0);
+
 	meta_filter('+p:next', '^focus', 'simple');
 	my(@list) = meta_pick(@_);
 	if (@list == 0) {
