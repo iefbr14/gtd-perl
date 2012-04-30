@@ -69,16 +69,18 @@ sub display_cond {
 	my($p_ref) = @_;
 	my($dep);
 
-	printf "X %d %s\n", $p_ref->get_tid(), $p_ref->get_title() if $Debug;
+	my($id) = $p_ref->get_tid(); 
+	printf "X %d %s\n", $id, $p_ref->get_title() if $Debug;
 
 	if ($dep = $p_ref->get_depends()) {	# can't be focus
 		for my $dep (split(' ', $dep)) {
+			printf "Deps %d on %s\n", $id, $Dep if $Debug;
 			return 1 if display_depends($dep);
 		}
 		return if $Dep ne 'PLAN';
 
 		$Dep = sprintf("Depends %d: %s", $dep, '(GTD bug lookup id)');
-		printf "Deps %d on %s\n", $p_ref->get_tid(), $Dep if $Debug;
+		printf "Deps %d on %s\n", $id, $Dep if $Debug;
 		return 0;
 	}
 

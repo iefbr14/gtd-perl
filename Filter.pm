@@ -58,7 +58,7 @@ sub tasks_matching_type {
 }
 
 sub apply_filters {
-	$Debug = option('Debug');
+	#$Debug = option('Debug');
 
 	# learn about actions
 	for my $ref (tasks_matching_type('a')) {
