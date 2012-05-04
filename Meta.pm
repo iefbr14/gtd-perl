@@ -187,12 +187,15 @@ sub meta_desc {
 sub meta_pick {
 	my(@list) = ();
 
+	my($fail) = 0;
+
 	foreach my $arg (meta_argv(@_)) {
                 if ($arg =~ /^\d+$/) {
                         my($ref) = meta_find($arg);
 
                         unless (defined $ref) {
                                 warn "Task $arg doesn't exits\n";
+				$fail++;
                                 next;
                         }
 			push(@list, $ref);
@@ -227,6 +230,7 @@ sub meta_pick {
 		print "**** Can't understand argument $arg\n";
 		exit 1;
 	}
+	exit(1) if $fail;
 	return @list;
 }
 
