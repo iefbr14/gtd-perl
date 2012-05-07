@@ -165,6 +165,10 @@ sub hier_detail {
 			warn "depend $tid: needs $depend failed to produce path!";
 			next;
 		}
+		if ($dep_path =~ /^\s*#/) {
+			warn "depend $tid: no-longer depends: $depend $dep_path\n";
+			next;
+		}
 
 		warn "depend $tid: $depend dep_path $dep_path\n";
 		print {$fd} $indent, qq(   depends $dep_path\n);
