@@ -24,8 +24,6 @@ sub Report_edit {	#-- Edit listed actions/projects
 
 	umask(0077);
 
-	display_mode('odump');	# *** need ordered dump ***
-
     {
 	open(my $fd, '>', "/tmp/todo.$$") or die;
 	for my $tid (@_) {
@@ -38,7 +36,7 @@ sub Report_edit {	#-- Edit listed actions/projects
 		}
 		++$cnt;
 
-		display_fd_task($fd, $ref);
+		disp_ordered_dump($fd, $ref);
 	}
 	close($fd);
    }
@@ -95,10 +93,11 @@ sub save {
 	for my $key (sort keys %$changed) {
 		$val = $ref->get_KEY($key);
 
-		###BUG### handle missing keys from @Ordered (see Report/dump.pm)
+		# Specal values from disp_ordered_dump
 		$val = $ref->disp_tags() if $key eq 'Tags';
 		$val = $ref->disp_parents() if $key eq 'Parents';
 		$val = $ref->disp_children() if $key eq 'Children';
+
 		$newval = $changed->{$key};
 
 		if (defined $val && defined $newval) {

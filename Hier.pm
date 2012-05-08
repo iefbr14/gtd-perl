@@ -166,7 +166,7 @@ sub has_parent_id {
 }
 
 #------------------------------------------------------------------------------
-## set_parent_ids is used by edit.
+## set_parent_ids is used by dset in Tasks.pm
 #
 sub set_parents_ids {
         my($self, $val) = @_;
@@ -177,7 +177,10 @@ sub set_parents_ids {
 	# find my new parents
 	for my $pid (@pid) {
 		my $p_ref = Hier::Tasks::find($pid);
-		next unless $p_ref;	# opps not a real parent
+		unless ($p_ref) { # opps not a real parent
+			warn "No parent id: $pid\n";
+			next;
+		}
 
 		$pid{$pid} = $p_ref;
 	}
@@ -195,6 +198,39 @@ sub set_parents_ids {
 	# for my new parents add self as thier child
 	for my $pref (values %pid) {
 		add_child($pref, $self);
+	}
+}
+
+sub set_children_ids {
+        my($self, $val) = @_;
+
+	my(@cid) = split(',', $val);	# parent ids
+	my(%cid);			# parent ids => parent ref
+
+	# find my new parents
+	for my $cid (@cid) {
+		my $c_ref = Hier::Tasks::find($cid);
+		unless ($c_ref) { # opps not a real child
+			warn "No child id: $cid\n";
+			next;
+		}
+
+		$cid{$cid} = $c_ref;
+	}
+
+	# keep child if already have that one, it otherwise disown it.
+	for my $ref (rel_vals(child => $self)) {
+		my $cid = $ref->get_tid();
+		if (defined $cid{$cid}) {
+			delete $cid{$cid};	# keeping this one.
+		} else {
+			# disown parent
+			$self->orphin_child($ref);
+		}
+	}
+	# for my new children add self as their parent
+	for my $cref (values %cid) {
+		add_child($self, $cref);
 	}
 }
 

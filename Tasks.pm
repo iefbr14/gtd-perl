@@ -228,6 +228,19 @@ sub set_KEY { my($self, $key, $val) = @_;  return dset($key, $self, $val); }
 sub dset {
 	my($field, $ref, $val) = @_;
 
+	if ($field eq 'Parents') {
+		$ref->set_parents_ids($val);
+		return;
+	}
+	if ($field eq 'Children') {
+		$ref->set_children_ids($val);
+		return;
+	}
+	if ($field eq 'Tags') {
+		#--BUG-- tag setting not done yet
+		die "Can't set tags yet";
+	}
+
 	unless (defined $val) {
 		die "Won't set $field to undef\n";
 	}

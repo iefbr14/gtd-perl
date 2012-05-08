@@ -14,6 +14,7 @@ BEGIN {
 		&report_header &count_children &summary_line
 		&display_mode &display_fd_task &display_task
 		&display_rgpa &display_hier
+		&disp_ordered_dump
 	);
 }
 
@@ -99,7 +100,6 @@ sub display_mode {
 		'dump'     => \&disp_ordered_dump,
 
 		'udump'    => \&disp_unordered_dump,
-		'sdump'    => \&disp_simple_dump,
 		'odump'    => \&disp_ordered_dump,
 	);
 
@@ -394,8 +394,9 @@ sub disp_unordered_dump {
 			print $fd "#$key:\n";
 		}
 	}
-	print $fd "#Parents:\t", $ref->disp_parents(),"\n";
-	print $fd "#Children:\t", $ref->disp_children(),"\n";
+	print $fd "Tags:\t", $ref->disp_tags(),"\n";
+	print $fd "Parents:\t", $ref->disp_parents(),"\n";
+	print $fd "Children:\t", $ref->disp_children(),"\n";
 	print $fd "=-=\n\n";
 }
 
