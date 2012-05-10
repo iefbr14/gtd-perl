@@ -388,6 +388,7 @@ sub task_mask {
 		$mask |= A_ACTION;
 		$mask |= A_NEXT	 if $ref->get_nextaction() eq 'y';
 	}
+	$ref->{_mask} = $mask;
 
 	if ($mask & A_DONE) {
 		$mask |= T_DONE;
@@ -428,7 +429,7 @@ sub task_mask {
 sub give_parent {
 	my($ref, $mask) = @_;
 
-	for my $pref ($ref->get_parents) {
+	for my $pref ($ref->get_parents()) {
 		$pref->{_mask} = task_mask($pref) | $mask;
 		give_parent($pref, $mask);
 	}
