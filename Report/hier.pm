@@ -33,7 +33,7 @@ sub Report_hier {	#-- Hiericial List of Values/Visions/Roles...
 
 	my($top) = 'm';
 
-	if ($criteria) {
+	for my $criteria (@_) {
 		if ($criteria =~ /^\d+$/) {
 			$top = $criteria;
 		} else {
@@ -48,6 +48,7 @@ sub Report_hier {	#-- Hiericial List of Values/Visions/Roles...
 
 	bless $walk;	# take ownership and walk the tree
 
+	$walk->{level} = 1 if $top ne 'm';
 	$walk->walk($top);
 }
 

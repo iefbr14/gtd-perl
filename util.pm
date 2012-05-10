@@ -44,7 +44,11 @@ my %Types = (
 my %Type_name = ( reverse %Types );
 
 sub type_val {
+	my($val) = @_;
+	return $val if defined $Type_name{val};
+
 	my($type) = ucfirst($_[0]);
+
 
 	if (defined $Types{$type}) {
 		return $Types{$type};
