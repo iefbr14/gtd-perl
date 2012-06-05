@@ -182,7 +182,7 @@ sub report_header {
 	unless ($Header) {
 		display_mode('simple');
 	}
-	&$Header(\*STDOUT, @_);
+	&$Header(\*STDOUT, $title);
 }
 
 sub count_children {
@@ -557,8 +557,9 @@ sub disp_task {
 	$pri = 'T' if $ref->get_tickledate() gt get_today();
 	$pri = 'L' if $type =~ /[rLCT]/;
 
-
-	print join(' ', "($pri)", $context.$project, $action, $tid), "\n";
+	my($result) = join(' ', "($pri)", $context.$project, $action, $tid);
+	$result =~ s/\s\s+/ /g;
+	print $result, "\n";
 }
 
 my($Count) = 0;

@@ -15,26 +15,23 @@ BEGIN {
 
 use Hier::util;
 use Hier::Meta;
+use Hier::Sort;
 use Hier::Format;
 
 sub Report_tasks {	#-- quick List by various methods
-	meta_filter('+a:live', 'title', 'task');	# Actions
-	list_tasks('Actions', meta_desc(@ARGV));
-}
+	meta_filter('+live', '^title', 'task');	# Actions
 
-sub list_tasks {
-	my($head, $desc) = @_;
+	my($title) = join(' ', @_);
 
-	report_header($head, $desc);
+	my(@list) = meta_pick(@_);
+	if (@list == 0) {
+		meta_pick('actions');
+	}
+	report_header('Tasks', $title);
 
-	# find all projects (next actions?)
-	for my $ref (meta_selected()) {
-		next unless $ref->is_task();
-		next if $ref->filtered();
-
+	for my $ref (sort_tasks @list) {
 		display_task($ref);
 	}
 }
-
 
 1;  # don't forget to return a true value from the file

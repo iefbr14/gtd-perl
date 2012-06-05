@@ -16,37 +16,18 @@ BEGIN {
 use Hier::util;
 use Hier::Meta;
 use Hier::Sort;
-use Hier::Filter;
-use Hier::Option;
 use Hier::Format;
 
 sub Report_list {	#-- list titles for any filtered class (actions/projects etc)
 	meta_filter('+live', '^title', 'title');
 
-	my($name) = meta_desc(@_);
-	if ($name) {
-		my($want) = type_val($name);
-		if ($want) {
-			list_desc($want, $name);
-			return;
-		}
-		print "**** Can't understand Type $name\n";
-		exit 1;
+	my($title) = join(' ', @_);
+
+	my(@list) = meta_pick(@_);
+	if (@list == 0) {
+		print "No items requested\n";
 	}
-	print "No items requested\n";
-}
-
-sub list_desc {	#-- List projects with waiting-fors
-	my($type, $typename) = @_;
-
-	report_header($typename);
-
-        my(@list);
-        for my $ref (meta_matching_type($type)) {
-		next if $ref->filtered($ref);
-
-                push(@list, $ref);
-        }
+	report_header('List', $title);
 
 	for my $ref (sort_tasks @list) {
 		display_task($ref);
