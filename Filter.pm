@@ -302,7 +302,7 @@ sub dispflags {
 	my($z) = '.';
 	my($t) = '.';
 
-	#              654321
+	#         654321
 	my($a) = '------';
 	#              Dn swt odsi
 
@@ -775,7 +775,7 @@ die "Use Z_MAKS?";
 sub filter_slow {
 	my($ref, $arg) = @_;
 
-die "Use Z_MAKS?";
+die "Use Z_MASK?";
 	my($pri) = $ref->get_priority() || 3;
 	return '+slow' if $pri == 4;
 	return '?';
@@ -785,7 +785,7 @@ die "Use Z_MAKS?";
 sub filter_idea {
 	my($ref, $arg) = @_;
 
-die "Use Z_MAKS?";
+die "Use Z_MASK?";
 	my($pri) = $ref->get_priority() || 3;
 	return '+idea' if $pri == 5;
 	return '?';

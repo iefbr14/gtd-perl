@@ -16,11 +16,12 @@ BEGIN {
 use Hier::util;
 use Hier::Meta;
 use Hier::Filter;
+use Hier::Format;
 use Hier::Selection;
 
 sub Report_records {	#-- detailed list all records for a type
 	# everybody into the pool
-	meta_filter('+any', '^tid', 'record');
+	meta_filter('+any', '^tid', 'simple');
 
 	my($desc) = join(' ', @ARGV);
 
@@ -68,8 +69,6 @@ sub list_records {
 	}
 }
 
-### format:
-### 99	P:Title	[_] A:Title
 sub disp {
 	my($ref) = @_;
 	my($tid) = $ref->get_tid();
@@ -80,18 +79,6 @@ sub disp {
 	my $type = uc($ref->get_type());
 
 	return "$type:$tid $key <$pri> $ref->get_task()";
-}
-
-sub bulk_display {
-	my($tag, $text) = @_;
-
-	return unless defined $text;
-	return if $text eq '';
-	return if $text eq '-';
-
-	for my $line (split("\n", $text)) {
-		print "$tag\t$line\n";
-	}
 }
 
 1;  # don't forget to return a true value from the file
