@@ -455,10 +455,10 @@ sub display_rgpa {
 
 	my $pid = $ref->get_tid();
 
-	my $g_ref = $ref->get_parent();
+	my $g_ref = $ref->get_parent(); return unless $g_ref;
 	my $g_id  = $g_ref->get_tid();
 
-	my $r_ref = $g_ref->get_parent();
+	my $r_ref = $g_ref->get_parent(); return unless $r_ref;
 	my $r_id  = $r_ref->get_tid();
 
 	#print "$r_id\t$g_id\t$pid\t$Meta_key{$pid}\n";next;

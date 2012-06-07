@@ -629,7 +629,7 @@ sub map_filter_name {
 
 	return (\&filter_slow, '<','')	if $word =~ /^slow/i;
 	return (\&filter_idea, '<','')	if $word =~ /^idea/i;
-	return (\&filter_plan, '<','')	if $word =~ /^plan/i;
+	return (\&filter_plan, '><','')	if $word =~ /^plan/i;
 
 
 	return 0;
@@ -691,7 +691,7 @@ sub filter_walk_up {
 
 	$ref->{_filtered} = $reason;
 	for my $pref ($ref->get_parents()) {
-		filter_walk_up($pref, '<'.$reason);
+		filter_walk_up($pref, $reason.'<');
 	}
 }
 
@@ -703,11 +703,11 @@ sub filter_walk_up_down {
 	return if $mask;	# already decided.
 
 	for my $pref ($ref->get_parents()) {
-		filter_walk_up($pref, '<'.$reason);
+		filter_walk_up($pref, $reason.'<');
 	}
 	$ref->{_filtered} = $reason;
 	for my $pref ($ref->get_children()) {
-		filter_walk_down($pref, '>'.$reason);
+		filter_walk_down($pref, $reason.'>');
 	}
 }
 
@@ -720,7 +720,7 @@ sub filter_walk_down {
 
 	$ref->{_filtered} = $reason;
 	for my $pref ($ref->get_children()) {
-		filter_walk_down($pref, '>'.$reason);
+		filter_walk_down($pref, $reason.'>');
 	}
 }
 sub filter_walk_down_up {
@@ -731,14 +731,14 @@ sub filter_walk_down_up {
 	return if $mask;	# already decided.
 
 	for my $pref ($ref->get_children()) {
-		filter_walk_down($pref, '>'.$reason);
+		filter_walk_down($pref, $reason.'>');
 	}
 	$ref->{_filtered} = $reason;
 
 	return if $reason =~ /^-/;
 
 	for my $pref ($ref->get_parents()) {
-		filter_walk_up($pref, '<'.$reason);
+		filter_walk_up($pref, $reason.'<');
 	}
 }
 

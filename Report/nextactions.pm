@@ -35,9 +35,9 @@ $pid, $pic, $parent,      $tid, $tic, $name,
 .
 	$~ = "HIER";	# set STDOUT format name to HIER
 
-	for my $ref (meta_sorted('^title')) {
+	for my $ref (meta_pick('actions')) {
 		$tid = $ref->get_tid();
-next unless $ref->is_nextaction();
+##FILTER	next unless $ref->is_nextaction();
 ##FILTER	next if $ref->filtered();
 
 		$name = $ref->get_task() || '';

@@ -73,11 +73,17 @@ sub meta_sorted {
 sub meta_matching_type {
 	my($type) = @_;
 
-	return grep { $_->get_type() eq $type } meta_selected();
+	return grep { $_->get_type() eq $type } meta_sorted();
 }
 
 sub meta_all {
-	return Hier::Tasks::all(@_);
+	return Hier::Tasks::all();
+}
+
+sub meta_all_matching_type {
+	my($type) = @_;
+
+	return grep { $_->get_type() eq $type } Hier::Tasks::all();
 }
 
 sub meta_find {

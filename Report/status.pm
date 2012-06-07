@@ -86,7 +86,7 @@ sub count_proj {
 
 	# find all projects
 	foreach my $ref (meta_matching_type('p')) {
-		next if $ref->filtered();
+###FILTER	next if $ref->filtered();
 
 		++$count;
 	}
@@ -98,7 +98,7 @@ sub count_liveproj {
 
 	# find all projects
 	foreach my $ref (meta_matching_type('p')) {
-		next if $ref->filtered();
+###FILTER	next if $ref->filtered();
 
 		next unless project_live($ref);
 
