@@ -22,7 +22,7 @@ use Hier::Filter;
 my $Mask = 0;
 
 sub Report_noop {	#-- No Operation
-	meta_filter('+any', 'tid', 'simple');
+	meta_filter('+any', '^tid', 'none');
 
 	my($criteria) = meta_desc(@ARGV);
 

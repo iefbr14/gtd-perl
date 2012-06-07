@@ -21,7 +21,7 @@ sub Report_hierlist {	#-- List all top level item (Project and above)
 	my($tid, $pid, $pref, $cnt, $parent, $cat, $name, $desc);
 	my(@row);
 
-	meta_filter('+p:live', 'title', 'simple');
+	meta_filter('+p:live', '^title', 'simple');
 	meta_desc(@ARGV);
 
 print <<"EOF";
@@ -38,7 +38,7 @@ $tid, $pid,$cnt,$cat,     $parent,     $name,      $desc
 	for my $ref (meta_sorted('^title')) {
 		$tid = $ref->get_tid();
 
-		next if $ref->filtered();
+##FILTER	next if $ref->filtered();
 
 		$cnt = $ref->count_children() || '';
 		

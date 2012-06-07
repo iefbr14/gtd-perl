@@ -172,7 +172,7 @@ sub add_action {
 
 
 sub _report_hier {	
-	meta_filter('+a:live', '^title', 'bulk');
+	meta_filter('+live', '^title', 'bulk');
 
 	my($criteria) = meta_desc(@ARGV);
 
@@ -338,7 +338,7 @@ use Hier::util;
 use Hier::Tasks;
 
 sub _report_actions {	
-	meta_filter('+live');
+	meta_filter('+live', '^title', 'bulk');
 	report_actions(1, 'Actions', meta_desc(@ARGV));
 }
 
@@ -352,12 +352,12 @@ sub report_actions {
 	# find all projects (next actions?)
 	for my $ref (meta_selected()) {
 		next unless $ref->is_task();
-		next if $ref->filtered();
+##FILTER	next if $ref->filtered();
 
 		$pref = $ref->get_parent();
 		next unless defined $pref;
 
-		next if $pref->filtered();
+##FILTER	next if $pref->filtered();
 
 		$pid = $pref->get_tid();
 		$active{$pid} = $pref;
@@ -378,7 +378,7 @@ sub report_actions {
 
 	my($last_goal) = 0;
 	for my $pref (sort by_task values %active) {
-		next if $pref->filtered();
+##FILTER	next if $pref->filtered();
 
 		$pid = $pref->get_tid();
 
@@ -398,7 +398,7 @@ sub report_actions {
 		my $tasks = $proj->{$pid};
 
 		for my $ref (sort by_task values %$tasks) {
-			next if $ref->filtered();
+##FILTER		next if $ref->filtered();
 
 			$tid = $ref->get_tid();
 			$title = $ref->get_title();

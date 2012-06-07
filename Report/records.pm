@@ -17,11 +17,11 @@ use Hier::util;
 use Hier::Meta;
 use Hier::Filter;
 use Hier::Format;
-use Hier::Selection;
+use Hier::Sort;
 
 sub Report_records {	#-- detailed list all records for a type
 	# everybody into the pool
-	meta_filter('+any', '^tid', 'simple');
+	meta_filter('+live', '^tid', 'simple');
 
 	my($desc) = join(' ', @ARGV);
 
@@ -47,7 +47,7 @@ sub list_records {
 	my($Dates) = '';
 
 	# find all records.
-	for my $ref (meta_sorted('^tid')) {
+	for my $ref (sort_tasks meta_all()) {
 		$tid  = $ref->get_tid();
 		$type = $ref->get_type();
 

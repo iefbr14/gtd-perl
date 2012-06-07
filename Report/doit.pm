@@ -160,7 +160,7 @@ sub list_all {
 
 	for my $ref (meta_sorted()) {
 		next unless $ref->is_task();
-		next if $ref->filtered();
+##FILTER	next if $ref->filtered();
 
 		my $pref = $ref->get_parent();
 		next unless defined $pref;

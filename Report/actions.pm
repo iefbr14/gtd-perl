@@ -54,14 +54,15 @@ sub report_select {
 	for my $ref (meta_selected()) {
 		next unless $ref->is_task();
 		next if $top && !has_parent($ref, $top);
-next unless $ref->is_nextaction();
-		next if $ref->filtered();
+
+##FILTER	next unless $ref->is_nextaction();
+##FILTER	next if $ref->filtered();
 
 		$pref = $ref->get_parent();
 		next unless defined $pref;
 next unless $pref->is_active();
 
-		next if $pref->filtered();
+##FILTER	next if $pref->filtered();
 
 		$pid = $pref->get_tid();
 		$Active{$pid} = $pref;
@@ -87,7 +88,7 @@ sub report_list {
 	my($last_goal) = 0;
 	my($last_proj) = 0;
 	for my $pref (sort_tasks values %Active) {
-		next if $pref->filtered();
+##FILTER	next if $pref->filtered();
 
 		$pid = $pref->get_tid();
 
@@ -98,7 +99,7 @@ sub report_list {
 
 		my($task_cnt) = 0;
 		for my $ref (sort_tasks values %$tasks) {
-			next if $ref->filtered();
+##FILTER		next if $ref->filtered();
 
 			$tid = $ref->get_tid();
 			print join("\t", 
@@ -140,11 +141,12 @@ sub report_actions {
 	my($last_goal) = 0;
 	my($last_proj) = 0;
 	for my $pref (sort_tasks values %Active) {
-		next if $pref->filtered();
+##FILTER	next if $pref->filtered();
 
 		$pid = $pref->get_tid();
 
 		$gref = get_goal($pref);
+		next unless $gref;
 		$gid = $gref->get_tid();
 
 		$rref = $gref->get_parent();
@@ -176,6 +178,11 @@ sub get_goal {
 	my($pref) = @_;
 
 	my($gref) = $pref->get_parent();
+
+	unless ($gref) {
+		warn "Parent of ", $pref->get_tid(), " is null\n";
+		return;
+	}
 
 	while ($gref->get_type() eq 'p') {
 #warn join(' ', "up:", $gref->get_tid(), $gref->get_title), "\n";

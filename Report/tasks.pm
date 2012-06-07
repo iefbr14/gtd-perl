@@ -19,7 +19,7 @@ use Hier::Sort;
 use Hier::Format;
 
 sub Report_tasks {	#-- quick List by various methods
-	meta_filter('+live', '^title', 'task');	# Actions
+	meta_filter('+g:live', '^title', 'task');	# Tasks filtered by goals
 
 	my($title) = join(' ', @_);
 

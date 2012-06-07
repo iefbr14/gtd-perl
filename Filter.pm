@@ -27,7 +27,7 @@ my $Soon  = get_today(+7);
 my @Filters;	# types of actions to include
 my $Debug = 0;
 
-my $Default_level = 'a';
+my $Default_level = 'm';
 
 sub filtered_reason {
 	my($ref) = @_;
@@ -64,13 +64,19 @@ sub apply_filters {
 	for my $ref (tasks_matching_type('a')) {
 		task_mask($ref);
 	}
+
 	# learn about projects
 	for my $ref (tasks_matching_type('p')) {
 		proj_mask($ref);
 	}
 
+	# walk down
+	#      kill children
+	# then on the way back up
+	#      back fill hier with wanted items
+	print "Default level $Default_level\n" if $Debug;
 	for my $ref (tasks_matching_type($Default_level)) {
-		apply_ref_filters($ref);
+		apply_walk_down($ref);
 	}
 	for my $ref (Hier::Tasks::all()) {
 		apply_walk_down($ref);
@@ -393,10 +399,12 @@ sub task_mask {
 	if ($mask & A_DONE) {
 		$mask |= T_DONE;
 		give_parent($ref, H_DONE);
+		give_children($ref, H_DONE);
 
 	} elsif ($mask & A_SOMEDAY || $mask & A_TICKLE || $mask & A_WAITING) {
 		$mask |= T_FUTURE;
 		give_parent($ref, H_FUTURE);
+		give_children($ref, H_FUTURE);
 
 	} elsif ($mask & A_NEXT) {
 		$mask |= T_NEXT;
@@ -424,6 +432,15 @@ sub task_mask {
 
 	$ref->{_mask} = $mask;
 	return $mask;
+}
+
+sub give_children {
+	my($ref, $mask) = @_;
+
+	for my $pref ($ref->get_children()) {
+		$pref->{_mask} = task_mask($pref) | $mask;
+		give_children($pref, $mask);
+	}
 }
 
 sub give_parent {
@@ -597,8 +614,13 @@ sub map_filter_name {
 	return (\&filter_some, '>','')	if $word =~ /^some/i;
 	return (\&filter_some, '>','')	if $word =~ /^maybe/i;
 
-	return (\&filter_next, '<','')	if $word =~ /^next/i;
 	return (\&filter_task, '<','')	if $word =~ /^action/i;
+#	return (\&filter_next, '<','')	if $word =~ /^pure_next/i;
+# we need to re-thing this live-next vs next
+
+	return (\&filter_next, '><','')	if $word =~ /^next/i;
+	return (\&filter_live, '><','')	if $word =~ /^live/i;
+	return (\&filter_dead, '><','')	if $word =~ /^dead/i;
 
 	return (\&filter_wait, '<','')	if $word =~ /^wait/i;
 	return (\&filter_wait, '<','')	if $word =~ /^tickle/i;
@@ -609,8 +631,6 @@ sub map_filter_name {
 	return (\&filter_idea, '<','')	if $word =~ /^idea/i;
 	return (\&filter_plan, '<','')	if $word =~ /^plan/i;
 
-	return (\&filter_live, '<','')	if $word =~ /^live/i;
-	return (\&filter_dead, '<','')	if $word =~ /^dead/i;
 
 	return 0;
 }
@@ -653,6 +673,10 @@ sub apply_ref_filters {
 			filter_walk_up($ref, $reason);
 		} elsif ($dir eq '>') {
 			filter_walk_down($ref, $reason);
+		} elsif ($dir eq '<>') {
+			filter_walk_up_down($ref, $reason);
+		} elsif ($dir eq '><') {
+			filter_walk_down_up($ref, $reason);
 		}
 		return;
 	}
@@ -671,6 +695,22 @@ sub filter_walk_up {
 	}
 }
 
+sub filter_walk_up_down {
+	my($ref, $reason) = @_;
+
+	my($mask) = $ref->{_filtered};
+
+	return if $mask;	# already decided.
+
+	for my $pref ($ref->get_parents()) {
+		filter_walk_up($pref, '<'.$reason);
+	}
+	$ref->{_filtered} = $reason;
+	for my $pref ($ref->get_children()) {
+		filter_walk_down($pref, '>'.$reason);
+	}
+}
+
 sub filter_walk_down {
 	my($ref, $reason) = @_;
 
@@ -681,6 +721,24 @@ sub filter_walk_down {
 	$ref->{_filtered} = $reason;
 	for my $pref ($ref->get_children()) {
 		filter_walk_down($pref, '>'.$reason);
+	}
+}
+sub filter_walk_down_up {
+	my($ref, $reason) = @_;
+
+	my($mask) = $ref->{_filtered};
+
+	return if $mask;	# already decided.
+
+	for my $pref ($ref->get_children()) {
+		filter_walk_down($pref, '>'.$reason);
+	}
+	$ref->{_filtered} = $reason;
+
+	return if $reason =~ /^-/;
+
+	for my $pref ($ref->get_parents()) {
+		filter_walk_up($pref, '<'.$reason);
 	}
 }
 
@@ -721,7 +779,7 @@ sub filter_done {
 }
 
 
-sub filter_next {
+sub filter_pure_next {
 	my($ref, $arg) = @_;
 
 	return '?' unless $ref->is_task();
@@ -820,14 +878,38 @@ sub filter_some {
 	return '?';
 }
 
+sub filter_next {
+	my($ref, $arg) = @_;
+
+	my($mask) = task_mask($ref);
+
+	if ($ref->is_task()) {
+		return '+live=n' if ($mask & T_MASK) == T_NEXT;
+	} else {
+		return filter_live($ref, $arg);
+	}
+
+	return '?';
+}
+
 sub filter_live {
 	my($ref, $arg) = @_;
 
-	return '?' unless $ref->is_task();
+	
+#	return '?' unless $ref->is_task();
 
 	my($mask) = task_mask($ref);
-	return '+live=n' if ($mask & T_MASK) == T_NEXT;
-	return '+live=a' if ($mask & T_MASK) == T_ACTION;
+
+	return '-live=d' if ($mask & A_MASK) == A_DONE;
+	return '-live=s' if ($mask & A_MASK) == A_SOMEDAY;
+	return '-live=t' if ($mask & A_MASK) == A_TICKLE;
+	return '-live=w' if ($mask & A_MASK) == A_WAITING;
+
+	if ($ref->is_task()) {
+		return '+live=n' if ($mask & T_MASK) == T_NEXT;
+		return '+live=a' if ($mask & T_MASK) == T_ACTION;
+	}
+
 	return '?';
 }
 
@@ -838,8 +920,8 @@ sub filter_dead {
 	return '?' unless $ref->is_task();
 
 	my($mask) = task_mask($ref);
-	return '+dead=n' if ($mask & T_MASK) == T_DONE;
-	return '+dead=a' if ($mask & T_MASK) == T_FUTURE;
+	return '+dead=d' if ($mask & T_MASK) == T_DONE;
+	return '+dead=f' if ($mask & T_MASK) == T_FUTURE;
 	return '?';
 }
 

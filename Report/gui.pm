@@ -130,7 +130,7 @@ sub walk_tree {
 	my($tree) = $pkg->{tree};
 	$tree->delete('all');
 
-	meta_filter('+all', 'tid', 'simple');
+	meta_filter('+all', '^tid', 'simple');
 	my($walk) = new Hier::Walk;
 	$walk->set_depth('a');
 	$walk->filter();

@@ -33,11 +33,11 @@ sub Report_taskjuggler {	#-- generate taskjuggler file from gtd db
 
 	if (scalar(@ARGV) && $ARGV[0] eq 'all') {
 		$Someday = 1;
-		meta_filter('+a:all', '^focus', 'none');
+		meta_filter('+all', '^focus', 'none');
 		# 5 year plan everything plan
 		$ToFuture = pdate(get_today(5*365));	
 	} else {
-		meta_filter('+p:live', '^focus', 'none');
+		meta_filter('+live', '^focus', 'none');
 		# don't care about start more > 3 months
 		$ToFuture = pdate(get_today(60));	
 	}

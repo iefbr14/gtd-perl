@@ -25,7 +25,7 @@ my $Mode = 'p';	# project, doit, next-actions, actions, someday
 my($List) = 0; ###BUG### should be an option
 
 sub Report_review {	#-- Review all projects with actions
-	meta_filter('+p:live', '^doitdate', 'simple');
+	meta_filter('+live', '^doitdate', 'simple');
 	my $desc = meta_desc(@ARGV);
 
 	$Mode = 'p';
@@ -39,7 +39,8 @@ sub Report_review {	#-- Review all projects with actions
 		$Mode = 'p';
 	} elsif (lc($desc) eq 'waiting') {
 		$Mode = 'w';
-		meta_filter('+wait');
+		warn "Fooked, meta_filter reset report/sort";
+		meta_filter('+wait', '^doitdate', 'simple');
 	} else {
 		$desc = "= $desc =";
 	}
@@ -195,7 +196,7 @@ sub get_status {
 sub _report_doit {	
 
 	$= = lines();
-	meta_filter('+live', '^doit', 'doit');
+	meta_filter('+a:live', '^doitdate', 'doit');
 	my($target) = 0;
 	my($action) = \&doit_list;
 

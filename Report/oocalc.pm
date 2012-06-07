@@ -19,7 +19,7 @@ use Hier::Filter;
 use Hier::Resource;
 
 sub Report_oocalc {	#-- Project Summary for a role
-	meta_filter('+a:live', 'tid', 'none');
+	meta_filter('+live', '^tid', 'none');
 	my @want = meta_argv(@ARGV);
 
 	new_calc();
@@ -38,7 +38,7 @@ sub load_roles {
 
 	# find all next and remember there projects
 	for my $ref (meta_matching_type('o')) {
-		next if $ref->filtered();
+##FILTER	next if $ref->filtered();
 
 		my $pid = $ref->get_tid();
 		my $role = $ref->get_title();

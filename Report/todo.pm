@@ -22,7 +22,7 @@ sub Report_todo {	#-- List high priority next actions
 	my($limit) = option('Limit', 10);
 	my($list)  = option('List', 0);
 
-	meta_filter('+p:live', '^priority', 'priority');
+	meta_filter('+live', '^priority', 'priority');
 	my($title) = meta_desc(@ARGV) || 'ToDo Tasks';
 
 	report_header($title);
@@ -30,7 +30,7 @@ sub Report_todo {	#-- List high priority next actions
 	my($count) = 0;
 	for my $ref (meta_sorted('^pri')) {
 		next unless $ref->is_task();	# only actions
-		next if $ref->filtered();		# other filterings
+##FILTER	next if $ref->filtered();		# other filterings
 
 		display_task($ref);
 

@@ -35,7 +35,7 @@ sub Report_focus {	#-- List focus -- live, plan or someday
 
 	$Debug = option('Debug', 0);
 
-	meta_filter('+p:next', '^focus', 'simple');
+	meta_filter('+next', '^focus', 'simple');
 	my(@list) = meta_pick(@_);
 	if (@list == 0) {
 		@list = meta_pick('Role');
@@ -87,7 +87,7 @@ sub display_cond {
 	foreach my $ref (sort_tasks $p_ref->get_children()) {
 		next unless $ref->is_nextaction();
 		next if $ref->get_completed();
-	#	next if $ref->filtered();
+##FILTER#	next if $ref->filtered();
 
 		my($work, $counts);
 		if ($ref->get_type() eq 'p') {

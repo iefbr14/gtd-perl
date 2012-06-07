@@ -21,7 +21,7 @@ sub Report_nextactions { #-- List next actions
 	my($tid, $pid, $pref, $tic, $parent, $pic, $name, $desc);
 	my(@row);
 
-	meta_filter('+a:next', '^title', 'none');
+	meta_filter('+next', '^title', 'none');
 	meta_desc(@ARGV);
 
 print <<"EOF";
@@ -38,7 +38,7 @@ $pid, $pic, $parent,      $tid, $tic, $name,
 	for my $ref (meta_sorted('^title')) {
 		$tid = $ref->get_tid();
 next unless $ref->is_nextaction();
-		next if $ref->filtered();
+##FILTER	next if $ref->filtered();
 
 		$name = $ref->get_task() || '';
 		$tic = action_disp($ref);

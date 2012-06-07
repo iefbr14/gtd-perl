@@ -44,7 +44,7 @@ sub list_items {	#-- List projects with waiting-fors
 
         my($tid, $title, $desc, @list);
         for my $ref (meta_matching_type($type)) {
-		next if $ref->filtered();
+##FILTER	next if $ref->filtered();
 
                 push(@list, $ref);
         }

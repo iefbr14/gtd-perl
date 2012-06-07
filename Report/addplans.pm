@@ -27,8 +27,7 @@ sub Report_addplans {	#-- add plan action items to unplaned projects
 sub report_addplans {
 	my($all, $head, $desc) = @_;
 
-	meta_filter('+all', '^focus', 'simple');
-	#meta_filter('+p:plan', '^focus', 'simple');
+	meta_filter('+p:plan', '^focus', 'simple');
 
 	report_header($head, $desc);
 
@@ -40,7 +39,7 @@ sub report_addplans {
 	# find all next actions and remember there projects
 	for my $ref (meta_selected()) {
 		next unless $ref->is_task();
-		next unless $ref->filtered();
+##FILTER	next unless $ref->filtered();
 
 		my $pref = $ref->get_parent();
 		next unless defined $pref;
@@ -54,7 +53,7 @@ sub report_addplans {
 		my($pid) = $ref->get_tid();
 
 		next if $has_children{$pid};
-		next if $ref->filtered($ref);
+##FILTER	next if $ref->filtered($ref);
 		next if $ref->get_completed();
 
 		$want_child{$pid} = $ref;

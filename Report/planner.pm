@@ -33,7 +33,7 @@ sub Report_planner {	#-- Create a planner file from gtd db
 	my($tid, $pri, $task, $cat, $ins, $due, $desc);
 	my(@row);
 
-	meta_filter('+all', '^tid', 'none');
+	meta_filter('+live', '^tid', 'none');
 	meta_argv(@ARGV);
 	my($planner) = new Hier::Walk;
 	$planner->set_depth('a');

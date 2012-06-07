@@ -56,6 +56,8 @@ sub walk {
 	my(@top) = meta_matching_type($toptype);
 
 	for my $ref (sort_tasks @top) {
+		next if $ref->filtered();
+
 		$self->detail($ref);
 	}
 	return;

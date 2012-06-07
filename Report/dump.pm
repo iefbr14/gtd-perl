@@ -21,7 +21,7 @@ use Hier::Format;
 
 sub Report_dump {	#-- dump records in edit format
 	# everybody into the pool by id 
-	meta_filter('+any', 'tid', 'dump');	
+	meta_filter('+any', '^tid', 'dump');	
 
 	my($name) = ucfirst(meta_desc(@ARGV));	# some out
 	if ($name) {
@@ -68,7 +68,7 @@ sub list_dump {
 		$type = $ref->get_type();
 		next if $want_type && $type ne $want_type;
 
-		next if $ref->filtered();
+##FILTER	next if $ref->filtered();
 	
 		display_task($ref);
 	}

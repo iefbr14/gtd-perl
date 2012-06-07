@@ -40,7 +40,7 @@ sub report_projects {
 
 	# find all next and remember there projects
 	for my $ref (meta_matching_type('p')) {
-		next if $ref->filtered();
+##FILTER	next if $ref->filtered();
 
 		my $pid = $ref->get_tid();
 		$wanted{$pid} = $ref;

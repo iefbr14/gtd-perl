@@ -23,7 +23,7 @@ use Hier::Format;
 my $Mask = 0;
 
 sub Report_hier {	#-- Hiericial List of Values/Visions/Roles...
-	meta_filter('+p:live', '^title', 'none');
+	meta_filter('+live', '^title', 'none');
 
 	$Mask  = option('Mask');
 	my($criteria) = meta_desc(@ARGV);
@@ -32,8 +32,7 @@ sub Report_hier {	#-- Hiericial List of Values/Visions/Roles...
 	$walk->filter();
 
 	my($top) = 'm';
-
-	for my $criteria (@_) {
+	for my $criteria (meta_argv(@_)) {
 		if ($criteria =~ /^\d+$/) {
 			$top = $criteria;
 		} else {

@@ -65,34 +65,33 @@ Category/Context/Timeframe/Tags filtering...
 
 ---------------------------------------------------------------------------
 
-actions	 meta_filter('+next', '^focus', 'detail');
-addplans meta_filter('+live', '^focus', 'simple');
-bulklist meta_filter('+live', '^title', 'bulk');
-doit	 meta_filter('+live', '^doitdate', 'simple');
-dump	 meta_filter('+any', 'tid', 'dump');	
-focus	 meta_filter('+next', '^focus', 'simple');
-fook	 meta_filter('+live', '^title', 'simple');
-gui	 meta_filter('+all', 'tid', 'simple');
-hierlist meta_filter('+live', 'title', 'simple');
-hier	 meta_filter('+live', '^title', 'none');
-items	 meta_filter('+any', '^title', 'item');	
-list	 meta_filter('+live', '^title', 'title');
-nextactions	meta_filter('+next', '^title', 'none');
-noop	 meta_filter('+live', 'tid', 'simple');
-oocalc	 meta_filter('+live', 'tid', 'none');
-planner	 meta_filter('+all', '^tid', 'none');
-projects	#meta_filter('+next', '^focus', 'rgpa');
-projects	meta_filter('+next', '^focus', 'simple');
-purge	 meta_filter('+dead', '^tid', 'simple');
-records	 meta_filter('+any', '^tid', 'record');
-review	 meta_filter('+live', '^doitdate', 'simple');
-review	 meta_filter('+wait');
-review	 meta_filter('+live', '^doit', 'doit');
-search	 meta_filter('+all', '^title', 'simple');
-spreadsheet meta_filter('+live', '^tid', 'none');
-status	meta_filter("+live", '^tid', 'none');	
-taskjuggler meta_filter('+all', '^focus', 'none');
-taskjuggler meta_filter('+live', '^focus', 'none');
-tasks	 meta_filter('+live', 'title', 'task');	# Actions
-todo	 meta_filter('+live', '^priority', 'priority');
+Function	Filter	Level
+actions		+next	 a
+addplans	+live	 p
+bulklist	+live
+doit		+live	 a
+dump		+any	 
+focus		+next	 
+fook		+live
+gui		+all
+hierlist	+live
+hier		+live	
+items		+any
+list		+live	
+nextactions	+next	
+noop		+live	
+oocalc		+live	
+planner		+live	
+projects	+next	p
+purge		+dead	
+records		+live	
+review		+live	
+review		+live	a	# when doit
+search		+all	
+spreadsheet	+live	
+status		+live	
+taskjuggler	+live	
+tasks		+live	g
+todo		+live 	
+walk		+live	
 

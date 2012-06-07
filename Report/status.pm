@@ -42,7 +42,7 @@ use Hier::Filter;
 
 sub Report_status {	#-- report status of projects/actions
 	# counts use it and it give a context
-	meta_filter("+a:live", '^tid', 'none');	
+	meta_filter('+live', '^tid', 'none');	
 
 	my $desc = meta_desc(@ARGV);
 	
