@@ -25,6 +25,8 @@ use Hier::Option;
 my $Display = \&disp_simple;
 my $Header  = undef;
 
+my $Wiki = 0;		#### display is in wiki format ####
+
 my @Order = (qw(
 	todo_id
 	type
@@ -70,6 +72,10 @@ sub display_mode {
 	$mode = lc($mode);
 	if (defined $alias{$mode}) {
 		$mode = $alias{$mode};
+	}
+
+	if ($mode eq 'wiki') {
+		$Wiki = 1;
 	}
 
 	my(%mode) = (
@@ -343,10 +349,6 @@ sub bulk_display {
 sub disp_bulklist {
 }
 
-sub disp_rpga {
-}
-
-
 sub disp_ordered_dump {
 	my($fd, $ref) = @_;
 
@@ -448,37 +450,51 @@ my($Prev_role) = 0;
 sub header_rgpa {
 }
 
+sub display_parent {
+	my($ref) = @_;
+
+	return unless $ref;
+
+	my $cols = columns() - 2;
+	my $tid  = $ref->get_tid();
+	my $type = $ref->get_type();
+
+	if ($type eq 'o') {	# 'o' == Role
+		return if $tid == $Prev_role;
+
+		if ($Wiki) {
+			display_task($ref);
+		} else {
+			print '#', "=" x $cols, "\n" if $Prev_role != 0;
+			print " [*** Role $tid: ", $ref->get_title(), " ***]\n";
+		}
+		$Prev_role = $tid;
+		$Prev_goal = 0;
+		return;
+	}
+	if ($type eq 'g') {
+		display_parent($ref->get_parent());
+
+		return if $tid == $Prev_goal;
+		if ($Wiki) {
+			display_task($ref);
+		} else {
+			print '#', "-" x $cols, "\n" if $Prev_goal != 0;
+			display_task($ref);
+		}
+
+		$Prev_goal = $tid;
+		return;
+	}
+	if ($type eq 'p') {
+		display_parent($ref->get_parent());
+	}
+}
+
 sub display_rgpa {
 	my($ref, $counts) = @_;
 
-	my($cols) = columns() - 2;
-
-	my $pid = $ref->get_tid();
-
-	my $g_ref = $ref->get_parent(); return unless $g_ref;
-	my $g_id  = $g_ref->get_tid();
-
-	my $r_ref = $g_ref->get_parent(); return unless $r_ref;
-	my $r_id  = $r_ref->get_tid();
-
-	#print "$r_id\t$g_id\t$pid\t$Meta_key{$pid}\n";next;
-
-	if ($r_id != $Prev_role) {
-		print '#', "=" x $cols, "\n" if $Prev_role != 0;
-		print " [*** Role $r_id: ", $r_ref->get_title(), " ***]\n";
-#		print '#', "-" x $cols, "\n";
-
-		$Prev_role = $r_id;
-		$Prev_goal = 0;
-	}
-
-	if ($g_id != $Prev_goal) {
-		print '#', "-" x $cols, "\n" if $Prev_goal != 0;
-		display_task($g_ref);
-
-		$Prev_goal = $g_id;
-	}
-
+	display_parent($ref->get_parent());
 	display_task($ref, $counts);
 }
 
@@ -503,7 +519,8 @@ sub disp_wiki {
 
 	$type = '?' unless defined $type{$type};
 	
-	print {$fd} '== ' if $type =~ /[govm]/;
+	print {$fd} '== ' if $type =~ /[ovm]/;
+	print {$fd} '=== ' if $type eq 'g';
 	print {$fd} '**' if $type eq 'a';
 	print {$fd} '*' if $type eq 'p';
 
@@ -511,7 +528,8 @@ sub disp_wiki {
 	print {$fd} '{{'.$type{$type},"|$tid|$title".'}}';
 	print {$fd} "</del>" if $done;
 
-	print {$fd} ' ==' if $type =~ /[govm]/;
+	print {$fd} ' ===' if $type eq 'g';
+	print {$fd} ' ==' if $type =~ /[ovm]/;
 	print {$fd} "\n";
 }
 

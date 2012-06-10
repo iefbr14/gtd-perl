@@ -34,7 +34,8 @@ my(%Criteria) = (
 	date     => \&by_age,
 	age      => \&by_age,
 	change   => \&by_change,
-	goaltask => \&by_goaltask,
+	rgpa     => \&by_goal_task,
+	goaltask => \&by_goal_task,
 );
 
 my(%Meta_key);
