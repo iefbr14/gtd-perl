@@ -64,17 +64,17 @@ sub ged_header {
 	my $projection = pdate(get_today($est));	
 print <<"EOF";
 0 HEAD
-1   SOUR GTD
+1   SOUR GTD-perl
 2     VERS 0.0
 2     NAME GTD-perl GED Module
 1   DEST GEDCOM 5.5
 1   DATE $date
 1   CHAR UTF-8
-1   SUBM \@SUBM@
+1   SUBM \@I0001@
 1   COPR Copyright (c) $date
 1   GEDC
 2      VERS 5.5
-2      FORM LINEAGE-LINKED
+2      FORM Lineage-Linked
 EOF
 
 }
@@ -96,7 +96,7 @@ sub hier_detail {
 	my($sid, $name, $cnt, $desc, $type, $note);
 	my($per, $start, $end, $done, $due, $we);
 	my($who, $doit, $role, $depends);
-	my($birth);
+	my($birth, $moded);
 	my($tj_pri);
 
 	my($tid) = $ref->get_tid();
@@ -113,6 +113,7 @@ sub hier_detail {
 	$done = pdate($ref->get_completed());
 	$start = pdate($ref->get_tickledate());
 	$birth = pdate($ref->get_created());
+	$moded = pdate($ref->get_modified());
 	$doit = pdate($ref->get_doit());
 	$depends = $ref->get_depends();
 
@@ -165,10 +166,10 @@ sub hier_detail {
 	print {$fd} "  1 NAME $name /$role/\n";
 
    if ($desc) {
-	print {$fd} "  1 DESC $desc\n";
+	print {$fd} "  1 DSCR $desc\n";
    }
    if ($note) {
-	print {$fd} "  1 CAST $note\n";
+	print {$fd} note($note);
    }
 
 	print {$fd} "  1 BIRT\n";
@@ -191,8 +192,8 @@ sub hier_detail {
 	print {$fd} "    2 DATE ", ged_date($done),"\n";	
    }
 
-	my($boost) = $ref->is_nextaction() ? 'M' : 'F';
-	print {$fd} "  1 SEX $boost\n";
+	my($sex) = $ref->is_nextaction() ? 'F' : 'M';
+	print {$fd} "  1 SEX $sex\n";
 
 #	print {$fd} qq(   effort $effort\n) if $effort;
 #	print {$fd} qq(   priority $tj_pri\n) if $tj_pri;
@@ -205,22 +206,53 @@ sub hier_detail {
    if ($done) {
 	print {$fd} "  1 BIRT\n";
 	print {$fd} "    1 DATE", ged_date($done),"\n";	
-  }
+   }
 
-	my(@children) = $ref->get_children();
-	return unless @children;
+    for my $pref ($ref->get_parents()) {
+	next if $pref->filtered();
 
-	print {$fd} "   1 FAMC ".id('F',$ref)."\n";	
+	print {$fd} "  1 FAMC ".id('F',$pref)."\n";	
+    }
 
-	print {$fd} "0 ".id('F',$ref)." FAM\n";	
-	my $n = 1;
-	for my $child (@children) {
-		print {$fd} "  $n CHIL ", id('I',$child), "\n";
-		++$n;
-	}
+	my(@children) = get_active_children($ref);
+    if (@children) {
+	print {$fd} "  1 FAMS ".id('F',$ref)."\n";	
+    }
+	print {$fd} "  1 CHAN\n";
+	print {$fd} "    2 DATE ", ged_date($moded), "\n";
 }
 
 sub end_detail {
+	my($planner, $ref) = @_;
+
+	my($fd) = $planner->{fd};
+
+	my(@children) = get_active_children($ref);
+	return unless @children;
+
+	#=============== Family records only for parents ==========
+	print {$fd} "0 ".id('F',$ref)." FAM\n";	
+	print {$fd} "  1 MARR\n";	
+	my($sex) = $ref->is_nextaction() ? 'WIFE' : 'HUSB';
+	print {$fd} "  1 $sex ", id('I', $ref), "\n";
+	print {$fd} "  1 NCHI ", scalar(@children), "\n";
+	for my $child (@children) {
+		print {$fd} "  1 CHIL ", id('I',$child), "\n";
+	}
+}
+
+sub get_active_children {
+	my($ref) = @_;
+
+	my(@children) = $ref->get_children();
+	my(@active);
+
+	for my $child (@children) {
+		next if $child->filtered();
+
+		push(@active, $child);
+	}
+	return @active;
 }
 
 sub id {
@@ -369,10 +401,10 @@ sub ged_date {
 sub note {
 	my($note) = @_;
 
-	my $res = '1 NOTE ';
-	while (length($note) > 72) {
-		$res .= substr($note, 0, 72) . "\n2 CONT ";
-		$note = substr($note, 72);
+	my $res = '  1 NOTE ';
+	while (length($note) > 70) {
+		$res .= substr($note, 0, 70) . "\n    2 CONT ";
+		$note = substr($note, 70);
 	}
 	$res .= $note . "\n";;
 	return $res;
