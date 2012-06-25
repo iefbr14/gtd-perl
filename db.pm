@@ -705,7 +705,7 @@ sub DB_init {
 	$MetaFix = option('MetaFix');
 
 	if ($confname) {
-		warn "#-Using $confname in Access.ini\n" if $Debug;
+		warn "#-Using $confname in Access.yaml\n" if $Debug;
 	} else {
 		$confname = 'gtd';
 #		$confname = 'gtdtest';
@@ -716,23 +716,22 @@ sub DB_init {
 			config => "$HOME/.todo/Access.yaml"
 		);
 
-	my($dbname,$host,$user,$pass);
-
 	my($dbconf) = $conf->{$confname};
 
 	unless ($dbconf) {
-		die "Can't fine section $confname in ~/.todo/Access.ini\n";
+		die "Can't fine section $confname in ~/.todo/Access.yaml\n";
 	}
 
 	warn Dumper($dbconf) if $Debug;
 
-	$dbname = $dbconf->{'dbname'};
-	$host   = $dbconf->{'host'};
-	$user   = $dbconf->{'user'};
-	$pass   = $dbconf->{'pass'};
+	my($dbname) = $dbconf->{'dbname'};
+	my($host)   = $dbconf->{'host'};
+	my($user)   = $dbconf->{'user'};
+	my($pass)   = $dbconf->{'pass'};
+	my($port)   = $dbconf->{'port'} || 3306;
 
 	if ($confname ne 'gtd') {
-		warn "confname=$confname;dbname=$dbname;host=$host\n";
+		warn "confname=$confname;dbname=$dbname;host=$host;port=$port\n";
 	}
 
 	$Prefix = $dbconf->{'prefix'};
