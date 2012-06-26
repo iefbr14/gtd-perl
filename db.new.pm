@@ -259,22 +259,23 @@ EOF
 
 EOF
 	$sth = G_select('itemstatus');
+
+	G_learn(todo_id        => 'itemId');
+	G_learn(modified       => 'lastModified');
+	G_learn(created        => 'dateCreated');
+	G_learn(completed      => 'dateCompleted');
+	G_learn(type           => 'type');
+	G_learn(_gtd_category  => 'categoryId');
+
+	G_learn(isSomeday      => 'isSomeday');
+	G_learn(_gtd_context   => 'contextId');
+	G_learn(_gtd_timeframe => 'timeframeId');
+	G_learn(due            => 'deadline');
+	G_learn(nextaction     => 'nextaction');
+	G_learn(tickledate     => 'tickledate');
+
 	while ($row = $sth->fetchrow_hashref()) {
-		gtdmap($row, todo_id        => 'itemId');
-		gtdmap($row, modified       => 'lastModified');
-		gtdmap($row, created        => 'dateCreated');
-		gtdmap($row, completed      => 'dateCompleted');
-		gtdmap($row, type           => 'type');
-		gtdmap($row, _gtd_category  => 'categoryId');
-
-		gtdmap($row, isSomeday      => 'isSomeday');
-		gtdmap($row, _gtd_context   => 'contextId');
-		gtdmap($row, _gtd_timeframe => 'timeframeId');
-		gtdmap($row, due            => 'deadline');
-		gtdmap($row, nextaction     => 'nextaction');
-		gtdmap($row, tickledate     => 'tickledate');
-
-		$ref = $Current_ref;
+		$ref = gtd_add($row);
 		cset($ref, category  => $Category->name($row->{categoryId}));
 		cset($ref, context   => $Context->name($row->{contextId}));
 		cset($ref, timeframe => $Timeframe->name($row->{timeframeId}));
@@ -296,15 +297,17 @@ mysql> describe gtd_items;
 EOF
 
 	$sth = G_select('items');
+
+	G_learn(todo_id     => 'itemId');
+	G_learn(task        => 'title');
+	G_learn(description => 'description');
+	G_learn(note        => 'desiredOutcome');
+
+	G_learn(recurdesc   => 'recurdesc');
+	G_learn(recur       => 'recur');
+
 	while ($row = $sth->fetchrow_hashref) {
-		gtdmap($row, todo_id     => 'itemId');
-		gtdmap($row, task        => 'title');
-		gtdmap($row, description => 'description');
-		gtdmap($row, note        => 'desiredOutcome');
-
-		gtdmap($row, recurdesc   => 'recurdesc');
-		gtdmap($row, recur       => 'recur');
-
+		gtd_add($row);
 	}
 
 
@@ -364,34 +367,38 @@ sub add_relationship {
 	$pref->add_child($tref);
 }
 
-sub gtdmap {
-	my($db, $t_key, $g_key) = @_;
-	# add mapping for $Table/g_key => t_key;
-#	$GTd{$t_key} = ...
+sub gtd_add {
+	my($db) = @_;
 
-	G_learn($t_key, $g_key);
+	my($t_key, $val);
+	for my $g_key (keys %$db) {
+		$t_key = G_map($g_key);
 
-	my($val) = html_clean( $db->{$g_key} );
+die "Can't map $g_key\n" unless $t_key;
 
-	# New master key
-	if ($t_key eq 'todo_id') {
-		my $ref = Hier::Tasks::find($val);
-		if (defined $ref) {
-			$Current_ref = $ref;
-			$Current_ref->{_todo_only} |= 0x02;
-			return;
+		$val = html_clean( $db->{$g_key} );
+
+		# New master key
+		if ($t_key eq 'todo_id') {
+			my $ref = Hier::Tasks::find($val);
+			if (defined $ref) {
+				$Current_ref = $ref;
+				$Current_ref->{_todo_only} |= 0x02;
+				next;
+			}
+			unless ($val) {
+				die "Can't create todo whith todo_id=$val for table $Table\n";
+			}
+			warn "Hard Need Create $val\n" if $Debug;
+			$Current_ref = Hier::Tasks->new($val);
+			$Current_ref->{_todo_only} = 0x03;
+			sac_create($val, {});
+			next;
 		}
-		unless ($val) {
-			die "Can't create todo whith todo_id=$val for table $Table\n";
-		}
-		warn "Hard Need Create $val\n" if $Debug;
-		$Current_ref = Hier::Tasks->new($val);
-		$Current_ref->{_todo_only} = 0x03;
-		sac_create($val, {});
-		return;
+
+		cset($Current_ref, $t_key, $val);
 	}
-
-	cset($Current_ref, $t_key, $val);
+	return $Current_ref;
 }
 
 sub html_clean {
@@ -399,7 +406,8 @@ sub html_clean {
 
 	return undef unless defined $val;
 
-	return $val unless $val =~ m/&[a-z]+;/;
+	return $val unless $val =~ m/(\&[a-z]+;)/;
+
 	my %map = (
 		lt	=> '<',
 		gt	=> '>',
@@ -409,7 +417,7 @@ sub html_clean {
 	);
 
 	my($to) = '';
-	while ($val =~ s/^(.*)&([A-Za-z]+);//) {
+	while ($val =~ s/^(.*)\&([A-Za-z]+);//) {
 		if (defined $map{lc($2)}) {
 			$to .= $1 . $map{lc($2)};
 		} else {
@@ -798,9 +806,15 @@ sub G_select {
 }
 
 sub G_learn {
-	my($from, $to) = @_;
+	my($t_key, $g_key) = @_;
 
-	$GTD_map->{$Table}->{$from} = $to;
+	$GTD_map->{$Table}->{$g_key} = $t_key;
+}
+
+sub G_map {
+	my($g_key) = @_;
+
+	return $GTD_map->{$Table}->{$g_key};
 }
 
 sub G_list {
