@@ -1,0 +1,36 @@
+digraph {
+graph [overlap=false]
+subgraph cluster_YAML_Base {
+	label="YAML::Base";
+	"YAML::Base::__ANON__[YAML/Base.pm:172]";
+}
+subgraph cluster_Data_Dumper {
+	label="Data::Dumper";
+	"Data::Dumper::Dump";
+	"Data::Dumper::BEGIN@683";
+	"Data::Dumper::Dumper";
+	"Data::Dumper::BEGIN@22";
+	"Data::Dumper::BEGIN@16";
+	"Data::Dumper::new";
+	"Data::Dumper::Dumpxs";
+	"Data::Dumper::BEGIN@20";
+}
+subgraph cluster_bytes {
+	label="bytes";
+	"bytes::import";
+}
+subgraph cluster_Exporter {
+	label="Exporter";
+	"Exporter::import";
+}
+"YAML::Base::__ANON__[YAML/Base.pm:172]" -> "Data::Dumper::Dumper";
+"YAML::Base::__ANON__[YAML/Base.pm:172]" -> "Data::Dumper::BEGIN@22";
+"Data::Dumper::BEGIN@683" -> "bytes::import";
+"Data::Dumper::BEGIN@20" -> "Exporter::import";
+"Data::Dumper::Dump" -> "Data::Dumper::Dumpxs";
+"YAML::Base::__ANON__[YAML/Base.pm:172]" -> "Data::Dumper::BEGIN@16";
+"Data::Dumper::Dumpxs" -> "Data::Dumper::new";
+"YAML::Base::__ANON__[YAML/Base.pm:172]" -> "Data::Dumper::BEGIN@683";
+"YAML::Base::__ANON__[YAML/Base.pm:172]" -> "Data::Dumper::BEGIN@20";
+"Data::Dumper::Dumper" -> "Data::Dumper::Dump";
+}

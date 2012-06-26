@@ -1,0 +1,56 @@
+digraph {
+graph [overlap=false]
+subgraph cluster_Hier_Walk {
+	label="Hier::Walk";
+	"Hier::Walk::new";
+}
+subgraph cluster_warnings {
+	label="warnings";
+	"warnings::import";
+}
+subgraph cluster_Hier_util {
+	label="Hier::util";
+	"Hier::util::BEGIN@20";
+	"Hier::util::BEGIN@3";
+	"Hier::util::type_depth";
+	"Hier::util::BEGIN@7";
+	"Hier::util::BEGIN@6";
+	"Hier::util::BEGIN@4";
+}
+subgraph cluster_main {
+	label="main";
+	"main::BEGIN@8";
+}
+subgraph cluster_strict {
+	label="strict";
+	"strict::import";
+}
+subgraph cluster_Hier_Option {
+	label="Hier::Option";
+	"Hier::Option::BEGIN@16";
+	"Hier::Option::BEGIN@13";
+	"Hier::Option::_today";
+	"Hier::Option::BEGIN@4";
+	"Hier::Option::BEGIN@3";
+	"Hier::Option::BEGIN@14";
+}
+subgraph cluster_Exporter {
+	label="Exporter";
+	"Exporter::import";
+}
+"main::BEGIN@8" -> "Hier::util::BEGIN@3";
+"main::BEGIN@8" -> "Hier::util::BEGIN@20";
+"Hier::util::BEGIN@20" -> "Hier::Option::BEGIN@3";
+"Hier::util::BEGIN@20" -> "Exporter::import";
+"main::BEGIN@8" -> "Hier::util::BEGIN@4";
+"main::BEGIN@8" -> "Hier::util::BEGIN@7";
+"Hier::util::BEGIN@20" -> "Hier::Option::_today";
+"Hier::util::BEGIN@4" -> "warnings::import";
+"Hier::util::BEGIN@20" -> "Hier::Option::BEGIN@4";
+"main::BEGIN@8" -> "Hier::util::BEGIN@6";
+"Hier::util::BEGIN@20" -> "Hier::Option::BEGIN@16";
+"Hier::util::BEGIN@20" -> "Hier::Option::BEGIN@13";
+"Hier::util::BEGIN@20" -> "Hier::Option::BEGIN@14";
+"Hier::Walk::new" -> "Hier::util::type_depth";
+"Hier::util::BEGIN@3" -> "strict::import";
+}

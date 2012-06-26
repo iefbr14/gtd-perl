@@ -1,0 +1,113 @@
+digraph {
+graph [overlap=false]
+subgraph cluster_warnings {
+	label="warnings";
+	"warnings::unimport";
+}
+subgraph cluster_re {
+	label="re";
+	"re::BEGIN@4";
+	"re::import";
+	"re::BEGIN@5";
+}
+subgraph cluster_vars {
+	label="vars";
+	"vars::import";
+}
+subgraph cluster_B {
+	label="B";
+	"B::BEGIN@30";
+	"B::BEGIN@237";
+	"B::opnumber";
+	"B::BEGIN@12";
+}
+subgraph cluster_strict {
+	label="strict";
+	"strict::import";
+	"strict::unimport";
+}
+subgraph cluster_XSLoader {
+	label="XSLoader";
+	"XSLoader::load";
+}
+subgraph cluster_B_Deparse {
+	label="B::Deparse";
+	"B::Deparse::BEGIN@2751";
+	"B::Deparse::BEGIN@601";
+	"B::Deparse::CORE:qr";
+	"B::Deparse::BEGIN@27";
+	"B::Deparse::BEGIN@11";
+	"B::Deparse::BEGIN@676";
+	"B::Deparse::BEGIN@2753";
+	"B::Deparse::BEGIN@28";
+	"B::Deparse::BEGIN@26";
+	"B::Deparse::BEGIN@473";
+	"B::Deparse::BEGIN@3606";
+	"B::Deparse::BEGIN@2752";
+	"B::Deparse::BEGIN@30";
+	"B::Deparse::BEGIN@3337";
+	"B::Deparse::CORE:pack";
+	"B::Deparse::BEGIN@1224";
+	"B::Deparse::BEGIN@12";
+	"B::Deparse::CORE:sort";
+	"B::Deparse::BEGIN@3412";
+	"B::Deparse::BEGIN@1999";
+	"B::Deparse::BEGIN@2750";
+	"B::Deparse::BEGIN@3413";
+	"B::Deparse::BEGIN@2821";
+	"B::Deparse::BEGIN@2030";
+	"B::Deparse::BEGIN@3338";
+}
+subgraph cluster_YAML_Type_code {
+	label="YAML::Type::code";
+	"YAML::Type::code::BEGIN@137";
+}
+subgraph cluster_Exporter {
+	label="Exporter";
+	"Exporter::import";
+}
+"YAML::Type::code::BEGIN@137" -> "B::Deparse::BEGIN@601";
+"B::Deparse::BEGIN@12" -> "B::BEGIN@12";
+"YAML::Type::code::BEGIN@137" -> "B::Deparse::BEGIN@26";
+"YAML::Type::code::BEGIN@137" -> "B::Deparse::BEGIN@1224";
+"YAML::Type::code::BEGIN@137" -> "B::Deparse::BEGIN@12";
+"B::Deparse::BEGIN@3338" -> "warnings::unimport";
+"YAML::Type::code::BEGIN@137" -> "B::Deparse::BEGIN@1999";
+"B::Deparse::BEGIN@12" -> "Exporter::import";
+"B::Deparse::BEGIN@11" -> "Exporter::import";
+"YAML::Type::code::BEGIN@137" -> "B::Deparse::BEGIN@3338";
+"YAML::Type::code::BEGIN@137" -> "B::Deparse::BEGIN@2751";
+"B::Deparse::BEGIN@676" -> "strict::unimport";
+"B::Deparse::BEGIN@473" -> "strict::unimport";
+"B::Deparse::BEGIN@3337" -> "strict::unimport";
+"YAML::Type::code::BEGIN@137" -> "B::Deparse::BEGIN@11";
+"YAML::Type::code::BEGIN@137" -> "B::Deparse::BEGIN@27";
+"YAML::Type::code::BEGIN@137" -> "B::Deparse::BEGIN@2752";
+"YAML::Type::code::BEGIN@137" -> "B::Deparse::BEGIN@3606";
+"YAML::Type::code::BEGIN@137" -> "B::Deparse::BEGIN@3337";
+"B::Deparse::BEGIN@3606" -> "B::Deparse::CORE:pack";
+"B::Deparse::BEGIN@12" -> "B::BEGIN@30";
+"B::Deparse::BEGIN@12" -> "B::BEGIN@237";
+"YAML::Type::code::BEGIN@137" -> "B::Deparse::CORE:sort";
+"YAML::Type::code::BEGIN@137" -> "B::Deparse::BEGIN@2821";
+"YAML::Type::code::BEGIN@137" -> "B::Deparse::BEGIN@2030";
+"B::Deparse::BEGIN@2750" -> "B::opnumber";
+"B::Deparse::BEGIN@2753" -> "B::opnumber";
+"B::Deparse::BEGIN@2751" -> "B::opnumber";
+"B::Deparse::BEGIN@2752" -> "B::opnumber";
+"B::Deparse::BEGIN@3412" -> "B::Deparse::CORE:qr";
+"YAML::Type::code::BEGIN@137" -> "B::Deparse::BEGIN@676";
+"B::Deparse::BEGIN@3413" -> "re::BEGIN@5";
+"YAML::Type::code::BEGIN@137" -> "B::Deparse::BEGIN@28";
+"YAML::Type::code::BEGIN@137" -> "B::Deparse::BEGIN@473";
+"B::Deparse::BEGIN@3413" -> "re::import";
+"B::Deparse::BEGIN@27" -> "vars::import";
+"YAML::Type::code::BEGIN@137" -> "B::Deparse::BEGIN@3412";
+"YAML::Type::code::BEGIN@137" -> "B::Deparse::BEGIN@2750";
+"YAML::Type::code::BEGIN@137" -> "B::Deparse::BEGIN@3413";
+"YAML::Type::code::BEGIN@137" -> "B::Deparse::BEGIN@2753";
+"B::Deparse::BEGIN@12" -> "XSLoader::load";
+"B::Deparse::BEGIN@3413" -> "re::BEGIN@4";
+"YAML::Type::code::BEGIN@137" -> "B::Deparse::BEGIN@30";
+"B::Deparse::BEGIN@26" -> "strict::import";
+}

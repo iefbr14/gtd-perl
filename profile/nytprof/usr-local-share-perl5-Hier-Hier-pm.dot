@@ -1,0 +1,65 @@
+digraph {
+graph [overlap=false]
+subgraph cluster_Hier_Hier {
+	label="Hier::Hier";
+	"Hier::Hier::rel_add";
+	"Hier::Hier::BEGIN@4";
+	"Hier::Hier::CORE:sort";
+	"Hier::Hier::BEGIN@7";
+	"Hier::Hier::get_parents";
+	"Hier::Hier::BEGIN@3";
+	"Hier::Hier::BEGIN@6";
+	"Hier::Hier::rel_vals";
+	"Hier::Hier::get_children";
+	"Hier::Hier::add_child";
+}
+subgraph cluster_base {
+	label="base";
+	"base::import";
+}
+subgraph cluster_warnings {
+	label="warnings";
+	"warnings::import";
+}
+subgraph cluster_strict {
+	label="strict";
+	"strict::import";
+}
+subgraph cluster_Hier_Filter {
+	label="Hier::Filter";
+	"Hier::Filter::give_parent";
+	"Hier::Filter::apply_walk_down";
+	"Hier::Filter::give_children";
+}
+subgraph cluster_Hier_db {
+	label="Hier::db";
+	"Hier::db::add_relationship";
+}
+subgraph cluster_Hier_Tasks {
+	label="Hier::Tasks";
+	"Hier::Tasks::set_dirty";
+	"Hier::Tasks::get_tid";
+}
+subgraph cluster_Exporter {
+	label="Exporter";
+	"Exporter::import";
+}
+"Hier::Hier::get_parents" -> "Hier::Hier::rel_vals";
+"Hier::Hier::get_children" -> "Hier::Hier::rel_vals";
+"Hier::Hier::BEGIN@6" -> "Exporter::import";
+"Hier::Hier::BEGIN@7" -> "Exporter::import";
+"Hier::Hier::add_child" -> "Hier::Tasks::set_dirty";
+"Hier::Filter::give_parent" -> "Hier::Hier::get_parents";
+"Hier::Filter::apply_walk_down" -> "Hier::Hier::get_children";
+"Hier::Filter::give_children" -> "Hier::Hier::get_children";
+"Hier::Hier::rel_add" -> "Hier::Tasks::get_tid";
+"Hier::Hier::BEGIN@4" -> "warnings::import";
+"base::import" -> "Hier::Hier::BEGIN@7";
+"base::import" -> "Hier::Hier::BEGIN@4";
+"base::import" -> "Hier::Hier::BEGIN@3";
+"Hier::Hier::rel_add" -> "Hier::Hier::CORE:sort";
+"base::import" -> "Hier::Hier::BEGIN@6";
+"Hier::Hier::add_child" -> "Hier::Hier::rel_add";
+"Hier::Hier::BEGIN@3" -> "strict::import";
+"Hier::db::add_relationship" -> "Hier::Hier::add_child";
+}

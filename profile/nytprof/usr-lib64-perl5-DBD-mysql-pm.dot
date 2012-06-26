@@ -1,0 +1,110 @@
+digraph {
+graph [overlap=false]
+subgraph cluster_DynaLoader {
+	label="DynaLoader";
+	"DynaLoader::bootstrap";
+}
+subgraph cluster_DBD_mysql_dr {
+	label="DBD::mysql::dr";
+	"DBD::mysql::dr::BEGIN@99";
+	"DBD::mysql::dr::connect";
+	"DBD::mysql::dr::BEGIN@101";
+	"DBD::mysql::dr::BEGIN@100";
+}
+subgraph cluster_DBI {
+	label="DBI";
+	"DBI::_new_dbh";
+	"DBI::install_driver";
+	"DBI::_new_sth";
+	"DBI::_new_drh";
+}
+subgraph cluster_vars {
+	label="vars";
+	"vars::import";
+}
+subgraph cluster_strict {
+	label="strict";
+	"strict::import";
+}
+subgraph cluster_DBD_mysql {
+	label="DBD::mysql";
+	"DBD::mysql::_OdbcParse";
+	"DBD::mysql::driver";
+	"DBD::mysql::CORE:match";
+	"DBD::mysql::BEGIN@4";
+	"DBD::mysql::BEGIN@9";
+	"DBD::mysql::BEGIN@8";
+	"DBD::mysql::BEGIN@7";
+	"DBD::mysql::bootstrap";
+	"DBD::mysql::BEGIN@5";
+}
+subgraph cluster_DBI_db {
+	label="DBI::db";
+	"DBI::db::prepare";
+}
+subgraph cluster_DBI_Const_GetInfoType {
+	label="DBI::Const::GetInfoType";
+	"DBI::Const::GetInfoType::BEGIN@16";
+	"DBI::Const::GetInfoType::BEGIN@46";
+	"DBI::Const::GetInfoType::BEGIN@45";
+	"DBI::Const::GetInfoType::CORE:match";
+	"DBI::Const::GetInfoType::BEGIN@14";
+	"DBI::Const::GetInfoType::BEGIN@12";
+}
+subgraph cluster_DBD_mysql_db {
+	label="DBD::mysql::db";
+	"DBD::mysql::db::BEGIN@187";
+	"DBD::mysql::db::_login";
+	"DBD::mysql::db::prepare";
+	"DBD::mysql::db::BEGIN@186";
+}
+subgraph cluster_DBD_mysql_st {
+	label="DBD::mysql::st";
+	"DBD::mysql::st::BEGIN@738";
+	"DBD::mysql::st::_prepare";
+}
+subgraph cluster_DBI_dr {
+	label="DBI::dr";
+	"DBI::dr::connect";
+}
+subgraph cluster_Exporter {
+	label="Exporter";
+	"Exporter::import";
+}
+"DBD::mysql::dr::BEGIN@101" -> "DBI::Const::GetInfoType::BEGIN@45";
+"DBD::mysql::db::prepare" -> "DBD::mysql::st::_prepare";
+"DBI::install_driver" -> "DBD::mysql::dr::BEGIN@101";
+"DBD::mysql::dr::BEGIN@101" -> "DBI::Const::GetInfoType::BEGIN@14";
+"DBD::mysql::db::prepare" -> "DBI::_new_sth";
+"DBD::mysql::dr::BEGIN@101" -> "Exporter::import";
+"DBD::mysql::dr::BEGIN@100" -> "Exporter::import";
+"DBD::mysql::db::BEGIN@187" -> "Exporter::import";
+"DBI::install_driver" -> "DBD::mysql::BEGIN@9";
+"DBD::mysql::dr::BEGIN@101" -> "DBI::Const::GetInfoType::CORE:match";
+"DBI::install_driver" -> "DBD::mysql::driver";
+"DBI::install_driver" -> "DBD::mysql::BEGIN@7";
+"DBI::install_driver" -> "DBD::mysql::db::BEGIN@187";
+"DBD::mysql::dr::connect" -> "DBI::_new_dbh";
+"DBI::install_driver" -> "DBD::mysql::BEGIN@4";
+"DBI::db::prepare" -> "DBD::mysql::db::prepare";
+"DBD::mysql::driver" -> "DBI::_new_drh";
+"DynaLoader::bootstrap" -> "DBD::mysql::bootstrap";
+"DBI::install_driver" -> "DBD::mysql::db::BEGIN@186";
+"DBD::mysql::dr::BEGIN@101" -> "DBI::Const::GetInfoType::BEGIN@16";
+"DBI::dr::connect" -> "DBD::mysql::dr::connect";
+"DBI::install_driver" -> "DBD::mysql::BEGIN@8";
+"DBI::install_driver" -> "DBD::mysql::dr::BEGIN@99";
+"DBD::mysql::BEGIN@5" -> "vars::import";
+"DBI::install_driver" -> "DBD::mysql::st::BEGIN@738";
+"DBD::mysql::dr::connect" -> "DBD::mysql::db::_login";
+"DBD::mysql::_OdbcParse" -> "DBD::mysql::CORE:match";
+"DBI::install_driver" -> "DBD::mysql::dr::BEGIN@100";
+"DBI::install_driver" -> "DBD::mysql::BEGIN@5";
+"DBD::mysql::dr::BEGIN@101" -> "DBI::Const::GetInfoType::BEGIN@46";
+"DBD::mysql::dr::connect" -> "DBD::mysql::_OdbcParse";
+"DBD::mysql::dr::BEGIN@101" -> "DBI::Const::GetInfoType::BEGIN@12";
+"DBD::mysql::dr::BEGIN@99" -> "strict::import";
+"DBD::mysql::st::BEGIN@738" -> "strict::import";
+"DBD::mysql::BEGIN@4" -> "strict::import";
+"DBD::mysql::db::BEGIN@186" -> "strict::import";
+}

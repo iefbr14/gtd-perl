@@ -1,0 +1,32 @@
+digraph {
+graph [overlap=false]
+subgraph cluster_strict {
+	label="strict";
+	"strict::import";
+	"strict::unimport";
+}
+subgraph cluster_XSLoader {
+	label="XSLoader";
+	"XSLoader::load";
+}
+subgraph cluster_Fcntl {
+	label="Fcntl";
+	"Fcntl::BEGIN@62";
+	"Fcntl::BEGIN@214";
+	"Fcntl::BEGIN@58";
+	"Fcntl::BEGIN@64";
+	"Fcntl::BEGIN@239";
+}
+subgraph cluster_POSIX {
+	label="POSIX";
+	"POSIX::BEGIN@13";
+}
+"POSIX::BEGIN@13" -> "Fcntl::BEGIN@214";
+"POSIX::BEGIN@13" -> "Fcntl::BEGIN@239";
+"Fcntl::BEGIN@239" -> "strict::unimport";
+"POSIX::BEGIN@13" -> "Fcntl::BEGIN@64";
+"POSIX::BEGIN@13" -> "Fcntl::BEGIN@62";
+"POSIX::BEGIN@13" -> "Fcntl::BEGIN@58";
+"Fcntl::BEGIN@214" -> "XSLoader::load";
+"Fcntl::BEGIN@58" -> "strict::import";
+}

@@ -1,0 +1,49 @@
+digraph {
+graph [overlap=false]
+subgraph cluster_base {
+	label="base";
+	"base::import";
+}
+subgraph cluster_warnings {
+	label="warnings";
+	"warnings::import";
+}
+subgraph cluster_strict {
+	label="strict";
+	"strict::import";
+}
+subgraph cluster_Hier_Option {
+	label="Hier::Option";
+	"Hier::Option::option";
+}
+subgraph cluster_Hier_Format {
+	label="Hier::Format";
+	"Hier::Format::BEGIN@6";
+	"Hier::Format::BEGIN@4";
+	"Hier::Format::BEGIN@22";
+	"Hier::Format::BEGIN@3";
+	"Hier::Format::BEGIN@7";
+	"Hier::Format::BEGIN@21";
+	"Hier::Format::display_mode";
+}
+subgraph cluster_Hier_Meta {
+	label="Hier::Meta";
+	"Hier::Meta::meta_filter";
+}
+subgraph cluster_Exporter {
+	label="Exporter";
+	"Exporter::import";
+}
+"base::import" -> "Hier::Format::BEGIN@4";
+"Hier::Meta::meta_filter" -> "Hier::Format::display_mode";
+"base::import" -> "Hier::Format::BEGIN@3";
+"Hier::Format::BEGIN@21" -> "Exporter::import";
+"Hier::Format::BEGIN@22" -> "Exporter::import";
+"Hier::Format::display_mode" -> "Hier::Option::option";
+"base::import" -> "Hier::Format::BEGIN@21";
+"base::import" -> "Hier::Format::BEGIN@6";
+"Hier::Format::BEGIN@4" -> "warnings::import";
+"base::import" -> "Hier::Format::BEGIN@7";
+"base::import" -> "Hier::Format::BEGIN@22";
+"Hier::Format::BEGIN@3" -> "strict::import";
+}

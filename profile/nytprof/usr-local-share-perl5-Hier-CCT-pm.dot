@@ -1,0 +1,44 @@
+digraph {
+graph [overlap=false]
+subgraph cluster_Hier_CCT {
+	label="Hier::CCT";
+	"Hier::CCT::use";
+	"Hier::CCT::BEGIN@17";
+	"Hier::CCT::BEGIN@4";
+	"Hier::CCT::_table";
+	"Hier::CCT::BEGIN@3";
+	"Hier::CCT::define";
+	"Hier::CCT::BEGIN@18";
+	"Hier::CCT::BEGIN@19";
+	"Hier::CCT::name";
+}
+subgraph cluster_warnings {
+	label="warnings";
+	"warnings::import";
+}
+subgraph cluster_strict {
+	label="strict";
+	"strict::import";
+}
+subgraph cluster_Hier_db {
+	label="Hier::db";
+	"Hier::db::load_gtd";
+	"Hier::db::BEGIN@24";
+}
+subgraph cluster_Exporter {
+	label="Exporter";
+	"Exporter::import";
+}
+"Hier::db::BEGIN@24" -> "Hier::CCT::BEGIN@4";
+"Hier::db::BEGIN@24" -> "Hier::CCT::BEGIN@3";
+"Hier::CCT::BEGIN@19" -> "Exporter::import";
+"Hier::db::BEGIN@24" -> "Hier::CCT::BEGIN@18";
+"Hier::CCT::BEGIN@18" -> "warnings::import";
+"Hier::db::load_gtd" -> "Hier::CCT::name";
+"Hier::CCT::use" -> "Hier::CCT::_table";
+"Hier::db::load_gtd" -> "Hier::CCT::use";
+"Hier::db::BEGIN@24" -> "Hier::CCT::BEGIN@17";
+"Hier::db::load_gtd" -> "Hier::CCT::define";
+"Hier::db::BEGIN@24" -> "Hier::CCT::BEGIN@19";
+"Hier::CCT::BEGIN@17" -> "strict::import";
+}

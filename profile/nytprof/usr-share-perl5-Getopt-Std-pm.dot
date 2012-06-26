@@ -1,0 +1,14 @@
+digraph {
+graph [overlap=false]
+subgraph cluster_Getopt_Std {
+	label="Getopt::Std";
+	"Getopt::Std::getopts";
+	"Getopt::Std::CORE:match";
+}
+subgraph cluster_main {
+	label="main";
+	"main::RUNTIME";
+}
+"main::RUNTIME" -> "Getopt::Std::getopts";
+"Getopt::Std::getopts" -> "Getopt::Std::CORE:match";
+}

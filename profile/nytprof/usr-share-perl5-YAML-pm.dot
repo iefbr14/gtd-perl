@@ -1,0 +1,125 @@
+digraph {
+graph [overlap=false]
+subgraph cluster_YAML {
+	label="YAML";
+	"YAML::BEGIN@7";
+	"YAML::Load";
+	"YAML::BEGIN@6";
+	"YAML::BEGIN@3";
+	"YAML::BEGIN@15";
+	"YAML::BEGIN@40";
+	"YAML::init_action_object";
+	"YAML::BEGIN@5";
+	"YAML::BEGIN@4";
+}
+subgraph cluster_YAML_Loader_Base {
+	label="YAML::Loader::Base";
+	"YAML::Loader::Base::set_global_options";
+}
+subgraph cluster_YAML_Loader {
+	label="YAML::Loader";
+	"YAML::Loader::BEGIN@285";
+	"YAML::Loader::BEGIN@14";
+	"YAML::Loader::BEGIN@3";
+	"YAML::Loader::BEGIN@15";
+	"YAML::Loader::BEGIN@5";
+	"YAML::Loader::load";
+	"YAML::Loader::BEGIN@4";
+	"YAML::Loader::BEGIN@7";
+	"YAML::Loader::BEGIN@6";
+	"YAML::Loader::BEGIN@13";
+	"YAML::Loader::BEGIN@16";
+}
+subgraph cluster_YAML_Base {
+	label="YAML::Base";
+	"YAML::Base::__ANON__[(eval 4)[YAML/Base.pm:73]:8]";
+	"YAML::Base::BEGIN@3";
+	"YAML::Base::__ANON__[(eval 6)[YAML/Base.pm:73]:7]";
+	"YAML::Base::BEGIN@75";
+	"YAML::Base::new";
+	"YAML::Base::BEGIN@165";
+	"YAML::Base::BEGIN@5";
+	"YAML::Base::BEGIN@4";
+}
+subgraph cluster_warnings {
+	label="warnings";
+	"warnings::unimport";
+	"warnings::import";
+}
+subgraph cluster_strict {
+	label="strict";
+	"strict::import";
+}
+subgraph cluster_Config_YAML {
+	label="Config::YAML";
+	"Config::YAML::BEGIN@7";
+	"Config::YAML::read";
+}
+subgraph cluster_constant {
+	label="constant";
+	"constant::import";
+	"constant::BEGIN@4";
+	"constant::BEGIN@3";
+	"constant::BEGIN@38";
+	"constant::BEGIN@101";
+	"constant::BEGIN@2";
+	"constant::BEGIN@6";
+}
+subgraph cluster_Exporter {
+	label="Exporter";
+	"Exporter::import";
+}
+subgraph cluster_YAML_Node {
+	label="YAML::Node";
+	"YAML::Node::BEGIN@4";
+	"YAML::Node::BEGIN@6";
+	"YAML::Node::BEGIN@7";
+	"YAML::Node::BEGIN@3";
+}
+"YAML::BEGIN@6" -> "YAML::Base::BEGIN@75";
+"YAML::init_action_object" -> "YAML::Loader::BEGIN@3";
+"YAML::BEGIN@7" -> "YAML::Node::BEGIN@6";
+"YAML::BEGIN@15" -> "constant::BEGIN@2";
+"YAML::init_action_object" -> "YAML::Loader::BEGIN@4";
+"Config::YAML::BEGIN@7" -> "YAML::BEGIN@7";
+"YAML::BEGIN@15" -> "constant::BEGIN@4";
+"YAML::init_action_object" -> "YAML::Loader::BEGIN@14";
+"YAML::BEGIN@6" -> "YAML::Base::BEGIN@165";
+"YAML::BEGIN@40" -> "warnings::unimport";
+"YAML::BEGIN@7" -> "Exporter::import";
+"YAML::BEGIN@6" -> "Exporter::import";
+"Config::YAML::BEGIN@7" -> "YAML::BEGIN@15";
+"YAML::Base::__ANON__[(eval 6)[YAML/Base.pm:73]:7]" -> "YAML::init_action_object";
+"YAML::init_action_object" -> "YAML::Loader::BEGIN@6";
+"YAML::BEGIN@15" -> "constant::BEGIN@6";
+"YAML::BEGIN@15" -> "constant::import";
+"Config::YAML::BEGIN@7" -> "YAML::BEGIN@3";
+"YAML::Load" -> "YAML::Base::new";
+"YAML::init_action_object" -> "YAML::Base::new";
+"YAML::init_action_object" -> "YAML::Loader::BEGIN@5";
+"Config::YAML::BEGIN@7" -> "YAML::BEGIN@6";
+"YAML::BEGIN@5" -> "warnings::import";
+"YAML::BEGIN@6" -> "YAML::Base::BEGIN@5";
+"YAML::init_action_object" -> "YAML::Loader::BEGIN@15";
+"YAML::Load" -> "YAML::Loader::load";
+"YAML::init_action_object" -> "YAML::Loader::BEGIN@16";
+"Config::YAML::BEGIN@7" -> "YAML::BEGIN@4";
+"YAML::BEGIN@7" -> "YAML::Node::BEGIN@4";
+"YAML::BEGIN@15" -> "constant::BEGIN@38";
+"YAML::Load" -> "YAML::Base::__ANON__[(eval 6)[YAML/Base.pm:73]:7]";
+"YAML::init_action_object" -> "YAML::Loader::Base::set_global_options";
+"Config::YAML::BEGIN@7" -> "YAML::BEGIN@5";
+"Config::YAML::read" -> "YAML::Load";
+"YAML::init_action_object" -> "YAML::Base::__ANON__[(eval 4)[YAML/Base.pm:73]:8]";
+"YAML::BEGIN@7" -> "YAML::Node::BEGIN@3";
+"YAML::BEGIN@7" -> "YAML::Node::BEGIN@7";
+"YAML::BEGIN@15" -> "constant::BEGIN@3";
+"YAML::BEGIN@6" -> "YAML::Base::BEGIN@3";
+"Config::YAML::BEGIN@7" -> "YAML::BEGIN@40";
+"YAML::BEGIN@6" -> "YAML::Base::BEGIN@4";
+"YAML::init_action_object" -> "YAML::Loader::BEGIN@285";
+"YAML::BEGIN@4" -> "strict::import";
+"YAML::init_action_object" -> "YAML::Loader::BEGIN@7";
+"YAML::BEGIN@15" -> "constant::BEGIN@101";
+"YAML::init_action_object" -> "YAML::Loader::BEGIN@13";
+}

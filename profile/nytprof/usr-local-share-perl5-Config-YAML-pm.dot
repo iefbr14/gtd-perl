@@ -1,0 +1,82 @@
+digraph {
+graph [overlap=false]
+subgraph cluster_YAML {
+	label="YAML";
+	"YAML::BEGIN@7";
+	"YAML::Load";
+	"YAML::BEGIN@6";
+	"YAML::BEGIN@3";
+	"YAML::BEGIN@15";
+	"YAML::BEGIN@40";
+	"YAML::BEGIN@5";
+	"YAML::BEGIN@4";
+}
+subgraph cluster_YAML_Base {
+	label="YAML::Base";
+	"YAML::Base::field";
+}
+subgraph cluster_warnings {
+	label="warnings";
+	"warnings::import";
+}
+subgraph cluster_vars {
+	label="vars";
+	"vars::import";
+}
+subgraph cluster_strict {
+	label="strict";
+	"strict::import";
+	"strict::unimport";
+}
+subgraph cluster_Hier_db {
+	label="Hier::db";
+	"Hier::db::BEGIN@21";
+	"Hier::db::DB_init";
+}
+subgraph cluster_Config_YAML {
+	label="Config::YAML";
+	"Config::YAML::BEGIN@5";
+	"Config::YAML::CORE:close";
+	"Config::YAML::CORE:open";
+	"Config::YAML::CORE:match";
+	"Config::YAML::BEGIN@7";
+	"Config::YAML::BEGIN@135";
+	"Config::YAML::new";
+	"Config::YAML::read";
+	"Config::YAML::AUTOLOAD";
+	"Config::YAML::BEGIN@6";
+	"Config::YAML::BEGIN@9";
+	"Config::YAML::CORE:readline";
+}
+subgraph cluster_Exporter {
+	label="Exporter";
+	"Exporter::import";
+}
+"Config::YAML::read" -> "Config::YAML::CORE:open";
+"Config::YAML::BEGIN@7" -> "YAML::BEGIN@7";
+"Config::YAML::BEGIN@7" -> "Exporter::import";
+"Hier::db::DB_init" -> "Config::YAML::AUTOLOAD";
+"Config::YAML::BEGIN@7" -> "YAML::BEGIN@15";
+"Config::YAML::read" -> "Config::YAML::CORE:close";
+"Config::YAML::BEGIN@7" -> "YAML::BEGIN@3";
+"Config::YAML::BEGIN@135" -> "strict::unimport";
+"Hier::db::BEGIN@21" -> "Config::YAML::BEGIN@7";
+"Config::YAML::BEGIN@7" -> "YAML::BEGIN@6";
+"Config::YAML::BEGIN@5" -> "warnings::import";
+"Hier::db::BEGIN@21" -> "Config::YAML::BEGIN@6";
+"Hier::db::BEGIN@21" -> "Config::YAML::BEGIN@9";
+"Config::YAML::BEGIN@7" -> "YAML::BEGIN@4";
+"Hier::db::BEGIN@21" -> "Config::YAML::BEGIN@5";
+"Hier::db::BEGIN@21" -> "Config::YAML::BEGIN@135";
+"Config::YAML::BEGIN@7" -> "YAML::Base::field";
+"Config::YAML::BEGIN@7" -> "YAML::BEGIN@5";
+"Config::YAML::read" -> "YAML::Load";
+"Config::YAML::BEGIN@9" -> "vars::import";
+"Hier::db::DB_init" -> "Config::YAML::new";
+"Config::YAML::BEGIN@7" -> "YAML::BEGIN@40";
+"Config::YAML::AUTOLOAD" -> "Config::YAML::CORE:match";
+"Config::YAML::read" -> "Config::YAML::CORE:match";
+"Config::YAML::new" -> "Config::YAML::read";
+"Config::YAML::read" -> "Config::YAML::CORE:readline";
+"Config::YAML::BEGIN@6" -> "strict::import";
+}

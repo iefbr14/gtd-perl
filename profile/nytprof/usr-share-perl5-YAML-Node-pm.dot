@@ -1,0 +1,42 @@
+digraph {
+graph [overlap=false]
+subgraph cluster_YAML {
+	label="YAML";
+	"YAML::BEGIN@7";
+}
+subgraph cluster_warnings {
+	label="warnings";
+	"warnings::import";
+}
+subgraph cluster_YAML_Tag {
+	label="YAML::Tag";
+	"YAML::Tag::BEGIN@4";
+	"YAML::Tag::BEGIN@3";
+	"YAML::Tag::BEGIN@8";
+}
+subgraph cluster_strict {
+	label="strict";
+	"strict::import";
+}
+subgraph cluster_Exporter {
+	label="Exporter";
+	"Exporter::import";
+}
+subgraph cluster_YAML_Node {
+	label="YAML::Node";
+	"YAML::Node::BEGIN@4";
+	"YAML::Node::BEGIN@6";
+	"YAML::Node::BEGIN@7";
+	"YAML::Node::BEGIN@3";
+}
+"YAML::BEGIN@7" -> "YAML::Node::BEGIN@6";
+"YAML::Node::BEGIN@6" -> "Exporter::import";
+"YAML::Node::BEGIN@4" -> "warnings::import";
+"YAML::Node::BEGIN@7" -> "YAML::Tag::BEGIN@8";
+"YAML::BEGIN@7" -> "YAML::Node::BEGIN@4";
+"YAML::BEGIN@7" -> "YAML::Node::BEGIN@3";
+"YAML::BEGIN@7" -> "YAML::Node::BEGIN@7";
+"YAML::Node::BEGIN@7" -> "YAML::Tag::BEGIN@4";
+"YAML::Node::BEGIN@7" -> "YAML::Tag::BEGIN@3";
+"YAML::Node::BEGIN@3" -> "strict::import";
+}

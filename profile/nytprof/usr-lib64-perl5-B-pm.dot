@@ -1,0 +1,32 @@
+digraph {
+graph [overlap=false]
+subgraph cluster_B {
+	label="B";
+	"B::BEGIN@30";
+	"B::BEGIN@237";
+	"B::opnumber";
+	"B::BEGIN@12";
+}
+subgraph cluster_strict {
+	label="strict";
+	"strict::import";
+	"strict::unimport";
+}
+subgraph cluster_B_Deparse {
+	label="B::Deparse";
+	"B::Deparse::BEGIN@2750";
+	"B::Deparse::BEGIN@2753";
+	"B::Deparse::BEGIN@2751";
+	"B::Deparse::BEGIN@12";
+	"B::Deparse::BEGIN@2752";
+}
+"B::Deparse::BEGIN@12" -> "B::BEGIN@12";
+"B::BEGIN@237" -> "strict::unimport";
+"B::Deparse::BEGIN@12" -> "B::BEGIN@30";
+"B::Deparse::BEGIN@12" -> "B::BEGIN@237";
+"B::Deparse::BEGIN@2750" -> "B::opnumber";
+"B::Deparse::BEGIN@2753" -> "B::opnumber";
+"B::Deparse::BEGIN@2751" -> "B::opnumber";
+"B::Deparse::BEGIN@2752" -> "B::opnumber";
+"B::BEGIN@30" -> "strict::import";
+}

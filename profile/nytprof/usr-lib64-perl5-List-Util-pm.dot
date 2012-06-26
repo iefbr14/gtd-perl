@@ -1,0 +1,24 @@
+digraph {
+graph [overlap=false]
+subgraph cluster_List_Util {
+	label="List::Util";
+	"List::Util::BEGIN@11";
+	"List::Util::BEGIN@12";
+}
+subgraph cluster_vars {
+	label="vars";
+	"vars::import";
+}
+subgraph cluster_strict {
+	label="strict";
+	"strict::import";
+}
+subgraph cluster_Hier_db {
+	label="Hier::db";
+	"Hier::db::BEGIN@20";
+}
+"Hier::db::BEGIN@20" -> "List::Util::BEGIN@12";
+"Hier::db::BEGIN@20" -> "List::Util::BEGIN@11";
+"List::Util::BEGIN@12" -> "vars::import";
+"List::Util::BEGIN@11" -> "strict::import";
+}

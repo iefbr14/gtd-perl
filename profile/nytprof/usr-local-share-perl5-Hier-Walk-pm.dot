@@ -1,0 +1,121 @@
+digraph {
+graph [overlap=false]
+subgraph cluster_Hier_Walk {
+	label="Hier::Walk";
+	"Hier::Walk::BEGIN@4";
+	"Hier::Walk::BEGIN@11";
+	"Hier::Walk::new";
+	"Hier::Walk::BEGIN@9";
+	"Hier::Walk::filter";
+	"Hier::Walk::BEGIN@8";
+	"Hier::Walk::BEGIN@7";
+	"Hier::Walk::BEGIN@14";
+	"Hier::Walk::BEGIN@6";
+	"Hier::Walk::BEGIN@10";
+	"Hier::Walk::BEGIN@3";
+	"Hier::Walk::BEGIN@13";
+}
+subgraph cluster_warnings {
+	label="warnings";
+	"warnings::import";
+}
+subgraph cluster_Hier_util {
+	label="Hier::util";
+	"Hier::util::type_depth";
+}
+subgraph cluster_strict {
+	label="strict";
+	"strict::import";
+}
+subgraph cluster_Hier_Option {
+	label="Hier::Option";
+	"Hier::Option::option";
+}
+subgraph cluster_Hier_Report_noop {
+	label="Hier::Report::noop";
+	"Hier::Report::noop::BEGIN@17";
+	"Hier::Report::noop::Report_noop";
+}
+subgraph cluster_Hier_Filter {
+	label="Hier::Filter";
+	"Hier::Filter::filtered";
+}
+subgraph cluster_Hier_Meta {
+	label="Hier::Meta";
+	"Hier::Meta::BEGIN@28";
+	"Hier::Meta::BEGIN@26";
+	"Hier::Meta::BEGIN@3";
+	"Hier::Meta::BEGIN@33";
+	"Hier::Meta::BEGIN@4";
+	"Hier::Meta::BEGIN@24";
+	"Hier::Meta::BEGIN@7";
+	"Hier::Meta::BEGIN@30";
+	"Hier::Meta::BEGIN@23";
+	"Hier::Meta::BEGIN@27";
+	"Hier::Meta::BEGIN@25";
+	"Hier::Meta::BEGIN@29";
+	"Hier::Meta::BEGIN@6";
+}
+subgraph cluster_Hier_Tasks {
+	label="Hier::Tasks";
+	"Hier::Tasks::all";
+	"Hier::Tasks::get_tid";
+}
+subgraph cluster_Hier_Sort {
+	label="Hier::Sort";
+	"Hier::Sort::BEGIN@16";
+	"Hier::Sort::BEGIN@7";
+	"Hier::Sort::BEGIN@6";
+	"Hier::Sort::BEGIN@4";
+	"Hier::Sort::BEGIN@3";
+	"Hier::Sort::BEGIN@17";
+}
+subgraph cluster_Exporter {
+	label="Exporter";
+	"Exporter::import";
+}
+"Hier::Walk::filter" -> "Hier::Filter::filtered";
+"Hier::Walk::BEGIN@10" -> "Hier::Meta::BEGIN@6";
+"Hier::Report::noop::BEGIN@17" -> "Hier::Walk::BEGIN@3";
+"Hier::Report::noop::Report_noop" -> "Hier::Walk::filter";
+"Hier::Report::noop::BEGIN@17" -> "Hier::Walk::BEGIN@8";
+"Hier::Walk::BEGIN@10" -> "Exporter::import";
+"Hier::Walk::BEGIN@9" -> "Exporter::import";
+"Hier::Walk::BEGIN@8" -> "Exporter::import";
+"Hier::Walk::BEGIN@11" -> "Exporter::import";
+"Hier::Walk::BEGIN@7" -> "Exporter::import";
+"Hier::Walk::BEGIN@6" -> "Exporter::import";
+"Hier::Walk::BEGIN@9" -> "Hier::Sort::BEGIN@6";
+"Hier::Report::noop::BEGIN@17" -> "Hier::Walk::BEGIN@14";
+"Hier::Walk::new" -> "Hier::Option::option";
+"Hier::Report::noop::BEGIN@17" -> "Hier::Walk::BEGIN@13";
+"Hier::Report::noop::BEGIN@17" -> "Hier::Walk::BEGIN@4";
+"Hier::Walk::BEGIN@10" -> "Hier::Meta::BEGIN@26";
+"Hier::Report::noop::BEGIN@17" -> "Hier::Walk::BEGIN@11";
+"Hier::Walk::BEGIN@10" -> "Hier::Meta::BEGIN@7";
+"Hier::Walk::BEGIN@10" -> "Hier::Meta::BEGIN@30";
+"Hier::Walk::BEGIN@10" -> "Hier::Meta::BEGIN@25";
+"Hier::Walk::filter" -> "Hier::Tasks::all";
+"Hier::Walk::filter" -> "Hier::Tasks::get_tid";
+"Hier::Walk::BEGIN@10" -> "Hier::Meta::BEGIN@33";
+"Hier::Walk::BEGIN@4" -> "warnings::import";
+"Hier::Walk::BEGIN@10" -> "Hier::Meta::BEGIN@23";
+"Hier::Report::noop::BEGIN@17" -> "Hier::Walk::BEGIN@6";
+"Hier::Walk::BEGIN@10" -> "Hier::Meta::BEGIN@24";
+"Hier::Report::noop::BEGIN@17" -> "Hier::Walk::BEGIN@10";
+"Hier::Walk::BEGIN@9" -> "Hier::Sort::BEGIN@3";
+"Hier::Report::noop::Report_noop" -> "Hier::Walk::new";
+"Hier::Walk::BEGIN@10" -> "Hier::Meta::BEGIN@4";
+"Hier::Report::noop::BEGIN@17" -> "Hier::Walk::BEGIN@9";
+"Hier::Walk::BEGIN@9" -> "Hier::Sort::BEGIN@7";
+"Hier::Walk::BEGIN@9" -> "Hier::Sort::BEGIN@16";
+"Hier::Walk::BEGIN@10" -> "Hier::Meta::BEGIN@3";
+"Hier::Walk::BEGIN@10" -> "Hier::Meta::BEGIN@28";
+"Hier::Walk::BEGIN@9" -> "Hier::Sort::BEGIN@4";
+"Hier::Walk::new" -> "Hier::util::type_depth";
+"Hier::Report::noop::BEGIN@17" -> "Hier::Walk::BEGIN@7";
+"Hier::Walk::BEGIN@10" -> "Hier::Meta::BEGIN@27";
+"Hier::Walk::BEGIN@3" -> "strict::import";
+"Hier::Walk::BEGIN@10" -> "Hier::Meta::BEGIN@29";
+"Hier::Walk::BEGIN@9" -> "Hier::Sort::BEGIN@17";
+}

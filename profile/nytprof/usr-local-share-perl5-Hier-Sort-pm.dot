@@ -1,0 +1,46 @@
+digraph {
+graph [overlap=false]
+subgraph cluster_Hier_Walk {
+	label="Hier::Walk";
+	"Hier::Walk::BEGIN@9";
+}
+subgraph cluster_warnings {
+	label="warnings";
+	"warnings::import";
+}
+subgraph cluster_strict {
+	label="strict";
+	"strict::import";
+}
+subgraph cluster_Hier_Meta {
+	label="Hier::Meta";
+	"Hier::Meta::meta_filter";
+}
+subgraph cluster_Hier_Sort {
+	label="Hier::Sort";
+	"Hier::Sort::BEGIN@16";
+	"Hier::Sort::BEGIN@7";
+	"Hier::Sort::BEGIN@6";
+	"Hier::Sort::BEGIN@4";
+	"Hier::Sort::BEGIN@3";
+	"Hier::Sort::sort_mode";
+	"Hier::Sort::BEGIN@17";
+	"Hier::Sort::CORE:subst";
+}
+subgraph cluster_Exporter {
+	label="Exporter";
+	"Exporter::import";
+}
+"Hier::Sort::BEGIN@16" -> "Exporter::import";
+"Hier::Sort::BEGIN@17" -> "Exporter::import";
+"Hier::Walk::BEGIN@9" -> "Hier::Sort::BEGIN@6";
+"Hier::Sort::BEGIN@4" -> "warnings::import";
+"Hier::Sort::sort_mode" -> "Hier::Sort::CORE:subst";
+"Hier::Meta::meta_filter" -> "Hier::Sort::sort_mode";
+"Hier::Walk::BEGIN@9" -> "Hier::Sort::BEGIN@3";
+"Hier::Walk::BEGIN@9" -> "Hier::Sort::BEGIN@7";
+"Hier::Walk::BEGIN@9" -> "Hier::Sort::BEGIN@16";
+"Hier::Walk::BEGIN@9" -> "Hier::Sort::BEGIN@4";
+"Hier::Sort::BEGIN@3" -> "strict::import";
+"Hier::Walk::BEGIN@9" -> "Hier::Sort::BEGIN@17";
+}

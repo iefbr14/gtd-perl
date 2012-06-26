@@ -1,0 +1,234 @@
+digraph {
+graph [overlap=false]
+subgraph cluster_YAML {
+	label="YAML";
+	"YAML::BEGIN@7";
+	"YAML::BEGIN@6";
+}
+subgraph cluster_Hier_Hier {
+	label="Hier::Hier";
+	"Hier::Hier::BEGIN@7";
+	"Hier::Hier::BEGIN@6";
+}
+subgraph cluster_Hier_Walk {
+	label="Hier::Walk";
+	"Hier::Walk::BEGIN@7";
+	"Hier::Walk::BEGIN@11";
+	"Hier::Walk::BEGIN@6";
+	"Hier::Walk::BEGIN@10";
+	"Hier::Walk::BEGIN@9";
+	"Hier::Walk::BEGIN@8";
+}
+subgraph cluster_Hier_CCT {
+	label="Hier::CCT";
+	"Hier::CCT::BEGIN@19";
+}
+subgraph cluster_YAML_Loader_Base {
+	label="YAML::Loader::Base";
+	"YAML::Loader::Base::BEGIN@5";
+}
+subgraph cluster_YAML_Loader {
+	label="YAML::Loader";
+	"YAML::Loader::BEGIN@5";
+	"YAML::Loader::BEGIN@7";
+	"YAML::Loader::BEGIN@6";
+}
+subgraph cluster_DBD_mysql_dr {
+	label="DBD::mysql::dr";
+	"DBD::mysql::dr::BEGIN@101";
+	"DBD::mysql::dr::BEGIN@100";
+}
+subgraph cluster_DBI {
+	label="DBI";
+	"DBI::BEGIN@160";
+}
+subgraph cluster_Hier_util {
+	label="Hier::util";
+	"Hier::util::BEGIN@20";
+}
+subgraph cluster_YAML_Type_blessed {
+	label="YAML::Type::blessed";
+	"YAML::Type::blessed::BEGIN@16";
+}
+subgraph cluster_Data_Dumper {
+	label="Data::Dumper";
+	"Data::Dumper::BEGIN@20";
+}
+subgraph cluster_Hier_Selection {
+	label="Hier::Selection";
+	"Hier::Selection::BEGIN@16";
+}
+subgraph cluster_Tie_Hash {
+	label="Tie::Hash";
+	"Tie::Hash::BEGIN@188";
+}
+subgraph cluster_main {
+	label="main";
+	"main::BEGIN@9";
+	"main::BEGIN@10";
+	"main::BEGIN@2";
+	"main::BEGIN@8";
+	"main::BEGIN@11";
+	"main::BEGIN@6";
+}
+subgraph cluster_B_Deparse {
+	label="B::Deparse";
+	"B::Deparse::BEGIN@12";
+	"B::Deparse::BEGIN@11";
+}
+subgraph cluster_Hier_Report_noop {
+	label="Hier::Report::noop";
+	"Hier::Report::noop::BEGIN@16";
+	"Hier::Report::noop::BEGIN@17";
+	"Hier::Report::noop::BEGIN@18";
+	"Hier::Report::noop::BEGIN@19";
+	"Hier::Report::noop::BEGIN@20";
+}
+subgraph cluster_Hier_Filter {
+	label="Hier::Filter";
+	"Hier::Filter::BEGIN@17";
+}
+subgraph cluster_Hier_Format {
+	label="Hier::Format";
+	"Hier::Format::BEGIN@22";
+	"Hier::Format::BEGIN@21";
+}
+subgraph cluster_YAML_Types {
+	label="YAML::Types";
+	"YAML::Types::BEGIN@5";
+	"YAML::Types::BEGIN@6";
+}
+subgraph cluster_DBD_mysql_db {
+	label="DBD::mysql::db";
+	"DBD::mysql::db::BEGIN@187";
+}
+subgraph cluster_Hier_db {
+	label="Hier::db";
+	"Hier::db::BEGIN@27";
+	"Hier::db::BEGIN@24";
+	"Hier::db::BEGIN@20";
+	"Hier::db::BEGIN@22";
+	"Hier::db::BEGIN@25";
+}
+subgraph cluster_POSIX {
+	label="POSIX";
+	"POSIX::BEGIN@13";
+	"POSIX::import";
+}
+subgraph cluster_Hier_Meta {
+	label="Hier::Meta";
+	"Hier::Meta::BEGIN@28";
+	"Hier::Meta::BEGIN@26";
+	"Hier::Meta::BEGIN@23";
+	"Hier::Meta::BEGIN@30";
+	"Hier::Meta::BEGIN@27";
+	"Hier::Meta::BEGIN@25";
+	"Hier::Meta::BEGIN@29";
+	"Hier::Meta::BEGIN@24";
+}
+subgraph cluster_Hier_Tasks {
+	label="Hier::Tasks";
+	"Hier::Tasks::BEGIN@6";
+}
+subgraph cluster_Hier_Sort {
+	label="Hier::Sort";
+	"Hier::Sort::BEGIN@16";
+	"Hier::Sort::BEGIN@17";
+}
+subgraph cluster_Exporter_Heavy {
+	label="Exporter::Heavy";
+	"Exporter::Heavy::BEGIN@4";
+	"Exporter::Heavy::BEGIN@200";
+	"Exporter::Heavy::heavy_export";
+	"Exporter::Heavy::BEGIN@3";
+}
+subgraph cluster_Config_YAML {
+	label="Config::YAML";
+	"Config::YAML::BEGIN@7";
+}
+subgraph cluster_Exporter {
+	label="Exporter";
+	"Exporter::import";
+	"Exporter::as_heavy";
+	"Exporter::CORE:subst";
+	"Exporter::export";
+	"Exporter::export_ok_tags";
+	"Exporter::CORE:match";
+}
+subgraph cluster_YAML_Node {
+	label="YAML::Node";
+	"YAML::Node::BEGIN@6";
+}
+"Exporter::export" -> "Exporter::as_heavy";
+"Exporter::export_ok_tags" -> "Exporter::as_heavy";
+"Exporter::import" -> "Exporter::CORE:match";
+"DBD::mysql::dr::BEGIN@101" -> "Exporter::import";
+"Hier::Meta::BEGIN@24" -> "Exporter::import";
+"YAML::Node::BEGIN@6" -> "Exporter::import";
+"Hier::Walk::BEGIN@10" -> "Exporter::import";
+"YAML::Loader::Base::BEGIN@5" -> "Exporter::import";
+"Hier::Report::noop::BEGIN@20" -> "Exporter::import";
+"Data::Dumper::BEGIN@20" -> "Exporter::import";
+"YAML::BEGIN@7" -> "Exporter::import";
+"Hier::Report::noop::BEGIN@16" -> "Exporter::import";
+"YAML::Type::blessed::BEGIN@16" -> "Exporter::import";
+"Hier::util::BEGIN@20" -> "Exporter::import";
+"B::Deparse::BEGIN@12" -> "Exporter::import";
+"Hier::Filter::BEGIN@17" -> "Exporter::import";
+"POSIX::import" -> "Exporter::import";
+"Hier::Walk::BEGIN@9" -> "Exporter::import";
+"Hier::Walk::BEGIN@8" -> "Exporter::import";
+"Hier::db::BEGIN@27" -> "Exporter::import";
+"main::BEGIN@2" -> "Exporter::import";
+"POSIX::BEGIN@13" -> "Exporter::import";
+"Hier::db::BEGIN@22" -> "Exporter::import";
+"Hier::Hier::BEGIN@6" -> "Exporter::import";
+"YAML::Loader::BEGIN@6" -> "Exporter::import";
+"main::BEGIN@10" -> "Exporter::import";
+"Hier::Meta::BEGIN@26" -> "Exporter::import";
+"Hier::Sort::BEGIN@16" -> "Exporter::import";
+"Hier::Walk::BEGIN@11" -> "Exporter::import";
+"Tie::Hash::BEGIN@188" -> "Exporter::import";
+"Hier::Report::noop::BEGIN@19" -> "Exporter::import";
+"Hier::Tasks::BEGIN@6" -> "Exporter::import";
+"Hier::Format::BEGIN@21" -> "Exporter::import";
+"main::BEGIN@8" -> "Exporter::import";
+"DBD::mysql::dr::BEGIN@100" -> "Exporter::import";
+"B::Deparse::BEGIN@11" -> "Exporter::import";
+"Config::YAML::BEGIN@7" -> "Exporter::import";
+"Hier::Report::noop::BEGIN@18" -> "Exporter::import";
+"Hier::Format::BEGIN@22" -> "Exporter::import";
+"Hier::Meta::BEGIN@30" -> "Exporter::import";
+"YAML::Loader::BEGIN@5" -> "Exporter::import";
+"Hier::Meta::BEGIN@25" -> "Exporter::import";
+"Hier::Selection::BEGIN@16" -> "Exporter::import";
+"Hier::db::BEGIN@24" -> "Exporter::import";
+"Hier::Meta::BEGIN@28" -> "Exporter::import";
+"YAML::BEGIN@6" -> "Exporter::import";
+"DBD::mysql::db::BEGIN@187" -> "Exporter::import";
+"Hier::db::BEGIN@25" -> "Exporter::import";
+"main::BEGIN@6" -> "Exporter::import";
+"Hier::Walk::BEGIN@7" -> "Exporter::import";
+"main::BEGIN@9" -> "Exporter::import";
+"Hier::Report::noop::BEGIN@17" -> "Exporter::import";
+"Hier::Hier::BEGIN@7" -> "Exporter::import";
+"Hier::CCT::BEGIN@19" -> "Exporter::import";
+"Hier::Meta::BEGIN@23" -> "Exporter::import";
+"Hier::db::BEGIN@20" -> "Exporter::import";
+"YAML::Types::BEGIN@5" -> "Exporter::import";
+"Hier::Walk::BEGIN@6" -> "Exporter::import";
+"Hier::Meta::BEGIN@27" -> "Exporter::import";
+"Hier::Meta::BEGIN@29" -> "Exporter::import";
+"YAML::Loader::BEGIN@7" -> "Exporter::import";
+"Hier::Sort::BEGIN@17" -> "Exporter::import";
+"YAML::Types::BEGIN@6" -> "Exporter::import";
+"main::BEGIN@11" -> "Exporter::import";
+"Exporter::import" -> "Exporter::export";
+"Exporter::import" -> "Exporter::CORE:subst";
+"Exporter::as_heavy" -> "Exporter::CORE:subst";
+"Exporter::as_heavy" -> "Exporter::Heavy::BEGIN@4";
+"DBI::BEGIN@160" -> "Exporter::export_ok_tags";
+"Exporter::import" -> "Exporter::Heavy::heavy_export";
+"Exporter::as_heavy" -> "Exporter::Heavy::BEGIN@200";
+"Exporter::as_heavy" -> "Exporter::Heavy::BEGIN@3";
+}

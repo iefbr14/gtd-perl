@@ -1,0 +1,42 @@
+digraph {
+graph [overlap=false]
+subgraph cluster_DBD_mysql_dr {
+	label="DBD::mysql::dr";
+	"DBD::mysql::dr::BEGIN@101";
+}
+subgraph cluster_vars {
+	label="vars";
+	"vars::import";
+}
+subgraph cluster_strict {
+	label="strict";
+	"strict::import";
+}
+subgraph cluster_DBI_Const_GetInfoType {
+	label="DBI::Const::GetInfoType";
+	"DBI::Const::GetInfoType::BEGIN@16";
+	"DBI::Const::GetInfoType::BEGIN@46";
+	"DBI::Const::GetInfoType::BEGIN@45";
+	"DBI::Const::GetInfoType::CORE:match";
+	"DBI::Const::GetInfoType::BEGIN@14";
+	"DBI::Const::GetInfoType::BEGIN@12";
+}
+subgraph cluster_DBI_Const_GetInfo_ODBC {
+	label="DBI::Const::GetInfo::ODBC";
+	"DBI::Const::GetInfo::ODBC::CORE:match";
+}
+subgraph cluster_DBI_Const_GetInfo_ANSI {
+	label="DBI::Const::GetInfo::ANSI";
+	"DBI::Const::GetInfo::ANSI::CORE:match";
+}
+"DBD::mysql::dr::BEGIN@101" -> "DBI::Const::GetInfoType::BEGIN@45";
+"DBD::mysql::dr::BEGIN@101" -> "DBI::Const::GetInfoType::BEGIN@14";
+"DBD::mysql::dr::BEGIN@101" -> "DBI::Const::GetInfoType::CORE:match";
+"DBI::Const::GetInfoType::BEGIN@45" -> "DBI::Const::GetInfo::ANSI::CORE:match";
+"DBD::mysql::dr::BEGIN@101" -> "DBI::Const::GetInfoType::BEGIN@16";
+"DBI::Const::GetInfoType::BEGIN@16" -> "vars::import";
+"DBI::Const::GetInfoType::BEGIN@46" -> "DBI::Const::GetInfo::ODBC::CORE:match";
+"DBD::mysql::dr::BEGIN@101" -> "DBI::Const::GetInfoType::BEGIN@46";
+"DBD::mysql::dr::BEGIN@101" -> "DBI::Const::GetInfoType::BEGIN@12";
+"DBI::Const::GetInfoType::BEGIN@12" -> "strict::import";
+}

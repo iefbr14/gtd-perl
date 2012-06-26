@@ -1,0 +1,82 @@
+digraph {
+graph [overlap=false]
+subgraph cluster_YAML_Type_regexp {
+	label="YAML::Type::regexp";
+	"YAML::Type::regexp::BEGIN@200";
+}
+subgraph cluster_YAML {
+	label="YAML";
+	"YAML::BEGIN@15";
+}
+subgraph cluster_Internals {
+	label="Internals";
+	"Internals::SvREADONLY";
+}
+subgraph cluster_YAML_Loader {
+	label="YAML::Loader";
+	"YAML::Loader::BEGIN@15";
+	"YAML::Loader::BEGIN@14";
+	"YAML::Loader::BEGIN@16";
+	"YAML::Loader::BEGIN@13";
+}
+subgraph cluster_vars {
+	label="vars";
+	"vars::import";
+}
+subgraph cluster_strict {
+	label="strict";
+	"strict::import";
+	"strict::unimport";
+}
+subgraph cluster_Hier_Filter {
+	label="Hier::Filter";
+	"Hier::Filter::BEGIN@204";
+}
+subgraph cluster_constant {
+	label="constant";
+	"constant::import";
+	"constant::BEGIN@4";
+	"constant::BEGIN@3";
+	"constant::BEGIN@38";
+	"constant::CORE:regcomp";
+	"constant::BEGIN@101";
+	"constant::BEGIN@2";
+	"constant::BEGIN@6";
+	"constant::CORE:match";
+}
+subgraph cluster_Hier_Fields {
+	label="Hier::Fields";
+	"Hier::Fields::BEGIN@8";
+}
+subgraph cluster_warnings_register {
+	label="warnings::register";
+	"warnings::register::import";
+}
+subgraph cluster_mro {
+	label="mro";
+	"mro::method_changed_in";
+}
+"constant::import" -> "mro::method_changed_in";
+"YAML::BEGIN@15" -> "constant::BEGIN@2";
+"YAML::BEGIN@15" -> "constant::BEGIN@4";
+"YAML::BEGIN@15" -> "constant::BEGIN@6";
+"YAML::Type::regexp::BEGIN@200" -> "constant::import";
+"YAML::Loader::BEGIN@15" -> "constant::import";
+"YAML::BEGIN@15" -> "constant::import";
+"Hier::Filter::BEGIN@204" -> "constant::import";
+"YAML::Loader::BEGIN@14" -> "constant::import";
+"Hier::Fields::BEGIN@8" -> "constant::import";
+"YAML::Loader::BEGIN@13" -> "constant::import";
+"YAML::Loader::BEGIN@16" -> "constant::import";
+"constant::BEGIN@38" -> "strict::unimport";
+"constant::BEGIN@101" -> "strict::unimport";
+"constant::import" -> "constant::CORE:regcomp";
+"constant::import" -> "Internals::SvREADONLY";
+"YAML::BEGIN@15" -> "constant::BEGIN@38";
+"constant::BEGIN@6" -> "vars::import";
+"YAML::BEGIN@15" -> "constant::BEGIN@3";
+"constant::import" -> "constant::CORE:match";
+"constant::BEGIN@3" -> "strict::import";
+"YAML::BEGIN@15" -> "constant::BEGIN@101";
+"constant::BEGIN@4" -> "warnings::register::import";
+}

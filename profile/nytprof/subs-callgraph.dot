@@ -1,0 +1,1558 @@
+digraph {
+graph [overlap=false]
+subgraph cluster_YAML_Type_regexp {
+	label="YAML::Type::regexp";
+	"YAML::Type::regexp::BEGIN@200";
+}
+subgraph cluster_YAML {
+	label="YAML";
+	"YAML::BEGIN@7";
+	"YAML::Load";
+	"YAML::BEGIN@6";
+	"YAML::BEGIN@3";
+	"YAML::BEGIN@40";
+	"YAML::BEGIN@15";
+	"YAML::init_action_object";
+	"YAML::BEGIN@4";
+	"YAML::BEGIN@5";
+}
+subgraph cluster_Internals {
+	label="Internals";
+	"Internals::SvREADONLY";
+}
+subgraph cluster_Config {
+	label="Config";
+	"Config::BEGIN@35";
+	"Config::CORE:match";
+	"Config::CORE:subst";
+	"Config::TIEHASH";
+	"Config::BEGIN@5";
+	"Config::fetch_string";
+	"Config::AUTOLOAD";
+	"Config::import";
+	"Config::CORE:pack";
+	"Config::launcher";
+	"Config::BEGIN@9";
+	"Config::CORE:substcont";
+	"Config::CORE:unpack";
+	"Config::FETCH";
+}
+subgraph cluster_Hier_Walk {
+	label="Hier::Walk";
+	"Hier::Walk::BEGIN@4";
+	"Hier::Walk::BEGIN@11";
+	"Hier::Walk::new";
+	"Hier::Walk::BEGIN@9";
+	"Hier::Walk::filter";
+	"Hier::Walk::BEGIN@8";
+	"Hier::Walk::BEGIN@7";
+	"Hier::Walk::BEGIN@14";
+	"Hier::Walk::BEGIN@10";
+	"Hier::Walk::BEGIN@6";
+	"Hier::Walk::BEGIN@3";
+	"Hier::Walk::BEGIN@13";
+}
+subgraph cluster_Hier_CCT {
+	label="Hier::CCT";
+	"Hier::CCT::use";
+	"Hier::CCT::BEGIN@4";
+	"Hier::CCT::BEGIN@17";
+	"Hier::CCT::BEGIN@3";
+	"Hier::CCT::_table";
+	"Hier::CCT::define";
+	"Hier::CCT::BEGIN@18";
+	"Hier::CCT::BEGIN@19";
+	"Hier::CCT::name";
+}
+subgraph cluster_DynaLoader {
+	label="DynaLoader";
+	"DynaLoader::CORE:ftfile";
+	"DynaLoader::CORE:ftsize";
+	"DynaLoader::dl_undef_symbols";
+	"DynaLoader::BEGIN@25";
+	"DynaLoader::dl_find_symbol";
+	"DynaLoader::dl_load_file";
+	"DynaLoader::CORE:subst";
+	"DynaLoader::BEGIN@18";
+	"DynaLoader::dl_load_flags";
+	"DynaLoader::CORE:ftdir";
+	"DynaLoader::dl_install_xsub";
+	"DynaLoader::bootstrap";
+}
+subgraph cluster_YAML_Base {
+	label="YAML::Base";
+	"YAML::Base::__ANON__[(eval 21)[YAML/Base.pm:73]:7]";
+	"YAML::Base::__ANON__[(eval 25)[YAML/Base.pm:73]:8]";
+	"YAML::Base::__ANON__[(eval 14)[YAML/Base.pm:73]:8]";
+	"YAML::Base::__ANON__[(eval 18)[YAML/Base.pm:73]:7]";
+	"YAML::Base::__ANON__[(eval 29)[YAML/Base.pm:73]:8]";
+	"YAML::Base::BEGIN@3";
+	"YAML::Base::BEGIN@75";
+	"YAML::Base::__ANON__[(eval 6)[YAML/Base.pm:73]:7]";
+	"YAML::Base::new";
+	"YAML::Base::__ANON__[(eval 24)[YAML/Base.pm:73]:8]";
+	"YAML::Base::CORE:subst";
+	"YAML::Base::__ANON__[(eval 17)[YAML/Base.pm:73]:7]";
+	"YAML::Base::__ANON__[(eval 19)[YAML/Base.pm:73]:8]";
+	"YAML::Base::__ANON__[(eval 15)[YAML/Base.pm:73]:8]";
+	"YAML::Base::field";
+	"YAML::Base::BEGIN@4";
+	"YAML::Base::__ANON__[(eval 27)[YAML/Base.pm:73]:8]";
+	"YAML::Base::__ANON__[YAML/Base.pm:162]";
+	"YAML::Base::__ANON__[YAML/Base.pm:172]";
+	"YAML::Base::__ANON__[(eval 26)[YAML/Base.pm:73]:8]";
+	"YAML::Base::__ANON__[(eval 4)[YAML/Base.pm:73]:8]";
+	"YAML::Base::BEGIN@165";
+	"YAML::Base::BEGIN@5";
+	"YAML::Base::__ANON__[(eval 23)[YAML/Base.pm:73]:7]";
+	"YAML::Base::__ANON__[(eval 22)[YAML/Base.pm:73]:8]";
+	"YAML::Base::__ANON__[(eval 20)[YAML/Base.pm:73]:8]";
+	"YAML::Base::__ANON__[(eval 28)[YAML/Base.pm:73]:8]";
+	"YAML::Base::__ANON__[(eval 16)[YAML/Base.pm:73]:8]";
+}
+subgraph cluster_DBI {
+	label="DBI";
+	"DBI::BEGIN@951";
+	"DBI::BEGIN@160";
+	"DBI::BEGIN@271";
+	"DBI::BEGIN@791";
+	"DBI::bootstrap";
+	"DBI::BEGIN@522";
+	"DBI::BEGIN@679";
+	"DBI::setup_driver";
+	"DBI::CORE:match";
+	"DBI::BEGIN@158";
+	"DBI::BEGIN@157";
+	"DBI::BEGIN@1017";
+	"DBI::_new_handle";
+	"DBI::_new_sth";
+	"DBI::BEGIN@267";
+	"DBI::BEGIN@825";
+	"DBI::END";
+	"DBI::BEGIN@854";
+	"DBI::_install_method";
+	"DBI::_new_dbh";
+	"DBI::install_driver";
+	"DBI::disconnect_all";
+	"DBI::CORE:subst";
+	"DBI::_new_drh";
+	"DBI::__ANON__[DBI.pm:719]";
+	"DBI::BEGIN@156";
+	"DBI::connect";
+}
+subgraph cluster_base {
+	label="base";
+	"base::BEGIN@3";
+	"base::BEGIN@4";
+	"base::has_fields";
+	"base::has_version";
+	"base::has_attr";
+	"base::import";
+}
+subgraph cluster_warnings {
+	label="warnings";
+	"warnings::unimport";
+	"warnings::CORE:regcomp";
+	"warnings::CORE:match";
+	"warnings::import";
+}
+subgraph cluster_vars {
+	label="vars";
+	"vars::BEGIN@8";
+	"vars::BEGIN@3";
+	"vars::import";
+	"vars::CORE:match";
+	"vars::BEGIN@7";
+}
+subgraph cluster_Hier_Selection {
+	label="Hier::Selection";
+	"Hier::Selection::BEGIN@7";
+	"Hier::Selection::BEGIN@3";
+	"Hier::Selection::BEGIN@4";
+	"Hier::Selection::BEGIN@6";
+	"Hier::Selection::BEGIN@16";
+}
+subgraph cluster_Tie_Hash {
+	label="Tie::Hash";
+	"Tie::Hash::BEGIN@188";
+	"Tie::Hash::BEGIN@189";
+}
+subgraph cluster_strict {
+	label="strict";
+	"strict::import";
+	"strict::CORE:regcomp";
+	"strict::unimport";
+	"strict::bits";
+	"strict::CORE:match";
+}
+subgraph cluster_Hier_Option {
+	label="Hier::Option";
+	"Hier::Option::BEGIN@3";
+	"Hier::Option::BEGIN@14";
+	"Hier::Option::BEGIN@16";
+	"Hier::Option::BEGIN@13";
+	"Hier::Option::get_today";
+	"Hier::Option::option_key";
+	"Hier::Option::set_option";
+	"Hier::Option::option";
+	"Hier::Option::CORE:match";
+	"Hier::Option::_today";
+	"Hier::Option::BEGIN@4";
+}
+subgraph cluster_DBD_mysql {
+	label="DBD::mysql";
+	"DBD::mysql::_OdbcParse";
+	"DBD::mysql::driver";
+	"DBD::mysql::CORE:match";
+	"DBD::mysql::BEGIN@4";
+	"DBD::mysql::BEGIN@9";
+	"DBD::mysql::BEGIN@8";
+	"DBD::mysql::BEGIN@7";
+	"DBD::mysql::bootstrap";
+	"DBD::mysql::BEGIN@5";
+}
+subgraph cluster_DBI_common {
+	label="DBI::common";
+	"DBI::common::DESTROY";
+	"DBI::common::STORE";
+	"DBI::common::FETCH";
+}
+subgraph cluster_DBI_Const_GetInfo_ODBC {
+	label="DBI::Const::GetInfo::ODBC";
+	"DBI::Const::GetInfo::ODBC::CORE:match";
+}
+subgraph cluster_XSLoader {
+	label="XSLoader";
+	"XSLoader::load";
+}
+subgraph cluster_bytes {
+	label="bytes";
+	"bytes::import";
+}
+subgraph cluster_Hier_Report_noop {
+	label="Hier::Report::noop";
+	"Hier::Report::noop::BEGIN@16";
+	"Hier::Report::noop::BEGIN@3";
+	"Hier::Report::noop::BEGIN@19";
+	"Hier::Report::noop::BEGIN@7";
+	"Hier::Report::noop::BEGIN@4";
+	"Hier::Report::noop::BEGIN@17";
+	"Hier::Report::noop::BEGIN@6";
+	"Hier::Report::noop::BEGIN@18";
+	"Hier::Report::noop::Report_noop";
+	"Hier::Report::noop::BEGIN@20";
+}
+subgraph cluster_B_Deparse {
+	label="B::Deparse";
+	"B::Deparse::BEGIN@2751";
+	"B::Deparse::BEGIN@601";
+	"B::Deparse::CORE:qr";
+	"B::Deparse::BEGIN@27";
+	"B::Deparse::BEGIN@11";
+	"B::Deparse::BEGIN@676";
+	"B::Deparse::BEGIN@26";
+	"B::Deparse::BEGIN@2753";
+	"B::Deparse::BEGIN@28";
+	"B::Deparse::BEGIN@473";
+	"B::Deparse::BEGIN@2752";
+	"B::Deparse::BEGIN@3606";
+	"B::Deparse::BEGIN@30";
+	"B::Deparse::BEGIN@3337";
+	"B::Deparse::CORE:pack";
+	"B::Deparse::BEGIN@1224";
+	"B::Deparse::BEGIN@12";
+	"B::Deparse::CORE:sort";
+	"B::Deparse::BEGIN@3412";
+	"B::Deparse::BEGIN@1999";
+	"B::Deparse::BEGIN@2750";
+	"B::Deparse::BEGIN@3413";
+	"B::Deparse::BEGIN@2821";
+	"B::Deparse::BEGIN@2030";
+	"B::Deparse::BEGIN@3338";
+}
+subgraph cluster_DBD___st {
+	label="DBD::_::st";
+	"DBD::_::st::BEGIN@1799";
+}
+subgraph cluster_DBI_var {
+	label="DBI::var";
+	"DBI::var::TIESCALAR";
+}
+subgraph cluster_Hier_Sort {
+	label="Hier::Sort";
+	"Hier::Sort::BEGIN@16";
+	"Hier::Sort::BEGIN@6";
+	"Hier::Sort::BEGIN@7";
+	"Hier::Sort::BEGIN@4";
+	"Hier::Sort::sort_mode";
+	"Hier::Sort::BEGIN@3";
+	"Hier::Sort::BEGIN@17";
+	"Hier::Sort::CORE:subst";
+}
+subgraph cluster_Exporter_Heavy {
+	label="Exporter::Heavy";
+	"Exporter::Heavy::_push_tags";
+	"Exporter::Heavy::BEGIN@4";
+	"Exporter::Heavy::CORE:subst";
+	"Exporter::Heavy::heavy_export_ok_tags";
+	"Exporter::Heavy::BEGIN@200";
+	"Exporter::Heavy::CORE:match";
+	"Exporter::Heavy::heavy_export";
+	"Exporter::Heavy::BEGIN@3";
+}
+subgraph cluster_Regexp {
+	label="Regexp";
+	"Regexp::DESTROY";
+}
+subgraph cluster_version {
+	label="version";
+	"version::(bool";
+	"version::(cmp";
+}
+subgraph cluster_DBI_dr {
+	label="DBI::dr";
+	"DBI::dr::disconnect_all";
+	"DBI::dr::connect";
+}
+subgraph cluster_POSIX_SigRt {
+	label="POSIX::SigRt";
+	"POSIX::SigRt::BEGIN@66";
+	"POSIX::SigRt::BEGIN@62";
+	"POSIX::SigRt::BEGIN@64";
+}
+subgraph cluster_constant {
+	label="constant";
+	"constant::import";
+	"constant::BEGIN@4";
+	"constant::BEGIN@3";
+	"constant::BEGIN@38";
+	"constant::CORE:regcomp";
+	"constant::BEGIN@2";
+	"constant::BEGIN@101";
+	"constant::BEGIN@6";
+	"constant::CORE:match";
+}
+subgraph cluster_Hier_Fields {
+	label="Hier::Fields";
+	"Hier::Fields::BEGIN@4";
+	"Hier::Fields::BEGIN@3";
+	"Hier::Fields::BEGIN@8";
+}
+subgraph cluster_Exporter {
+	label="Exporter";
+	"Exporter::import";
+	"Exporter::as_heavy";
+	"Exporter::export";
+	"Exporter::CORE:subst";
+	"Exporter::export_ok_tags";
+	"Exporter::CORE:match";
+}
+subgraph cluster_DBD___common {
+	label="DBD::_::common";
+	"DBD::_::common::BEGIN@1330";
+	"DBD::_::common::trace_msg";
+}
+subgraph cluster_DBI_st {
+	label="DBI::st";
+	"DBI::st::fetch";
+	"DBI::st::execute";
+	"DBI::st::fetchrow_hashref";
+}
+subgraph cluster_AutoLoader {
+	label="AutoLoader";
+	"AutoLoader::BEGIN@138";
+	"AutoLoader::find_filename";
+	"AutoLoader::CORE:substcont";
+	"AutoLoader::CORE:subst";
+	"AutoLoader::BEGIN@186";
+	"AutoLoader::AUTOLOAD";
+	"AutoLoader::CORE:match";
+	"AutoLoader::CORE:fteread";
+	"AutoLoader::BEGIN@4";
+	"AutoLoader::import";
+	"AutoLoader::BEGIN@30";
+	"AutoLoader::CORE:regcomp";
+	"AutoLoader::BEGIN@3";
+	"AutoLoader::BEGIN@13";
+}
+subgraph cluster_mro {
+	label="mro";
+	"mro::method_changed_in";
+}
+subgraph cluster_Hier_Hier {
+	label="Hier::Hier";
+	"Hier::Hier::rel_add";
+	"Hier::Hier::BEGIN@4";
+	"Hier::Hier::CORE:sort";
+	"Hier::Hier::BEGIN@7";
+	"Hier::Hier::BEGIN@3";
+	"Hier::Hier::BEGIN@6";
+	"Hier::Hier::get_parents";
+	"Hier::Hier::rel_vals";
+	"Hier::Hier::get_children";
+	"Hier::Hier::add_child";
+}
+subgraph cluster_List_Util {
+	label="List::Util";
+	"List::Util::BEGIN@11";
+	"List::Util::BEGIN@12";
+}
+subgraph cluster_YAML_Loader_Base {
+	label="YAML::Loader::Base";
+	"YAML::Loader::Base::BEGIN@3";
+	"YAML::Loader::Base::set_global_options";
+	"YAML::Loader::Base::BEGIN@4";
+	"YAML::Loader::Base::BEGIN@5";
+}
+subgraph cluster_YAML_Loader {
+	label="YAML::Loader";
+	"YAML::Loader::_parse_mapping";
+	"YAML::Loader::_parse_qualifiers";
+	"YAML::Loader::BEGIN@3";
+	"YAML::Loader::_parse_implicit";
+	"YAML::Loader::_parse_inline_simple";
+	"YAML::Loader::BEGIN@5";
+	"YAML::Loader::_parse";
+	"YAML::Loader::BEGIN@4";
+	"YAML::Loader::CORE:subst";
+	"YAML::Loader::CORE:match";
+	"YAML::Loader::_parse_inline";
+	"YAML::Loader::BEGIN@285";
+	"YAML::Loader::_parse_next_line";
+	"YAML::Loader::CORE:qr";
+	"YAML::Loader::BEGIN@14";
+	"YAML::Loader::_parse_node";
+	"YAML::Loader::BEGIN@15";
+	"YAML::Loader::CORE:regcomp";
+	"YAML::Loader::CORE:substcont";
+	"YAML::Loader::load";
+	"YAML::Loader::BEGIN@7";
+	"YAML::Loader::BEGIN@6";
+	"YAML::Loader::BEGIN@16";
+	"YAML::Loader::_parse_throwaway_comments";
+	"YAML::Loader::BEGIN@13";
+}
+subgraph cluster_DBD_mysql_dr {
+	label="DBD::mysql::dr";
+	"DBD::mysql::dr::connect";
+	"DBD::mysql::dr::BEGIN@99";
+	"DBD::mysql::dr::BEGIN@101";
+	"DBD::mysql::dr::BEGIN@100";
+}
+subgraph cluster_YAML_Type_blessed {
+	label="YAML::Type::blessed";
+	"YAML::Type::blessed::BEGIN@16";
+	"YAML::Type::blessed::BEGIN@22";
+}
+subgraph cluster_Getopt_Std {
+	label="Getopt::Std";
+	"Getopt::Std::getopts";
+	"Getopt::Std::CORE:match";
+}
+subgraph cluster_Hier_util {
+	label="Hier::util";
+	"Hier::util::BEGIN@3";
+	"Hier::util::BEGIN@20";
+	"Hier::util::BEGIN@7";
+	"Hier::util::type_depth";
+	"Hier::util::BEGIN@6";
+	"Hier::util::BEGIN@4";
+}
+subgraph cluster_Data_Dumper {
+	label="Data::Dumper";
+	"Data::Dumper::BEGIN@683";
+	"Data::Dumper::Dump";
+	"Data::Dumper::Dumper";
+	"Data::Dumper::BEGIN@22";
+	"Data::Dumper::BEGIN@16";
+	"Data::Dumper::new";
+	"Data::Dumper::Dumpxs";
+	"Data::Dumper::BEGIN@20";
+}
+subgraph cluster_overload {
+	label="overload";
+	"overload::OVERLOAD";
+	"overload::BEGIN@139";
+	"overload::import";
+}
+subgraph cluster_re {
+	label="re";
+	"re::BEGIN@4";
+	"re::import";
+	"re::BEGIN@5";
+	"re::bits";
+}
+subgraph cluster_YAML_Tag {
+	label="YAML::Tag";
+	"YAML::Tag::BEGIN@4";
+	"YAML::Tag::BEGIN@3";
+	"YAML::Tag::BEGIN@8";
+}
+subgraph cluster_B {
+	label="B";
+	"B::BEGIN@30";
+	"B::BEGIN@237";
+	"B::BEGIN@12";
+	"B::opnumber";
+}
+subgraph cluster_main {
+	label="main";
+	"main::BEGIN@10";
+	"main::BEGIN@8";
+	"main::CORE:match";
+	"main::BEGIN@6";
+	"main::BEGIN@9";
+	"main::BEGIN@2";
+	"main::BEGIN@4";
+	"main::report";
+	"main::RUNTIME";
+	"main::BEGIN@5";
+	"main::BEGIN@11";
+}
+subgraph cluster_YAML_Type_glob {
+	label="YAML::Type::glob";
+	"YAML::Type::glob::BEGIN@97";
+}
+subgraph cluster_DBI_db {
+	label="DBI::db";
+	"DBI::db::connected";
+	"DBI::db::prepare";
+}
+subgraph cluster_DBI_Const_GetInfoType {
+	label="DBI::Const::GetInfoType";
+	"DBI::Const::GetInfoType::BEGIN@16";
+	"DBI::Const::GetInfoType::BEGIN@46";
+	"DBI::Const::GetInfoType::BEGIN@45";
+	"DBI::Const::GetInfoType::BEGIN@14";
+	"DBI::Const::GetInfoType::CORE:match";
+	"DBI::Const::GetInfoType::BEGIN@12";
+}
+subgraph cluster_POSIX_SigAction {
+	label="POSIX::SigAction";
+	"POSIX::SigAction::BEGIN@58";
+}
+subgraph cluster_Scalar_Util {
+	label="Scalar::Util";
+	"Scalar::Util::BEGIN@9";
+	"Scalar::Util::BEGIN@10";
+	"Scalar::Util::weaken";
+}
+subgraph cluster_UNIVERSAL {
+	label="UNIVERSAL";
+	"UNIVERSAL::isa";
+}
+subgraph cluster_Fcntl {
+	label="Fcntl";
+	"Fcntl::BEGIN@62";
+	"Fcntl::BEGIN@214";
+	"Fcntl::BEGIN@64";
+	"Fcntl::BEGIN@58";
+	"Fcntl::BEGIN@239";
+}
+subgraph cluster_Hier_Filter {
+	label="Hier::Filter";
+	"Hier::Filter::add_filter_tags";
+	"Hier::Filter::BEGIN@3";
+	"Hier::Filter::BEGIN@16";
+	"Hier::Filter::tasks_matching_type";
+	"Hier::Filter::filtered_reason";
+	"Hier::Filter::proj_mask";
+	"Hier::Filter::filtered";
+	"Hier::Filter::BEGIN@6";
+	"Hier::Filter::prop_up";
+	"Hier::Filter::map_filter_name";
+	"Hier::Filter::task_filter";
+	"Hier::Filter::filter_any";
+	"Hier::Filter::task_mask";
+	"Hier::Filter::BEGIN@7";
+	"Hier::Filter::BEGIN@4";
+	"Hier::Filter::CORE:subst";
+	"Hier::Filter::give_parent";
+	"Hier::Filter::apply_filters";
+	"Hier::Filter::BEGIN@17";
+	"Hier::Filter::apply_walk_down";
+	"Hier::Filter::apply_ref_filters";
+	"Hier::Filter::add_filter";
+	"Hier::Filter::CORE:match";
+	"Hier::Filter::BEGIN@204";
+	"Hier::Filter::give_children";
+}
+subgraph cluster_YAML_Type_code {
+	label="YAML::Type::code";
+	"YAML::Type::code::BEGIN@137";
+}
+subgraph cluster_Hier_Format {
+	label="Hier::Format";
+	"Hier::Format::BEGIN@6";
+	"Hier::Format::BEGIN@4";
+	"Hier::Format::BEGIN@22";
+	"Hier::Format::BEGIN@3";
+	"Hier::Format::BEGIN@7";
+	"Hier::Format::BEGIN@21";
+	"Hier::Format::display_mode";
+}
+subgraph cluster_DBD___dr {
+	label="DBD::_::dr";
+	"DBD::_::dr::BEGIN@1432";
+}
+subgraph cluster_YAML_Types {
+	label="YAML::Types";
+	"YAML::Types::BEGIN@4";
+	"YAML::Types::BEGIN@5";
+	"YAML::Types::BEGIN@3";
+	"YAML::Types::BEGIN@6";
+}
+subgraph cluster_DBD_mysql_db {
+	label="DBD::mysql::db";
+	"DBD::mysql::db::BEGIN@187";
+	"DBD::mysql::db::_login";
+	"DBD::mysql::db::prepare";
+	"DBD::mysql::db::BEGIN@186";
+}
+subgraph cluster_DBI_DBI_tie {
+	label="DBI::DBI_tie";
+	"DBI::DBI_tie::TIEHASH";
+}
+subgraph cluster_POSIX {
+	label="POSIX";
+	"POSIX::load_imports";
+	"POSIX::import";
+	"POSIX::AUTOLOAD";
+	"POSIX::BEGIN@9";
+	"POSIX::BEGIN@3";
+	"POSIX::BEGIN@39";
+	"POSIX::BEGIN@2";
+	"POSIX::BEGIN@40";
+	"POSIX::BEGIN@13";
+	"POSIX::BEGIN@11";
+	"POSIX::strftime";
+	"POSIX::CORE:match";
+}
+subgraph cluster_Hier_db {
+	label="Hier::db";
+	"Hier::db::metafix";
+	"Hier::db::G_map";
+	"Hier::db::BEGIN@11";
+	"Hier::db::cset";
+	"Hier::db::CORE:match";
+	"Hier::db::G_learn";
+	"Hier::db::CORE:subst";
+	"Hier::db::gtd_add";
+	"Hier::db::load_gtd";
+	"Hier::db::BEGIN@3";
+	"Hier::db::G_default";
+	"Hier::db::DB_init";
+	"Hier::db::add_relationship";
+	"Hier::db::BEGIN@26";
+	"Hier::db::BEGIN@21";
+	"Hier::db::load_meta";
+	"Hier::db::BEGIN@24";
+	"Hier::db::html_clean";
+	"Hier::db::BEGIN@6";
+	"Hier::db::BEGIN@25";
+	"Hier::db::T_select";
+	"Hier::db::BEGIN@4";
+	"Hier::db::BEGIN@27";
+	"Hier::db::BEGIN@7";
+	"Hier::db::BEGIN@20";
+	"Hier::db::BEGIN@22";
+	"Hier::db::G_select";
+}
+subgraph cluster_Hier_Meta {
+	label="Hier::Meta";
+	"Hier::Meta::BEGIN@28";
+	"Hier::Meta::BEGIN@26";
+	"Hier::Meta::BEGIN@3";
+	"Hier::Meta::BEGIN@33";
+	"Hier::Meta::BEGIN@4";
+	"Hier::Meta::BEGIN@24";
+	"Hier::Meta::meta_argv";
+	"Hier::Meta::BEGIN@7";
+	"Hier::Meta::BEGIN@23";
+	"Hier::Meta::BEGIN@30";
+	"Hier::Meta::BEGIN@25";
+	"Hier::Meta::BEGIN@27";
+	"Hier::Meta::meta_filter";
+	"Hier::Meta::BEGIN@29";
+	"Hier::Meta::BEGIN@6";
+	"Hier::Meta::meta_desc";
+}
+subgraph cluster_DBD_mysql_st {
+	label="DBD::mysql::st";
+	"DBD::mysql::st::BEGIN@738";
+	"DBD::mysql::st::_prepare";
+}
+subgraph cluster_DBI_Const_GetInfo_ANSI {
+	label="DBI::Const::GetInfo::ANSI";
+	"DBI::Const::GetInfo::ANSI::CORE:match";
+}
+subgraph cluster_Hier_Tasks {
+	label="Hier::Tasks";
+	"Hier::Tasks::default";
+	"Hier::Tasks::get_isSomeday";
+	"Hier::Tasks::get_nextaction";
+	"Hier::Tasks::BEGIN@6";
+	"Hier::Tasks::clean_dirty";
+	"Hier::Tasks::all";
+	"Hier::Tasks::get_tickledate";
+	"Hier::Tasks::get_due";
+	"Hier::Tasks::get_priority";
+	"Hier::Tasks::END";
+	"Hier::Tasks::get_tid";
+	"Hier::Tasks::is_dirty";
+	"Hier::Tasks::BEGIN@4";
+	"Hier::Tasks::get_type";
+	"Hier::Tasks::set_dirty";
+	"Hier::Tasks::BEGIN@8";
+	"Hier::Tasks::get_completed";
+	"Hier::Tasks::BEGIN@3";
+	"Hier::Tasks::find";
+	"Hier::Tasks::new";
+}
+subgraph cluster_Config_YAML {
+	label="Config::YAML";
+	"Config::YAML::BEGIN@5";
+	"Config::YAML::CORE:close";
+	"Config::YAML::CORE:open";
+	"Config::YAML::BEGIN@7";
+	"Config::YAML::CORE:match";
+	"Config::YAML::BEGIN@135";
+	"Config::YAML::new";
+	"Config::YAML::AUTOLOAD";
+	"Config::YAML::BEGIN@6";
+	"Config::YAML::BEGIN@9";
+	"Config::YAML::read";
+	"Config::YAML::CORE:readline";
+}
+subgraph cluster_Tie_StdHash {
+	label="Tie::StdHash";
+	"Tie::StdHash::TIEHASH";
+}
+subgraph cluster_DBD___db {
+	label="DBD::_::db";
+	"DBD::_::db::BEGIN@1493";
+}
+subgraph cluster_warnings_register {
+	label="warnings::register";
+	"warnings::register::mkMask";
+	"warnings::register::import";
+}
+subgraph cluster_DBD__mem_common {
+	label="DBD::_mem::common";
+	"DBD::_mem::common::DESTROY";
+}
+subgraph cluster_YAML_Node {
+	label="YAML::Node";
+	"YAML::Node::BEGIN@4";
+	"YAML::Node::BEGIN@6";
+	"YAML::Node::BEGIN@7";
+	"YAML::Node::BEGIN@3";
+}
+"Hier::db::BEGIN@20" -> "DBI::BEGIN@271";
+"constant::import" -> "mro::method_changed_in";
+"POSIX::BEGIN@13" -> "Fcntl::BEGIN@214";
+"YAML::init_action_object" -> "YAML::Loader::BEGIN@4";
+"Hier::Option::option_key" -> "Hier::Option::CORE:match";
+"Hier::Hier::get_parents" -> "Hier::Hier::rel_vals";
+"Hier::Hier::get_children" -> "Hier::Hier::rel_vals";
+"Hier::Meta::meta_filter" -> "Hier::Format::display_mode";
+"YAML::Loader::BEGIN@6" -> "YAML::Loader::Base::BEGIN@5";
+"main::BEGIN@8" -> "Hier::util::BEGIN@20";
+"Exporter::import" -> "Exporter::CORE:match";
+"YAML::BEGIN@6" -> "YAML::Base::BEGIN@165";
+"DBD::mysql::dr::BEGIN@101" -> "Exporter::import";
+"Hier::Meta::BEGIN@24" -> "Exporter::import";
+"YAML::Node::BEGIN@6" -> "Exporter::import";
+"Hier::Walk::BEGIN@10" -> "Exporter::import";
+"YAML::Loader::Base::BEGIN@5" -> "Exporter::import";
+"Hier::Report::noop::BEGIN@20" -> "Exporter::import";
+"Data::Dumper::BEGIN@20" -> "Exporter::import";
+"YAML::BEGIN@7" -> "Exporter::import";
+"Hier::Report::noop::BEGIN@16" -> "Exporter::import";
+"YAML::Type::blessed::BEGIN@16" -> "Exporter::import";
+"Hier::util::BEGIN@20" -> "Exporter::import";
+"B::Deparse::BEGIN@12" -> "Exporter::import";
+"Hier::Filter::BEGIN@17" -> "Exporter::import";
+"POSIX::import" -> "Exporter::import";
+"Hier::Walk::BEGIN@9" -> "Exporter::import";
+"Hier::Walk::BEGIN@8" -> "Exporter::import";
+"Hier::db::BEGIN@27" -> "Exporter::import";
+"main::BEGIN@2" -> "Exporter::import";
+"POSIX::BEGIN@13" -> "Exporter::import";
+"Hier::db::BEGIN@22" -> "Exporter::import";
+"Hier::Hier::BEGIN@6" -> "Exporter::import";
+"YAML::Loader::BEGIN@6" -> "Exporter::import";
+"main::BEGIN@10" -> "Exporter::import";
+"Hier::Meta::BEGIN@26" -> "Exporter::import";
+"Hier::Sort::BEGIN@16" -> "Exporter::import";
+"Hier::Walk::BEGIN@11" -> "Exporter::import";
+"Tie::Hash::BEGIN@188" -> "Exporter::import";
+"Hier::Report::noop::BEGIN@19" -> "Exporter::import";
+"Hier::Tasks::BEGIN@6" -> "Exporter::import";
+"Hier::Format::BEGIN@21" -> "Exporter::import";
+"main::BEGIN@8" -> "Exporter::import";
+"DBD::mysql::dr::BEGIN@100" -> "Exporter::import";
+"B::Deparse::BEGIN@11" -> "Exporter::import";
+"Config::YAML::BEGIN@7" -> "Exporter::import";
+"Hier::Report::noop::BEGIN@18" -> "Exporter::import";
+"Hier::Format::BEGIN@22" -> "Exporter::import";
+"Hier::Meta::BEGIN@30" -> "Exporter::import";
+"YAML::Loader::BEGIN@5" -> "Exporter::import";
+"Hier::Meta::BEGIN@25" -> "Exporter::import";
+"Hier::Selection::BEGIN@16" -> "Exporter::import";
+"Hier::db::BEGIN@24" -> "Exporter::import";
+"Hier::Meta::BEGIN@28" -> "Exporter::import";
+"YAML::BEGIN@6" -> "Exporter::import";
+"DBD::mysql::db::BEGIN@187" -> "Exporter::import";
+"Hier::db::BEGIN@25" -> "Exporter::import";
+"main::BEGIN@6" -> "Exporter::import";
+"Hier::Walk::BEGIN@7" -> "Exporter::import";
+"main::BEGIN@9" -> "Exporter::import";
+"Hier::Report::noop::BEGIN@17" -> "Exporter::import";
+"Hier::Hier::BEGIN@7" -> "Exporter::import";
+"Hier::CCT::BEGIN@19" -> "Exporter::import";
+"Hier::Meta::BEGIN@23" -> "Exporter::import";
+"Hier::db::BEGIN@20" -> "Exporter::import";
+"YAML::Types::BEGIN@5" -> "Exporter::import";
+"Hier::Walk::BEGIN@6" -> "Exporter::import";
+"Hier::Meta::BEGIN@27" -> "Exporter::import";
+"Hier::Meta::BEGIN@29" -> "Exporter::import";
+"YAML::Loader::BEGIN@7" -> "Exporter::import";
+"Hier::Sort::BEGIN@17" -> "Exporter::import";
+"YAML::Types::BEGIN@6" -> "Exporter::import";
+"main::BEGIN@11" -> "Exporter::import";
+"main::BEGIN@9" -> "Hier::db::BEGIN@22";
+"YAML::Loader::_parse" -> "YAML::Base::__ANON__[(eval 28)[YAML/Base.pm:73]:8]";
+"YAML::init_action_object" -> "YAML::Loader::BEGIN@6";
+"YAML::Loader::_parse_next_line" -> "YAML::Loader::_parse_throwaway_comments";
+"YAML::Loader::_parse" -> "YAML::Loader::_parse_throwaway_comments";
+"YAML::Load" -> "YAML::Base::new";
+"YAML::init_action_object" -> "YAML::Base::new";
+"Hier::db::BEGIN@21" -> "Config::YAML::BEGIN@7";
+"Exporter::import" -> "Exporter::CORE:subst";
+"Exporter::as_heavy" -> "Exporter::CORE:subst";
+"Hier::db::metafix" -> "Hier::Tasks::all";
+"Hier::db::load_gtd" -> "Hier::Tasks::all";
+"Hier::Filter::tasks_matching_type" -> "Hier::Tasks::all";
+"Hier::Filter::apply_filters" -> "Hier::Tasks::all";
+"Hier::Tasks::END" -> "Hier::Tasks::all";
+"Hier::Walk::filter" -> "Hier::Tasks::all";
+"Hier::db::BEGIN@20" -> "DBI::var::TIESCALAR";
+"warnings::register::import" -> "warnings::register::mkMask";
+"Exporter::Heavy::heavy_export_ok_tags" -> "Exporter::Heavy::_push_tags";
+"Hier::db::BEGIN@20" -> "List::Util::BEGIN@11";
+"Hier::Walk::BEGIN@10" -> "Hier::Meta::BEGIN@33";
+"Config::FETCH" -> "Config::fetch_string";
+"DBD::mysql::dr::connect" -> "DBI::_new_dbh";
+"DBI::install_driver" -> "DBD::mysql::BEGIN@4";
+"YAML::Base::__ANON__[YAML/Base.pm:172]" -> "Data::Dumper::BEGIN@16";
+"DBI::st::fetchrow_hashref" -> "DBI::st::fetch";
+"YAML::Load" -> "YAML::Loader::load";
+"YAML::Loader::BEGIN@7" -> "YAML::Types::BEGIN@6";
+"base::import" -> "Hier::Fields::BEGIN@8";
+"DBI::install_driver" -> "DBD::mysql::db::BEGIN@186";
+"Hier::Meta::meta_argv" -> "Hier::Filter::add_filter_tags";
+"DynaLoader::BEGIN@25" -> "Config::TIEHASH";
+"DBD::mysql::dr::BEGIN@101" -> "DBI::Const::GetInfoType::BEGIN@16";
+"Hier::db::load_meta" -> "Hier::db::cset";
+"Hier::db::gtd_add" -> "Hier::db::cset";
+"Hier::db::load_gtd" -> "Hier::db::cset";
+"B::Deparse::BEGIN@3413" -> "re::BEGIN@5";
+"Hier::Filter::task_filter" -> "Hier::Filter::map_filter_name";
+"DBI::BEGIN@160" -> "Exporter::export_ok_tags";
+"base::import" -> "Hier::Hier::BEGIN@3";
+"Hier::Report::noop::BEGIN@17" -> "Hier::Walk::BEGIN@9";
+"Hier::Option::BEGIN@16" -> "POSIX::BEGIN@9";
+"Hier::db::BEGIN@20" -> "DBD::_::st::BEGIN@1799";
+"DBI::install_driver" -> "DBD::mysql::st::BEGIN@738";
+"DBI::connect" -> "DBI::__ANON__[DBI.pm:719]";
+"Hier::db::BEGIN@20" -> "Scalar::Util::BEGIN@9";
+"re::import" -> "re::bits";
+"Hier::Option::BEGIN@16" -> "POSIX::SigRt::BEGIN@64";
+"Hier::db::BEGIN@20" -> "DBI::BEGIN@522";
+"Hier::db::BEGIN@20" -> "DBI::BEGIN@679";
+"Hier::Option::set_option" -> "Hier::Option::option_key";
+"Hier::Option::option" -> "Hier::Option::option_key";
+"Hier::Walk::BEGIN@9" -> "Hier::Sort::BEGIN@4";
+"Hier::Meta::BEGIN@24" -> "Hier::Selection::BEGIN@6";
+"Hier::Meta::meta_desc" -> "Hier::Meta::meta_argv";
+"main::RUNTIME" -> "main::BEGIN@4";
+"YAML::BEGIN@15" -> "constant::BEGIN@101";
+"constant::BEGIN@4" -> "warnings::register::import";
+"Tie::Hash::BEGIN@189" -> "warnings::register::import";
+"vars::BEGIN@7" -> "warnings::register::import";
+"overload::BEGIN@139" -> "warnings::register::import";
+"DBD::mysql::dr::BEGIN@101" -> "DBI::Const::GetInfoType::BEGIN@45";
+"DBI::install_driver" -> "DBD::mysql::dr::BEGIN@101";
+"YAML::Base::__ANON__[YAML/Base.pm:172]" -> "Data::Dumper::BEGIN@22";
+"base::import" -> "Hier::Filter::BEGIN@6";
+"Hier::Filter::add_filter" -> "Hier::Filter::task_filter";
+"DBI::__ANON__[DBI.pm:719]" -> "DBI::db::connected";
+"YAML::Type::code::BEGIN@137" -> "B::Deparse::BEGIN@26";
+"Hier::db::load_gtd" -> "Hier::db::add_relationship";
+"overload::import" -> "overload::OVERLOAD";
+"YAML::BEGIN@15" -> "constant::BEGIN@4";
+"AutoLoader::AUTOLOAD" -> "AutoLoader::find_filename";
+"Hier::Filter::filter_any" -> "Hier::Tasks::get_type";
+"Hier::Filter::tasks_matching_type" -> "Hier::Tasks::get_type";
+"Hier::Filter::task_mask" -> "Hier::Tasks::get_type";
+"base::import" -> "Hier::Filter::BEGIN@17";
+"Hier::Report::noop::BEGIN@17" -> "Hier::Walk::BEGIN@8";
+"main::BEGIN@9" -> "Hier::db::BEGIN@7";
+"DBI::connect" -> "DBI::install_driver";
+"DBI::install_driver" -> "DBD::mysql::BEGIN@9";
+"Config::YAML::BEGIN@7" -> "YAML::BEGIN@15";
+"main::RUNTIME" -> "main::report";
+"Config::YAML::read" -> "Config::YAML::CORE:close";
+"DBI::install_driver" -> "DBD::mysql::driver";
+"DBI::BEGIN@951" -> "strict::unimport";
+"Config::BEGIN@35" -> "strict::unimport";
+"AutoLoader::BEGIN@138" -> "strict::unimport";
+"YAML::Base::BEGIN@75" -> "strict::unimport";
+"constant::BEGIN@38" -> "strict::unimport";
+"YAML::Type::glob::BEGIN@97" -> "strict::unimport";
+"DBI::BEGIN@791" -> "strict::unimport";
+"AutoLoader::BEGIN@186" -> "strict::unimport";
+"B::Deparse::BEGIN@676" -> "strict::unimport";
+"DBI::BEGIN@522" -> "strict::unimport";
+"DBI::BEGIN@679" -> "strict::unimport";
+"POSIX::BEGIN@39" -> "strict::unimport";
+"Config::YAML::BEGIN@135" -> "strict::unimport";
+"B::Deparse::BEGIN@473" -> "strict::unimport";
+"DBI::BEGIN@1017" -> "strict::unimport";
+"Fcntl::BEGIN@239" -> "strict::unimport";
+"B::Deparse::BEGIN@3337" -> "strict::unimport";
+"YAML::Loader::BEGIN@285" -> "strict::unimport";
+"DBI::BEGIN@267" -> "strict::unimport";
+"B::BEGIN@237" -> "strict::unimport";
+"DBI::BEGIN@825" -> "strict::unimport";
+"DBI::BEGIN@854" -> "strict::unimport";
+"Exporter::Heavy::BEGIN@4" -> "strict::unimport";
+"YAML::Type::blessed::BEGIN@22" -> "strict::unimport";
+"constant::BEGIN@101" -> "strict::unimport";
+"AutoLoader::BEGIN@30" -> "strict::unimport";
+"main::BEGIN@5" -> "warnings::CORE:match";
+"Hier::Tasks::BEGIN@8" -> "base::import";
+"Hier::Meta::BEGIN@33" -> "base::import";
+"YAML::init_action_object" -> "YAML::Loader::BEGIN@5";
+"main::BEGIN@4" -> "strict::CORE:regcomp";
+"Hier::Filter::task_mask" -> "Hier::Tasks::get_priority";
+"Hier::Option::get_today" -> "Hier::Option::_today";
+"Hier::util::BEGIN@20" -> "Hier::Option::_today";
+"POSIX::SigAction::BEGIN@58" -> "AutoLoader::import";
+"POSIX::SigRt::BEGIN@62" -> "AutoLoader::import";
+"POSIX::BEGIN@9" -> "AutoLoader::import";
+"Hier::db::BEGIN@20" -> "DBI::BEGIN@1017";
+"Hier::db::metafix" -> "Hier::Tasks::get_tid";
+"Hier::Hier::rel_add" -> "Hier::Tasks::get_tid";
+"Hier::Walk::filter" -> "Hier::Tasks::get_tid";
+"YAML::Tag::BEGIN@8" -> "overload::import";
+"Hier::db::DB_init" -> "Hier::db::load_meta";
+"YAML::Type::code::BEGIN@137" -> "B::Deparse::BEGIN@3337";
+"B::Deparse::BEGIN@12" -> "B::BEGIN@30";
+"DBI::install_driver" -> "DBD::mysql::db::BEGIN@187";
+"Hier::Filter::apply_filters" -> "Hier::Filter::apply_walk_down";
+"Hier::Filter::apply_walk_down" -> "Hier::Filter::apply_walk_down";
+"Config::YAML::BEGIN@5" -> "warnings::import";
+"Hier::Format::BEGIN@4" -> "warnings::import";
+"Hier::Walk::BEGIN@4" -> "warnings::import";
+"YAML::Node::BEGIN@4" -> "warnings::import";
+"Hier::Report::noop::BEGIN@4" -> "warnings::import";
+"Hier::Hier::BEGIN@4" -> "warnings::import";
+"POSIX::BEGIN@3" -> "warnings::import";
+"Hier::Option::BEGIN@14" -> "warnings::import";
+"Hier::Fields::BEGIN@4" -> "warnings::import";
+"re::BEGIN@5" -> "warnings::import";
+"YAML::Tag::BEGIN@4" -> "warnings::import";
+"Hier::Selection::BEGIN@4" -> "warnings::import";
+"YAML::Base::BEGIN@4" -> "warnings::import";
+"YAML::Loader::BEGIN@4" -> "warnings::import";
+"YAML::Loader::Base::BEGIN@4" -> "warnings::import";
+"main::BEGIN@5" -> "warnings::import";
+"Hier::Filter::BEGIN@4" -> "warnings::import";
+"Hier::Tasks::BEGIN@4" -> "warnings::import";
+"YAML::BEGIN@5" -> "warnings::import";
+"Hier::Sort::BEGIN@4" -> "warnings::import";
+"Hier::Meta::BEGIN@4" -> "warnings::import";
+"Hier::db::BEGIN@4" -> "warnings::import";
+"YAML::Types::BEGIN@4" -> "warnings::import";
+"Hier::CCT::BEGIN@18" -> "warnings::import";
+"Hier::util::BEGIN@4" -> "warnings::import";
+"YAML::Node::BEGIN@7" -> "YAML::Tag::BEGIN@8";
+"Hier::db::BEGIN@20" -> "DBI::_install_method";
+"YAML::Loader::_parse_mapping" -> "YAML::Base::__ANON__[(eval 20)[YAML/Base.pm:73]:8]";
+"YAML::Loader::_parse" -> "YAML::Base::__ANON__[(eval 20)[YAML/Base.pm:73]:8]";
+"Hier::db::BEGIN@21" -> "Config::YAML::BEGIN@6";
+"YAML::Loader::BEGIN@7" -> "YAML::Types::BEGIN@5";
+"B::Deparse::BEGIN@2750" -> "B::opnumber";
+"B::Deparse::BEGIN@2753" -> "B::opnumber";
+"B::Deparse::BEGIN@2751" -> "B::opnumber";
+"B::Deparse::BEGIN@2752" -> "B::opnumber";
+"Hier::db::gtd_add" -> "Hier::db::G_map";
+"Hier::Filter::task_mask" -> "Hier::Tasks::get_isSomeday";
+"YAML::Load" -> "YAML::Base::__ANON__[(eval 6)[YAML/Base.pm:73]:7]";
+"DBI::END" -> "DBD::_::common::trace_msg";
+"Hier::CCT::use" -> "Hier::CCT::_table";
+"POSIX::BEGIN@9" -> "AutoLoader::BEGIN@186";
+"base::import" -> "Hier::Hier::BEGIN@4";
+"AutoLoader::find_filename" -> "AutoLoader::CORE:match";
+"AutoLoader::import" -> "AutoLoader::CORE:match";
+"Hier::db::load_gtd" -> "Hier::Tasks::clean_dirty";
+"Hier::Walk::BEGIN@9" -> "Hier::Sort::BEGIN@3";
+"YAML::Base::field" -> "YAML::Base::__ANON__[YAML/Base.pm:162]";
+"YAML::Base::__ANON__[YAML/Base.pm:172]" -> "Data::Dumper::BEGIN@20";
+"YAML::Base::field" -> "YAML::Base::__ANON__[YAML/Base.pm:172]";
+"Getopt::Std::getopts" -> "Getopt::Std::CORE:match";
+"DBI::Const::GetInfoType::BEGIN@16" -> "vars::import";
+"POSIX::SigRt::BEGIN@66" -> "vars::import";
+"B::Deparse::BEGIN@27" -> "vars::import";
+"base::BEGIN@4" -> "vars::import";
+"Config::YAML::BEGIN@9" -> "vars::import";
+"List::Util::BEGIN@12" -> "vars::import";
+"DBD::mysql::BEGIN@5" -> "vars::import";
+"Scalar::Util::BEGIN@10" -> "vars::import";
+"constant::BEGIN@6" -> "vars::import";
+"YAML::init_action_object" -> "YAML::Base::__ANON__[(eval 4)[YAML/Base.pm:73]:8]";
+"Hier::Option::BEGIN@16" -> "POSIX::SigRt::BEGIN@62";
+"YAML::BEGIN@7" -> "YAML::Node::BEGIN@3";
+"Hier::util::BEGIN@20" -> "Hier::Option::BEGIN@16";
+"main::BEGIN@9" -> "Hier::db::BEGIN@27";
+"Hier::util::BEGIN@20" -> "Hier::Option::BEGIN@13";
+"Hier::Hier::rel_add" -> "Hier::Hier::CORE:sort";
+"Exporter::Heavy::heavy_export" -> "Exporter::Heavy::CORE:subst";
+"Hier::db::BEGIN@20" -> "Hier::db::BEGIN@11";
+"base::import" -> "Hier::Filter::BEGIN@16";
+"YAML::BEGIN@15" -> "constant::BEGIN@3";
+"Hier::Filter::apply_filters" -> "Hier::Filter::tasks_matching_type";
+"YAML::Loader::BEGIN@6" -> "YAML::Loader::Base::BEGIN@3";
+"YAML::Type::code::BEGIN@137" -> "B::Deparse::BEGIN@2753";
+"base::import" -> "Hier::Format::BEGIN@22";
+"YAML::Loader::_parse" -> "YAML::Base::__ANON__[(eval 15)[YAML/Base.pm:73]:8]";
+"Exporter::import" -> "Exporter::Heavy::heavy_export";
+"DBI::BEGIN@157" -> "Config::FETCH";
+"Data::Dumper::Dumper" -> "Data::Dumper::Dump";
+"Hier::db::BEGIN@24" -> "Hier::CCT::BEGIN@17";
+"Hier::Hier::add_child" -> "Hier::Hier::rel_add";
+"Config::YAML::AUTOLOAD" -> "Config::YAML::CORE:match";
+"Config::YAML::read" -> "Config::YAML::CORE:match";
+"POSIX::SigRt::BEGIN@66" -> "vars::BEGIN@7";
+"Exporter::as_heavy" -> "Exporter::Heavy::BEGIN@3";
+"base::import" -> "Hier::Format::BEGIN@4";
+"YAML::Type::code::BEGIN@137" -> "B::Deparse::BEGIN@601";
+"Config::YAML::read" -> "Config::YAML::CORE:open";
+"main::RUNTIME" -> "main::CORE:match";
+"Hier::Filter::task_mask" -> "Hier::Tasks::get_tickledate";
+"main::BEGIN@4" -> "strict::CORE:match";
+"Hier::db::load_meta" -> "DBI::st::fetchrow_hashref";
+"Hier::db::load_gtd" -> "DBI::st::fetchrow_hashref";
+"Exporter::export" -> "Exporter::as_heavy";
+"Exporter::export_ok_tags" -> "Exporter::as_heavy";
+"Data::Dumper::BEGIN@683" -> "bytes::import";
+"YAML::Type::code::BEGIN@137" -> "B::Deparse::BEGIN@12";
+"main::RUNTIME" -> "DBI::END";
+"YAML::init_action_object" -> "YAML::Loader::BEGIN@14";
+"POSIX::BEGIN@40" -> "warnings::unimport";
+"Exporter::Heavy::BEGIN@200" -> "warnings::unimport";
+"YAML::BEGIN@40" -> "warnings::unimport";
+"YAML::Base::BEGIN@165" -> "warnings::unimport";
+"B::Deparse::BEGIN@3338" -> "warnings::unimport";
+"main::BEGIN@9" -> "Hier::db::BEGIN@4";
+"YAML::Type::code::BEGIN@137" -> "B::Deparse::BEGIN@1999";
+"Config::AUTOLOAD" -> "Config::CORE:pack";
+"YAML::Loader::BEGIN@7" -> "YAML::Types::BEGIN@3";
+"base::import" -> "Hier::Filter::BEGIN@204";
+"Hier::db::gtd_add" -> "Hier::Tasks::find";
+"Hier::db::load_gtd" -> "Hier::Tasks::find";
+"Hier::db::add_relationship" -> "Hier::Tasks::find";
+"DynaLoader::BEGIN@25" -> "Config::BEGIN@35";
+"Hier::db::BEGIN@20" -> "DBI::BEGIN@951";
+"YAML::Loader::_parse_next_line" -> "YAML::Base::__ANON__[(eval 18)[YAML/Base.pm:73]:7]";
+"YAML::Loader::_parse" -> "YAML::Base::__ANON__[(eval 18)[YAML/Base.pm:73]:7]";
+"YAML::Loader::_parse_throwaway_comments" -> "YAML::Base::__ANON__[(eval 18)[YAML/Base.pm:73]:7]";
+"base::import" -> "Hier::Filter::BEGIN@3";
+"Config::YAML::BEGIN@7" -> "YAML::BEGIN@3";
+"Hier::Meta::BEGIN@24" -> "Hier::Selection::BEGIN@4";
+"Data::Dumper::Dump" -> "Data::Dumper::Dumpxs";
+"YAML::Type::code::BEGIN@137" -> "B::Deparse::BEGIN@3606";
+"Hier::db::BEGIN@25" -> "Hier::Tasks::BEGIN@4";
+"main::RUNTIME" -> "main::BEGIN@6";
+"DynaLoader::bootstrap" -> "DynaLoader::CORE:subst";
+"Hier::Sort::sort_mode" -> "Hier::Sort::CORE:subst";
+"Hier::db::load_gtd" -> "Hier::CCT::name";
+"Hier::db::DB_init" -> "Hier::db::metafix";
+"YAML::BEGIN@7" -> "YAML::Node::BEGIN@4";
+"YAML::Loader::_parse_inline" -> "YAML::Loader::_parse_implicit";
+"YAML::Type::code::BEGIN@137" -> "B::Deparse::BEGIN@28";
+"DynaLoader::BEGIN@25" -> "Config::BEGIN@9";
+"POSIX::BEGIN@13" -> "Fcntl::BEGIN@58";
+"YAML::BEGIN@7" -> "YAML::Node::BEGIN@7";
+"Hier::Filter::map_filter_name" -> "Hier::Filter::CORE:match";
+"DBI::install_driver" -> "DBI::CORE:subst";
+"DBI::connect" -> "DBI::CORE:subst";
+"DBD::mysql::_OdbcParse" -> "DBD::mysql::CORE:match";
+"Config::YAML::BEGIN@7" -> "YAML::BEGIN@40";
+"Hier::util::BEGIN@20" -> "Hier::Option::BEGIN@14";
+"DBI::install_driver" -> "DBI::setup_driver";
+"Hier::db::BEGIN@20" -> "DBI::setup_driver";
+"Hier::db::BEGIN@20" -> "DBI::BEGIN@158";
+"POSIX::SigRt::BEGIN@64" -> "Tie::Hash::BEGIN@189";
+"Hier::Report::noop::Report_noop" -> "Hier::Meta::meta_filter";
+"DynaLoader::bootstrap" -> "DynaLoader::dl_install_xsub";
+"YAML::Loader::_parse_mapping" -> "YAML::Loader::_parse_inline";
+"YAML::Loader::_parse_node" -> "YAML::Loader::_parse_inline";
+"main::BEGIN@9" -> "Hier::db::BEGIN@24";
+"main::BEGIN@2" -> "Hier::Report::noop::BEGIN@3";
+"Hier::Walk::new" -> "Hier::util::type_depth";
+"DBD::mysql::dr::BEGIN@101" -> "DBI::Const::GetInfoType::BEGIN@12";
+"Hier::db::load_gtd" -> "Hier::CCT::define";
+"main::BEGIN@5" -> "warnings::CORE:regcomp";
+"Hier::Filter::task_mask" -> "Hier::Tasks::get_completed";
+"YAML::Loader::_parse_inline" -> "YAML::Loader::CORE:substcont";
+"YAML::Loader::_parse" -> "YAML::Loader::CORE:substcont";
+"Config::YAML::read" -> "Config::YAML::CORE:readline";
+"Hier::Walk::BEGIN@10" -> "Hier::Meta::BEGIN@29";
+"YAML::Tag::BEGIN@8" -> "overload::BEGIN@139";
+"main::RUNTIME" -> "main::BEGIN@11";
+"YAML::init_action_object" -> "YAML::Loader::BEGIN@13";
+"Hier::Filter::task_mask" -> "Hier::Filter::give_children";
+"Hier::Filter::give_children" -> "Hier::Filter::give_children";
+"YAML::Loader::_parse_mapping" -> "YAML::Base::__ANON__[(eval 21)[YAML/Base.pm:73]:7]";
+"YAML::Loader::_parse" -> "YAML::Base::__ANON__[(eval 21)[YAML/Base.pm:73]:7]";
+"Hier::Tasks::BEGIN@8" -> "base::BEGIN@3";
+"Hier::db::BEGIN@24" -> "Hier::CCT::BEGIN@3";
+"YAML::init_action_object" -> "YAML::Loader::BEGIN@3";
+"Hier::db::load_gtd" -> "Hier::db::G_default";
+"Exporter::Heavy::heavy_export" -> "Exporter::Heavy::CORE:match";
+"main::RUNTIME" -> "Hier::Tasks::END";
+"Hier::db::BEGIN@20" -> "Scalar::Util::weaken";
+"base::import" -> "Hier::Format::BEGIN@3";
+"Hier::db::BEGIN@20" -> "DBI::BEGIN@854";
+"Hier::db::BEGIN@24" -> "Hier::CCT::BEGIN@18";
+"Hier::Report::noop::BEGIN@17" -> "Hier::Walk::BEGIN@14";
+"Hier::db::BEGIN@20" -> "List::Util::BEGIN@12";
+"DBD::mysql::dr::BEGIN@101" -> "DBI::Const::GetInfoType::CORE:match";
+"YAML::BEGIN@15" -> "constant::BEGIN@6";
+"main::BEGIN@2" -> "Hier::Report::noop::BEGIN@19";
+"main::RUNTIME" -> "Getopt::Std::getopts";
+"Hier::Meta::BEGIN@24" -> "Hier::Selection::BEGIN@3";
+"DBI::setup_driver" -> "UNIVERSAL::isa";
+"base::import" -> "UNIVERSAL::isa";
+"Hier::db::BEGIN@20" -> "Scalar::Util::BEGIN@10";
+"base::import" -> "Hier::Filter::BEGIN@4";
+"base::import" -> "Hier::Format::BEGIN@6";
+"YAML::Loader::_parse_next_line" -> "Regexp::DESTROY";
+"YAML::Loader::BEGIN@7" -> "YAML::Types::BEGIN@4";
+"Hier::Meta::meta_argv" -> "Hier::Filter::add_filter";
+"Data::Dumper::Dumpxs" -> "Data::Dumper::new";
+"DBI::END" -> "DBI::disconnect_all";
+"Hier::db::BEGIN@25" -> "Hier::Tasks::BEGIN@3";
+"Hier::Report::noop::BEGIN@17" -> "Hier::Walk::BEGIN@6";
+"YAML::Loader::BEGIN@7" -> "YAML::Type::code::BEGIN@137";
+"Hier::util::BEGIN@20" -> "Hier::Option::BEGIN@4";
+"Config::YAML::BEGIN@7" -> "YAML::BEGIN@4";
+"Hier::Report::noop::Report_noop" -> "Hier::Meta::meta_desc";
+"base::import" -> "Hier::Fields::BEGIN@4";
+"POSIX::BEGIN@13" -> "Fcntl::BEGIN@62";
+"YAML::Type::code::BEGIN@137" -> "B::Deparse::BEGIN@676";
+"Hier::db::DB_init" -> "Hier::db::load_gtd";
+"YAML::Type::code::BEGIN@137" -> "B::Deparse::BEGIN@473";
+"main::RUNTIME" -> "Hier::Option::set_option";
+"YAML::Loader::_parse" -> "YAML::Base::__ANON__[(eval 27)[YAML/Base.pm:73]:8]";
+"Hier::Filter::task_mask" -> "Hier::Tasks::get_due";
+"YAML::Loader::_parse_inline" -> "YAML::Loader::CORE:subst";
+"YAML::Loader::_parse_mapping" -> "YAML::Loader::CORE:subst";
+"YAML::Loader::_parse" -> "YAML::Loader::CORE:subst";
+"YAML::Loader::_parse_implicit" -> "YAML::Loader::CORE:subst";
+"YAML::Loader::_parse_node" -> "YAML::Loader::CORE:subst";
+"main::BEGIN@9" -> "Hier::db::BEGIN@21";
+"DynaLoader::BEGIN@25" -> "version::(cmp";
+"DBI::BEGIN@157" -> "DynaLoader::BEGIN@18";
+"vars::import" -> "vars::CORE:match";
+"base::import" -> "Hier::Hier::BEGIN@6";
+"Hier::db::BEGIN@20" -> "DBI::BEGIN@791";
+"Hier::db::load_gtd" -> "Hier::db::gtd_add";
+"main::BEGIN@9" -> "Hier::db::BEGIN@3";
+"Hier::Option::BEGIN@16" -> "POSIX::BEGIN@40";
+"YAML::Loader::_parse_next_line" -> "YAML::Base::__ANON__[(eval 19)[YAML/Base.pm:73]:8]";
+"YAML::Loader::_parse" -> "YAML::Base::__ANON__[(eval 19)[YAML/Base.pm:73]:8]";
+"YAML::Loader::_parse_throwaway_comments" -> "YAML::Base::__ANON__[(eval 19)[YAML/Base.pm:73]:8]";
+"YAML::Loader::_parse_inline" -> "YAML::Loader::_parse_inline_simple";
+"DBI::_new_dbh" -> "DBI::_new_handle";
+"DBI::_new_sth" -> "DBI::_new_handle";
+"DBI::_new_drh" -> "DBI::_new_handle";
+"constant::import" -> "constant::CORE:match";
+"YAML::Loader::_parse_mapping" -> "YAML::Base::__ANON__[(eval 23)[YAML/Base.pm:73]:7]";
+"YAML::Loader::_parse_next_line" -> "YAML::Base::__ANON__[(eval 23)[YAML/Base.pm:73]:7]";
+"YAML::Loader::_parse" -> "YAML::Base::__ANON__[(eval 23)[YAML/Base.pm:73]:7]";
+"YAML::Loader::_parse_node" -> "YAML::Base::__ANON__[(eval 23)[YAML/Base.pm:73]:7]";
+"main::RUNTIME" -> "main::BEGIN@9";
+"YAML::init_action_object" -> "YAML::Loader::BEGIN@7";
+"POSIX::BEGIN@9" -> "AutoLoader::BEGIN@30";
+"POSIX::BEGIN@9" -> "AutoLoader::BEGIN@138";
+"YAML::Loader::_parse_inline" -> "YAML::Loader::_parse_qualifiers";
+"YAML::Loader::_parse_node" -> "YAML::Loader::_parse_qualifiers";
+"YAML::Base::__ANON__[YAML/Base.pm:172]" -> "Data::Dumper::Dumper";
+"Hier::db::BEGIN@24" -> "Hier::CCT::BEGIN@4";
+"YAML::BEGIN@6" -> "YAML::Base::BEGIN@75";
+"Hier::db::html_clean" -> "Hier::db::CORE:subst";
+"base::import" -> "Hier::Fields::BEGIN@3";
+"YAML::BEGIN@7" -> "YAML::Node::BEGIN@6";
+"Hier::Report::noop::BEGIN@17" -> "Hier::Walk::BEGIN@3";
+"DynaLoader::bootstrap" -> "DynaLoader::CORE:ftsize";
+"Hier::Meta::meta_argv" -> "Hier::Filter::apply_filters";
+"Hier::db::load_meta" -> "Hier::db::T_select";
+"Hier::Report::noop::Report_noop" -> "Hier::Walk::filter";
+"Hier::Hier::add_child" -> "Hier::Tasks::set_dirty";
+"YAML::Loader::BEGIN@7" -> "YAML::Type::blessed::BEGIN@22";
+"Hier::Filter::give_parent" -> "Hier::Hier::get_parents";
+"YAML::Base::__ANON__[(eval 6)[YAML/Base.pm:73]:7]" -> "YAML::init_action_object";
+"main::BEGIN@8" -> "Hier::util::BEGIN@4";
+"Hier::db::load_meta" -> "Hier::Tasks::new";
+"Hier::Report::noop::BEGIN@17" -> "Hier::Walk::BEGIN@13";
+"YAML::Type::code::BEGIN@137" -> "B::Deparse::BEGIN@2751";
+"base::import" -> "Hier::Format::BEGIN@21";
+"YAML::Type::code::BEGIN@137" -> "B::Deparse::BEGIN@11";
+"YAML::Type::code::BEGIN@137" -> "B::Deparse::BEGIN@27";
+"DBI::disconnect_all" -> "DBI::dr::disconnect_all";
+"main::BEGIN@2" -> "Hier::Report::noop::BEGIN@18";
+"Hier::Walk::BEGIN@10" -> "Hier::Meta::BEGIN@30";
+"Hier::Walk::BEGIN@10" -> "Hier::Meta::BEGIN@25";
+"Config::AUTOLOAD" -> "Config::CORE:substcont";
+"YAML::Loader::load" -> "YAML::Loader::_parse";
+"Hier::db::T_select" -> "DBI::db::prepare";
+"Hier::db::G_select" -> "DBI::db::prepare";
+"DBI::install_driver" -> "DBD::mysql::BEGIN@7";
+"Hier::Filter::give_parent" -> "Hier::Filter::give_parent";
+"Hier::Filter::task_mask" -> "Hier::Filter::give_parent";
+"Hier::Filter::proj_mask" -> "Hier::Filter::give_parent";
+"YAML::Loader::_parse_next_line" -> "YAML::Loader::CORE:qr";
+"YAML::Type::code::BEGIN@137" -> "B::Deparse::CORE:sort";
+"constant::import" -> "Internals::SvREADONLY";
+"Exporter::as_heavy" -> "Exporter::Heavy::BEGIN@4";
+"base::import" -> "Hier::Hier::BEGIN@7";
+"POSIX::BEGIN@13" -> "Fcntl::BEGIN@64";
+"YAML::Type::code::BEGIN@137" -> "B::Deparse::BEGIN@2030";
+"DynaLoader::bootstrap" -> "DBD::mysql::bootstrap";
+"YAML::Base::__ANON__[YAML/Base.pm:172]" -> "Data::Dumper::BEGIN@683";
+"YAML::BEGIN@15" -> "constant::BEGIN@38";
+"Hier::Meta::meta_filter" -> "Hier::Sort::sort_mode";
+"DynaLoader::BEGIN@25" -> "Config::import";
+"Hier::Walk::BEGIN@10" -> "Hier::Meta::BEGIN@24";
+"Hier::db::BEGIN@20" -> "DBI::BEGIN@157";
+"Hier::Option::BEGIN@16" -> "POSIX::BEGIN@11";
+"AutoLoader::find_filename" -> "AutoLoader::CORE:regcomp";
+"AutoLoader::import" -> "AutoLoader::CORE:regcomp";
+"Hier::Tasks::END" -> "Hier::Tasks::is_dirty";
+"DBI::install_driver" -> "DBD::mysql::dr::BEGIN@99";
+"DBI::__ANON__[DBI.pm:719]" -> "DBI::common::FETCH";
+"DBI::st::fetchrow_hashref" -> "DBI::common::FETCH";
+"base::import" -> "Hier::Option::get_today";
+"YAML::Type::code::BEGIN@137" -> "B::Deparse::BEGIN@2750";
+"Hier::Walk::BEGIN@9" -> "Hier::Sort::BEGIN@7";
+"YAML::Type::code::BEGIN@137" -> "B::Deparse::BEGIN@3413";
+"Hier::db::BEGIN@20" -> "DBD::_::dr::BEGIN@1432";
+"Hier::Walk::BEGIN@9" -> "Hier::Sort::BEGIN@16";
+"Hier::db::load_gtd" -> "Hier::CCT::use";
+"Hier::db::BEGIN@25" -> "Hier::Tasks::BEGIN@6";
+"main::RUNTIME" -> "main::BEGIN@8";
+"POSIX::SigRt::BEGIN@66" -> "vars::BEGIN@3";
+"YAML::Loader::BEGIN@7" -> "YAML::Type::regexp::BEGIN@200";
+"Hier::Option::BEGIN@16" -> "POSIX::BEGIN@39";
+"DynaLoader::bootstrap" -> "DynaLoader::dl_load_flags";
+"YAML::BEGIN@6" -> "YAML::Base::BEGIN@4";
+"DBI::Const::GetInfoType::BEGIN@46" -> "DBI::Const::GetInfo::ODBC::CORE:match";
+"main::BEGIN@9" -> "Hier::db::BEGIN@26";
+"DBI::install_driver" -> "DBD::mysql::BEGIN@5";
+"YAML::Type::code::BEGIN@137" -> "B::Deparse::BEGIN@30";
+"Hier::db::gtd_add" -> "Hier::db::html_clean";
+"Hier::Walk::BEGIN@10" -> "Hier::Meta::BEGIN@27";
+"Hier::db::add_relationship" -> "Hier::Hier::add_child";
+"Hier::db::BEGIN@20" -> "DBI::BEGIN@160";
+"DBD::mysql::db::prepare" -> "DBD::mysql::st::_prepare";
+"B::Deparse::BEGIN@12" -> "B::BEGIN@12";
+"YAML::Loader::_parse" -> "YAML::Base::__ANON__[(eval 17)[YAML/Base.pm:73]:7]";
+"DBD::mysql::dr::BEGIN@101" -> "DBI::Const::GetInfoType::BEGIN@14";
+"POSIX::AUTOLOAD" -> "POSIX::CORE:match";
+"POSIX::import" -> "POSIX::CORE:match";
+"base::import" -> "Hier::Filter::BEGIN@7";
+"Hier::Walk::BEGIN@10" -> "Hier::Meta::BEGIN@6";
+"main::BEGIN@2" -> "Hier::Report::noop::BEGIN@16";
+"DBD::mysql::db::prepare" -> "DBI::_new_sth";
+"Hier::db::load_gtd" -> "DBD::_mem::common::DESTROY";
+"Hier::db::DB_init" -> "DBD::_mem::common::DESTROY";
+"strict::unimport" -> "strict::bits";
+"strict::import" -> "strict::bits";
+"main::BEGIN@4" -> "strict::bits";
+"DynaLoader::bootstrap" -> "DynaLoader::dl_load_file";
+"Hier::Tasks::BEGIN@8" -> "base::BEGIN@4";
+"Hier::Filter::apply_walk_down" -> "Hier::Hier::get_children";
+"Hier::Filter::give_children" -> "Hier::Hier::get_children";
+"YAML::Type::regexp::BEGIN@200" -> "constant::import";
+"YAML::Loader::BEGIN@15" -> "constant::import";
+"YAML::BEGIN@15" -> "constant::import";
+"Hier::Filter::BEGIN@204" -> "constant::import";
+"YAML::Loader::BEGIN@14" -> "constant::import";
+"Hier::Fields::BEGIN@8" -> "constant::import";
+"YAML::Loader::BEGIN@13" -> "constant::import";
+"YAML::Loader::BEGIN@16" -> "constant::import";
+"Hier::Report::noop::BEGIN@17" -> "Hier::Walk::BEGIN@4";
+"Hier::Walk::BEGIN@10" -> "Hier::Meta::BEGIN@26";
+"Hier::Report::noop::BEGIN@17" -> "Hier::Walk::BEGIN@11";
+"Config::FETCH" -> "Config::AUTOLOAD";
+"base::import" -> "base::has_fields";
+"YAML::Base::__ANON__[YAML/Base.pm:172]" -> "YAML::Base::CORE:subst";
+"Hier::Meta::BEGIN@24" -> "Hier::Selection::BEGIN@16";
+"Hier::db::BEGIN@20" -> "DBD::_::db::BEGIN@1493";
+"B::Deparse::BEGIN@3606" -> "B::Deparse::CORE:pack";
+"Hier::db::BEGIN@20" -> "DBI::BEGIN@825";
+"POSIX::import" -> "AutoLoader::AUTOLOAD";
+"Hier::Filter::apply_walk_down" -> "Hier::Filter::apply_ref_filters";
+"main::BEGIN@2" -> "Hier::Report::noop::BEGIN@17";
+"Hier::Walk::BEGIN@10" -> "Hier::Meta::BEGIN@23";
+"Hier::db::BEGIN@21" -> "Config::YAML::BEGIN@9";
+"Config::FETCH" -> "Config::launcher";
+"DBI::db::prepare" -> "DBD::mysql::db::prepare";
+"YAML::Type::code::BEGIN@137" -> "B::Deparse::BEGIN@2821";
+"Config::AUTOLOAD" -> "Config::CORE:unpack";
+"YAML::Loader::load" -> "YAML::Base::__ANON__[(eval 14)[YAML/Base.pm:73]:8]";
+"YAML::Loader::_parse" -> "YAML::Base::__ANON__[(eval 14)[YAML/Base.pm:73]:8]";
+"Config::AUTOLOAD" -> "Config::BEGIN@5";
+"B::Deparse::BEGIN@3412" -> "B::Deparse::CORE:qr";
+"YAML::Loader::BEGIN@7" -> "YAML::Type::glob::BEGIN@97";
+"DynaLoader::bootstrap" -> "DBI::bootstrap";
+"YAML::Loader::_parse_mapping" -> "YAML::Base::__ANON__[(eval 24)[YAML/Base.pm:73]:8]";
+"YAML::Loader::_parse_next_line" -> "YAML::Base::__ANON__[(eval 24)[YAML/Base.pm:73]:8]";
+"YAML::Loader::_parse" -> "YAML::Base::__ANON__[(eval 24)[YAML/Base.pm:73]:8]";
+"YAML::Loader::_parse_node" -> "YAML::Base::__ANON__[(eval 24)[YAML/Base.pm:73]:8]";
+"DBI::BEGIN@160" -> "DBI::CORE:match";
+"DBI::install_driver" -> "DBD::mysql::BEGIN@8";
+"YAML::Loader::BEGIN@7" -> "YAML::Type::blessed::BEGIN@16";
+"main::report" -> "main::BEGIN@2";
+"YAML::Loader::_parse_mapping" -> "YAML::Base::__ANON__[(eval 22)[YAML/Base.pm:73]:8]";
+"YAML::Loader::_parse_next_line" -> "YAML::Base::__ANON__[(eval 22)[YAML/Base.pm:73]:8]";
+"YAML::Loader::_parse" -> "YAML::Base::__ANON__[(eval 22)[YAML/Base.pm:73]:8]";
+"YAML::Loader::_parse_node" -> "YAML::Base::__ANON__[(eval 22)[YAML/Base.pm:73]:8]";
+"Hier::db::DB_init" -> "Config::YAML::new";
+"main::RUNTIME" -> "main::BEGIN@10";
+"POSIX::SigRt::BEGIN@64" -> "Tie::Hash::BEGIN@188";
+"DBI::__ANON__[DBI.pm:719]" -> "DBI::dr::connect";
+"base::import" -> "base::has_attr";
+"DBI::install_driver" -> "DBD::mysql::dr::BEGIN@100";
+"Hier::db::T_select" -> "DBI::st::execute";
+"Hier::db::G_select" -> "DBI::st::execute";
+"Hier::Filter::map_filter_name" -> "Hier::Filter::CORE:subst";
+"Hier::Filter::add_filter" -> "Hier::Filter::CORE:subst";
+"Config::AUTOLOAD" -> "Config::CORE:subst";
+"Hier::Walk::BEGIN@10" -> "Hier::Meta::BEGIN@28";
+"DBD::mysql::dr::connect" -> "DBD::mysql::_OdbcParse";
+"Config::YAML::new" -> "Config::YAML::read";
+"base::BEGIN@3" -> "strict::import";
+"Config::BEGIN@5" -> "strict::import";
+"DBI::BEGIN@271" -> "strict::import";
+"YAML::Loader::BEGIN@3" -> "strict::import";
+"vars::BEGIN@8" -> "strict::import";
+"B::Deparse::BEGIN@26" -> "strict::import";
+"POSIX::BEGIN@2" -> "strict::import";
+"Hier::Fields::BEGIN@3" -> "strict::import";
+"Hier::util::BEGIN@3" -> "strict::import";
+"Fcntl::BEGIN@58" -> "strict::import";
+"Config::BEGIN@9" -> "strict::import";
+"Hier::Sort::BEGIN@3" -> "strict::import";
+"Hier::Hier::BEGIN@3" -> "strict::import";
+"AutoLoader::BEGIN@3" -> "strict::import";
+"Hier::Walk::BEGIN@3" -> "strict::import";
+"DBD::mysql::dr::BEGIN@99" -> "strict::import";
+"Hier::Format::BEGIN@3" -> "strict::import";
+"YAML::Node::BEGIN@3" -> "strict::import";
+"DBD::mysql::st::BEGIN@738" -> "strict::import";
+"DBD::_::st::BEGIN@1799" -> "strict::import";
+"Hier::Option::BEGIN@13" -> "strict::import";
+"YAML::Types::BEGIN@3" -> "strict::import";
+"DBD::_::dr::BEGIN@1432" -> "strict::import";
+"Scalar::Util::BEGIN@9" -> "strict::import";
+"Hier::Meta::BEGIN@3" -> "strict::import";
+"Hier::Filter::BEGIN@3" -> "strict::import";
+"constant::BEGIN@3" -> "strict::import";
+"YAML::Base::BEGIN@3" -> "strict::import";
+"Hier::Selection::BEGIN@3" -> "strict::import";
+"YAML::Loader::Base::BEGIN@3" -> "strict::import";
+"Hier::db::BEGIN@3" -> "strict::import";
+"re::BEGIN@4" -> "strict::import";
+"List::Util::BEGIN@11" -> "strict::import";
+"B::BEGIN@30" -> "strict::import";
+"DBD::_::db::BEGIN@1493" -> "strict::import";
+"Hier::Report::noop::BEGIN@3" -> "strict::import";
+"DBD::_::common::BEGIN@1330" -> "strict::import";
+"Hier::CCT::BEGIN@17" -> "strict::import";
+"DBI::Const::GetInfoType::BEGIN@12" -> "strict::import";
+"YAML::Tag::BEGIN@3" -> "strict::import";
+"DBD::mysql::BEGIN@4" -> "strict::import";
+"Hier::Tasks::BEGIN@3" -> "strict::import";
+"Config::YAML::BEGIN@6" -> "strict::import";
+"main::BEGIN@4" -> "strict::import";
+"Exporter::Heavy::BEGIN@3" -> "strict::import";
+"DBD::mysql::db::BEGIN@186" -> "strict::import";
+"YAML::BEGIN@4" -> "strict::import";
+"DBI::__ANON__[DBI.pm:719]" -> "DBI::common::STORE";
+"DBI::connect" -> "DBI::common::STORE";
+"YAML::Loader::_parse_mapping" -> "YAML::Base::__ANON__[(eval 16)[YAML/Base.pm:73]:8]";
+"YAML::Loader::_parse" -> "YAML::Base::__ANON__[(eval 16)[YAML/Base.pm:73]:8]";
+"YAML::Loader::_parse_node" -> "YAML::Base::__ANON__[(eval 16)[YAML/Base.pm:73]:8]";
+"YAML::Loader::_parse_mapping" -> "YAML::Base::__ANON__[(eval 25)[YAML/Base.pm:73]:8]";
+"YAML::Loader::_parse_next_line" -> "YAML::Base::__ANON__[(eval 25)[YAML/Base.pm:73]:8]";
+"YAML::Loader::_parse_node" -> "YAML::Base::__ANON__[(eval 25)[YAML/Base.pm:73]:8]";
+"Config::AUTOLOAD" -> "Config::CORE:match";
+"YAML::Loader::_parse_node" -> "YAML::Loader::_parse_mapping";
+"Hier::Option::BEGIN@16" -> "POSIX::SigRt::BEGIN@66";
+"AutoLoader::find_filename" -> "AutoLoader::CORE:substcont";
+"AutoLoader::import" -> "AutoLoader::CORE:substcont";
+"Hier::Option::BEGIN@16" -> "Tie::StdHash::TIEHASH";
+"DynaLoader::bootstrap" -> "DynaLoader::dl_find_symbol";
+"Hier::Walk::filter" -> "Hier::Filter::filtered";
+"main::RUNTIME" -> "Hier::db::DB_init";
+"POSIX::BEGIN@9" -> "AutoLoader::BEGIN@3";
+"Hier::Option::BEGIN@16" -> "POSIX::SigAction::BEGIN@58";
+"Hier::Walk::BEGIN@9" -> "Hier::Sort::BEGIN@6";
+"Hier::db::DB_init" -> "Config::YAML::AUTOLOAD";
+"main::report" -> "Hier::Report::noop::Report_noop";
+"Hier::Filter::add_filter_tags" -> "Hier::Option::option";
+"Hier::Walk::new" -> "Hier::Option::option";
+"Hier::db::DB_init" -> "Hier::Option::option";
+"Hier::Meta::meta_filter" -> "Hier::Option::option";
+"Hier::Format::display_mode" -> "Hier::Option::option";
+"DBI::install_driver" -> "DynaLoader::bootstrap";
+"DBI::BEGIN@160" -> "DynaLoader::bootstrap";
+"YAML::Type::code::BEGIN@137" -> "B::Deparse::BEGIN@3338";
+"DBI::BEGIN@160" -> "Exporter::Heavy::heavy_export_ok_tags";
+"main::BEGIN@8" -> "Hier::util::BEGIN@7";
+"main::BEGIN@2" -> "Hier::Report::noop::BEGIN@4";
+"Hier::db::load_gtd" -> "Hier::db::G_learn";
+"constant::import" -> "constant::CORE:regcomp";
+"Hier::Walk::BEGIN@10" -> "Hier::Meta::BEGIN@7";
+"Hier::Filter::apply_ref_filters" -> "Hier::Filter::filter_any";
+"Hier::Filter::give_parent" -> "Hier::Filter::task_mask";
+"Hier::Filter::prop_up" -> "Hier::Filter::task_mask";
+"Hier::Filter::apply_filters" -> "Hier::Filter::task_mask";
+"Hier::Filter::give_children" -> "Hier::Filter::task_mask";
+"Hier::Filter::proj_mask" -> "Hier::Filter::task_mask";
+"YAML::Loader::_parse_inline" -> "YAML::Loader::CORE:match";
+"YAML::Loader::_parse_qualifiers" -> "YAML::Loader::CORE:match";
+"YAML::Loader::_parse_next_line" -> "YAML::Loader::CORE:match";
+"YAML::Loader::_parse_implicit" -> "YAML::Loader::CORE:match";
+"YAML::Loader::_parse_node" -> "YAML::Loader::CORE:match";
+"YAML::Loader::_parse_inline_simple" -> "YAML::Loader::CORE:match";
+"YAML::Loader::_parse" -> "YAML::Loader::CORE:match";
+"YAML::Loader::_parse_throwaway_comments" -> "YAML::Loader::CORE:match";
+"Config::YAML::BEGIN@7" -> "YAML::BEGIN@6";
+"DynaLoader::BEGIN@25" -> "version::(bool";
+"B::Deparse::BEGIN@12" -> "B::BEGIN@237";
+"DBI::Const::GetInfoType::BEGIN@45" -> "DBI::Const::GetInfo::ANSI::CORE:match";
+"YAML::Loader::_parse_next_line" -> "YAML::Loader::CORE:regcomp";
+"YAML::Loader::_parse" -> "YAML::Loader::CORE:regcomp";
+"YAML::Loader::_parse_node" -> "YAML::Loader::CORE:regcomp";
+"main::BEGIN@9" -> "Hier::db::BEGIN@20";
+"DBD::mysql::driver" -> "DBI::_new_drh";
+"Hier::db::load_gtd" -> "Hier::db::G_select";
+"Hier::db::BEGIN@21" -> "Config::YAML::BEGIN@5";
+"POSIX::import" -> "POSIX::load_imports";
+"DBI::dr::connect" -> "DBD::mysql::dr::connect";
+"DBI::BEGIN@157" -> "DynaLoader::BEGIN@25";
+"base::import" -> "base::has_version";
+"Hier::db::html_clean" -> "Hier::db::CORE:match";
+"main::BEGIN@2" -> "Hier::Report::noop::BEGIN@7";
+"Hier::Filter::filtered" -> "Hier::Filter::filtered_reason";
+"AutoLoader::find_filename" -> "AutoLoader::CORE:subst";
+"AutoLoader::import" -> "AutoLoader::CORE:subst";
+"POSIX::SigRt::BEGIN@66" -> "vars::BEGIN@8";
+"Hier::db::BEGIN@21" -> "Config::YAML::BEGIN@135";
+"Hier::Option::BEGIN@16" -> "POSIX::BEGIN@2";
+"Hier::Report::noop::BEGIN@17" -> "Hier::Walk::BEGIN@10";
+"DynaLoader::bootstrap" -> "DynaLoader::CORE:ftdir";
+"Config::YAML::read" -> "YAML::Load";
+"DynaLoader::bootstrap" -> "DynaLoader::dl_undef_symbols";
+"YAML::Loader::_parse_mapping" -> "YAML::Loader::_parse_next_line";
+"YAML::Loader::_parse" -> "YAML::Loader::_parse_next_line";
+"Hier::Report::noop::Report_noop" -> "Hier::Walk::new";
+"Hier::db::BEGIN@25" -> "Hier::Tasks::BEGIN@8";
+"Hier::Walk::BEGIN@10" -> "Hier::Meta::BEGIN@3";
+"base::import" -> "Hier::Format::BEGIN@7";
+"Hier::Filter::proj_mask" -> "Hier::Filter::prop_up";
+"YAML::Node::BEGIN@7" -> "YAML::Tag::BEGIN@4";
+"Hier::db::load_meta" -> "DBI::common::DESTROY";
+"Hier::db::load_gtd" -> "DBI::common::DESTROY";
+"Hier::db::DB_init" -> "DBI::common::DESTROY";
+"YAML::Loader::BEGIN@6" -> "YAML::Loader::Base::BEGIN@4";
+"Hier::Option::BEGIN@16" -> "XSLoader::load";
+"Fcntl::BEGIN@214" -> "XSLoader::load";
+"Hier::db::BEGIN@20" -> "XSLoader::load";
+"B::Deparse::BEGIN@12" -> "XSLoader::load";
+"YAML::Base::__ANON__[YAML/Base.pm:172]" -> "XSLoader::load";
+"POSIX::BEGIN@9" -> "AutoLoader::BEGIN@13";
+"YAML::init_action_object" -> "YAML::Loader::BEGIN@285";
+"YAML::Loader::_parse_mapping" -> "YAML::Loader::_parse_node";
+"YAML::Loader::_parse" -> "YAML::Loader::_parse_node";
+"Hier::db::BEGIN@20" -> "DBI::BEGIN@156";
+"main::BEGIN@8" -> "Hier::util::BEGIN@3";
+"YAML::BEGIN@15" -> "constant::BEGIN@2";
+"POSIX::BEGIN@13" -> "Fcntl::BEGIN@239";
+"Config::YAML::BEGIN@7" -> "YAML::BEGIN@7";
+"YAML::Type::code::BEGIN@137" -> "B::Deparse::BEGIN@1224";
+"Hier::util::BEGIN@20" -> "Hier::Option::BEGIN@3";
+"Hier::db::BEGIN@20" -> "DBI::DBI_tie::TIEHASH";
+"POSIX::BEGIN@9" -> "AutoLoader::BEGIN@4";
+"Hier::Filter::task_mask" -> "Hier::Tasks::get_nextaction";
+"Exporter::import" -> "Exporter::export";
+"YAML::Type::code::BEGIN@137" -> "B::Deparse::BEGIN@2752";
+"DynaLoader::bootstrap" -> "DynaLoader::CORE:ftfile";
+"main::BEGIN@9" -> "Hier::db::BEGIN@25";
+"YAML::BEGIN@6" -> "YAML::Base::BEGIN@5";
+"YAML::init_action_object" -> "YAML::Loader::BEGIN@15";
+"main::BEGIN@8" -> "Hier::util::BEGIN@6";
+"YAML::init_action_object" -> "YAML::Loader::BEGIN@16";
+"Hier::Option::BEGIN@16" -> "POSIX::BEGIN@3";
+"main::BEGIN@2" -> "Hier::Report::noop::BEGIN@6";
+"YAML::init_action_object" -> "YAML::Loader::Base::set_global_options";
+"Config::YAML::BEGIN@7" -> "YAML::Base::field";
+"YAML::Loader::BEGIN@6" -> "YAML::Base::field";
+"main::BEGIN@2" -> "Hier::Report::noop::BEGIN@20";
+"Config::YAML::BEGIN@7" -> "YAML::BEGIN@5";
+"B::Deparse::BEGIN@3413" -> "re::import";
+"YAML::Loader::_parse_mapping" -> "YAML::Base::__ANON__[(eval 26)[YAML/Base.pm:73]:8]";
+"YAML::Loader::_parse_next_line" -> "YAML::Base::__ANON__[(eval 26)[YAML/Base.pm:73]:8]";
+"YAML::Loader::_parse_node" -> "YAML::Base::__ANON__[(eval 26)[YAML/Base.pm:73]:8]";
+"POSIX::import" -> "POSIX::AUTOLOAD";
+"Hier::Option::BEGIN@16" -> "POSIX::import";
+"Hier::Walk::BEGIN@10" -> "Hier::Meta::BEGIN@4";
+"YAML::Type::code::BEGIN@137" -> "B::Deparse::BEGIN@3412";
+"DBD::mysql::dr::connect" -> "DBD::mysql::db::_login";
+"Hier::Option::BEGIN@16" -> "POSIX::BEGIN@13";
+"Hier::Option::_today" -> "POSIX::strftime";
+"Hier::db::DB_init" -> "DBI::connect";
+"Hier::Meta::BEGIN@24" -> "Hier::Selection::BEGIN@7";
+"YAML::Loader::_parse_inline" -> "YAML::Base::__ANON__[(eval 29)[YAML/Base.pm:73]:8]";
+"YAML::Loader::_parse_mapping" -> "YAML::Base::__ANON__[(eval 29)[YAML/Base.pm:73]:8]";
+"YAML::Loader::_parse_qualifiers" -> "YAML::Base::__ANON__[(eval 29)[YAML/Base.pm:73]:8]";
+"YAML::Loader::_parse_inline_simple" -> "YAML::Base::__ANON__[(eval 29)[YAML/Base.pm:73]:8]";
+"YAML::Loader::_parse_node" -> "YAML::Base::__ANON__[(eval 29)[YAML/Base.pm:73]:8]";
+"Hier::Tasks::get_completed" -> "Hier::Tasks::default";
+"Hier::Tasks::get_isSomeday" -> "Hier::Tasks::default";
+"Hier::Tasks::get_tickledate" -> "Hier::Tasks::default";
+"Hier::Tasks::get_type" -> "Hier::Tasks::default";
+"Hier::Tasks::get_nextaction" -> "Hier::Tasks::default";
+"Hier::Tasks::get_priority" -> "Hier::Tasks::default";
+"Hier::Tasks::get_due" -> "Hier::Tasks::default";
+"YAML::BEGIN@6" -> "YAML::Base::BEGIN@3";
+"Hier::Filter::apply_filters" -> "Hier::Filter::proj_mask";
+"AutoLoader::find_filename" -> "AutoLoader::CORE:fteread";
+"main::RUNTIME" -> "main::BEGIN@5";
+"B::Deparse::BEGIN@3413" -> "re::BEGIN@4";
+"DBD::mysql::dr::BEGIN@101" -> "DBI::Const::GetInfoType::BEGIN@46";
+"Hier::db::BEGIN@20" -> "DBI::BEGIN@267";
+"Hier::db::BEGIN@20" -> "DBD::_::common::BEGIN@1330";
+"Exporter::as_heavy" -> "Exporter::Heavy::BEGIN@200";
+"main::BEGIN@9" -> "Hier::db::BEGIN@6";
+"YAML::Node::BEGIN@7" -> "YAML::Tag::BEGIN@3";
+"Hier::Report::noop::BEGIN@17" -> "Hier::Walk::BEGIN@7";
+"Hier::db::BEGIN@24" -> "Hier::CCT::BEGIN@19";
+"Hier::Walk::BEGIN@9" -> "Hier::Sort::BEGIN@17";
+}

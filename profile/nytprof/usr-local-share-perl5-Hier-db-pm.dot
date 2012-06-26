@@ -1,0 +1,270 @@
+digraph {
+graph [overlap=false]
+subgraph cluster_Hier_Hier {
+	label="Hier::Hier";
+	"Hier::Hier::add_child";
+}
+subgraph cluster_List_Util {
+	label="List::Util";
+	"List::Util::BEGIN@11";
+	"List::Util::BEGIN@12";
+}
+subgraph cluster_Hier_CCT {
+	label="Hier::CCT";
+	"Hier::CCT::use";
+	"Hier::CCT::BEGIN@18";
+	"Hier::CCT::BEGIN@19";
+	"Hier::CCT::BEGIN@17";
+	"Hier::CCT::BEGIN@4";
+	"Hier::CCT::BEGIN@3";
+	"Hier::CCT::define";
+	"Hier::CCT::name";
+}
+subgraph cluster_DBI {
+	label="DBI";
+	"DBI::BEGIN@951";
+	"DBI::BEGIN@267";
+	"DBI::BEGIN@160";
+	"DBI::BEGIN@825";
+	"DBI::BEGIN@271";
+	"DBI::BEGIN@791";
+	"DBI::BEGIN@854";
+	"DBI::BEGIN@522";
+	"DBI::_install_method";
+	"DBI::BEGIN@679";
+	"DBI::setup_driver";
+	"DBI::BEGIN@158";
+	"DBI::BEGIN@157";
+	"DBI::BEGIN@1017";
+	"DBI::BEGIN@156";
+	"DBI::connect";
+}
+subgraph cluster_warnings {
+	label="warnings";
+	"warnings::import";
+}
+subgraph cluster_main {
+	label="main";
+	"main::BEGIN@9";
+	"main::RUNTIME";
+}
+subgraph cluster_strict {
+	label="strict";
+	"strict::import";
+}
+subgraph cluster_Hier_Option {
+	label="Hier::Option";
+	"Hier::Option::option";
+}
+subgraph cluster_DBI_common {
+	label="DBI::common";
+	"DBI::common::DESTROY";
+}
+subgraph cluster_DBI_db {
+	label="DBI::db";
+	"DBI::db::prepare";
+}
+subgraph cluster_Scalar_Util {
+	label="Scalar::Util";
+	"Scalar::Util::BEGIN@9";
+	"Scalar::Util::BEGIN@10";
+	"Scalar::Util::weaken";
+}
+subgraph cluster_XSLoader {
+	label="XSLoader";
+	"XSLoader::load";
+}
+subgraph cluster_DBD___dr {
+	label="DBD::_::dr";
+	"DBD::_::dr::BEGIN@1432";
+}
+subgraph cluster_DBD___st {
+	label="DBD::_::st";
+	"DBD::_::st::BEGIN@1799";
+}
+subgraph cluster_DBI_var {
+	label="DBI::var";
+	"DBI::var::TIESCALAR";
+}
+subgraph cluster_DBI_DBI_tie {
+	label="DBI::DBI_tie";
+	"DBI::DBI_tie::TIEHASH";
+}
+subgraph cluster_Hier_db {
+	label="Hier::db";
+	"Hier::db::G_map";
+	"Hier::db::metafix";
+	"Hier::db::BEGIN@11";
+	"Hier::db::cset";
+	"Hier::db::CORE:match";
+	"Hier::db::G_learn";
+	"Hier::db::gtd_add";
+	"Hier::db::load_gtd";
+	"Hier::db::CORE:subst";
+	"Hier::db::BEGIN@3";
+	"Hier::db::G_default";
+	"Hier::db::DB_init";
+	"Hier::db::add_relationship";
+	"Hier::db::BEGIN@26";
+	"Hier::db::BEGIN@21";
+	"Hier::db::BEGIN@24";
+	"Hier::db::load_meta";
+	"Hier::db::html_clean";
+	"Hier::db::BEGIN@6";
+	"Hier::db::T_select";
+	"Hier::db::BEGIN@25";
+	"Hier::db::BEGIN@27";
+	"Hier::db::BEGIN@7";
+	"Hier::db::BEGIN@4";
+	"Hier::db::BEGIN@20";
+	"Hier::db::BEGIN@22";
+	"Hier::db::G_select";
+}
+subgraph cluster_Hier_Tasks {
+	label="Hier::Tasks";
+	"Hier::Tasks::BEGIN@6";
+	"Hier::Tasks::BEGIN@8";
+	"Hier::Tasks::BEGIN@3";
+	"Hier::Tasks::clean_dirty";
+	"Hier::Tasks::all";
+	"Hier::Tasks::get_tid";
+	"Hier::Tasks::new";
+	"Hier::Tasks::find";
+	"Hier::Tasks::BEGIN@4";
+}
+subgraph cluster_Config_YAML {
+	label="Config::YAML";
+	"Config::YAML::BEGIN@5";
+	"Config::YAML::BEGIN@7";
+	"Config::YAML::BEGIN@135";
+	"Config::YAML::new";
+	"Config::YAML::BEGIN@9";
+	"Config::YAML::BEGIN@6";
+	"Config::YAML::AUTOLOAD";
+}
+subgraph cluster_Exporter {
+	label="Exporter";
+	"Exporter::import";
+}
+subgraph cluster_DBD___common {
+	label="DBD::_::common";
+	"DBD::_::common::BEGIN@1330";
+}
+subgraph cluster_DBD___db {
+	label="DBD::_::db";
+	"DBD::_::db::BEGIN@1493";
+}
+subgraph cluster_DBD__mem_common {
+	label="DBD::_mem::common";
+	"DBD::_mem::common::DESTROY";
+}
+subgraph cluster_DBI_st {
+	label="DBI::st";
+	"DBI::st::execute";
+	"DBI::st::fetchrow_hashref";
+}
+"Hier::db::BEGIN@20" -> "DBI::BEGIN@160";
+"Hier::db::BEGIN@24" -> "Hier::CCT::BEGIN@4";
+"Hier::db::BEGIN@20" -> "DBI::BEGIN@271";
+"Hier::db::BEGIN@24" -> "Hier::CCT::BEGIN@3";
+"Hier::db::html_clean" -> "Hier::db::CORE:subst";
+"Hier::db::load_gtd" -> "Hier::db::G_default";
+"main::RUNTIME" -> "Hier::db::DB_init";
+"Hier::db::load_gtd" -> "Hier::db::add_relationship";
+"Hier::db::BEGIN@20" -> "Scalar::Util::weaken";
+"Hier::db::load_meta" -> "DBI::st::fetchrow_hashref";
+"Hier::db::load_gtd" -> "DBI::st::fetchrow_hashref";
+"Hier::db::load_gtd" -> "DBD::_mem::common::DESTROY";
+"Hier::db::DB_init" -> "DBD::_mem::common::DESTROY";
+"Hier::db::load_meta" -> "Hier::db::T_select";
+"Hier::db::BEGIN@20" -> "DBI::BEGIN@854";
+"Hier::db::BEGIN@20" -> "DBI::DBI_tie::TIEHASH";
+"main::BEGIN@9" -> "Hier::db::BEGIN@4";
+"Hier::db::BEGIN@27" -> "Exporter::import";
+"Hier::db::BEGIN@22" -> "Exporter::import";
+"Hier::db::BEGIN@24" -> "Exporter::import";
+"Hier::db::BEGIN@25" -> "Exporter::import";
+"Hier::db::BEGIN@20" -> "Exporter::import";
+"main::BEGIN@9" -> "Hier::db::BEGIN@7";
+"Hier::db::BEGIN@24" -> "Hier::CCT::BEGIN@18";
+"Hier::db::DB_init" -> "Config::YAML::AUTOLOAD";
+"Hier::db::BEGIN@20" -> "List::Util::BEGIN@12";
+"main::BEGIN@9" -> "Hier::db::BEGIN@22";
+"Hier::db::DB_init" -> "Hier::Option::option";
+"Hier::db::load_meta" -> "Hier::Tasks::new";
+"Hier::db::gtd_add" -> "Hier::Tasks::find";
+"Hier::db::load_gtd" -> "Hier::Tasks::find";
+"Hier::db::add_relationship" -> "Hier::Tasks::find";
+"Hier::db::BEGIN@20" -> "DBI::BEGIN@951";
+"Hier::db::load_gtd" -> "Hier::db::G_learn";
+"Hier::db::BEGIN@21" -> "Config::YAML::BEGIN@7";
+"Hier::db::metafix" -> "Hier::Tasks::all";
+"Hier::db::load_gtd" -> "Hier::Tasks::all";
+"Hier::db::BEGIN@20" -> "DBI::var::TIESCALAR";
+"Hier::db::BEGIN@20" -> "DBI::BEGIN@1017";
+"Hier::db::T_select" -> "DBI::db::prepare";
+"Hier::db::G_select" -> "DBI::db::prepare";
+"Hier::db::metafix" -> "Hier::Tasks::get_tid";
+"Hier::db::BEGIN@20" -> "Scalar::Util::BEGIN@10";
+"Hier::db::BEGIN@25" -> "Hier::Tasks::BEGIN@4";
+"Hier::db::DB_init" -> "Hier::db::load_meta";
+"Hier::db::BEGIN@20" -> "List::Util::BEGIN@11";
+"Hier::db::BEGIN@20" -> "DBD::_::db::BEGIN@1493";
+"Hier::db::BEGIN@20" -> "DBI::BEGIN@825";
+"main::BEGIN@9" -> "Hier::db::BEGIN@25";
+"Hier::db::BEGIN@4" -> "warnings::import";
+"Hier::db::BEGIN@20" -> "DBI::_install_method";
+"Hier::db::BEGIN@25" -> "Hier::Tasks::BEGIN@3";
+"Hier::db::BEGIN@21" -> "Config::YAML::BEGIN@6";
+"main::BEGIN@9" -> "Hier::db::BEGIN@20";
+"Hier::db::BEGIN@21" -> "Config::YAML::BEGIN@9";
+"Hier::db::load_gtd" -> "Hier::db::G_select";
+"Hier::db::load_gtd" -> "Hier::CCT::name";
+"Hier::db::BEGIN@21" -> "Config::YAML::BEGIN@5";
+"Hier::db::DB_init" -> "Hier::db::metafix";
+"Hier::db::gtd_add" -> "Hier::db::G_map";
+"Hier::db::load_meta" -> "Hier::db::cset";
+"Hier::db::gtd_add" -> "Hier::db::cset";
+"Hier::db::load_gtd" -> "Hier::db::cset";
+"Hier::db::html_clean" -> "Hier::db::CORE:match";
+"Hier::db::BEGIN@21" -> "Config::YAML::BEGIN@135";
+"Hier::db::DB_init" -> "Hier::db::load_gtd";
+"Hier::db::load_gtd" -> "Hier::Tasks::clean_dirty";
+"Hier::db::BEGIN@20" -> "DBI::BEGIN@157";
+"main::BEGIN@9" -> "Hier::db::BEGIN@21";
+"Hier::db::BEGIN@20" -> "DBD::_::st::BEGIN@1799";
+"main::BEGIN@9" -> "Hier::db::BEGIN@27";
+"Hier::db::BEGIN@25" -> "Hier::Tasks::BEGIN@8";
+"Hier::db::DB_init" -> "Config::YAML::new";
+"Hier::db::BEGIN@20" -> "DBD::_::dr::BEGIN@1432";
+"Hier::db::DB_init" -> "DBI::connect";
+"Hier::db::load_gtd" -> "Hier::CCT::use";
+"Hier::db::BEGIN@20" -> "Scalar::Util::BEGIN@9";
+"Hier::db::BEGIN@20" -> "Hier::db::BEGIN@11";
+"Hier::db::BEGIN@25" -> "Hier::Tasks::BEGIN@6";
+"Hier::db::BEGIN@20" -> "DBI::BEGIN@791";
+"Hier::db::BEGIN@20" -> "DBI::BEGIN@522";
+"Hier::db::load_gtd" -> "Hier::db::gtd_add";
+"Hier::db::BEGIN@20" -> "DBI::BEGIN@679";
+"Hier::db::BEGIN@20" -> "DBI::setup_driver";
+"main::BEGIN@9" -> "Hier::db::BEGIN@3";
+"Hier::db::BEGIN@20" -> "DBI::BEGIN@158";
+"Hier::db::load_meta" -> "DBI::common::DESTROY";
+"Hier::db::load_gtd" -> "DBI::common::DESTROY";
+"Hier::db::DB_init" -> "DBI::common::DESTROY";
+"main::BEGIN@9" -> "Hier::db::BEGIN@26";
+"Hier::db::BEGIN@20" -> "XSLoader::load";
+"Hier::db::T_select" -> "DBI::st::execute";
+"Hier::db::G_select" -> "DBI::st::execute";
+"main::BEGIN@9" -> "Hier::db::BEGIN@24";
+"Hier::db::BEGIN@20" -> "DBI::BEGIN@267";
+"Hier::db::BEGIN@20" -> "DBD::_::common::BEGIN@1330";
+"Hier::db::gtd_add" -> "Hier::db::html_clean";
+"Hier::db::BEGIN@24" -> "Hier::CCT::BEGIN@17";
+"main::BEGIN@9" -> "Hier::db::BEGIN@6";
+"Hier::db::load_gtd" -> "Hier::CCT::define";
+"Hier::db::BEGIN@24" -> "Hier::CCT::BEGIN@19";
+"Hier::db::BEGIN@3" -> "strict::import";
+"Hier::db::BEGIN@20" -> "DBI::BEGIN@156";
+"Hier::db::add_relationship" -> "Hier::Hier::add_child";
+}

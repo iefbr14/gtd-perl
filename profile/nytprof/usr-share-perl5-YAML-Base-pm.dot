@@ -1,0 +1,74 @@
+digraph {
+graph [overlap=false]
+subgraph cluster_YAML {
+	label="YAML";
+	"YAML::Load";
+	"YAML::BEGIN@6";
+	"YAML::init_action_object";
+}
+subgraph cluster_YAML_Loader {
+	label="YAML::Loader";
+	"YAML::Loader::BEGIN@6";
+}
+subgraph cluster_YAML_Base {
+	label="YAML::Base";
+	"YAML::Base::BEGIN@3";
+	"YAML::Base::BEGIN@75";
+	"YAML::Base::new";
+	"YAML::Base::BEGIN@165";
+	"YAML::Base::BEGIN@5";
+	"YAML::Base::CORE:subst";
+	"YAML::Base::BEGIN@4";
+	"YAML::Base::field";
+	"YAML::Base::__ANON__[YAML/Base.pm:162]";
+	"YAML::Base::__ANON__[YAML/Base.pm:172]";
+}
+subgraph cluster_warnings {
+	label="warnings";
+	"warnings::unimport";
+	"warnings::import";
+}
+subgraph cluster_Data_Dumper {
+	label="Data::Dumper";
+	"Data::Dumper::BEGIN@22";
+	"Data::Dumper::BEGIN@16";
+	"Data::Dumper::BEGIN@683";
+	"Data::Dumper::Dumper";
+	"Data::Dumper::BEGIN@20";
+}
+subgraph cluster_strict {
+	label="strict";
+	"strict::import";
+	"strict::unimport";
+}
+subgraph cluster_XSLoader {
+	label="XSLoader";
+	"XSLoader::load";
+}
+subgraph cluster_Config_YAML {
+	label="Config::YAML";
+	"Config::YAML::BEGIN@7";
+}
+"YAML::Base::__ANON__[YAML/Base.pm:172]" -> "Data::Dumper::Dumper";
+"YAML::BEGIN@6" -> "YAML::Base::BEGIN@75";
+"YAML::Base::__ANON__[YAML/Base.pm:172]" -> "Data::Dumper::BEGIN@22";
+"YAML::BEGIN@6" -> "YAML::Base::BEGIN@165";
+"YAML::Base::BEGIN@165" -> "warnings::unimport";
+"YAML::Base::BEGIN@75" -> "strict::unimport";
+"YAML::Load" -> "YAML::Base::new";
+"YAML::init_action_object" -> "YAML::Base::new";
+"YAML::Base::__ANON__[YAML/Base.pm:172]" -> "YAML::Base::CORE:subst";
+"YAML::Base::BEGIN@4" -> "warnings::import";
+"YAML::BEGIN@6" -> "YAML::Base::BEGIN@5";
+"YAML::Base::__ANON__[YAML/Base.pm:172]" -> "Data::Dumper::BEGIN@16";
+"YAML::Base::__ANON__[YAML/Base.pm:172]" -> "Data::Dumper::BEGIN@683";
+"Config::YAML::BEGIN@7" -> "YAML::Base::field";
+"YAML::Loader::BEGIN@6" -> "YAML::Base::field";
+"YAML::Base::field" -> "YAML::Base::__ANON__[YAML/Base.pm:162]";
+"YAML::Base::__ANON__[YAML/Base.pm:172]" -> "Data::Dumper::BEGIN@20";
+"YAML::Base::field" -> "YAML::Base::__ANON__[YAML/Base.pm:172]";
+"YAML::BEGIN@6" -> "YAML::Base::BEGIN@3";
+"YAML::BEGIN@6" -> "YAML::Base::BEGIN@4";
+"YAML::Base::__ANON__[YAML/Base.pm:172]" -> "XSLoader::load";
+"YAML::Base::BEGIN@3" -> "strict::import";
+}

@@ -1,0 +1,243 @@
+digraph {
+graph [overlap=false]
+subgraph cluster_Internals {
+	label="Internals";
+	"Internals::SvREADONLY";
+}
+subgraph cluster_YAML_Loader {
+	label="YAML::Loader";
+	"YAML::Loader::_parse_next_line";
+}
+subgraph cluster_DynaLoader {
+	label="DynaLoader";
+	"DynaLoader::BEGIN@25";
+}
+subgraph cluster_DBD_mysql_dr {
+	label="DBD::mysql::dr";
+	"DBD::mysql::dr::connect";
+}
+subgraph cluster_DBI {
+	label="DBI";
+	"DBI::setup_driver";
+	"DBI::disconnect_all";
+	"DBI::__ANON__[DBI.pm:719]";
+	"DBI::END";
+	"DBI::connect";
+}
+subgraph cluster_base {
+	label="base";
+	"base::import";
+}
+subgraph cluster_warnings {
+	label="warnings";
+	"warnings::CORE:regcomp";
+	"warnings::CORE:match";
+	"warnings::import";
+}
+subgraph cluster_Getopt_Std {
+	label="Getopt::Std";
+	"Getopt::Std::getopts";
+}
+subgraph cluster_Hier_util {
+	label="Hier::util";
+	"Hier::util::BEGIN@20";
+	"Hier::util::BEGIN@3";
+	"Hier::util::BEGIN@7";
+	"Hier::util::BEGIN@6";
+	"Hier::util::BEGIN@4";
+}
+subgraph cluster_main {
+	label="main";
+	"main::BEGIN@10";
+	"main::BEGIN@8";
+	"main::CORE:match";
+	"main::BEGIN@6";
+	"main::BEGIN@9";
+	"main::BEGIN@2";
+	"main::BEGIN@4";
+	"main::report";
+	"main::RUNTIME";
+	"main::BEGIN@5";
+	"main::BEGIN@11";
+}
+subgraph cluster_strict {
+	label="strict";
+	"strict::import";
+	"strict::CORE:regcomp";
+	"strict::bits";
+	"strict::CORE:match";
+}
+subgraph cluster_Hier_Option {
+	label="Hier::Option";
+	"Hier::Option::set_option";
+}
+subgraph cluster_DBI_common {
+	label="DBI::common";
+	"DBI::common::DESTROY";
+	"DBI::common::STORE";
+	"DBI::common::FETCH";
+}
+subgraph cluster_DBI_db {
+	label="DBI::db";
+	"DBI::db::connected";
+	"DBI::db::prepare";
+}
+subgraph cluster_DBI_Const_GetInfoType {
+	label="DBI::Const::GetInfoType";
+	"DBI::Const::GetInfoType::BEGIN@46";
+	"DBI::Const::GetInfoType::BEGIN@45";
+}
+subgraph cluster_DBI_Const_GetInfo_ODBC {
+	label="DBI::Const::GetInfo::ODBC";
+	"DBI::Const::GetInfo::ODBC::CORE:match";
+}
+subgraph cluster_UNIVERSAL {
+	label="UNIVERSAL";
+	"UNIVERSAL::isa";
+}
+subgraph cluster_Hier_Report_noop {
+	label="Hier::Report::noop";
+	"Hier::Report::noop::Report_noop";
+}
+subgraph cluster_DBD_mysql_db {
+	label="DBD::mysql::db";
+	"DBD::mysql::db::prepare";
+}
+subgraph cluster_Hier_db {
+	label="Hier::db";
+	"Hier::db::BEGIN@21";
+	"Hier::db::load_meta";
+	"Hier::db::BEGIN@24";
+	"Hier::db::BEGIN@6";
+	"Hier::db::T_select";
+	"Hier::db::BEGIN@25";
+	"Hier::db::BEGIN@4";
+	"Hier::db::BEGIN@7";
+	"Hier::db::BEGIN@27";
+	"Hier::db::load_gtd";
+	"Hier::db::BEGIN@3";
+	"Hier::db::BEGIN@20";
+	"Hier::db::BEGIN@22";
+	"Hier::db::DB_init";
+	"Hier::db::BEGIN@26";
+	"Hier::db::G_select";
+}
+subgraph cluster_DBI_Const_GetInfo_ANSI {
+	label="DBI::Const::GetInfo::ANSI";
+	"DBI::Const::GetInfo::ANSI::CORE:match";
+}
+subgraph cluster_Hier_Tasks {
+	label="Hier::Tasks";
+	"Hier::Tasks::END";
+}
+subgraph cluster_Regexp {
+	label="Regexp";
+	"Regexp::DESTROY";
+}
+subgraph cluster_version {
+	label="version";
+	"version::(bool";
+	"version::(cmp";
+}
+subgraph cluster_DBI_dr {
+	label="DBI::dr";
+	"DBI::dr::disconnect_all";
+	"DBI::dr::connect";
+}
+subgraph cluster_constant {
+	label="constant";
+	"constant::import";
+}
+subgraph cluster_Exporter {
+	label="Exporter";
+	"Exporter::import";
+}
+subgraph cluster_DBD__mem_common {
+	label="DBD::_mem::common";
+	"DBD::_mem::common::DESTROY";
+}
+subgraph cluster_DBI_st {
+	label="DBI::st";
+	"DBI::st::fetch";
+	"DBI::st::execute";
+	"DBI::st::fetchrow_hashref";
+}
+subgraph cluster_mro {
+	label="mro";
+	"mro::method_changed_in";
+}
+"main::RUNTIME" -> "main::CORE:match";
+"DBI::__ANON__[DBI.pm:719]" -> "DBI::db::connected";
+"constant::import" -> "mro::method_changed_in";
+"main::BEGIN@8" -> "Hier::util::BEGIN@3";
+"main::RUNTIME" -> "Hier::db::DB_init";
+"main::RUNTIME" -> "Hier::Tasks::END";
+"main::BEGIN@4" -> "strict::CORE:match";
+"Hier::db::load_meta" -> "DBI::st::fetchrow_hashref";
+"Hier::db::load_gtd" -> "DBI::st::fetchrow_hashref";
+"Hier::db::load_gtd" -> "DBD::_mem::common::DESTROY";
+"Hier::db::DB_init" -> "DBD::_mem::common::DESTROY";
+"main::BEGIN@8" -> "Hier::util::BEGIN@20";
+"main::RUNTIME" -> "DBI::END";
+"main::BEGIN@4" -> "strict::bits";
+"main::BEGIN@9" -> "Hier::db::BEGIN@4";
+"main::BEGIN@10" -> "Exporter::import";
+"main::BEGIN@8" -> "Exporter::import";
+"main::BEGIN@6" -> "Exporter::import";
+"main::BEGIN@9" -> "Exporter::import";
+"main::BEGIN@11" -> "Exporter::import";
+"main::BEGIN@9" -> "Hier::db::BEGIN@7";
+"main::report" -> "Hier::Report::noop::Report_noop";
+"main::RUNTIME" -> "main::report";
+"main::BEGIN@9" -> "Hier::db::BEGIN@22";
+"main::BEGIN@8" -> "Hier::util::BEGIN@4";
+"main::BEGIN@8" -> "Hier::util::BEGIN@7";
+"main::BEGIN@5" -> "warnings::CORE:match";
+"DBI::disconnect_all" -> "DBI::dr::disconnect_all";
+"main::RUNTIME" -> "Getopt::Std::getopts";
+"DBI::setup_driver" -> "UNIVERSAL::isa";
+"base::import" -> "UNIVERSAL::isa";
+"main::BEGIN@4" -> "strict::CORE:regcomp";
+"Hier::db::T_select" -> "DBI::db::prepare";
+"Hier::db::G_select" -> "DBI::db::prepare";
+"DynaLoader::BEGIN@25" -> "version::(bool";
+"main::BEGIN@9" -> "Hier::db::BEGIN@25";
+"DBI::Const::GetInfoType::BEGIN@45" -> "DBI::Const::GetInfo::ANSI::CORE:match";
+"main::BEGIN@5" -> "warnings::import";
+"constant::import" -> "Internals::SvREADONLY";
+"YAML::Loader::_parse_next_line" -> "Regexp::DESTROY";
+"main::RUNTIME" -> "main::BEGIN@6";
+"DBI::st::fetchrow_hashref" -> "DBI::st::fetch";
+"main::BEGIN@9" -> "Hier::db::BEGIN@20";
+"DBI::db::prepare" -> "DBD::mysql::db::prepare";
+"main::BEGIN@8" -> "Hier::util::BEGIN@6";
+"DBI::dr::connect" -> "DBD::mysql::dr::connect";
+"main::RUNTIME" -> "Hier::Option::set_option";
+"main::BEGIN@9" -> "Hier::db::BEGIN@21";
+"DynaLoader::BEGIN@25" -> "version::(cmp";
+"DBI::__ANON__[DBI.pm:719]" -> "DBI::common::FETCH";
+"DBI::st::fetchrow_hashref" -> "DBI::common::FETCH";
+"main::BEGIN@9" -> "Hier::db::BEGIN@27";
+"main::report" -> "main::BEGIN@2";
+"main::RUNTIME" -> "main::BEGIN@10";
+"DBI::__ANON__[DBI.pm:719]" -> "DBI::dr::connect";
+"main::RUNTIME" -> "main::BEGIN@8";
+"main::BEGIN@9" -> "Hier::db::BEGIN@3";
+"main::RUNTIME" -> "main::BEGIN@5";
+"Hier::db::load_meta" -> "DBI::common::DESTROY";
+"Hier::db::load_gtd" -> "DBI::common::DESTROY";
+"Hier::db::DB_init" -> "DBI::common::DESTROY";
+"DBI::Const::GetInfoType::BEGIN@46" -> "DBI::Const::GetInfo::ODBC::CORE:match";
+"main::BEGIN@9" -> "Hier::db::BEGIN@26";
+"Hier::db::T_select" -> "DBI::st::execute";
+"Hier::db::G_select" -> "DBI::st::execute";
+"main::BEGIN@9" -> "Hier::db::BEGIN@24";
+"main::BEGIN@9" -> "Hier::db::BEGIN@6";
+"main::RUNTIME" -> "main::BEGIN@9";
+"main::BEGIN@5" -> "warnings::CORE:regcomp";
+"main::BEGIN@4" -> "strict::import";
+"main::RUNTIME" -> "main::BEGIN@4";
+"main::RUNTIME" -> "main::BEGIN@11";
+"DBI::__ANON__[DBI.pm:719]" -> "DBI::common::STORE";
+"DBI::connect" -> "DBI::common::STORE";
+}

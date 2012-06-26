@@ -1,0 +1,121 @@
+digraph {
+graph [overlap=false]
+subgraph cluster_Hier_Walk {
+	label="Hier::Walk";
+	"Hier::Walk::new";
+}
+subgraph cluster_base {
+	label="base";
+	"base::import";
+}
+subgraph cluster_warnings {
+	label="warnings";
+	"warnings::import";
+}
+subgraph cluster_Hier_util {
+	label="Hier::util";
+	"Hier::util::BEGIN@20";
+}
+subgraph cluster_main {
+	label="main";
+	"main::RUNTIME";
+}
+subgraph cluster_strict {
+	label="strict";
+	"strict::import";
+}
+subgraph cluster_Hier_Option {
+	label="Hier::Option";
+	"Hier::Option::BEGIN@3";
+	"Hier::Option::BEGIN@14";
+	"Hier::Option::BEGIN@16";
+	"Hier::Option::get_today";
+	"Hier::Option::BEGIN@13";
+	"Hier::Option::option_key";
+	"Hier::Option::set_option";
+	"Hier::Option::CORE:match";
+	"Hier::Option::option";
+	"Hier::Option::_today";
+	"Hier::Option::BEGIN@4";
+}
+subgraph cluster_POSIX_SigAction {
+	label="POSIX::SigAction";
+	"POSIX::SigAction::BEGIN@58";
+}
+subgraph cluster_XSLoader {
+	label="XSLoader";
+	"XSLoader::load";
+}
+subgraph cluster_Hier_Filter {
+	label="Hier::Filter";
+	"Hier::Filter::add_filter_tags";
+}
+subgraph cluster_Hier_Format {
+	label="Hier::Format";
+	"Hier::Format::display_mode";
+}
+subgraph cluster_Hier_db {
+	label="Hier::db";
+	"Hier::db::DB_init";
+}
+subgraph cluster_POSIX {
+	label="POSIX";
+	"POSIX::BEGIN@39";
+	"POSIX::BEGIN@2";
+	"POSIX::BEGIN@40";
+	"POSIX::BEGIN@13";
+	"POSIX::BEGIN@11";
+	"POSIX::strftime";
+	"POSIX::import";
+	"POSIX::BEGIN@9";
+	"POSIX::BEGIN@3";
+}
+subgraph cluster_Hier_Meta {
+	label="Hier::Meta";
+	"Hier::Meta::meta_filter";
+}
+subgraph cluster_Tie_StdHash {
+	label="Tie::StdHash";
+	"Tie::StdHash::TIEHASH";
+}
+subgraph cluster_POSIX_SigRt {
+	label="POSIX::SigRt";
+	"POSIX::SigRt::BEGIN@66";
+	"POSIX::SigRt::BEGIN@62";
+	"POSIX::SigRt::BEGIN@64";
+}
+"Hier::Option::BEGIN@16" -> "POSIX::SigRt::BEGIN@66";
+"Hier::Option::BEGIN@16" -> "Tie::StdHash::TIEHASH";
+"Hier::Option::option_key" -> "Hier::Option::CORE:match";
+"Hier::Option::BEGIN@16" -> "POSIX::SigAction::BEGIN@58";
+"Hier::util::BEGIN@20" -> "Hier::Option::BEGIN@3";
+"Hier::Filter::add_filter_tags" -> "Hier::Option::option";
+"Hier::Walk::new" -> "Hier::Option::option";
+"Hier::db::DB_init" -> "Hier::Option::option";
+"Hier::Meta::meta_filter" -> "Hier::Option::option";
+"Hier::Format::display_mode" -> "Hier::Option::option";
+"Hier::Option::get_today" -> "Hier::Option::_today";
+"Hier::util::BEGIN@20" -> "Hier::Option::_today";
+"Hier::Option::BEGIN@14" -> "warnings::import";
+"Hier::util::BEGIN@20" -> "Hier::Option::BEGIN@4";
+"Hier::Option::BEGIN@16" -> "POSIX::BEGIN@3";
+"Hier::Option::BEGIN@16" -> "POSIX::BEGIN@2";
+"main::RUNTIME" -> "Hier::Option::set_option";
+"Hier::Option::BEGIN@16" -> "POSIX::BEGIN@11";
+"Hier::Option::BEGIN@16" -> "POSIX::SigRt::BEGIN@62";
+"Hier::Option::BEGIN@16" -> "POSIX::import";
+"Hier::Option::BEGIN@16" -> "POSIX::BEGIN@9";
+"Hier::util::BEGIN@20" -> "Hier::Option::BEGIN@16";
+"base::import" -> "Hier::Option::get_today";
+"Hier::util::BEGIN@20" -> "Hier::Option::BEGIN@13";
+"Hier::Option::BEGIN@16" -> "POSIX::BEGIN@13";
+"Hier::Option::_today" -> "POSIX::strftime";
+"Hier::Option::BEGIN@16" -> "POSIX::SigRt::BEGIN@64";
+"Hier::util::BEGIN@20" -> "Hier::Option::BEGIN@14";
+"Hier::Option::BEGIN@16" -> "POSIX::BEGIN@39";
+"Hier::Option::set_option" -> "Hier::Option::option_key";
+"Hier::Option::option" -> "Hier::Option::option_key";
+"Hier::Option::BEGIN@16" -> "POSIX::BEGIN@40";
+"Hier::Option::BEGIN@16" -> "XSLoader::load";
+"Hier::Option::BEGIN@13" -> "strict::import";
+}
