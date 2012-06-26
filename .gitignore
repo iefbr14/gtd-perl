@@ -1,2 +1,5 @@
 *.swp
 .nfs*
+profile/nytprof/
+profile/nytprof.out
+
