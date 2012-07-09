@@ -65,6 +65,8 @@ sub report_task {
 	display_task($ref);
 }
 
+###BUG -- borks if dep on completed item
+### Re-thing whole logic
 sub display_cond {
 	my($p_ref) = @_;
 	my($dep);
