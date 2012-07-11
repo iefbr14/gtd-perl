@@ -75,7 +75,8 @@ sub display_cond {
 	printf "X %d %s\n", $id, $p_ref->get_title() if $Debug;
 
 	if ($dep = $p_ref->get_depends()) {	# can't be focus
-		for my $dep (split(' ', $dep)) {
+		$dep =~ s/\s+/,/g;
+		for my $dep (split(',', $dep)) {
 			printf "Deps %d on %s\n", $id, $Dep if $Debug;
 			return 1 if display_depends($dep);
 		}
