@@ -27,6 +27,8 @@ my $First = '';
 # the other is the prompter version with defaults
 #
 sub Report_new {	#-- create a new action or project
+	meta_filter('+all', '^tid', 'none');
+
 	unless (@ARGV) {
 		new_inbox('i', meta_desc(@ARGV));
 		return;
@@ -122,31 +124,29 @@ sub new_inbox {
 	my($pri, $category, $note, $desc, $line);
 
 	first("Enter Item, Desc, Category, Notes...");
-	for (;;) {
-		$task     = prompt("Task", $task);
-		$pri      = option('Priority') || 3;
-		$desc     = prompts("Desc", $title);
+	$task     = prompt("Task", $task);
+	$pri      = option('Priority') || 3;
+	$desc     = prompts("Desc", $title);
 
-		$category = prompt("Category", option('Category'));
-		$note     = prompts("Note", option('Note')); 
+	$category = prompt("Category", option('Category'));
+	$note     = prompts("Note", option('Note')); 
 
-		my $ref = Hier::Tasks->new(undef);
+	my $ref = Hier::Tasks->new(undef);
 
-		$ref->set_priority($pri);
-		$ref->set_category($category);
-		$ref->set_title($task);
-		$ref->set_description($desc);
-		$ref->set_note($note);
+	$ref->set_priority($pri);
+	$ref->set_category($category);
+	$ref->set_title($task);
+	$ref->set_description($desc);
+	$ref->set_note($note);
 
-		$ref->set_type($type);
-		$ref->set_nextaction('y') if $pri > 3;
+	$ref->set_type($type);
+	$ref->set_nextaction('y') if $pri > 3;
 
-		$ref->set_isSomeday('y') if $pri < 3;
+	$ref->set_isSomeday('y') if $pri < 3;
 
-		$ref->insert();
+	$ref->insert();
 
-		print "Created: ", $ref->get_tid(), "\n";
-	}
+	print "Created: ", $ref->get_tid(), "\n";
 }
 
 sub new_action {
@@ -156,32 +156,30 @@ sub new_action {
 
 	first("Enter Action, Priority, Desc, palm Category, Notes...");
 
-	for (;;) {
-		$task     = prompt("Task", $task);
-		$pri      = prompt("Priority", option('Priority')) || 3;
-		$desc     = prompts("Desc", $desc);
+	$task     = prompt("Task", $task);
+	$pri      = prompt("Priority", option('Priority')) || 3;
+	$desc     = prompts("Desc", $desc);
 
-		$category = prompt("Category", option('Category'));
-		$note     = prompts("Note", option('Note')); 
+	$category = prompt("Category", option('Category'));
+	$note     = prompts("Note", option('Note')); 
 
-		my $ref = Hier::Tasks->new(undef);
+	my $ref = Hier::Tasks->new(undef);
 
-		$ref->set_type('a'); # action
+	$ref->set_type('a'); # action
 
-		$ref->set_priority($pri);
-		$ref->set_category($category);
-		$ref->set_title($task);
-		$ref->set_description($desc);
-		$ref->set_note($note);
+	$ref->set_priority($pri);
+	$ref->set_category($category);
+	$ref->set_title($task);
+	$ref->set_description($desc);
+	$ref->set_note($note);
 
-		$ref->set_nextaction('y') if $pri > 3;
+	$ref->set_nextaction('y') if $pri > 3;
 
-		$ref->set_isSomeday('y') if $pri < 3;
+	$ref->set_isSomeday('y') if $pri < 3;
 
-		$ref->insert();
+	$ref->insert();
 
-		print "Created: ", $ref->get_tid(), "\n";
-	}
+	print "Created: ", $ref->get_tid(), "\n";
 }
 
 
@@ -194,31 +192,29 @@ sub new_project {
 
 	first("Enter $type_name, Category, Description, Outcome...");
 
-	for (;;) {
-		$category = prompt("Category", option('Category'));
-		$title    = prompt("Title", $title);
-		$pri      = option('Priority') || 3;
-		if ($desc) {
-			$note = option('Note');
-		} else {
-			$desc     = prompts("Description", $desc);
-			$note     = prompts("Outcome", option('Note'));
-		}
-
-		my $ref = Hier::Tasks->new(undef);
-
-		$ref->set_type($type); 
-
-		$ref->set_priority($pri);
-		$ref->set_category($category);
-		$ref->set_title($title);
-		$ref->set_description($desc);
-		$ref->set_note($note);
-
-		$ref->insert();
-
-		print "Created: ", $ref->get_tid(), "\n";
+	$category = prompt("Category", option('Category'));
+	$title    = prompt("Title", $title);
+	$pri      = option('Priority') || 3;
+	if ($desc) {
+		$note = option('Note');
+	} else {
+		$desc     = prompts("Description", $desc);
+		$note     = prompts("Outcome", option('Note'));
 	}
+
+	my $ref = Hier::Tasks->new(undef);
+
+	$ref->set_type($type); 
+
+	$ref->set_priority($pri);
+	$ref->set_category($category);
+	$ref->set_title($title);
+	$ref->set_description($desc);
+	$ref->set_note($note);
+
+	$ref->insert();
+
+	print "Created: ", $ref->get_tid(), "\n";
 }
 
 sub first {
@@ -264,8 +260,8 @@ sub prompt {
 
 		return $_;
 	}
-	print "^D -- Bye --\n";
-	exit 0;
+	print "^D -- End --\n";
+	return '';
 }
 
 1;  # don't forget to return a true value from the file
