@@ -146,6 +146,9 @@ sub hier_detail {
 	$due = '' if $due && $due lt '2010-';
 	$we    = $due || '';
 
+	my($pri) = $ref->get_priority();
+	$we    = '' if $pri >= 6;
+
 	my($fd) = $planner->{fd};
 
 	$name =~ s/"/'/g;
