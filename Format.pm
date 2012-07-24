@@ -119,7 +119,7 @@ sub display_mode {
 		'simple'   => 'report',
 		'summary'  => 'report',
 		'detail'   => 'report',
-		'task'     => 'report',
+		'task'     => 'none',
 
 		'doit'     => 'report',
 		'html'     => 'html',
@@ -405,7 +405,7 @@ sub disp_unordered_dump {
 my($Hier_stack) = { 'o' => 0, 'g' => 0, 'p' => 0 };
 
 sub display_hier {
-	my($ref, $counts) = @_;
+	my($ref, $note) = @_;
 
 	my($cols) = columns() - 2;
 
@@ -418,8 +418,8 @@ sub display_hier {
 			print '#'.("=" x $cols), "\n";
 		}
 		$Hier_stack = { 'o' => $tid, 'g' => 0, 'p' => 0 };
-		$counts ||= '';
-		print " [*** Role $tid: $title ***] $counts\n";
+		$note ||= '';
+		print " [*** Role $tid: $title ***] $note\n";
 		return;
 	}
 
@@ -441,7 +441,7 @@ sub display_hier {
 		}
 	}
 
-	display_task($ref, $counts);
+	display_task($ref, $note);
 }
 
 my($Prev_goal) = 0;
@@ -450,8 +450,12 @@ my($Prev_role) = 0;
 sub header_rgpa {
 }
 
-sub display_parent {
-	my($ref) = @_;
+sub display_rgpa {
+	my($ref, $note, $nosep) = @_;
+
+	if ($nosep) {
+		$Prev_role = 0;
+	}
 
 	return unless $ref;
 
@@ -463,7 +467,7 @@ sub display_parent {
 		return if $tid == $Prev_role;
 
 		if ($Wiki) {
-			display_task($ref);
+			display_task($ref, $note);
 		} else {
 			print '#', "=" x $cols, "\n" if $Prev_role != 0;
 			print " [*** Role $tid: ", $ref->get_title(), " ***]\n";
@@ -473,11 +477,11 @@ sub display_parent {
 		return;
 	}
 	if ($type eq 'g') {
-		display_parent($ref->get_parent());
+		display_rgpa($ref->get_parent());
 
 		return if $tid == $Prev_goal;
 		if ($Wiki) {
-			display_task($ref);
+			display_task($ref, $note);
 		} else {
 			print '#', "-" x $cols, "\n" if $Prev_goal != 0;
 			display_task($ref);
@@ -486,16 +490,8 @@ sub display_parent {
 		$Prev_goal = $tid;
 		return;
 	}
-	if ($type eq 'p') {
-		display_parent($ref->get_parent());
-	}
-}
-
-sub display_rgpa {
-	my($ref, $counts) = @_;
-
-	display_parent($ref->get_parent());
-	display_task($ref, $counts);
+	display_rgpa($ref->get_parent());
+	display_task($ref, $note);
 }
 
 sub disp_wiki {

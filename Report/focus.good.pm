@@ -45,53 +45,46 @@ sub Report_focus {	#-- List focus -- live, plan or someday
 
 	# find all next and remember there focus
 	for my $r_ref (sort_tasks @list) {
-		unless (check_task($r_ref)) {
-			display_rgpa($r_ref, "(PLAN)");
+		$Dep = 'PLAN';
+		unless (display_cond($r_ref)) {
+			display_task($r_ref, "($Dep)");
 		}
 	}
 	print "***** Work Load: $Proj_cnt Projects, $Work_load action items\n";
 }
 
+sub report_task {
+	my($tid) = @_;
+
+	my($ref) = meta_find($tid);
+
+	unless (defined $ref) {
+		warn "No such task: $ref\n";
+		return;
+	}
+	display_task($ref);
+}
+
 ###BUG -- borks if dep on completed item
 ### Re-thing whole logic
-sub check_task {
+sub display_cond {
 	my($p_ref) = @_;
-	my($deps);
+	my($dep);
 
 	my($id) = $p_ref->get_tid(); 
 	printf "X %d %s\n", $id, $p_ref->get_title() if $Debug;
 
-	if ($deps = $p_ref->get_depends()) {	# can't be focus
-		$deps =~ s/\s+/,/g;
-		for my $dep (split(',', $deps)) {
-			printf "Deps %d on %s\n", $id, $deps if $Debug;
-
-			my($d_ref) = Hier::Tasks::find($dep);
-			unless ($d_ref) {
-				print "Info: task $id depends on missing task $dep\n";
-				next;
-			}
-
-			$Dep = $p_ref;
-			if (check_task($d_ref)) {
-				$Dep = undef;
-				return 1;
-			}
-			$Dep = undef;
+	if ($dep = $p_ref->get_depends()) {	# can't be focus
+		$dep =~ s/\s+/,/g;
+		for my $dep (split(',', $dep)) {
+			printf "Deps %d on %s\n", $id, $Dep if $Debug;
+			return 1 if display_depends($dep);
 		}
-		printf "No actions for %d on %s\n", $id, $deps if $Debug;
-		return;
-	}
+		return if $Dep ne 'PLAN';
 
-	if ($p_ref->get_type() eq 'a') {
-		if ($Dep) {
-			display_rgpa($Dep, '(DEP)');
-			print ("--- ( Depends On ) ----\n");
-			display_rgpa($p_ref, '', 1);
-		} else {
-			display_rgpa($p_ref);
-		}
-		return 1;
+		$Dep = sprintf("Depends %d: %s", $dep, '(GTD bug lookup id)');
+		printf "Deps %d on %s\n", $id, $Dep if $Debug;
+		return 0;
 	}
 
 	foreach my $ref (sort_tasks $p_ref->get_children()) {
@@ -106,9 +99,25 @@ sub check_task {
 			++$Proj_cnt;
 		}
 
-		return 1 if check_task($ref);
+		if ($ref->get_type() eq 'a') {
+			display_hier($p_ref, $counts);
+			display_task($ref);
+			return 1;
+		}
+
+		return 1 if display_cond($ref);
 	}
 	return 0;
 }
+
+sub display_depends {
+	my($id) = @_;
+
+	my($ref) = Hier::Tasks::find(@_);
+	return unless $ref;
+
+	return display_cond($ref);
+}
+
 
 1;  # don't forget to return a true value from the file
