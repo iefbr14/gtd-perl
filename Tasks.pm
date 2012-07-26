@@ -244,6 +244,11 @@ sub dset {
 	unless (defined $val) {
 		die "Won't set $field to undef\n";
 	}
+
+	# skip setting if already set that way!
+	return $ref if defined($ref->{$field}) && defined($val)
+		    && $ref->{$field} eq $val;
+
 	$ref->{_dirty}{$field}++;
 
 	$ref->{$field} = $val;

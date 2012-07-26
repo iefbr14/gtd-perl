@@ -44,7 +44,7 @@ sub Report_search {	#-- Search for items
 			$found = 1;
 		}
 	}
-	exit $found ? 0 : 1;
+	exit($found ? 0 : 1);
 }
 
 sub match_desc {

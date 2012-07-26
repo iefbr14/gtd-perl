@@ -37,7 +37,7 @@ my($List) = 0; ###BUG### should be an option
 sub Report_doit {	#-- doit tracks which projects/actions have had movement
 
 	$List = option('List', 0);
-	$Limit = option('Limit', 2);
+	$Limit = option('Limit', 1);
 
 	$= = lines();
 	meta_filter('+a:live', '^doitdate', 'simple');
@@ -83,6 +83,10 @@ sub Report_doit {	#-- doit tracks which projects/actions have had movement
 		
 		if ($arg eq 'someday') {
 			$action = \&doit_someday;
+			next;
+		}
+		if ($arg eq 'did') {
+			$action = \&doit_now;
 			next;
 		}
 		if ($arg eq 'now') {
@@ -176,7 +180,7 @@ sub list_all {
 		
 sub doit_list {
 	foreach my $ref (@_) {
-		display_task($ref);
+		display_rgpa($ref);
 
 		last if $Limit-- <= 0;
 	}

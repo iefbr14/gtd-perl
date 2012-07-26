@@ -180,10 +180,19 @@ sub by_pri($$) {
 sub by_doitdate($$) {
 	my($a, $b) = @_;
 
-        my($ad) = $a->get_doit() || sprintf("-%06d", $a->get_tid());
-        my($bd) = $b->get_doit() || sprintf("-%06d", $b->get_tid());
+        return sort_doit($a) cmp sort_doit($b);
+}
 
-        return $ad cmp $bd;
+sub sort_doit {
+	my($ref) = @_;
+
+	my($tid) = $ref->get_tid();
+	return $Sort_cache{$tid} if defined $Sort_cache{$tid};
+
+	my($v) = $ref->get_doit() || $ref->get_created();
+
+	$Sort_cache{$tid} = $v;
+	return $v;
 }
 
 
