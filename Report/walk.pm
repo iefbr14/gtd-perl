@@ -115,7 +115,7 @@ sub set {
 		$ref->set_priority($val);
 	}
 
-	if ($val = option('Description')) {
+	if ($val = option('Task')) {
 		$ref->set_description($val);
 	}
 
