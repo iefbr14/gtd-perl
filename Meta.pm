@@ -44,7 +44,7 @@ sub hier {
 
 sub meta_selected {
 	if (@Selected == 0) {
-		@Selected = Hier::Tasks::all();
+		@Selected = meta_filtered();
 	}
 	return @Selected;
 }

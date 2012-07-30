@@ -53,7 +53,22 @@ sub Report_taskjuggler {	#-- generate taskjuggler file from gtd db
 }
 
 sub calc_est {
-	return 180;
+	my($hours) = 0;
+	my($task) = 0;
+
+	for my $ref (meta_selected()) {
+		
+		#my($resource) = new Hier::Resource($ref);
+		#my($effort) = $resource->hours($ref);
+		++$task;
+		++$hours;
+	}
+	my($days) = $hours / 4;
+
+	warn "Tasks: $task Est days $days (min 90)\n";
+
+	$days = 90 if $days < 90;
+	return $days;
 }
 
 sub tj_header {
