@@ -18,8 +18,11 @@ use Hier::Meta;
 my %Dep_map;
 
 sub Report_renumber { #-- Renumber task Ids 
-	if (@ARGV) {
-		foreach my $pair (@ARGV) {
+	meta_filter('+all', '^tid', 'none');
+	my(@list) = meta_argv(@_);
+
+	if (@list) {
+		foreach my $pair (@list) {
 			renumber_pair($pair);
 		}
 	} else {
