@@ -470,7 +470,8 @@ sub display_rgpa {
 			display_task($ref, $note);
 		} else {
 			print '#', "=" x $cols, "\n" if $Prev_role != 0;
-			print " [*** Role $tid: ", $ref->get_title(), " ***]\n";
+			$note ||= '';
+			print " [*** Role $tid: ", $ref->get_title(), " ***] $note\n";
 		}
 		$Prev_role = $tid;
 		$Prev_goal = 0;
@@ -484,7 +485,7 @@ sub display_rgpa {
 			display_task($ref, $note);
 		} else {
 			print '#', "-" x $cols, "\n" if $Prev_goal != 0;
-			display_task($ref);
+			display_task($ref, $note);
 		}
 
 		$Prev_goal = $tid;
@@ -495,7 +496,7 @@ sub display_rgpa {
 }
 
 sub disp_wiki {
-	my($fd, $ref) = @_;
+	my($fd, $ref, $note) = @_;
 
 	my(%type) = (
 		'a' => 'action',
@@ -523,6 +524,8 @@ sub disp_wiki {
 	print {$fd} "<del>" if $done;
 	print {$fd} '{{'.$type{$type},"|$tid|$title".'}}';
 	print {$fd} "</del>" if $done;
+
+	print {$fd} " -- $note" if $note;
 
 	print {$fd} ' ===' if $type eq 'g';
 	print {$fd} ' ==' if $type =~ /[ovm]/;
