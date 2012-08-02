@@ -55,7 +55,7 @@ sub Report_addplans {	#-- add plan action items to unplaned projects
 		next unless $reason;
 
 		display_rgpa($ref, "(PLAN: $reason)");
-		last if --$Limit < 0;
+		last if --$Limit <= 0;
 	}
 }
 
@@ -71,14 +71,18 @@ sub check_task {
 	my($desc) = $ref->get_description();
 	my($result) = $ref->get_note();
 
-   if ($type ne 'p') {
-	return "Need wiki ref" unless $title =~ /\[\[.*\]\]/;
-   }
-	return "Need description" unless $desc;
-	return "Need result" unless $result;
-
 	my(@children) = $ref->get_children();
-	return "Need children"  unless @children;
+
+   if ($type ne 'p' or iscomplex(@children)) {
+	return "Needs wiki ref" unless $title =~ /\[\[.*\]\]/;
+   }
+
+	return if $ref->get_completed();
+
+	return "Needs description" unless $desc;
+	return "Needs result" unless $result;
+
+	return "Needs children"  unless @children;
 
 	my($work, $children) = count_children($ref);
 	print "$pid: $children\n" if $Debug;
@@ -88,6 +92,16 @@ sub check_task {
 	push(@List, @children);
 
 	return;
+}
+
+sub iscomplex {
+	return 1 if scalar(@_) > 5;	# has more than 5 children
+
+	for my $ref (@_) {
+		# has a non action ie: complex child
+		return 1if $ref->get_type() ne 'a';	
+	}
+	return 0;
 }
 
 1;  # don't forget to return a true value from the file
