@@ -60,7 +60,7 @@ sub calc_est {
 		++$task;
 
 		my($resource) = new Hier::Resource($ref);
-		$hours += = $resource->hours($ref);
+		$hours += $resource->hours($ref);
 	}
 	my($days) = $hours / 4;
 
