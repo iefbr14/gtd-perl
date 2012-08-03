@@ -88,6 +88,7 @@ sub display_mode {
 		'simple'   => \&disp_simple,
 		'summary'  => \&disp_summary,
 		'detail'   => \&disp_detail,
+		'action'   => \&disp_detail,
 
 		'task'     => \&disp_task,
 		'doit'     => \&disp_task,
@@ -119,6 +120,7 @@ sub display_mode {
 		'simple'   => 'report',
 		'summary'  => 'report',
 		'detail'   => 'report',
+		'action'   => 'report',
 		'task'     => 'none',
 
 		'doit'     => 'report',
@@ -519,6 +521,7 @@ sub disp_wiki {
 	print {$fd} '== ' if $type =~ /[ovm]/;
 	print {$fd} '=== ' if $type eq 'g';
 	print {$fd} '**' if $type eq 'a';
+	print {$fd} '**(wait)' if $type eq 'w';
 	print {$fd} '*' if $type eq 'p';
 
 	print {$fd} "<del>" if $done;

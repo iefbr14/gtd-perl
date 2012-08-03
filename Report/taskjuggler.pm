@@ -57,11 +57,10 @@ sub calc_est {
 	my($task) = 0;
 
 	for my $ref (meta_selected()) {
-		
-		#my($resource) = new Hier::Resource($ref);
-		#my($effort) = $resource->hours($ref);
 		++$task;
-		++$hours;
+
+		my($resource) = new Hier::Resource($ref);
+		$hours += = $resource->hours($ref);
 	}
 	my($days) = $hours / 4;
 

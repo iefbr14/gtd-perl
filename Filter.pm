@@ -242,12 +242,12 @@ use constant {
 	H_DONE		=> 0x08_0000,	# a project has done
 
 # project known
-	P_PLAN		=> 0x010_0000,	# a project needs planning
+#	P_PLAN		=> 0x010_0000,	# a project needs planning
 	P_IDLE  	=> 0x020_0000,	# only has actions (no next)
 	P_FUTURE	=> 0x040_0000,	# is only in future
 	P_DONE		=> 0x080_0000,	# is complete tagged as done
 
-	G_PLAN		=> 0x1000_0000,	# has need of planning
+#	G_PLAN		=> 0x1000_0000,	# has need of planning
 	G_LIVE  	=> 0x2000_0000,	# has live items
 	G_FUTURE	=> 0x4000_0000,	# has future items
 	G_DONE		=> 0x8000_0000,	# has done items
@@ -336,13 +336,13 @@ sub dispflags {
 
 	my($p) = '----';
 
-	substr($p,  0, 1) = 'P' if $flags & P_PLAN;
+#	substr($p,  0, 1) = 'P' if $flags & P_PLAN;
 	substr($p,  1, 1) = 'I' if $flags & P_IDLE;
 	substr($p,  2, 1) = 'F' if $flags & P_FUTURE;
 	substr($p,  3, 1) = 'X' if $flags & P_DONE;
 
 	my($g) = '----';
-	substr($p,  0, 1) = 'p' if $flags & G_PLAN;
+#	substr($p,  0, 1) = 'p' if $flags & G_PLAN;
 	substr($p,  1, 1) = 'l' if $flags & G_LIVE;
 	substr($p,  2, 1) = 'f' if $flags & G_FUTURE;
 	substr($p,  3, 1) = 'x' if $flags & G_DONE;
@@ -466,21 +466,8 @@ sub proj_mask {
 	return if $mask & T_DONE;	# project tagged as done
 	return if $mask & T_FUTURE;	# project yet to start
 		
-	# check out planning needs (no children) needs planning
-	if (($mask & H_MASK) == 0) {
-		$ref->{_mask} |= P_PLAN;
-		give_parent($ref, G_PLAN);
-		return;
-	}
-
 	# check out if completely done children
 	prop_up($ref, H_MASK, H_DONE, P_DONE);
-
-	# calculate complete done
-	if (($mask & H_MASK) == H_DONE) {
-		$ref->{_mask} |= P_PLAN;
-		return;
-	}
 
 	# check out if IDLE (no next action)
 #	if (($mask & H_NEXT) == 0)
@@ -629,7 +616,6 @@ sub map_filter_name {
 
 	return (\&filter_slow, '<','')	if $word =~ /^slow/i;
 	return (\&filter_idea, '<','')	if $word =~ /^idea/i;
-	return (\&filter_plan, '><','')	if $word =~ /^plan/i;
 
 
 	return 0;
@@ -849,26 +835,6 @@ die "Use Z_MASK?";
 	return '?';
 }
 
-
-sub filter_plan {
-	my($ref, $arg) = @_;
-
-	my($type) = $ref->get_type();
-
-	return '?' unless $ref->is_hier();
-
-	my($children) = $ref->count_children();
-	
-	return "+plan=$type" if $children == 0;
-	return '?';
-
-	if ($type eq 'p') {
-		my($actions) = $ref->count_actions();
-		return "+plan=A" if $actions == 0;
-	}
-
-	return '?';
-}
 
 sub filter_some {
 	my($ref, $arg) = @_;

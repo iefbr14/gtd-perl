@@ -1,15 +1,19 @@
 actions.pm:	meta_filter('+a:next', '^focus', 'detail');
-addplans.pm:	meta_filter('+p:plan', '^focus', 'simple');
+addplans.pm:	meta_filter('+live', '^goaltask', 'simple');
 bulklist.pm:	meta_filter('+live', '^title', 'bulk');
 bulklist.pm:	meta_filter('+live', '^title', 'bulk');
 doit.pm:	meta_filter('+a:live', '^doitdate', 'simple');
 dump.pm:	meta_filter('+any', '^tid', 'dump');	
+focus.good.pm:	meta_filter('+next', '^focus', 'simple');
 focus.pm:	meta_filter('+next', '^focus', 'simple');
-gui.pm:		meta_filter('+all', '^tid', 'simple');
+ged.pm:		meta_filter('+all', '^focus', 'none');
+ged.pm:		meta_filter('+live', '^focus', 'none');
+gui.pm:	meta_filter('+all', '^tid', 'simple');
 hierlist.pm:	meta_filter('+p:live', '^title', 'simple');
 hier.pm:	meta_filter('+live', '^title', 'none');
 items.pm:	meta_filter('+any', '^title', 'item');	
 list.pm:	meta_filter('+live', '^title', 'title');
+new.pm:	meta_filter('+all', '^tid', 'none');
 nextactions.pm:	meta_filter('+next', '^title', 'none');
 noop.pm:	meta_filter('+any', '^tid', 'none');
 oocalc.pm:	meta_filter('+live', '^tid', 'none');
@@ -18,44 +22,16 @@ projects.pm:	#meta_filter('+next', '^focus', 'rgpa');
 projects.pm:	meta_filter('+p:next', '^focus', 'simple');
 purge.pm:	meta_filter('+dead', '^tid', 'simple');
 records.pm:	meta_filter('+live', '^tid', 'simple');
+renumber.pm:	meta_filter('+all', '^tid', 'none');
 review.pm:	meta_filter('+live', '^doitdate', 'simple');
-review.pm:	meta_filter('+wait', '^doitdate', 'simple');
+review.pm:		warn "Fooked, meta_filter reset report/sort";
+review.pm:		meta_filter('+wait', '^doitdate', 'simple');
 review.pm:	meta_filter('+a:live', '^doitdate', 'doit');
 search.pm:	meta_filter('+all', '^title', 'simple');
 spreadsheet.pm:	meta_filter('+live', '^tid', 'none');
 status.pm:	meta_filter('+live', '^tid', 'none');	
-taskjuggler.pm:	meta_filter('+all', '^focus', 'none');
-taskjuggler.pm:	meta_filter('+live', '^focus', 'none');
-tasks.pm:	meta_filter('+g:live', '^title', 'task');	# Tasks filtered by goals
+taskjuggler.pm:		meta_filter('+all', '^focus', 'none');
+taskjuggler.pm:		meta_filter('+live', '^focus', 'none');
+task.pm:	meta_filter('+g:live', '^title', 'task');	# Tasks filtered by goals
 todo.pm:	meta_filter('+live', '^priority', 'priority');
 walk.pm:	meta_filter('+live', '^tid', 'simple');
-
-filter +a:live
-filter +all
-filter +a:next
-filter +any
-filter +dead
-filter +live
-filter +next
-filter +p:live
-filter +p:next
-filter +wait
-
-report bulk
-report detail
-report doit
-report dump
-report item
-report none
-report priority
-report rgpa
-report simple
-report task
-report title
-
-sort ^doit
-sort ^doitdate
-sort ^focus
-sort ^priority
-sort ^tid
-sort ^title

@@ -14,9 +14,12 @@ BEGIN {
 }
 
 use Hier::Meta;
+use Hier::Option;
 
 sub Report_clean {	#-- clean unused categories
+	my $Yesterday = get_today(-1);
 
+	meta_filter('+all', '^tid', 'task');
 	my($done, $tickle, $type);
 	
 	for my $ref (meta_selected()) {
@@ -24,18 +27,20 @@ sub Report_clean {	#-- clean unused categories
 		if ($done) {
 			set_active($ref);
 			fix_done_0000($ref, $done);
-			# clean next action
-			# clean tickles
+			clear_next($ref);
+			clear_tickle($ref);
 		}
+
+		$tickle = $ref->get_tickledate() <= $Yesterday;
 		if ($tickle) {
-			# clean next action
-			# clean tickles
+			clear_next($ref);
+			clear_tickle($ref);
 		}
 
 		$type = $ref->get_type();
 
-		# all values,visions,roles and goals are acive
-		if ($type =~ /[mvog]/) {	
+		# all values and visions are active
+		if ($type =~ /[mv]/) {	
 			set_active($ref);
 		}
 	}
@@ -44,9 +49,11 @@ sub Report_clean {	#-- clean unused categories
 sub set_active {
 	my($ref) = @_;
 
-	if ($ref->get_isSomeday() eq 'y') {
-		$ref->set_isSomeday('n');
-	}
+	return unless $ref->get_isSomeday() eq 'y';
+
+	display_task($ref, 'active');
+
+	$ref->set_isSomeday('n');
 	return;
 }
 
@@ -54,8 +61,28 @@ sub fix_done_0000 {
 	my($ref, $done) = @_;
 
 	return unless $done =~ /^0000/;
+
+	display_task($ref, 'clean done bug');
 	$ref->set_completed(undef);
 	return;
+}
+
+sub clear_next {
+	my $ref = @_;
+
+	return unless $ref->get_nextaction() eq 'y';
+
+	display_task($ref, 'clear next action');
+	$ref->set_nextaction('n');
+}
+
+sub clear_tickle {
+	my $ref = @_;
+
+	return unless $ref->get_tickledate();
+
+	display_task($ref, 'clear tickle date');
+	$ref->set_tickledate(undef);
 }
 
 1;  # don't forget to return a true value from the file

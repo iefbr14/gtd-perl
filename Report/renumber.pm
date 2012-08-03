@@ -18,7 +18,7 @@ use Hier::Meta;
 my %Dep_map;
 
 sub Report_renumber { #-- Renumber task Ids 
-	meta_filter('+all', '^tid', 'none');
+	meta_filter('+any', '^tid', 'none');
 	my(@list) = meta_argv(@_);
 
 	if (@list) {
