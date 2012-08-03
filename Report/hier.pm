@@ -26,24 +26,25 @@ sub Report_hier {	#-- Hiericial List of Values/Visions/Roles...
 	meta_filter('+live', '^title', 'none');
 
 	$Mask  = option('Mask');
-	my($criteria) = meta_desc(@ARGV);
-
-	my($walk) = new Hier::Walk();
-	$walk->filter();
 
 	my($top) = 'm';
+	my($depth) = 'p';
 	for my $criteria (meta_argv(@_)) {
 		if ($criteria =~ /^\d+$/) {
 			$top = $criteria;
 		} else {
 			my($type) = type_val($criteria);
 			if ($type) {
-				$walk->set_depth($type);
+				$depth = $type;
 			} else {
 				die "unknown type $criteria\n";
 			}
 		}
 	}
+
+	my($walk) = new Hier::Walk();
+	$walk->filter();
+	$walk->set_depth($depth);
 
 	bless $walk;	# take ownership and walk the tree
 

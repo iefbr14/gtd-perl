@@ -31,8 +31,27 @@ sub Report_taskjuggler {	#-- generate taskjuggler file from gtd db
 
 	$ToOld = pdate(get_today(-7));	# don't care about done items > 2 week
 
-	if (scalar(@ARGV) && $ARGV[0] eq 'all') {
-		$Someday = 1;
+	meta_filter('+all', '^focus', 'none');
+	my($top) = 'm';			# default to top of everything
+	for my $criteria (meta_argv(@_)) {
+		if ($criteria eq 'all') {
+			$Someday = 1;
+			next;
+		}
+
+		if ($criteria =~ /^\d+$/) {
+			$top = $criteria;
+			next;
+		} 
+		my($type) = type_val($criteria);
+		if ($type) {
+			$top = $type;
+		} else {
+			die "unknown type $criteria\n";
+		}
+	}
+
+	if ($Someday) {
 		meta_filter('+all', '^focus', 'none');
 		# 5 year plan everything plan
 		$ToFuture = pdate(get_today(5*365));	
@@ -41,15 +60,17 @@ sub Report_taskjuggler {	#-- generate taskjuggler file from gtd db
 		# don't care about start more > 3 months
 		$ToFuture = pdate(get_today(60));	
 	}
-	meta_argv(@ARGV);
-	my($planner) = new Hier::Walk;
-	$planner->set_depth('a');
-	$planner->filter();
+
+	my($walk) = new Hier::Walk();
+	$walk->set_depth('a');
+	$walk->filter();
 
 	tj_header();
 
-	bless $planner;
-	$planner->walk('o');
+	bless $walk;	# take ownership and walk the tree
+
+	$walk->{level} = 1 if $top ne 'm';
+	$walk->walk($top);
 }
 
 sub calc_est {
@@ -60,7 +81,7 @@ sub calc_est {
 		++$task;
 
 		my($resource) = new Hier::Resource($ref);
-		$hours += = $resource->hours($ref);
+		$hours += $resource->hours($ref);
 	}
 	my($days) = $hours / 4;
 
@@ -105,7 +126,7 @@ sub task_detail {
 }
 
 sub hier_detail {
-	my($planner, $ref) = @_;
+	my($walk, $ref) = @_;
 	my($sid, $name, $cnt, $desc, $type, $note);
 	my($per, $start, $end, $done, $due, $we);
 	my($who, $doit, $role, $depends);
@@ -113,7 +134,7 @@ sub hier_detail {
 
 	my($tid) = $ref->get_tid();
 
-	my($indent) = $planner->indent();
+	my($indent) = $walk->indent();
 	my($resource) = new Hier::Resource($ref);
 	
 	$name = $ref->get_task() || '';
@@ -137,16 +158,16 @@ sub hier_detail {
 	return if $type eq 'T'; # Item
 
 	if ($Someday ==0 && $ref->is_someday()) {
-		supress($planner, $ref);
+		supress($walk, $ref);
 		return;
 	}
 
 	if ($done) {
-		supress($planner, $ref);
+		supress($walk, $ref);
 		return;
 	}
 	if ($start && $start gt $ToFuture) {
-		supress($planner, $ref);
+		supress($walk, $ref);
 		return;
 	}
 	if ($start && $start lt $ToOld) {
@@ -163,7 +184,7 @@ sub hier_detail {
 	my($pri) = $ref->get_priority();
 	$we    = '' if $pri >= 6;
 
-	my($fd) = $planner->{fd};
+	my($fd) = $walk->{fd};
 
 	$name =~ s/"/'/g;
 	print {$fd} $indent, qq(task $type\_$tid "$name" \{\n);
@@ -200,18 +221,18 @@ sub hier_detail {
 }
 
 sub old_indent {
-	my($planner) = @_;
+	my($walk) = @_;
 
-	my($level) = $planner->{level} || 0;
+	my($level) = $walk->{level} || 0;
 
 	return '' if $level <= 0;
 
 	return '  ' x $level;
 }
 sub indent {
-	my($planner) = @_;
+	my($walk) = @_;
 
-	my($level) = $planner->{level} || 0;
+	my($level) = $walk->{level} || 0;
 
 	return '' if $level <= 2;
 
@@ -219,13 +240,13 @@ sub indent {
 }
 
 sub end_detail {
-	my($planner, $ref) = @_;
+	my($walk, $ref) = @_;
 
 	my($tid) = $ref->get_tid();
-	return if $planner->{want}{$tid} == 0;
+	return if $walk->{want}{$tid} == 0;
 
-	my($fd) = $planner->{fd};
-	my($indent) = $planner->indent();
+	my($fd) = $walk->{fd};
+	my($indent) = $walk->indent();
 
 	my($type) = $ref->get_type();
 
@@ -285,13 +306,13 @@ sub dep_path {
 
 
 sub supress {
-	my($planner, $ref) = @_;
+	my($walk, $ref) = @_;
 
 	my($tid) = $ref->get_tid();
-	$planner->{want}{$tid} = 0;
+	$walk->{want}{$tid} = 0;
 
 	foreach my $child ($ref->get_children()) {
-		supress($planner, $child);
+		supress($walk, $child);
 	}
 }
 
