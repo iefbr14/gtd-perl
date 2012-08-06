@@ -72,11 +72,6 @@ sub set_depth {
 }
 
 
-sub by_name {
-	return $a->get_title() cmp $b->get_title()
-	||     $a->get_tid()   <=> $b->get_tid();
-}
-
 sub filter {
 	my($walk) = shift @_;
 
@@ -133,19 +128,20 @@ sub detail {
 	my $tid  = $ref->get_tid();
 	my $type = $ref->get_type();
 
+	warn "detail($tid:$type) level:$level\n" if $Debug;
+
 	return if $walk->{seen}{$tid}++;
 
 	return if $ref->is_list();
-	return if $ref->filtered();
 
 	if ($walk->{want}{$tid} == 0) {
 		# we are global filtered
-		warn "< detail($tid} filtered\n" if $Debug;
+		warn "< detail($tid) filtered\n" if $Debug;
 		return;
 	}
 
 	if (type_depth($type) > $depth) {
-		warn "+ detail($tid}\n" if $Debug;
+		warn "+ detail($tid)\n" if $Debug;
 		return;
 	}
 
@@ -163,7 +159,8 @@ sub detail {
 	$walk->{level}++;
 
 	foreach my $child (sort_tasks $ref->get_children()) {
-		warn "$tid => detail($child)\n" if $Debug;
+		my $cid = $child->get_tid();
+		warn "$tid => detail($cid)\n" if $Debug;
 
 		$walk->detail($child);
 	}

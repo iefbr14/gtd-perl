@@ -216,7 +216,7 @@ sub hier_detail {
 	print {$fd} $indent, qq(   priority $tj_pri\n) if $tj_pri;
 	
 	print {$fd} $indent, qq(   start $start\n) if $start && $we eq '';
-	print {$fd} $indent, qq(   maxend  $we\n)   if $we;
+	print {$fd} $indent, qq(   maxend  $we\n)   if $we && $we gt $ToOld;
 	print {$fd} $indent, qq(   complete  100\n)   if $done;
 }
 

@@ -688,8 +688,10 @@ sub filter_walk_up_down {
 
 	return if $mask;	# already decided.
 
-	for my $pref ($ref->get_parents()) {
-		filter_walk_up($pref, $reason.'<');
+	if ($reason =~ /^\+/) {
+		for my $pref ($ref->get_parents()) {
+			filter_walk_up($pref, $reason.'<');
+		}
 	}
 	$ref->{_filtered} = $reason;
 	for my $pref ($ref->get_children()) {
