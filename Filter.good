@@ -165,7 +165,7 @@ sub kill_children {
 # todo_id:        1889				id/type
 # type:           a			[ ]
 # nextaction:     n			[_]
-# isSomeday:      y			{_}
+# isSomeday:      n			(_)
 
 # category:       Admin				context
 # context:        Office
@@ -205,7 +205,8 @@ use constant {
 	A_MASK		=> 0x0000_00FF,	# action bits
 	Z_MASK		=> 0x0000_0F00,	# timeframe hints
 	T_MASK		=> 0x0000_F000,	# task type mask
-	P_MASK		=> 0x00FF_0000,	# Parent mask
+	H_MASK		=> 0x000F_0000,	# hints mask
+	P_MASK		=> 0x0FF0_0000,	# project mask
 
 
 # done/next/current/later
@@ -216,7 +217,7 @@ use constant {
 	A_WAITING	=> 0x10,
 	A_SOMEDAY	=> 0x20,
 	A_TICKLE	=> 0x40,
-	#_HIER		=> 0x80,
+	#		=> 0x80,
 
 # timeframe hints
 	Z_LATE		=> 0x0100,	# priority == 1
@@ -229,15 +230,24 @@ use constant {
 	Z_IDEA		=> 0x0400,	# priority == 5
 
 # composite (from A_)
-	T_NEXT		=> 0x1000,
-	T_ACTIVE	=> 0x2000,
-	T_FUTURE	=> 0x3000,
-	T_DONE		=> 0x4000,
+	T_DONE		=> 0x1000,
+	T_ACTION	=> 0x2000,
+	T_NEXT		=> 0x3000,
+	T_FUTURE	=> 0x4000,
+
+# project hints
+	H_ACTION	=> 0x01_0000,	# a project has action
+	H_NEXT		=> 0x02_0000,	# a project has next actions
+	H_FUTURE	=> 0x04_0000,	# a project has future
+	H_DONE		=> 0x08_0000,	# a project has done
 
 # project known
+#	P_PLAN		=> 0x010_0000,	# a project needs planning
+	P_IDLE  	=> 0x020_0000,	# only has actions (no next)
 	P_FUTURE	=> 0x040_0000,	# is only in future
 	P_DONE		=> 0x080_0000,	# is complete tagged as done
 
+#	G_PLAN		=> 0x1000_0000,	# has need of planning
 	G_LIVE  	=> 0x2000_0000,	# has live items
 	G_FUTURE	=> 0x4000_0000,	# has future items
 	G_DONE		=> 0x8000_0000,	# has done items
@@ -303,34 +313,41 @@ sub dispflags {
 	#              Dn swt odsi
 
 	substr($a, -1, 1) = 'x' if $flags & A_DONE;
-	substr($a, -2, 1) = 'w' if $flags & A_WAITING;
-	substr($a, -3, 1) = 's' if $flags & A_SOMEDAY;
-	substr($a, -4, 1) = 't' if $flags & A_TICKLE;
-	substr($a, -5, 1) = 'a' if $flags & A_ACTION;
-	substr($a, -6, 1) = 'n' if $flags & A_NEXT;
+	substr($a, -2, 1) = 'n' if $flags & A_NEXT;
+	substr($a, -3, 1) = 'a' if $flags & A_ACTION;
+	substr($a, -4, 1) = 'w' if $flags & A_WAITING;
+	substr($a, -5, 1) = 's' if $flags & A_SOMEDAY;
+	substr($a, -6, 1) = 't' if $flags & A_TICKLE;
 
 	$t = 'x' if ($flags & T_MASK) == T_DONE;
-	$t = 'f' if ($flags & T_MASK) == T_FUTURE;
-	$t = 'a' if ($flags & T_MASK) == T_ACTIVE;
 	$t = 'n' if ($flags & T_MASK) == T_NEXT;
+	$t = 'a' if ($flags & T_MASK) == T_ACTION;
 
 	$z = 'l' if ($flags & Z_MASK) == Z_LATE;
 	$z = 'd' if ($flags & Z_MASK) == Z_DUE;
 	$z = 's' if ($flags & Z_MASK) == Z_SLOW;
 	$z = 'i' if ($flags & Z_MASK) == Z_IDEA;
 
-	my($p) = '--';
+	my($h) = '----';
+	substr($h,  0, 1) = 'a' if $flags & H_ACTION;
+	substr($h,  1, 1) = 'n' if $flags & H_NEXT;
+	substr($h,  2, 1) = 'f' if $flags & H_FUTURE;
+	substr($h,  3, 1) = 'x' if $flags & H_DONE;
 
-	substr($p,  0, 1) = 'F' if $flags & P_FUTURE;
-	substr($p,  1, 1) = 'X' if $flags & P_DONE;
+	my($p) = '----';
 
-	my($g) = '---';
-	substr($g,  0, 1) = 'l' if $flags & G_LIVE;
-	substr($g,  1, 1) = 'f' if $flags & G_FUTURE;
-	substr($g,  2, 1) = 'x' if $flags & G_DONE;
+#	substr($p,  0, 1) = 'P' if $flags & P_PLAN;
+	substr($p,  1, 1) = 'I' if $flags & P_IDLE;
+	substr($p,  2, 1) = 'F' if $flags & P_FUTURE;
+	substr($p,  3, 1) = 'X' if $flags & P_DONE;
 
-	return "$g.$p|$z.$t|$a";
-	return "$g.$p|$z.$t|$a";
+	my($g) = '----';
+#	substr($p,  0, 1) = 'p' if $flags & G_PLAN;
+	substr($p,  1, 1) = 'l' if $flags & G_LIVE;
+	substr($p,  2, 1) = 'f' if $flags & G_FUTURE;
+	substr($p,  3, 1) = 'x' if $flags & G_DONE;
+
+	return "$g.$p.$h|$z.$t|$a";
 }
 
 sub task_filter {
@@ -372,25 +389,30 @@ sub task_mask {
 	$mask |= A_SOMEDAY	if $ref->get_isSomeday() eq 'y';
 	$mask |= A_TICKLE	if $ref->get_tickledate() gt $Today;
 	$mask |= A_WAITING	if $type eq 'w';
-	$mask |= A_NEXT	 	if $ref->get_nextaction() eq 'y';
 
 	if ($type eq 'a') {
 		$mask |= A_ACTION;
+		$mask |= A_NEXT	 if $ref->get_nextaction() eq 'y';
 	}
 	$ref->{_mask} = $mask;
 
 	if ($mask & A_DONE) {
 		$mask |= T_DONE;
-		give_children($ref, P_DONE);
+		give_parent($ref, H_DONE);
+		give_children($ref, H_DONE);
 
 	} elsif ($mask & A_SOMEDAY || $mask & A_TICKLE || $mask & A_WAITING) {
 		$mask |= T_FUTURE;
-		give_children($ref, P_FUTURE);
+		give_parent($ref, H_FUTURE);
+		give_children($ref, H_FUTURE);
 
 	} elsif ($mask & A_NEXT) {
 		$mask |= T_NEXT;
-	} else {
-		$mask |= T_ACTIVE;
+		give_parent($ref, H_NEXT | G_LIVE);
+
+	} elsif ($mask & A_ACTION) {
+		$mask |= T_ACTION;
+		give_parent($ref, H_ACTION | G_LIVE);
 	}
 
 	unless ($done) {
@@ -444,14 +466,18 @@ sub proj_mask {
 	return if $mask & T_DONE;	# project tagged as done
 	return if $mask & T_FUTURE;	# project yet to start
 		
-	###BUG### propigate done upward
-	# check if all children are done
-#	for my $cref ($ref->get_children()) {
-#		next if task_mask($cref) & T_DONE;
-#
-#		return;
-#	}
-#	return 1;
+	# check out if completely done children
+	prop_up($ref, H_MASK, H_DONE, P_DONE);
+
+	# check out if IDLE (no next action)
+#	if (($mask & H_NEXT) == 0)
+}
+
+sub prop_up {
+	my($ref, $hmask, $hbit, $give) = @_;
+
+	my($mask) = task_mask($ref);
+
 }
 
 sub meta_find_context {
@@ -580,10 +606,8 @@ sub map_filter_name {
 # we need to re-thing this live-next vs next
 
 	return (\&filter_next, '><','')	if $word =~ /^next/i;
-	return (\&filter_active, '><','')	if $word =~ /^active/i;
 	return (\&filter_live, '><','')	if $word =~ /^live/i;
 	return (\&filter_dead, '><','')	if $word =~ /^dead/i;
-	return (\&filter_idle, '><','')	if $word =~ /^idle/i;
 
 	return (\&filter_wait, '<','')	if $word =~ /^wait/i;
 	return (\&filter_wait, '<','')	if $word =~ /^tickle/i;
@@ -783,7 +807,7 @@ sub filter_late {
 
 sub filter_due {
 	my($ref, $arg) = @_;
-
+die "Use Z_MAKS?";
 	my($due)  = $ref->get_due();
 	return '?' unless $due;
 
@@ -797,6 +821,7 @@ sub filter_due {
 sub filter_slow {
 	my($ref, $arg) = @_;
 
+die "Use Z_MASK?";
 	my($pri) = $ref->get_priority() || 3;
 	return '+slow' if $pri == 4;
 	return '?';
@@ -806,6 +831,7 @@ sub filter_slow {
 sub filter_idea {
 	my($ref, $arg) = @_;
 
+die "Use Z_MASK?";
 	my($pri) = $ref->get_priority() || 3;
 	return '+idea' if $pri == 5;
 	return '?';
@@ -834,27 +860,6 @@ sub filter_next {
 	return '?';
 }
 
-sub filter_active {
-	my($ref, $arg) = @_;
-
-	
-#	return '?' unless $ref->is_task();
-
-	my($mask) = task_mask($ref);
-
-	return '-act=d' if ($mask & A_MASK) == A_DONE;
-	return '-act=s' if ($mask & A_MASK) == A_SOMEDAY;
-	return '-act=t' if ($mask & A_MASK) == A_TICKLE;
-	return '-act=w' if ($mask & A_MASK) == A_WAITING;
-
-	if ($ref->is_task()) {
-		return '+act=n' if ($mask & T_MASK) == T_NEXT;
-		return '+act=a' if ($mask & T_MASK) == T_ACTIVE;
-	}
-
-	return '?';
-}
-
 sub filter_live {
 	my($ref, $arg) = @_;
 
@@ -864,11 +869,13 @@ sub filter_live {
 	my($mask) = task_mask($ref);
 
 	return '-live=d' if ($mask & A_MASK) == A_DONE;
+	return '-live=s' if ($mask & A_MASK) == A_SOMEDAY;
+	return '-live=t' if ($mask & A_MASK) == A_TICKLE;
+	return '-live=w' if ($mask & A_MASK) == A_WAITING;
 
 	if ($ref->is_task()) {
 		return '+live=n' if ($mask & T_MASK) == T_NEXT;
-		return '+live=a' if ($mask & T_MASK) == T_ACTIVE;
-		return '+live=f' if ($mask & T_MASK) == T_FUTURE;
+		return '+live=a' if ($mask & T_MASK) == T_ACTION;
 	}
 
 	return '?';
@@ -882,6 +889,7 @@ sub filter_dead {
 
 	my($mask) = task_mask($ref);
 	return '+dead=d' if ($mask & T_MASK) == T_DONE;
+	return '+dead=f' if ($mask & T_MASK) == T_FUTURE;
 	return '?';
 }
 

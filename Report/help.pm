@@ -60,6 +60,13 @@ my(%Helps) = (
 (gtd) Value => Vision => Role => Goal => Project => Action
 (sac)                  Client => Project => Task => Item
 EOF
+	'Selection' => <<'EOF',
+  tid       -- task id
+  /title    -- match any with title
+  T:/title  -- match only type T,  with title
+               (T == A,P,G,R,V)
+EOF
+
 	'Filters' => <<'EOF',
 ~NAME -- exclude those of the type (check first)
 +NAME -- include those of the type (check last)

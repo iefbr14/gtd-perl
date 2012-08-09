@@ -35,14 +35,12 @@ my %Types = (
 
 
 use Hier::util;
-use Hier::Filter;
 use Hier::Meta;
 use Hier::Option;
-use Hier::Filter;
 
 sub Report_status {	#-- report status of projects/actions
 	# counts use it and it give a context
-	meta_filter('+live', '^tid', 'none');	
+	meta_filter('+active', '^tid', 'none');	
 
 	my $desc = meta_desc(@ARGV);
 	

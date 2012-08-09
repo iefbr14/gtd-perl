@@ -16,7 +16,6 @@ BEGIN {
 use Hier::util;
 use Hier::Walk;
 use Hier::Meta;
-use Hier::Filter;
 
 my %Depth = (
 	'value'   => 1,

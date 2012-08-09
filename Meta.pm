@@ -21,7 +21,6 @@ BEGIN {
 }
 
 use Hier::Tasks;
-use Hier::Selection;
 use Hier::Filter;
 use Hier::CCT;
 use Hier::Option;
@@ -29,8 +28,9 @@ use Hier::Format;
 use Hier::Sort;
 use Hier::util;
 
+my $Debug = 0;
 
-use base qw(Hier::Hier Hier::Fields Hier::Filter Hier::Selection);
+use base qw(Hier::Hier Hier::Fields Hier::Filter);
 
 #==============================================================================
 #==== Top level filter/sort/selection
@@ -116,7 +116,6 @@ sub delete_hier {
 sub meta_filter {
 	my($filter, $sort, $display) = @_;
 
-#	filter_mode(option('Filter', $filter)) if $sort;
 	sort_mode(option('Sort', $sort)) if $sort;
 	display_mode(option('Format', $display)) if $display;
 
@@ -142,15 +141,23 @@ sub meta_argv {
 			Hier::Filter::meta_find_context($_);
 			next;
 		}
-		if (s=^\/==) {				# pattern match
-			add_pattern($_);
+
+		if (m/^\d+$/) {
+			push(@ret, $_);		# tid
 			next;
 		}
 
-		if (s/^\=//) {				# search for.
-			add_selection($_);
+		if (s=^\/==) {				# pattern match
+			push(@ret, find_pattern($_));
 			next;
 		}
+
+		if (s|^=\/||) {				# pattern match
+			push(@ret, find_pattern($_));
+			next;
+		}
+
+
 		if (s/^\*//) {
 			my($type) = lc(substr($_, 0, 1));
 			$type = type_name($_);
@@ -160,10 +167,11 @@ sub meta_argv {
 		}
 		if (s/^([A-Z])://) {
 			my($type) = lc($1);
-			set_option(Type => $type);
-
-			print "Type: Title =====:  $type: $_\n";
-			set_option(Title -> $_);
+#			set_option(Type => $type);
+#
+#			print "Type: Title =====:  $type: $_\n";
+#			set_option(Title -> $_);
+			push(@ret, find_hier($type, $_));
 			next;
 		}
 
@@ -238,6 +246,58 @@ sub meta_pick {
 	}
 	exit(1) if $fail;
 	return @list;
+}
+
+sub find_pattern {
+	my($pat) = @_;
+
+	$pat =~ s=/$==;	# remove trailing /
+
+	my(@list);
+
+	for my $ref (Hier::Tasks::all()) {
+		my($title) = $ref->get_title();
+		if ($title =~ /$pat/i) {
+			my($tid) = $ref->get_tid();
+			push(@list, $tid);
+			warn "Added($tid): /$pat/ =~ $title\n" if $Debug;
+		}
+	}
+	return @list;
+}
+
+sub find_hier {
+	my($type, $pat) = @_;
+
+	$pat =~ s=/$==;	# remove trailing /
+
+	my(@list);
+
+	for my $ref (Hier::Tasks::all()) {
+		next unless $ref->is_hier();
+		next unless match_type($type, $ref);
+
+		my($title) = $ref->get_title();
+		if ($title =~ /$pat/i) {
+			my($tid) = $ref->get_tid();
+			push(@list, $tid);
+			warn "Added($tid): /$pat/ =~ $title\n" if $Debug;
+		}
+	}
+	return @list;
+}
+
+sub match_type {
+	my($want, $ref) = @_;
+
+	my($type) = $ref->get_type();
+
+	return 1 if $type eq $want;
+
+	return 1 if $type eq 'm' and $want eq 'v';
+	return 1 if $type eq 'o' and $want eq 'r';
+
+	return 0;
 }
 
 1; # <=============================================================

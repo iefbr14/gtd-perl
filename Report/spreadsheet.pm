@@ -15,11 +15,10 @@ BEGIN {
 
 use Hier::util;
 use Hier::Meta;
-use Hier::Filter;
 use Hier::Resource;
 
 sub Report_spreadsheet {	#-- Project Summary for a role
-	meta_filter('+live', '^tid', 'none');
+	meta_filter('+active', '^tid', 'none');
 	my @want = meta_argv(@ARGV);
 
 	if (@want == 0) {

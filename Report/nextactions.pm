@@ -15,7 +15,6 @@ BEGIN {
 
 use Hier::util;
 use Hier::Meta;
-use Hier::Filter;
 
 sub Report_nextactions { #-- List next actions
 	my($tid, $pid, $pref, $tic, $parent, $pic, $name, $desc);

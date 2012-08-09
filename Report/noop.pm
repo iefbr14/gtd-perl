@@ -17,7 +17,6 @@ use Hier::util;
 use Hier::Walk;
 use Hier::Meta;
 use Hier::Option;
-use Hier::Filter;
 
 my $Mask = 0;
 

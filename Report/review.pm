@@ -16,7 +16,6 @@ BEGIN {
 use Hier::util;
 use Hier::Meta;
 use Hier::Option;
-use Hier::Filter;
 use Hier::Format;
 use Hier::Sort;
 
@@ -25,7 +24,7 @@ my $Mode = 'p';	# project, doit, next-actions, actions, someday
 my($List) = 0; ###BUG### should be an option
 
 sub Report_review {	#-- Review all projects with actions
-	meta_filter('+live', '^doitdate', 'simple');
+	meta_filter('+active', '^doitdate', 'simple');
 	my $desc = meta_desc(@ARGV);
 
 	$Mode = 'p';

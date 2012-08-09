@@ -19,7 +19,7 @@ use Hier::Sort;
 use Hier::Format;
 
 sub Report_list {	#-- list titles for any filtered class (actions/projects etc)
-	meta_filter('+live', '^title', 'title');
+	meta_filter('+active', '^title', 'title');
 
 	my($title) = join(' ', @_);
 

@@ -18,7 +18,6 @@ use Hier::util;
 use Hier::Meta;
 use Hier::Sort;
 use Hier::Option;
-use Hier::Filter;
 use Hier::Format;
 
 my $Today = get_today(0);

@@ -15,7 +15,6 @@ BEGIN {
 
 use Hier::util;
 use Hier::Meta;
-use Hier::Filter;
 use Hier::Format;
 
 

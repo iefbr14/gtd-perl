@@ -22,7 +22,7 @@ sub Report_todo {	#-- List high priority next actions
 	my($limit) = option('Limit', 10);
 	my($list)  = option('List', 0);
 
-	meta_filter('+live', '^priority', 'priority');
+	meta_filter('+active', '^priority', 'priority');
 	my($title) = meta_desc(@ARGV) || 'ToDo Tasks';
 
 	report_header($title);

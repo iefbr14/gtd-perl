@@ -23,7 +23,7 @@ use Hier::Format;
 my $Mask = 0;
 
 sub Report_hier {	#-- Hiericial List of Values/Visions/Roles...
-	meta_filter('+live', '^title', 'none');
+	meta_filter('+active', '^title', 'none');
 
 	$Mask  = option('Mask');
 

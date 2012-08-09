@@ -16,7 +16,6 @@ BEGIN {
 use Hier::util;
 use Hier::Meta;
 use Hier::Option;
-use Hier::Filter;
 use Hier::Sort;
 use Hier::Format;
 

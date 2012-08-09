@@ -38,7 +38,6 @@ use Hier::util;
 use Hier::Walk;
 use Hier::Resource;
 use Hier::Option;
-use Hier::Filter;
 use Hier::util;
 
 my($Parent);
@@ -172,7 +171,7 @@ sub add_action {
 
 
 sub _report_hier {	
-	meta_filter('+live', '^title', 'bulk');
+	meta_filter('+active', '^title', 'bulk');
 
 	my($criteria) = meta_desc(@ARGV);
 

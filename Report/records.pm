@@ -15,13 +15,13 @@ BEGIN {
 
 use Hier::util;
 use Hier::Meta;
-use Hier::Filter;
+use Hier::Filter;	# task_mask_disp
 use Hier::Format;
 use Hier::Sort;
 
 sub Report_records {	#-- detailed list all records for a type
 	# everybody into the pool
-	meta_filter('+live', '^tid', 'simple');
+	meta_filter('+active', '^tid', 'simple');
 
 	my($desc) = join(' ', @ARGV);
 
