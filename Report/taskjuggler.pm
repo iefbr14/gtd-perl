@@ -100,6 +100,7 @@ project GTD "Get Things Done" "1.0" $ToOld - $projection {
 
   # The currency for all money values is CAN
   currency "CAN"
+  weekstartssunday
 
   # We want to compare the baseline scenario, to one with a slightly
   # delayed start.
