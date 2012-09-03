@@ -1,10 +1,6 @@
-By default the whole database is selected.  By specifiing a part of
-the database all the records below the selected part are logical added
-for processing.  If more than one slice is selected then they are added
-in the order you specify.  This is important because it can effect the
-default (first) parent.
+Selection is done before filtering it happens 
 
-The selection criteria is done by prefixing the request with a slash or =.
+The selection criteria is done by prefixing the request with a slash or T:.
 
  tid 
  /title 
