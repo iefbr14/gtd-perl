@@ -505,8 +505,8 @@ sub disp_wiki {
 		'p' => 'project',
 		'g' => 'goal',
 		'o' => 'role',
-		'v' => 'value',
-		'm' => 'vision',
+		'v' => 'vision',
+		'm' => 'value',
 		'w' => 'action',
 		'?' => 'fook',
 	);
