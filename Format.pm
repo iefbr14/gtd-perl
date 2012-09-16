@@ -535,6 +535,48 @@ sub disp_wiki {
 	print {$fd} "\n";
 }
 
+sub disp_html {
+	my($fd, $ref, $note) = @_;
+
+	my(%type) = (
+		'a' => 'action',
+		'p' => 'project',
+		'g' => 'goal',
+		'o' => 'role',
+		'v' => 'vision',
+		'm' => 'value',
+		'w' => 'action',
+		'?' => 'fook',
+	);
+
+	my($type) = $ref->get_type();
+	my($tid) =  $ref->get_tid();
+	my($title) =  $ref->get_title();
+	my($done) =  $ref->get_completed();
+
+	$title =~ s|\[\[(.+?)\]\]|<a href=/dev/index.php?$1>$1</a>|;
+
+	$type = '?' unless defined $type{$type};
+	
+	print {$fd} '<h2> ' if $type =~ /[ovm]/;
+	print {$fd} '<h3> ' if $type eq 'g';
+	print {$fd} '<ul>*' if $type eq 'a';
+	print {$fd} '<ul>*(wait)' if $type eq 'w';
+	print {$fd} '<ul>' if $type eq 'p';
+
+	print {$fd} "<del>" if $done;
+	print {$fd} $type{$type}, ":[".
+		"<a href=/todo/r617/itemReport.php?itemId=$tid>".
+		"$tid</a>]$title";
+	print {$fd} "</del>" if $done;
+
+	print {$fd} " -- $note" if $note;
+
+	print {$fd} ' </h3>' if $type eq 'g';
+	print {$fd} ' </h2>' if $type =~ /[ovm]/;
+	print {$fd} "\n";
+}
+
 sub disp_task {
 	my($fd, $ref) = @_;
 
