@@ -40,8 +40,7 @@ die;
 
 sub hier_detail {
 }
-sub task_detail {
-}
+
 ###BUG### walk forward stopping on excludes
 ###BUG### walk backward keeping on includes
 

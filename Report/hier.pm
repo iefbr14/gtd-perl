@@ -91,36 +91,6 @@ sub hier_detail {
 	}
 	nl();
 }
-sub task_detail {
-	return hier_detail(@_);
-
-	my($self, $ref) = @_;
-
-	my $level = $self->{level};
-
-	my $tid  = $ref->get_tid();
-	my $name = $ref->get_task() || '';
-	my $cnt  = $ref->count_actions() || '';
-	my $pri  = $ref->get_priority() || 3;
-	my $desc = summary_line($ref->get_description(), '');
-	my $type = $ref->get_type() || '';
-	my $done = $ref->get_completed() || '';
-
-	color($ref);
-
-	printf "%5s %3s ", $tid, $cnt;
-	printf "%-15s", $ref->task_mask_disp() if $Mask;
-
-	my($dots) = "..." x $level;
-	substr($dots, 1, 6) = '(done)' if $done;
-	print $dots, "...";
-	if ($name eq $desc or $desc eq '') {
-		printf "%.50s",  $name;
-	} else {
-		printf "%.50s",  $name . ': ' . $desc;
-	}
-	nl();
-}
 
 sub end_detail {
 }

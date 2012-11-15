@@ -190,15 +190,6 @@ sub _report_hier {
 }
 
 
-sub header {
-	hier_detail(@_);
-}
-
-sub task_detail {
-	hier_detail(@_);
-	end_detail(@_);
-}
-
 sub hier_detail {
 	my($planner, $ref) = @_;
 	my($sid, $name, $cnt, $desc, $pri, $type, $note);

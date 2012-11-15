@@ -31,7 +31,7 @@ sub Report_taskjuggler {	#-- generate taskjuggler file from gtd db
 	$ToOld = pdate(get_today(-7));	# don't care about done items > 2 week
 
 	meta_filter('+all', '^focus', 'none');
-	my($top) = 'm';			# default to top of everything
+	my($top) = 'o';			# default to top of everything
 	for my $criteria (meta_argv(@_)) {
 		if ($criteria eq 'all') {
 			$Someday = 1;
@@ -64,11 +64,11 @@ sub Report_taskjuggler {	#-- generate taskjuggler file from gtd db
 	$walk->set_depth('a');
 	$walk->filter();
 
+	Taskjuggler::build_deps($walk, $top);
+
 	tj_header();
 
 	bless $walk;	# take ownership and walk the tree
-
-	$walk->{level} = 1 if $top ne 'm';
 	$walk->walk($top);
 }
 
@@ -116,15 +116,6 @@ EOF
 
 }
 
-sub header {
-	hier_detail(@_);
-}
-
-sub task_detail {
-	hier_detail(@_);
-	end_detail(@_);
-}
-
 sub hier_detail {
 	my($walk, $ref) = @_;
 	my($sid, $name, $cnt, $desc, $type, $note);
@@ -151,25 +142,12 @@ sub hier_detail {
 
 	$role = $resource->resource($ref);
 
-	return if $type eq 'm'; # Vision
-	return if $type eq 'v'; # Values
 	return if $type eq 'C'; # Checklists
 	return if $type eq 'L'; # Lists
 	return if $type eq 'T'; # Item
 
-	if ($Someday ==0 && $ref->is_someday()) {
-		supress($walk, $ref);
-		return;
-	}
+	return if skip($walk, $ref);
 
-	if ($done) {
-		supress($walk, $ref);
-		return;
-	}
-	if ($start && $start gt $ToFuture) {
-		supress($walk, $ref);
-		return;
-	}
 	if ($start && $start lt $ToOld) {
 		$start = '';
 	}
@@ -189,7 +167,7 @@ sub hier_detail {
 	$name =~ s/"/'/g;
 	print {$fd} $indent, qq(task $type\_$tid "$name" \{\n);
 
-	if ($type eq 'o') {
+	if ($indent eq '') {
 		print {$fd} $indent, qq(   start \${now}\n);
 		print {$fd} $indent, qq(   allocate $role\n);
 	} elsif ($role && parent_role($ref) ne $role) {
@@ -197,7 +175,7 @@ sub hier_detail {
 	}
 
 	foreach my $depend (split(/[ ,]/, $depends)) {
-		my($dep_path) = dep_path($depend);
+		my($dep_path) = Taskjuggler::dep_path($depend);
 
 		unless ($dep_path) {
 			warn "depend $tid: needs $depend failed to produce path!";
@@ -220,23 +198,14 @@ sub hier_detail {
 	print {$fd} $indent, qq(   complete  100\n)   if $done;
 }
 
-sub old_indent {
+sub indent {
 	my($walk) = @_;
 
 	my($level) = $walk->{level} || 0;
 
 	return '' if $level <= 0;
 
-	return '  ' x $level;
-}
-sub indent {
-	my($walk) = @_;
-
-	my($level) = $walk->{level} || 0;
-
-	return '' if $level <= 2;
-
-	return '   ' x ($level-2);
+	return '   ' x ($level);
 }
 
 sub end_detail {
@@ -250,12 +219,9 @@ sub end_detail {
 
 	my($type) = $ref->get_type();
 
-	return if $type eq 'm';	# Value
-	return if $type eq 'v'; # Vision
-
 	if ($type =~ /[mvog]/) {
-	print {$fd} $indent, qq(} # $type\_$tid\n);
-	return;
+		print {$fd} $indent, qq(} # $type\_$tid\n);
+		return;
 	}
 	print {$fd} $indent, qq(}\n);
 }
@@ -280,41 +246,7 @@ sub parent_role {
 	return $resource->resource($pref);
 }
 
-sub dep_path {
-	my($tid) = @_;
 
-	my($ref) = meta_find($tid);
-	return unless $ref;
-
-	my($task) = $ref->get_task($ref);
-	my($path) = $ref->get_type() . '_' . $tid;
-	my($pref);
-
-	if ($ref->get_completed()) {
-		return "# depends on $tid ($task) is done";
-	}
-
-	for (;;) {
-		$ref = $ref->get_parent();
-		last unless $ref;
-
-		$path = $ref->get_type() . '_' . $ref->get_tid() . '.' . $path;
-		last if $ref->get_type() eq 'o';
-	}
-	return $path . " # $task";
-}
-
-
-sub supress {
-	my($walk, $ref) = @_;
-
-	my($tid) = $ref->get_tid();
-	$walk->{want}{$tid} = 0;
-
-	foreach my $child ($ref->get_children()) {
-		supress($walk, $child);
-	}
-}
 
 sub old_task_priority {
 	my($ref) = @_;
@@ -380,4 +312,107 @@ sub task_priority {
 	return $tj_pri . " # $pri.$boost";
 }
 
+sub skip {
+	my($walk, $ref) = @_;
+
+	my $start = pdate($ref->get_tickledate());
+	my $done = pdate($ref->get_completed());
+
+	if ($Someday == 0 && $ref->is_someday()) {
+		supress($walk, $ref);
+		return 1;
+	}
+
+	if ($done) {
+		supress($walk, $ref);
+		return 1;
+	}
+	if ($start && $start gt $ToFuture) {
+		supress($walk, $ref);
+		return 1;
+	}
+
+	return 0;
+}
+
+
+sub supress {
+	my($walk, $ref) = @_;
+
+	my($tid) = $ref->get_tid();
+	$walk->{want}{$tid} = 0;
+
+	foreach my $child ($ref->get_children()) {
+		supress($walk, $child);
+	}
+}
+#==============================================================================
+package Taskjuggler;
+
+use Hier::Walk;
+use Hier::Meta;
+
+my %Dep_list;
+
+sub build_deps {
+	my($walk, $top) = @_;
+
+	bless $walk;	# take ownership and walk the tree
+	$walk->walk($top);
+}
+
+sub hier_detail {
+	my($walk, $ref) = @_;
+
+	my($tid) = $ref->get_tid();
+	return if defined $Dep_list{$tid};
+
+	return if Hier::Report::taskjuggler::skip($walk, $ref);
+
+	my($path) = $ref->get_type() . '_' . $tid;
+
+	if ($walk->{level} == 0) {
+		$Dep_list{$tid} = $path;
+		return;
+	}
+
+	my($fook) = '';
+
+	for my $pref ($ref->get_parents()) {
+		my $pid = $pref->get_tid();
+
+		if ($Dep_list{$pid}) {
+			$path = $Dep_list{$pid} . '.' . $path;
+			$Dep_list{$tid} = $path;
+			
+			return;
+		}
+
+		$fook .= " $pid ";
+	}
+	warn "Can't find parrent for $tid -> $fook\n";
+}
+
+
+sub dep_path {
+	my($tid) = @_;
+
+	my($ref) = meta_find($tid);
+	return unless $ref;
+
+	my($path) = $Dep_list{$tid};
+
+	my($task) = $ref->get_task($ref);
+
+	return "$path # $task" if $path;
+
+	print "# Can't map $tid ($task) as a depencency\n";
+	warn "Can't map $tid ($task) as a depencency\n";
+
+	return ''
+}
+
+
+sub end_detail {
+}
 1;  # don't forget to return a true value from the file

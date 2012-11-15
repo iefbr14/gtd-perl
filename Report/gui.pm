@@ -142,15 +142,6 @@ warn "Walked\n";
         return $pkg;
 }
 
-sub header {
-        hier_detail(@_);
-}
-
-sub task_detail {
-        hier_detail(@_);
-        end_detail(@_);
-}
-
 sub hier_detail {
 	my($walk, $ref) = @_;
 	my($tid, $sid, $name, $cnt,$plan, $desc, $pri, $type, $done);

@@ -52,11 +52,6 @@ sub Report_planner {	#-- Create a planner file from gtd db
 
 }
 
-sub task_detail {
-	hier_detail(@_);
-	end_detail(@_);
-}
-
 sub hier_detail {
 	my($planner, $ref) = @_;
 	my($sid, $name, $cnt, $desc, $pri, $type, $note);

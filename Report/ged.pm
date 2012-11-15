@@ -82,14 +82,6 @@ sub ged_footer {
 	print "0 TRLR\n";
 }
 
-sub header {
-	hier_detail(@_);
-}
-
-sub task_detail {
-	hier_detail(@_);
-}
-
 sub hier_detail {
 	my($planner, $ref) = @_;
 	my($sid, $name, $cnt, $desc, $type, $note);
