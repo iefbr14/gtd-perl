@@ -39,14 +39,19 @@ sub new {
 }
 
 sub walk {
-	my($self, $toptype) = @_;
+	my($walk) = shift @_;
+
+	my($toptype) = @_;
+
+	# we have seen nothing on this walk
+	$walk->{seen} = {};
 
 	$toptype ||= 'm';
 
 	if ($toptype =~ /^\d+/) {
 		my($ref) = meta_find($toptype);
 		if ($ref) {
-			$self->detail($ref);
+			$walk->detail($ref);
 		} else {
 			warn "No such task: $toptype\n";
 		}
@@ -58,7 +63,7 @@ sub walk {
 	for my $ref (sort_tasks @top) {
 		next if $ref->filtered();
 
-		$self->detail($ref);
+		$walk->detail($ref);
 	}
 	return;
 }
@@ -142,16 +147,6 @@ sub detail {
 
 	if (type_depth($type) > $depth) {
 		warn "+ detail($tid)\n" if $Debug;
-		return;
-	}
-
-	if ($ref->is_task()) {
-		if ($ref->filtered()) {
-			# we are item filtered
-			warn "< detail($tid} filtered\n" if $Debug;
-			return;
-		} 
-		$walk->task_detail($ref);
 		return;
 	}
 
