@@ -72,9 +72,9 @@ sub check_task {
 
 	my(@children) = $ref->get_children();
 
-   if ($type ne 'p' or iscomplex(@children)) {
+#   if ($type ne 'p' or iscomplex(@children)) {
 	return "Needs wiki ref" unless $title =~ /\[\[.*\]\]/;
-   }
+#   }
 
 	return if $ref->get_completed();
 
