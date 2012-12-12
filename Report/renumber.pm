@@ -34,9 +34,9 @@ sub renumber_all { #-- Renumber task Ids
 	renumb(\&is_value,       1,    4, 'Values');
 	renumb(\&is_vision,      5,    9, 'Vision');
 	renumb(\&is_roles,      10,   29, 'Roles');
-	renumb(\&is_goals,      30,   99, 'Goals');
-	renumb(\&is_project,   100,  999, 'Projects');
-	renumb(\&is_action,   1000, 9999, 'Actions');
+	renumb(\&is_goals,      30,  199, 'Goals');
+	renumb(\&is_project,   200, 1999, 'Projects');
+	renumb(\&is_action,   2000, 9999, 'Actions');
 }
 
 sub renumber_pair {
