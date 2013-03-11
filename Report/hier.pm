@@ -27,11 +27,11 @@ sub Report_hier {	#-- Hiericial List of Values/Visions/Roles...
 
 	$Mask  = option('Mask');
 
-	my($top) = 'm';
+	my(@top);
 	my($depth) = 'p';
 	for my $criteria (meta_argv(@_)) {
 		if ($criteria =~ /^\d+$/) {
-			$top = $criteria;
+			push(@top, $criteria);
 		} else {
 			my($type) = type_val($criteria);
 			if ($type) {
@@ -41,15 +41,20 @@ sub Report_hier {	#-- Hiericial List of Values/Visions/Roles...
 			}
 		}
 	}
+	if (@top == 0) {
+		@top = ( 'm' );
+	}
 
-	my($walk) = new Hier::Walk();
-	$walk->filter();
-	$walk->set_depth($depth);
+	for my $top (@top) {
+		my($walk) = new Hier::Walk();
+		$walk->filter();
+		$walk->set_depth($depth);
 
-	bless $walk;	# take ownership and walk the tree
+		bless $walk;	# take ownership and walk the tree
 
-	$walk->{level} = 1 if $top ne 'm';
-	$walk->walk($top);
+		$walk->{level} = 1 if $top ne 'm';
+		$walk->walk($top);
+	}
 }
 
 sub hier_detail {
