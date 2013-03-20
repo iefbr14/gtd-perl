@@ -192,31 +192,15 @@ sub project_live {
 	return 0;
 }
 
-sub report_detail {
-	meta_filter('+all', '^title', 'simple');
+sub calc_type {
+	my($ref) = @_;
 
-	my(%data);
-	my($type, $class);
-	for my $ref (meta_all()) {
-		$type = calc_type($ref);
-		$class = calc_class($ref);
-
-		++$data{$type}{$class};
-	}
-	for my $type (keys %data) {
-		print "$type --- ";
-		my $classes = $data{$type};
-
-		for my $class (keys %$classes) {
-			my $val = $classes->{$class};
-			print "$class => $val  ";
-		}
-		print "\n";
-	}
+	return 'h' if $ref->is_hier();
+	return 'a' if $ref->is_task();
+	return 'l';
 }
 
-
-sub calc_type {
+sub calc_class {
 	my($ref) = @_;
 
 	return 'd' if $ref->get_completed();
@@ -227,12 +211,47 @@ sub calc_type {
 	return 'a';
 }
 
-sub calc_class {
-	my($ref) = @_;
+sub report_detail {
+	meta_filter('+all', '^title', 'simple');
 
-	return 't' if $ref->is_task();
-	return 'h' if $ref->is_hier();
-	return 'l';
+	my @Types = qw(Hier Action List Total);
+	my @Class = qw(Done Someday Action Next Future Total);
+
+	my(%data);
+	my($type, $class);
+	for my $ref (meta_all()) {
+		$type = calc_type($ref);
+		$class = calc_class($ref);
+
+		++$data{$type}{$class};
+
+		# totals;
+		++$data{'t'}{$class};
+		++$data{$type}{'t'};
+		++$data{'t'}{'t'};
+	}
+
+	for my $title ('Type', @Class) {
+		printf "   %7s", $title;
+	}
+	print "\n".('-'x75)."\n";
+
+	for my $type (@Types) {
+		my $tk = lc(substr($type,0, 1));
+		my $classes = $data{$tk};
+
+		printf "%7s | ", $type;
+
+		for my $class (@Class) {
+			my $ck = lc(substr($class,0, 1));
+			my $val = $classes->{$ck};
+			$val ||= '';
+	
+			printf "   %7s", $val;
+		}
+		print "\n";
+	}
 }
+
 
 1;
