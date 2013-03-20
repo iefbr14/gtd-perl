@@ -33,6 +33,8 @@ my %Types = (
         'Item'          => 'T',
 );
 
+my @Class = qw(Done Someday Action Next Future Total);
+
 
 use Hier::util;
 use Hier::Meta;
@@ -43,6 +45,11 @@ sub Report_status {	#-- report status of projects/actions
 	meta_filter('+active', '^tid', 'none');	
 
 	my $desc = meta_desc(@ARGV);
+
+	if (lc($desc) eq 'all') {
+		report_detail();
+		exit 0;
+	}
 	
 	my $hier = count_hier();
 	my $proj = count_proj();
@@ -183,6 +190,49 @@ sub project_live {
 	}
 
 	return 0;
+}
+
+sub report_detail {
+	meta_filter('+all', '^title', 'simple');
+
+	my(%data);
+	my($type, $class);
+	for my $ref (meta_all()) {
+		$type = calc_type($ref);
+		$class = calc_class($ref);
+
+		++$data{$type}{$class};
+	}
+	for my $type (keys %data) {
+		print "$type --- ";
+		my $classes = $data{$type};
+
+		for my $class (keys %$classes) {
+			my $val = $classes->{$class};
+			print "$class => $val  ";
+		}
+		print "\n";
+	}
+}
+
+
+sub calc_type {
+	my($ref) = @_;
+
+	return 'd' if $ref->get_completed();
+	return 's' if $ref->is_someday();
+	return 'f' if $ref->is_later();
+
+	return 'n' if $ref->is_nextaction();
+	return 'a';
+}
+
+sub calc_class {
+	my($ref) = @_;
+
+	return 't' if $ref->is_task();
+	return 'h' if $ref->is_hier();
+	return 'l';
 }
 
 1;
