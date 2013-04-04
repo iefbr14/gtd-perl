@@ -118,7 +118,7 @@ sub action_disp {
 #==============================================================================
 
 sub delete_hier {
-	die "###ToDo Broked, should be deleting by categories?\n";
+	die "###ToDo Borked, should be deleting by categories?\n";
 	foreach my $tid (@_) {
 		my $ref = Hier::Tasks::find{$tid};
 		if (defined $ref) {
