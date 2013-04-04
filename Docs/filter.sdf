@@ -1,0 +1,100 @@
+Filters are applied in one of two ways.
+
+Slice mode where only items of the correct type are looked at and
+the hierarchy needed to support that item is included.
+
+Hier mode where the Hierarcy is looked at top down and each item in sorted order
+is looked at for filtering.
+
+Default Level:
+	project|actions (depends on report)
+
+H2: Filters:
+
+!block table
+Type    Meaning
+any	any item (including list types)
+all	any non "list" type
+
+list	any "list" type
+hier	any "value/vision/role/goal/project"
+task	any "action"
+
+live	
+
+next	types that have is_nextAtion tagged (default actions)
+someday types that have is_someday tagged (default actions)
+maybe   (same as someday)
+
+wait	waiting on
+tickle	has a tickle on
+late	has a due date that has passed
+due	has a due date in the near (default 7 days) future
+done:	has a completed date (actions|projects)
+
+slow
+idea
+plan	hier items without children (default projets)
+!endblock
+
+>---------------------------------------------------------------------------
+>Category/Context/Timeframe/Tags filtering...
+>---------------------------------------------------------------------------
+>	return (\&filter_any, '=', '*')	if $word =~ /^any/i;
+>	return (\&filter_any, '=', '=')	if $word =~ /^all/i;
+>	return (\&filter_any, '=', 'l')	if $word =~ /^list/i;
+>	return (\&filter_any, '=', 'h')	if $word =~ /^hier/i;
+>	return (\&filter_any, '=', 't')	if $word =~ /^task/i;
+>
+>
+>	return (\&filter_done, '>','')	if $word =~ /^done/i;
+>	return (\&filter_some, '>','')	if $word =~ /^some/i;
+>	return (\&filter_some, '>','')	if $word =~ /^maybe/i;
+>
+>	return (\&filter_next, '<','')	if $word =~ /^next/i;
+>	return (\&filter_task, '<','')	if $word =~ /^action/i;
+>
+>	return (\&filter_wait, '<','')	if $word =~ /^wait/i;
+>	return (\&filter_wait, '<','')	if $word =~ /^tickle/i;
+>	return (\&filter_late, '<','')	if $word =~ /^late/i;
+>	return (\&filter_due,  '<','')	if $word =~ /^due/i;
+>
+>	return (\&filter_slow, '<','')	if $word =~ /^slow/i;
+>	return (\&filter_idea, '<','')	if $word =~ /^idea/i;
+>	return (\&filter_plan, '<','')	if $word =~ /^plan/i;
+>
+>	return (\&filter_live, '<','')	if $word =~ /^live/i;
+>	return (\&filter_dead, '<','')	if $word =~ /^dead/i;
+>---------------------------------------------------------------------------
+
+!block table; style="grid"; groups
+Function        __Filter  Level
+actions         +next    a
+addplans        +live    p
+bulklist        +live
+doit            +live    a
+dump            +any     
+focus           +next    
+fook            +live
+gui             +all
+hierlist        +live
+hier            +live   
+items           +any
+list            +live   
+nextactions     +next   
+noop            +live   
+oocalc          +live   
+planner         +live   
+projects        +next   p
+purge           +dead   
+records         +live   
+review          +live   
+review          +live   a       # when doit
+search          +all    
+spreadsheet     +live   
+status          +live   
+taskjuggler     +live   
+tasks           +live   g
+todo            +live   
+walk            +live   
+!endblock

@@ -1,0 +1,23 @@
+H1: Perl GTD
+
+Drew Sullivan <drew@ss.org>
+v0.0, November 2011
+
+H1: Dedication
+
+Thank you too all the open source developers before me.
+David Allen for guidance on why I needed to do it.
+PHP gtd for a graphical interface and database structure
+
+
+!include "Readme.sdf"
+!include "gtd.sdf"
+!include "git.sdf"
+!include "local.sdf"
+!include "report.sdf"
+!include "selection.sdf"
+!include "sort.sdf"
+!include "type-tags.sdf"
+!include "Verbs.sdf"
+!include "Test-Plan.sdf"
+!include "todo.sdf"

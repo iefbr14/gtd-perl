@@ -1,26 +1,26 @@
-=head Overview
+H1: Overview
 
 As part of startup the data in the database is processed using three criteria.
 From all of the data, it goes through selection, filtering and then sorting.
 Each report has its own default selection, filter and sort order.
 
 
-=head Selection
+H1: Selection
 
-include selection.sdf
+!include "selection.sdf"
 
-=head Filter
+H1: Filter
 
-include filter.sdf
+!include "filter.sdf"
 
-=head Sort
+H1: Sort
 
-include sort.sdf
+!include "sort.sdf"
 
-=head Report
+H1: Report
 
-include report.sdf
+!include "report.sdf"
 
-=head Notes
+H1: Notes
 
-include local.sdf
+!include "local.sdf"
