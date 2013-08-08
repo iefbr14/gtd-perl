@@ -26,6 +26,9 @@ my %Total;
 my %Dups;
 
 sub Report_cct {	#-- List Categories/Contexts/Time Frames
+	meta_argv(@ARGV);
+	meta_filter('+all', '^tid', 'simple');
+
 	count_items();
 
 	cct_crosstab();
@@ -39,7 +42,7 @@ sub cct_crosstab {	#-- List Categories/Contexts/Time Frames
 }
 
 sub count_items {
-	foreach my $ref (meta_selected()) {
+	foreach my $ref (meta_all()) {
 		my $type = $ref->get_type();
 
 		count_item('category',  $type, $ref->get_category());
