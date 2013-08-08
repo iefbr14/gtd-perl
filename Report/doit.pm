@@ -179,7 +179,8 @@ sub list_all {
 		
 sub doit_list {
 	foreach my $ref (@_) {
-		display_rgpa($ref);
+		my($date) = $ref->get_doit() || $ref->get_created();
+		display_rgpa($ref, "{{doit|$date}}");
 
 		last if $Limit-- <= 0;
 	}

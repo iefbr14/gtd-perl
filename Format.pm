@@ -664,8 +664,8 @@ EOF
 
 }
 
-sub display_doit_list {
-	my($ref) = @_;
+sub disp_doit_list {
+	my($fd, $ref) = @_;
 
 	my($tid, $pri, $task, $cat, $created, $modified,
 		$doit, $desc, $note, @desc);
@@ -677,7 +677,7 @@ $tid,  $pri, $cat,       $doit,    $desc
                                    $desc
 .
 
-	header_doit_list();
+#	header_doit_list();
 	$~ = "DOIT";	# set STDOUT format name to HIER
 
 	$tid = $ref->get_tid();
@@ -724,7 +724,7 @@ $tid,  $pri, $cat,       $doit,    $desc
 			split("\n", $note)
 	);
 
-	write;
+	write $fd;
 }
 
 sub next_line {
