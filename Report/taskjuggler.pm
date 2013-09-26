@@ -125,7 +125,7 @@ sub hier_detail {
 
 	my($tid) = $ref->get_tid();
 
-	my($indent) = $walk->indent();
+	my($indent) = $ref->indent();
 	my($resource) = new Hier::Resource($ref);
 	
 	$name = $ref->get_task() || '';
@@ -199,9 +199,9 @@ sub hier_detail {
 }
 
 sub indent {
-	my($walk) = @_;
+	my($ref) = @_;
 
-	my($level) = $walk->{level} || 0;
+	my($level) = $ref->level() || 0;
 
 	return '' if $level <= 0;
 

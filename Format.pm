@@ -104,6 +104,8 @@ sub display_mode {
 		'hier'     => \&disp_hier,
 		'priority' => \&disp_priority,
 
+		'print'    => \&disp_print,
+
 		'dump'     => \&disp_ordered_dump,
 
 		'udump'    => \&disp_unordered_dump,
@@ -147,7 +149,7 @@ sub display_mode {
 		'html'     => \&header_html,
 		'wiki'     => \&header_wiki,
 		'rgpa'     => \&header_rgpa,
-		'hier'     => \&header_hier,
+		'hier'     => \&header_none,
 	);
 
 	$mode = 'simple' if $mode eq '';
@@ -349,6 +351,35 @@ sub bulk_display {
 }
 
 sub disp_bulklist {
+}
+
+sub disp_print {
+	my($fd, $ref) = @_;
+
+	my $val;
+	for my $key (@Order) {
+		next if $key =~ /^_/;
+		if ($key eq '.') {
+			print $fd "\n";
+			next;
+		}
+
+		$val = $ref->get_KEY($key);
+		if (defined $val) {
+			chomp $val;
+			$val =~ s/\r//gm;	# all returns
+			$val =~ s/^/\t\t/gm;	# tab at start of line(s)
+			$val =~ s/^\t// if length($key) >= 7;
+			print $fd "$key:$val\n";
+		} else {
+			print $fd "#$key:\n";
+		}
+	}
+	###BUG### handle missing keys from @Ordered
+	print $fd "Tags:\t", $ref->disp_tags(),"\n";
+	print $fd "Parents:\t", $ref->disp_parents(),"\n";
+	print $fd "Children:\t", $ref->disp_children(),"\n";
+	print $fd "=-=\n\n";
 }
 
 sub disp_ordered_dump {
@@ -624,6 +655,70 @@ sub disp_task {
 	print $result, "\n";
 }
 
+sub disp_rgpa {
+	my($fd, $ref, $extra) = @_;
+
+	my($old) = $Display;
+	$Display = \&disp_simple;
+
+	display_rgpa($ref, $extra, '');
+
+	$Display = $old;
+}
+
+sub disp_hier {
+	my($fd, $ref) = @_;
+
+	my $mask  = option('Mask');
+
+	my $level = $ref->level();
+
+	my $tid  = $ref->get_tid();
+	my $name = $ref->get_task() || '';
+
+	if ($level == 0) {
+		color($fd, $ref);
+		print {$fd} "===== $tid -- $name ====================";
+		nl($fd);
+		return;
+	}
+	if ($level == 1) {
+		color($fd, $ref);
+		print {$fd} "----- $tid -- $name --------------------";
+		nl($fd);
+		return;
+	}
+
+	my $cnt  = $ref->count_actions() || '';
+	my $pri  = $ref->get_priority() || 3;
+	my $desc = summary_line($ref->get_description(), '');
+	my $done = $ref->get_completed() || '';
+
+	color($ref);
+
+	printf {$fd} "%5s %3s ", $tid, $cnt;
+	printf {$fd} "%-15s", $ref->task_mask_disp() if $mask;
+
+	print {$fd} "|  " x ($level-2), '+-', type_disp($ref). '-';
+	if ($name eq $desc or $desc eq '') {
+		printf {$fd} "%.50s",  $name;
+	} else {
+		printf {$fd} "%.50s",  $name . ': ' . $desc;
+	}
+	nl($fd);
+}
+
+sub color {
+	my($fd, $ref) = @_;
+}
+
+sub nl {
+	my($fd) = @_;
+
+	print {$fd} "\n";
+}
+
+
 my($Count) = 0;
 my @Lines;
 
@@ -692,39 +787,43 @@ $tid,  $pri, $cat,       $doit,    $desc
 	$desc      = $ref->get_description();
 	$note      = $ref->get_note();
 
-	my($pid, $pref, $pname, $pdesc);
 
-	$pref     = $ref->get_parent();
-	next unless defined $pref;
+	my(@parents) = ();
+	my($pref) = $ref->get_parent();
+	for (; $pref ; $pref = $pref->get_parent()) {
+		my($info) = d_type($pref);
 
-	$pid      = $pref->get_tid();
-	$pname    = $pref->get_title();
-	$pdesc    = $pref->get_description();
+		unshift(@parents, $info);
 
-	my($gid, $gref, $gname);
-	$gref      = $pref->get_parent();
-	next unless defined $gref;
+		last if $info =~ /^G/;
+	}
 
-	$gid      = $gref->get_tid();
-	$gname    = $gref->get_title();
-
-	chomp $gname;
-	chomp $pname;
-	chomp $pdesc;
 	chomp $task;
 	chomp $desc;
 	chomp $note;
 	$note = "Outcome: $note" if $note;
 
-	$desc = join("\r", "G[$gid]: $gname",
-		  "P[$pid]: $pname", 
-			split("\n", $pdesc),
+	$desc = join("\r", @parents,
 		  "*[$tid] $task",
 			split("\n", $desc),
 			split("\n", $note)
 	);
 
 	write $fd;
+}
+
+sub d_type {
+	my($ref) = @_;
+
+	return undef unless defined $ref;
+
+	my $id      = $ref->get_tid();
+	my $type    = uc($ref->get_type());
+	my $name    = $ref->get_title();
+
+	chomp $name;
+
+	return "$type\[$id]: $name";
 }
 
 sub next_line {

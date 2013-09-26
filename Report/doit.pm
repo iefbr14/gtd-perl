@@ -39,7 +39,7 @@ sub Report_doit {	#-- doit tracks which projects/actions have had movement
 	$Limit = option('Limit', 1);
 
 	$= = lines();
-	meta_filter('+a:live', '^doitdate', 'simple');
+	meta_filter('+a:live', '^doitdate', 'rpga');
 	my($target) = 0;
 	my($action) = \&doit_list;
 
@@ -180,7 +180,7 @@ sub list_all {
 sub doit_list {
 	foreach my $ref (@_) {
 		my($date) = $ref->get_doit() || $ref->get_created();
-		display_rgpa($ref, "{{doit|$date}}");
+		display_task($ref, "{{doit|$date}}");
 
 		last if $Limit-- <= 0;
 	}

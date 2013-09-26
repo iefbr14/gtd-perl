@@ -17,6 +17,7 @@ use Hier::util;
 use Hier::Meta;
 use Hier::Option;
 use Hier::Format;
+use Hier::Sort;
 
 my $List = 0;
 my $Doit = 0;
@@ -82,6 +83,7 @@ sub Report_walk {	#-- Command line walk of a hier
 		}
 
 		# apply all actions to task in direction specified
+		$ref->set_level(1);
 		&$dir($ref, $action);
 	}
 }
@@ -127,7 +129,7 @@ sub down {
 
 	display_task($ref);
 
-	foreach my $cref ($ref->get_children()) {
+	foreach my $cref (sort_tasks $ref->get_children()) {
 		down($cref, $action);
 	}
 
@@ -137,7 +139,7 @@ sub down {
 sub up {
 	my($ref, $action) = @_;
 
-	foreach my $cref ($ref->get_parents()) {
+	foreach my $cref (sort_tasks $ref->get_parents()) {
 		up($cref, $action);
 	}
 	display_task($ref);

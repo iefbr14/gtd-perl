@@ -5,7 +5,7 @@ use warnings;
 
 use Hier::Option;
 
-use base qw(Hier::Hier Hier::Fields Hier::Filter Hier::Format);
+use base qw(Hier::Hier Hier::Fields Hier::Filter Hier::Format Hier::Level);
 
 my %Task;		# all Todo items (including Hier)
 

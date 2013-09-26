@@ -46,32 +46,40 @@ sub Report_hier {	#-- Hiericial List of Values/Visions/Roles...
 	}
 
 	for my $top (@top) {
+
 		my($walk) = new Hier::Walk();
 		$walk->filter();
 		$walk->set_depth($depth);
 
 		bless $walk;	# take ownership and walk the tree
 
-		$walk->{level} = 1 if $top ne 'm';
 		$walk->walk($top);
 	}
 }
 
 sub hier_detail {
+	hier_detail_old(@_); return;
+#
 	my($self, $ref) = @_;
 
-	my $level = $self->{level};
+	display_task($ref);
+}
+
+sub hier_detail_old {
+	my($self, $ref) = @_;
+
+	my $level = $ref->level();
 
 	my $tid  = $ref->get_tid();
 	my $name = $ref->get_task() || '';
 
-	if ($level == 0) {
+	if ($level == 1) {
 		color($ref);
 		print "===== $tid -- $name ====================";
 		nl();
 		return;
 	}
-	if ($level == 1) {
+	if ($level == 2) {
 		color($ref);
 		print "----- $tid -- $name --------------------";
 		nl();
@@ -88,7 +96,7 @@ sub hier_detail {
 	printf "%5s %3s ", $tid, $cnt;
 	printf "%-15s", $ref->task_mask_disp() if $Mask;
 
-	print "|  " x ($level-2), '+-', type_disp($ref). '-';
+	print "|  " x ($level-3), '+-', type_disp($ref). '-';
 	if ($name eq $desc or $desc eq '') {
 		printf "%.50s",  $name;
 	} else {

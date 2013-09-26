@@ -39,6 +39,10 @@ my @Class = qw(Done Someday Action Next Future Total);
 use Hier::util;
 use Hier::Meta;
 use Hier::Option;
+use Hier::Resource;
+
+my $Hours_task = 0;
+my $Hours_next = 0;
 
 sub Report_status {	#-- report status of projects/actions
 	# counts use it and it give a context
@@ -64,13 +68,14 @@ sub Report_status {	#-- report status of projects/actions
 
 	print "For: $desc " if $desc;
 	my($total) = $task + $next;
-	print "hier: $hier, projects: $proj, next/actions: $next/$task = $total\n";
+	print "hier: $hier, projects: $proj, next,actions: $next+$task = $total\n";
 
 	my($t_p) = '-';
-	my($t_n) = '-';
-	my($t_a) = '-';
+	my($t_a) = $Hours_task;
+	my($t_n) = $Hours_next;
+
 	my($time) = '?';
-	print "time: $time, projects: $t_p, next/actions: $t_n/$t_a\n";
+	print "time: $time, projects: $t_p, next,actions: $t_n,$t_a\n";
 }
 
 sub count_hier {
@@ -125,6 +130,9 @@ sub count_task {
 		next unless project_live($ref);
 
 		++$count;
+
+		my($resource) = new Hier::Resource($ref);
+		$Hours_task += $resource->hours($ref);
 	}
 	return $count;
 }
@@ -144,6 +152,9 @@ sub count_next {
 		next unless $ref->is_nextaction();
 
 		++$count;
+
+		my($resource) = new Hier::Resource($ref);
+		$Hours_next += $resource->hours($ref);
 	}
 	return $count;
 }

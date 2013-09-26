@@ -198,7 +198,7 @@ sub hier_detail {
 
 	my($tid) = $ref->get_tid();
 
-	my($indent) = $planner->indent();
+	my($indent) = $ref->indent();
 	my($resource) = new Hier::Resource($ref);
 	
 	$name = $ref->get_task() || '';
@@ -260,9 +260,9 @@ warn "depend: $depend dep_path $dep_path\n";
 }
 
 sub indent {
-	my($planner) = @_;
+	my($ref) = @_;
 
-	my($level) = $planner->{level} || 0;
+	my($level) = $ref->level() || 0;
 
 	return '' if $level <= 0;
 

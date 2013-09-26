@@ -148,9 +148,7 @@ sub hier_detail {
 
 	my (%opt);
 
-	my $level = $walk->{level};
 	my $tree = $walk->{tree};
-
 
 	$tid  = $ref->get_tid() || '';
 	$name = $ref->get_title() || '';

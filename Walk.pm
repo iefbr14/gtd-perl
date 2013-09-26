@@ -51,6 +51,7 @@ sub walk {
 	if ($toptype =~ /^\d+/) {
 		my($ref) = meta_find($toptype);
 		if ($ref) {
+			$ref->set_level(0);
 			$walk->detail($ref);
 		} else {
 			warn "No such task: $toptype\n";

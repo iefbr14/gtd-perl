@@ -18,13 +18,15 @@ use Hier::Option;
 
 our $Version = 1.0;
 
+sub by_hier($$);
+
 my(@Criteria);
 my(%Criteria) = (
 	id	 => \&by_tid,
 	tid	 => \&by_tid,
 	task	 => \&by_task,
 	title	 => \&by_task,
-#	hier	 => \&by_hier,
+	hier	 => \&by_hier,
 	status	 => \&by_status,
 	focus    => \&by_focus,
 	pri	 => \&by_pri,
@@ -111,19 +113,26 @@ sub by_tid($$) {
 	return $a->get_tid() <=> $b->get_tid();
 }
 
-#sub By_hier($$) {
-#	my($a, $b) = @_;
-#
-#	return By_hier($a, $b) || By_task($a, $b);
-#}
+sub by_hier($$) {
+	my($a, $b) = @_;
 
-#sub by_hier($$) {
-#	my($a, $b) = @_;
-#die;
-#	###BUG### junk sub need to walk to hier
-#	return  $a->get_title() cmp $b->get_title()
-#	||      $a->get_tid() <=> $b->get_tid();
-#}
+	my($pa) = $a->get_parent();
+	my($pb) = $b->get_parent();
+
+	if ($pa && $pb) {
+		if ($pa != $pb) {
+			return by_hier($pa, $pb);
+		}
+	} elsif ($pa) {
+		return 1;
+	} elsif ($pb) {
+		return -1;
+	}
+
+	# no parents or parents equal
+	return  $a->get_title() cmp $b->get_title()
+	||      $a->get_tid() <=> $b->get_tid();
+}
 
 sub by_status($$) {
 	my($a, $b) = @_;
