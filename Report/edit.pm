@@ -19,35 +19,27 @@ use Hier::Meta;
 use Hier::Format;
 
 sub Report_edit {	#-- Edit listed actions/projects
-	my($cnt) = 0;
 	my($key, $val, $changed);
 
+	meta_filter('+all', '^tid', 'none');
+
+	my(@list) = meta_pick(@_);
+	if (@list == 0) {
+		print "No items to edit\n";
+		exit;
+	}
+    
 	umask(0077);
-
-    {
-	open(my $fd, '>', "/tmp/todo.$$") or die;
-	for my $tid (@_) {
-		my $ref = meta_find($tid);
-
-		unless (defined $ref) {
-			print "No item $tid\n";
-			print {$fd} "#*** no item $tid\n";
-			next;
-		}
-		++$cnt;
-
-		disp_ordered_dump($fd, $ref);
+	open(my $ofd, '>', "/tmp/todo.$$") or die;
+	for my $ref (@list) {
+		disp_ordered_dump($ofd, $ref);
 	}
-	close($fd);
-   }
-	if ($cnt == 0) {
-		unlink("/tmp/todo.$$");
-		return;
-	}
+	close($ofd);
+   
 	system('vi', "/tmp/todo.$$");
-   {
-	open(my $fd, '<', "/tmp/todo.$$") or die;
-	while (<$fd>) {
+ 
+	open(my $ifd, '<', "/tmp/todo.$$") or die;
+	while (<$ifd>) {
 		next if /^$/;
 		next if /^#/;
 
@@ -72,8 +64,8 @@ sub Report_edit {	#-- Edit listed actions/projects
 
 	}
 	save($changed) if %$changed;
-	close($fd);
-   }
+	close($ifd);
+
 	unlink("/tmp/todo.$$");
 
 	exit 0;

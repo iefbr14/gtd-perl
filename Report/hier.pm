@@ -23,7 +23,7 @@ use Hier::Format;
 my $Mask = 0;
 
 sub Report_hier {	#-- Hiericial List of Values/Visions/Roles...
-	meta_filter('+active', '^title', 'none');
+	meta_filter('+active', '^title', 'hier');
 
 	$Mask  = option('Mask');
 
@@ -58,8 +58,8 @@ sub Report_hier {	#-- Hiericial List of Values/Visions/Roles...
 }
 
 sub hier_detail {
-	hier_detail_old(@_); return;
-#
+#	hier_detail_old(@_); # return;
+
 	my($self, $ref) = @_;
 
 	display_task($ref);

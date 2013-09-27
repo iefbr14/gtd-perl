@@ -95,6 +95,7 @@ sub display_mode {
 
 		'html'     => \&disp_html,
 		'wiki'     => \&disp_wiki,
+		'walk'     => \&disp_wikiwalk,
 
 		'd_csv'    => \&disp_doit_csv,
 		'd_lst'    => \&disp_doit_list,
@@ -128,6 +129,7 @@ sub display_mode {
 		'doit'     => 'report',
 		'html'     => 'html',
 		'wiki'     => 'wiki',
+		'walk'     => 'wiki',
 
 		'd_csv'    => 'report',
 		'd_lst'    => 'report',
@@ -148,6 +150,7 @@ sub display_mode {
 		'report'   => \&header_report,
 		'html'     => \&header_html,
 		'wiki'     => \&header_wiki,
+		'walk'     => \&header_wiki,
 		'rgpa'     => \&header_rgpa,
 		'hier'     => \&header_none,
 	);
@@ -528,6 +531,40 @@ sub display_rgpa {
 	display_task($ref, $note);
 }
 
+sub disp_wikiwalk {
+	my($fd, $ref, $note) = @_;
+
+	my(%type) = (
+		'a' => 'action',
+		'p' => 'project',
+		'g' => 'goal',
+		'o' => 'role',
+		'v' => 'vision',
+		'm' => 'value',
+		'w' => 'action',
+		'?' => 'fook',
+	);
+
+	my($type) = $ref->get_type();
+	my($tid) =  $ref->get_tid();
+	my($title) =  $ref->get_title();
+	my($done) =  $ref->get_completed();
+
+	$type = '?' unless defined $type{$type};
+	
+	my($level) = $ref->level();
+
+	print {$fd} '*' x $level;
+
+	print {$fd} "<del>" if $done;
+	print {$fd} '{{'.$type{$type},"|$tid|$title".'}}';
+	print {$fd} "</del>" if $done;
+
+	print {$fd} " -- $note" if $note;
+
+	print {$fd} "\n";
+}
+
 sub disp_wiki {
 	my($fd, $ref, $note) = @_;
 
@@ -676,13 +713,13 @@ sub disp_hier {
 	my $tid  = $ref->get_tid();
 	my $name = $ref->get_task() || '';
 
-	if ($level == 0) {
+	if ($level == 1) {
 		color($fd, $ref);
 		print {$fd} "===== $tid -- $name ====================";
 		nl($fd);
 		return;
 	}
-	if ($level == 1) {
+	if ($level == 2) {
 		color($fd, $ref);
 		print {$fd} "----- $tid -- $name --------------------";
 		nl($fd);
@@ -699,7 +736,7 @@ sub disp_hier {
 	printf {$fd} "%5s %3s ", $tid, $cnt;
 	printf {$fd} "%-15s", $ref->task_mask_disp() if $mask;
 
-	print {$fd} "|  " x ($level-2), '+-', type_disp($ref). '-';
+	print {$fd} "|  " x ($level-3), '+-', type_disp($ref). '-';
 	if ($name eq $desc or $desc eq '') {
 		printf {$fd} "%.50s",  $name;
 	} else {

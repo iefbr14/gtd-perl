@@ -28,7 +28,6 @@ sub new {
 	my($walk) = {};
 
 	$walk->{fd} = \*STDOUT;
-	$walk->{level} = 0;
 	$walk->{depth} = type_depth('p');	# projects
 
 	bless $walk, $class;
@@ -51,7 +50,7 @@ sub walk {
 	if ($toptype =~ /^\d+/) {
 		my($ref) = meta_find($toptype);
 		if ($ref) {
-			$ref->set_level(0);
+			$ref->set_level(2);
 			$walk->detail($ref);
 		} else {
 			warn "No such task: $toptype\n";
@@ -64,6 +63,7 @@ sub walk {
 	for my $ref (sort_tasks @top) {
 		next if $ref->filtered();
 
+		$ref->set_level(1);
 		$walk->detail($ref);
 	}
 	return;
@@ -128,7 +128,7 @@ sub detail {
 	my($walk, $ref) = @_;
 	my($sid, $name, $cnt, $desc, $pri, $done);
 
-	my $level = $walk->{level};
+	my $level = $ref->level();
 	my $depth = $walk->{depth};
 
 	my $tid  = $ref->get_tid();
@@ -152,7 +152,6 @@ sub detail {
 	}
 
 	$walk->hier_detail($ref);
-	$walk->{level}++;
 
 	foreach my $child (sort_tasks $ref->get_children()) {
 		my $cid = $child->get_tid();
@@ -161,7 +160,6 @@ sub detail {
 		$walk->detail($child);
 	}
 
-	$walk->{level}--;
 	
 	$walk->end_detail($ref);
 }
