@@ -103,7 +103,7 @@ sub disp {
 
 	my($key) = action_disp($ref);
 
-	my $pri = $ref->get_priority() || 3;
+	my $pri = $ref->get_priority();
 	my $type = uc($ref->get_type());
 
 	return "$type:$tid $key <$pri> $ref->get_task()";

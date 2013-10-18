@@ -66,7 +66,7 @@ sub hier_detail {
 	
 
 	$name = xml($ref->get_task() || '');
-	$pri  = $ref->get_priority() || 3;
+	$pri  = $ref->get_priority();
 	$desc = xml(summary_line($ref->get_description(), '', 1));
 	$note = xml(summary_line($ref->get_note(), '', 1));
 	$type = $ref->get_type() || '';

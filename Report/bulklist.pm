@@ -202,7 +202,7 @@ sub hier_detail {
 	my($resource) = new Hier::Resource($ref);
 	
 	$name = $ref->get_task() || '';
-	$pri  = $ref->get_priority() || 3;
+	$pri  = $ref->get_priority();
 	$desc = summary_line($ref->get_description(), '', 1);
 	$note = summary_line($ref->get_note(), '', 1);
 	$type = $ref->get_type() || '';

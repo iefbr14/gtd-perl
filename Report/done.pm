@@ -17,6 +17,13 @@ use Hier::Option;
 use Hier::Meta;
 
 sub Report_done {	#-- Tag listed projects/actions as done
+	my($date) = get_today();
+
+	my($o_date) = option('Date', '');
+	if ($o_date) {
+		$date = $o_date;
+	}
+
 	for my $tid (@_) {
 		my $ref = meta_find($tid);
 
@@ -24,7 +31,9 @@ sub Report_done {	#-- Tag listed projects/actions as done
 			print "Task $tid not found to tag done\n";
 			next;
 		}
-		$ref->set_completed(get_today());
+		print "Task $tid completed $date\n";
+
+		$ref->set_completed($date);
 		$ref->update();
 	}
 }

@@ -30,7 +30,7 @@ my $Limit;
 my %Seen;
 
 sub Report_addplans {	#-- add plan action items to unplaned projects
-	meta_filter('+live', '^goaltask', 'simple');
+	meta_filter('+live', '^focus', 'simple');
 
 	$Debug = option('Debug', 0);
 

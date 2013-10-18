@@ -42,9 +42,9 @@ my %Option_keys = (
 	'Format'      => 1,	# Formating routine
 	'Sort'        => 1,	# Sortting routine
 
-	'List'        => 1,	# tab seperated list format
-	'Wiki'        => 1,	# media wiki format
-	'Html'        => 1,	# html text format
+	'Layout'      => 'Text', # Layout format
+
+	'Date'        => '',	# Date (completed etc)
 );
 
 my $Debug = 0;
@@ -53,7 +53,7 @@ sub option_key {
 	my($key) = @_;
 
 	my($newkey) = $Option_keys{$key};
-	unless ($newkey) {
+	unless (defined $newkey) {
 		warn "Unknown option: $key\n";
 		$Option_keys{$key} = 1;
 		$newkey = 1;

@@ -29,6 +29,7 @@ my(%Criteria) = (
 	hier	 => \&by_hier,
 	status	 => \&by_status,
 	focus    => \&by_focus,
+	panic    => \&by_panic,
 	pri	 => \&by_pri,
 	priority => \&by_pri,
 	doit     => \&by_doitdate,
@@ -71,6 +72,15 @@ sub sort_tasks {
 	}
 	
 	return sort { &$Sorter($a,$b) } @_;
+	## comment out prev line to Debug.
+	my(@list) =  sort { &$Sorter($a,$b) } @_;
+
+	for my $ref (@list) {
+		my $tid = $ref->get_tid();
+		my $title = $ref->get_title();
+		print "$Meta_key{$tid} $tid => $title\n";
+	}
+	return @list;
 }
 
 my %Sort_cache;
@@ -265,17 +275,8 @@ sub Meta_key {
 # 012345 12345 12345
 #  abcde fghij klmno z
 
-sub calc_focus {
+sub item_focus {
 	my($ref) = @_;
-
-	unless (defined $ref) {
-		return '';
-	}
-
-	my($tid) = $ref->get_tid();
-
-	my($val) = $Meta_key{$tid};
-	return $val  if defined $val;
 
 	my($pri) = $ref->get_priority();
 
@@ -290,15 +291,70 @@ sub calc_focus {
 
 	$pri = 'z' if $ref->get_completed();
 
+	return $pri;
+}
+
+sub calc_focus {
+	my($ref) = @_;
+
+	unless (defined $ref) {
+		return '';
+	}
+
+	my($tid) = $ref->get_tid();
+
+	my($val) = $Meta_key{$tid};
+	return $val  if defined $val;
+
+	my($pri) = item_focus($ref);
+
 	$val = calc_focus($ref->get_parent()) . $pri;
 	$Meta_key{$tid} = $val;
 
 	return $val;
 }
 
+
 sub by_focus($$) {
 	my($a, $b) = @_;
 
 	return calc_focus($a) cmp calc_focus($b);
 }
+
+# next   norm  some  done 
+# 012345 12345 12345
+#  abcde fghij klmno z
+
+sub calc_panic {
+	my($ref) = @_;
+
+	unless (defined $ref) {
+		return '';
+	}
+
+	my($tid) = $ref->get_tid();
+
+	my($val) = $Meta_key{$tid};
+	return $val if defined $val;
+
+	$val = item_focus($ref);
+	for my $child ($ref->get_children()) {
+		my $pri = calc_panic($child);
+		$val = $pri if $pri lt $val;
+	}
+	
+	$Meta_key{$tid} = $val;
+
+	return $val;
+}
+
+
+
+sub by_panic($$) {
+	my($a, $b) = @_;
+
+	return (calc_panic($a) cmp calc_panic($b))
+	    || by_hier($a, $b);
+}
+
 1;

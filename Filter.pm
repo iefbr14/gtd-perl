@@ -394,7 +394,7 @@ sub task_mask {
 	}
 
 	unless ($done) {
-		my($pri) = $ref->get_priority() || 3;
+		my($pri) = $ref->get_priority();
 		my($hint) = 0;
 
 		$hint = Z_LATE	if $pri == 1;
@@ -797,7 +797,7 @@ sub filter_due {
 sub filter_slow {
 	my($ref, $arg) = @_;
 
-	my($pri) = $ref->get_priority() || 3;
+	my($pri) = $ref->get_priority();
 	return '+slow' if $pri == 4;
 	return '?';
 }
@@ -806,7 +806,7 @@ sub filter_slow {
 sub filter_idea {
 	my($ref, $arg) = @_;
 
-	my($pri) = $ref->get_priority() || 3;
+	my($pri) = $ref->get_priority();
 	return '+idea' if $pri == 5;
 	return '?';
 }

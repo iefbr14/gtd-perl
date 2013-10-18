@@ -669,12 +669,12 @@ sub disp_task {
 	my($tid) = '['.$ref->get_tid().']';
 
 	if ($ref->is_nextaction()) {
-		$pri = chr(ord('A') + ($ref->get_priority() || '4') - 1);
+		$pri = chr(ord('A') + $ref->get_priority() - 1);
 	} else {
-		$pri = chr(ord('C') + ($ref->get_priority() || '4') - 1);
+		$pri = chr(ord('c') + $ref->get_priority() - 1);
 	}
 
-	$pri = 'S' if $ref->get_isSomeday() eq 'y';
+	$pri = 'S' if $ref->is_someday() eq 'y';
 	$pri = 'X' if $ref->get_completed();
 	$pri = 'V' if $type =~ /[mv]/;
 
@@ -727,7 +727,7 @@ sub disp_hier {
 	}
 
 	my $cnt  = $ref->count_actions() || '';
-	my $pri  = $ref->get_priority() || 3;
+	my $pri  = $ref->get_priority();
 	my $desc = summary_line($ref->get_description(), '');
 	my $done = $ref->get_completed() || '';
 

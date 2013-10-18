@@ -19,6 +19,7 @@ use Hier::Resource;
 use Hier::Meta;
 use Hier::Format;
 use Hier::Option;	# get_today
+use Hier::Level;
 
 my $ToOld;
 my $ToFuture;
@@ -125,7 +126,7 @@ sub hier_detail {
 
 	my($tid) = $ref->get_tid();
 
-	my($indent) = $ref->indent();
+	my($indent) = indent($ref);
 	my($resource) = new Hier::Resource($ref);
 	
 	$name = $ref->get_task() || '';
@@ -201,7 +202,7 @@ sub hier_detail {
 sub indent {
 	my($ref) = @_;
 
-	my($level) = $ref->level() || 0;
+	my($level) = $ref->level() - 1;
 
 	return '' if $level <= 0;
 
@@ -215,7 +216,7 @@ sub end_detail {
 	return if $walk->{want}{$tid} == 0;
 
 	my($fd) = $walk->{fd};
-	my($indent) = $walk->indent();
+	my($indent) = indent($ref);
 
 	my($type) = $ref->get_type();
 
@@ -371,7 +372,7 @@ sub hier_detail {
 
 	my($path) = $ref->get_type() . '_' . $tid;
 
-	if ($walk->{level} == 0) {
+	if ($ref->level() == 1) {
 		$Dep_list{$tid} = $path;
 		return;
 	}
