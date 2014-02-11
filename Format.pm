@@ -80,6 +80,7 @@ sub display_mode {
 
 	my(%mode) = (
 		'none'     => \&disp_none,
+		'list'     => \&disp_title,	# same as title but no headers
 
 		'tid'      => \&disp_tid,
 		'title'    => \&disp_title,
@@ -88,7 +89,6 @@ sub display_mode {
 		'summary'  => \&disp_summary,
 		'detail'   => \&disp_detail,
 		'action'   => \&disp_detail,
-		'list'     => \&disp_list,
 
 		'task'     => \&disp_task,
 		'doit'     => \&disp_task,
@@ -116,9 +116,9 @@ sub display_mode {
 
 	my(%report) = (
 		'none'     => 'none',
+		'list'     => 'none',	# same as title but no headers
 
 		'tid'      => 'report',
-		'list'     => 'report',
 		'title'    => 'report',
 		'item'     => 'report',
 		'simple'   => 'report',
