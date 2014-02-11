@@ -25,17 +25,12 @@ my $Later = get_today(+7);
 my $Priority = 0;
 my $Limit = 2;
 
-my($List) = 0; ###BUG### should be an option
-
-
-
 ### rethink totally
 ### REWRITE --- scan list for \d+ and put in work list
 ### if work list is empty  
 
 sub Report_doit {	#-- doit tracks which projects/actions have had movement
 
-	$List = option('List', 0);
 	$Limit = option('Limit', 1);
 
 	$= = lines();

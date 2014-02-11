@@ -82,13 +82,13 @@ sub display_mode {
 		'none'     => \&disp_none,
 
 		'tid'      => \&disp_tid,
-		'list'     => \&disp_tid,
 		'title'    => \&disp_title,
 		'item'     => \&disp_item,
 		'simple'   => \&disp_simple,
 		'summary'  => \&disp_summary,
 		'detail'   => \&disp_detail,
 		'action'   => \&disp_detail,
+		'list'     => \&disp_list,
 
 		'task'     => \&disp_task,
 		'doit'     => \&disp_task,
@@ -96,6 +96,7 @@ sub display_mode {
 		'html'     => \&disp_html,
 		'wiki'     => \&disp_wiki,
 		'walk'     => \&disp_wikiwalk,
+
 
 		'd_csv'    => \&disp_doit_csv,
 		'd_lst'    => \&disp_doit_list,
@@ -156,10 +157,6 @@ sub display_mode {
 	);
 
 	$mode = 'simple' if $mode eq '';
-
-	if ($mode eq 'simple') {
-		$mode = 'tid' if option('List', 0);
-	}
 
 	# process header modes
 	unless (defined $mode{$mode}) {

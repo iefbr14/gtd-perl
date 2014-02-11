@@ -35,6 +35,8 @@ my %Option_keys = (
 
 	'Color'       => 1, 'Colour'      => 'Color',
 
+	'List'        => 0,
+
 	'Limit'       => 1,
 	'Reverse'     => 1,	# reverse sort
 

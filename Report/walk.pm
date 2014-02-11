@@ -59,6 +59,11 @@ sub Report_walk {	#-- Command line walk of a hier
 			next;
 		}
 		if ($task eq 'list') {
+			display_mode('list');
+			next;
+		}
+
+		if ($task eq 'tid') {
 			display_mode('tid');
 			next;
 		}
