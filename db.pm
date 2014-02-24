@@ -18,7 +18,7 @@ BEGIN {
 #==============================================================================
 
 use DBI;
-use Config::YAML;
+use YAML::Syck qw(LoadFile);
 use Data::Dumper;
 
 use Hier::CCT;
@@ -712,9 +712,7 @@ sub DB_init {
 	}
 
 	my $HOME = $ENV{'HOME'};
-	my $conf = new Config::YAML(
-			config => "$HOME/.todo/Access.yaml"
-		);
+	my $conf = LoadFile("$HOME/.todo/Access.yaml");
 
 	my($dbconf) = $conf->{$confname};
 
