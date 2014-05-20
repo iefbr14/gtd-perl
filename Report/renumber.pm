@@ -31,12 +31,13 @@ sub Report_renumber { #-- Renumber task Ids
 }
 
 sub renumber_all { #-- Renumber task Ids 
-	renumb(\&is_value,       1,    4, 'Values');
-	renumb(\&is_vision,      5,    9, 'Vision');
-	renumb(\&is_roles,      10,   29, 'Roles');
-	renumb(\&is_goals,      30,  199, 'Goals');
-	renumb(\&is_project,   200, 1999, 'Projects');
 	renumb(\&is_action,   2000, 9999, 'Actions');
+ 	renumb(\&is_subject,  1000, 1999, 'Sub-Projects');
+	renumb(\&is_project,   200,  999, 'Projects');
+	renumb(\&is_goals,      30,  199, 'Goals');
+	renumb(\&is_roles,      10,   29, 'Roles');
+	renumb(\&is_vision,      5,    9, 'Vision');
+	renumb(\&is_value,       1,    4, 'Values');
 }
 
 sub renumber_pair {
@@ -78,8 +79,29 @@ sub is_goals {
 sub is_project {
 	my($ref) = @_;
 
-	return 1 if $ref->get_type() eq 'p';	# Project
+	return 0 if $ref->get_type() ne 'p';	# ! Project
+
+	# return 1 iff any parents are not project
+	for my $pref ($ref->get_parents()) {
+		return 1 if $pref->get_type() ne 'p';	# Parrent ! Project
+	}
+
+	# is a project and some parent is not projects
 	return 0;
+}
+
+sub is_subject {
+	my($ref) = @_;
+
+	return 0 if $ref->get_type() ne 'p';	# ! Project
+
+	# return 1 iff all parents are projects
+	for my $pref ($ref->get_parents()) {
+		return 0 if $pref->get_type() ne 'p';	# Parrent is project
+	}
+
+	# is a project and all parents are projects
+	return 1;
 }
 
 sub is_action {
@@ -143,6 +165,7 @@ sub renumber_task {
 
 	die "Can't renumber task $tid (has depedencies)\n" if dependent($ref);
 	print "$tid => $new\n";
+
 	$ref->set_tid($new);
 }
 

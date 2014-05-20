@@ -241,9 +241,9 @@ sub dset {
 		die "Can't set tags yet";
 	}
 
-	unless (defined $val) {
-		die "Won't set $field to undef\n";
-	}
+#	unless (defined $val) {
+#		die "Won't set $field to undef\n";
+#	}
 
 	# skip setting if already set that way!
 	return $ref if defined($ref->{$field}) && defined($val)
@@ -253,7 +253,8 @@ sub dset {
 
 	$ref->{$field} = $val;
 
-	warn "Dirty $field => $val\n" if $Debug;
+	my($warn_val) = $val || '';
+	warn "Dirty $field => $warn_val\n" if $Debug;
 
 	return $ref;
 }
