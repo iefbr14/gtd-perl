@@ -143,10 +143,6 @@ sub hier_detail {
 
 	$role = $resource->resource($ref);
 
-	return if $type eq 'C'; # Checklists
-	return if $type eq 'L'; # Lists
-	return if $type eq 'T'; # Item
-
 	return if skip($walk, $ref);
 
 	if ($start && $start lt $ToOld) {
@@ -191,6 +187,9 @@ sub hier_detail {
 		print {$fd} $indent, qq(   depends $dep_path\n);
 	}
 
+	if ($effort) {
+		++$ref->{_effort};
+	}
 	print {$fd} $indent, qq(   effort $effort\n) if $effort;
 	print {$fd} $indent, qq(   priority $tj_pri\n) if $tj_pri;
 	
@@ -213,12 +212,23 @@ sub end_detail {
 	my($walk, $ref) = @_;
 
 	my($tid) = $ref->get_tid();
-	return if $walk->{want}{$tid} == 0;
 
 	my($fd) = $walk->{fd};
 	my($indent) = indent($ref);
 
 	my($type) = $ref->get_type();
+
+	unless ($ref->{_effort}) {
+		my($task) = $ref->get_task();
+
+		print {$fd} $indent, qq(   effort 1h  # Need planning \n);
+		warn "Task $tid: $task Need effort planning\n";
+
+		++$ref->{_effort};
+	}
+
+	my($pref) = $ref->get_parent();
+	++$pref->{_effort};
 
 	if ($type =~ /[mvog]/) {
 		print {$fd} $indent, qq(} # $type\_$tid\n);

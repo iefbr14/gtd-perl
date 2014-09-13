@@ -94,19 +94,19 @@ sub effort {
 	if ($effort eq '') {
 		###TODO have these in the resource list
 		my(%efforts) = (
-			Quick => '0.3h',
-			Hour  => '1h',
-			Day   => '4h',
+			Quick => '1h',
+			Hour  => '2h',
+			Day   => '8h',
 			Week  => '5d',
 			Month => '20d',
-			Year  => '60d',
+			Year  => '100d',
 		);
 
 		my $tf = $ref->get_timeframe() || '';
 		if ($tf && defined $efforts{$tf}) {
 			$effort = $efforts{$tf};
 		} else {
-			$effort = '2h';
+			$effort = '3h';
 		}
 	}
 
