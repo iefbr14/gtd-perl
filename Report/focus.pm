@@ -40,12 +40,26 @@ sub Report_focus {	#-- List focus -- live, plan or someday
 		@list = meta_pick('Role');
 	}
 
-	report_header(join(' ', "Focus", @_));
+	if (scalar(@_) > 0) {
+		if ($_[0] =~ m/^\d+$/) {
+			my($ref) = $list[0];
+
+			my($title) = $ref->get_tid().': '.$ref->get_title();
+
+			report_header(join(' ', "Focus", $title));
+		} else {
+			report_header(join(' ', "Focus", @_));
+		}
+	} else {
+		report_header("Focus Role");
+	}
+
 
 	# find all next and remember there focus
-	for my $r_ref (sort_tasks @list) {
-		unless (check_task($r_ref)) {
-			display_rgpa($r_ref, "(PLAN)");
+	for my $ref (sort_tasks @list) {
+
+		unless (check_task($ref)) {
+			display_rgpa($ref, "(PLAN)");
 		}
 	}
 	print "***** Work Load: $Proj_cnt Projects, $Work_load action items\n";
