@@ -142,7 +142,7 @@ sub meta_argv {
 			next;
 		}
 
-		if (m/^\d+$/) {
+		if (s/^(\d+:)$/$1/ or m/^\d+$/) {
 			push(@ret, $_);		# tid
 			next;
 		}
@@ -218,7 +218,7 @@ sub meta_pick {
                 }
 
 		# task all by itself
-                if ($arg =~ /^\d+$/) {
+		if ($arg=~ s/^(\d+):$/$1/ or $arg =~ m/^\d+$/) {
                         my($ref) = meta_find($arg);
 
                         unless (defined $ref) {
