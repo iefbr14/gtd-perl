@@ -122,6 +122,7 @@ sub get_description  { my($self) = @_; return default($self->{description}, '');
 sub get_doit         { my($self) = @_; return default($self->{doit}, ''); }
 sub get_due          { my($self) = @_; return default($self->{due}, ''); }
 sub get_effort       { my($self) = @_; return default($self->{effort}, ''); }
+sub get_state        { my($self) = @_; return default($self->{state}, '-'); }
 sub get_isSomeday    { my($self) = @_; return default($self->{isSomeday}, 'n'); }
 sub get_later        { my($self) = @_; return default($self->{later}, ''); }
 sub get_live         { my($self) = @_; return default($self->{live}, 1); }
@@ -148,6 +149,7 @@ sub set_description  {return dset('description', @_); }
 sub set_doit         {return dset('doit', @_); }
 sub set_due          {return dset('due', @_); }
 sub set_effort       {return dset('effort', @_); }
+sub set_state        {return dset('state', @_); }
 sub set_gtd_modified {return dset('gtd_modified', @_); }
 sub set_isSomeday    {return dset('isSomeday', @_); }
 sub set_later        {return dset('later', @_); }

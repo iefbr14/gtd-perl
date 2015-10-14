@@ -10,12 +10,13 @@ BEGIN {
 	# set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
-	@EXPORT      = qw(&color &nl);
+	@EXPORT      = qw(&color &color_ref &nl);
 }
 
 use Hier::Option;
 
 my $Type = 0;
+my $Incolor = 0;
 
 my %Pri_terminal = (
 	"NEXT"	=> 1,
@@ -70,8 +71,9 @@ my %Bg_terminal = (
 );
 
 sub color {
-	my($ref, $fg, $bg) = @_;
+	my($fg, $bg) = @_;
 
+	### print "color: Type:$Type Incolor:$Incolor\n";
 	if ($Type == 0) {
 		guess_type();
 	}
@@ -81,62 +83,76 @@ sub color {
 	}
 
 	if ($Type == 2) {
-		color_terminal($ref, $fg, $bg);
+		unless ($fg) {
+			print "\e[0m" if $Incolor;
+			$Incolor = 0;
+			return;
+		}
+
+		$fg = uc($fg);
+		$bg = uc($bg);
+
+		my($cv) = $Fg_terminal{$fg};
+		my($bv) = $Bg_terminal{$bg};
+
+	#print "$fg=>cv:$cv, $bg=>bv:$bv\n";
+
+		print "\e[". $cv . "m" if defined $cv;
+		print "\e[". $bv . "m" if defined $bv;
+
+		$Incolor = 1;
 		return;
 	}
 
 	if ($Type == 3) {
-		color_html($ref, $fg, $bg);
+		unless ($fg) {
+			print "</font>" if $Incolor;
+			$Incolor = 0;
+			return;
+		}
+
+		$fg = lc($fg);
+		print "</font>" if $Incolor;
+
+		print "<font color=\"$fg\">";
+		$Incolor = 1;
 	}
 }
 
-
 sub guess_type {
-	if (option('Color', 'none') eq 'none') {
+	if (option('Color', 'guess') ne 'guess') {
 		$Type = 1;
 		return;
 	}
 
-	if (defined $ENV{'LINES'}) {
-		$Type = 2 if -t STDOUT;
+	if (defined $ENV{'TERM'}) {
+		### print "TERM: color mode TERM\n";
+
+		$Type = 2;
 		return;
-	}
-	if (defined $ENV{'COLORTERM'}) {
-		$Type = 2 if -t STDOUT;
-		return;
-	}
+	} 
 
 	if (defined $ENV{'HTTP_ACCEPT'}) {
 		$Type = 3;
 		return;
 	}
+
 	# guess failed, no color
 	$Type = 1;
 }
 
-sub color_terminal {
+sub color_ref {
 	my($ref, $fg, $bg) = @_;
 
+	unless ($ref) {
+		print "\e[0m";
+		return;
+	}
+		
 	$fg ||= pick_color_fg($ref);
-	$bg ||= pick_color_bg($ref);
+#	$bg ||= pick_color_bg($ref);
 
-	$fg = uc($fg);
-	$bg = uc($bg);
-
-	my($cv) = $Fg_terminal{$fg};
-	my($bv) = $Bg_terminal{$bg};
-
-#print "$fg=>cv:$cv, $bg=>bv:$bv\n";
-
-	print "\e[". $cv . "m" if defined $cv;
-	print "\e[". $bv . "m" if defined $bv;
-
-}
-
-sub color_html {
-	my($ref, $color) = @_;
-
-	$color ||= pick_color($ref);
+	color($fg, $bg);
 }
 
 sub pick_color_pri {
@@ -148,10 +164,12 @@ sub pick_color_pri {
 	# pick category
 
 
-#	return 'BOLD' if $ref->is_nextaction();
+	return 'BOLD' if $ref->is_nextaction();
+	return 'YELLOW' if $ref->isSomeday();
 
 	return '';
 }
+
 sub pick_color_fg {
 	my($ref) = @_;
 
@@ -160,12 +178,16 @@ sub pick_color_fg {
 	# pick pri
 	# pick category
 
-	return 'RED' if $ref->is_nextaction();
+#	return 'RED' if $ref->is_nextaction();
 	return 'GREY' if $ref->is_someday();
 	return 'STRIKE' if $ref->get_completed();
 
 	my($pri) = $ref->get_priority();
-	return 'PINK' if $pri >= 3;
+	return 'RED'   if $pri <= 1;
+	return 'PINK'  if $pri <= 2;
+	return 'GREEN' if $pri <= 3;
+	return 'BLACK' if $pri <= 4;
+	return 'CYAN'  if $pri > 4;
 
 	return '';
 }
@@ -195,6 +217,9 @@ sub pick_color_bg {
 }
 
 sub nl {
-	color(undef, 'NONE', 'NONE');
+	color();
+	if ($Type == 3) {
+		print "<br>";
+	}
 	print "\n";
 }

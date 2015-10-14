@@ -62,7 +62,9 @@ sub hier_detail {
 
 	my($self, $ref) = @_;
 
+	color_ref($ref);
 	display_task($ref);
+	color();
 }
 
 sub hier_detail_old {
@@ -74,13 +76,13 @@ sub hier_detail_old {
 	my $name = $ref->get_task() || '';
 
 	if ($level == 1) {
-		color($ref);
+		color_ref($ref);
 		print "===== $tid -- $name ====================";
 		nl();
 		return;
 	}
 	if ($level == 2) {
-		color($ref);
+		color_ref($ref);
 		print "----- $tid -- $name --------------------";
 		nl();
 		return;
@@ -91,7 +93,7 @@ sub hier_detail_old {
 	my $desc = summary_line($ref->get_description(), '');
 	my $done = $ref->get_completed() || '';
 
-	color($ref);
+	color_ref($ref);
 
 	printf "%5s %3s ", $tid, $cnt;
 	printf "%-15s", $ref->task_mask_disp() if $Mask;

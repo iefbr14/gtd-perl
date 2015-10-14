@@ -53,6 +53,7 @@ my @Order = (qw(
 	owner
 	palm_id
 	priority
+	state
 	effort
 	resource
 	depends

@@ -32,10 +32,10 @@ sub Report_color {	#-- Detailed list of projects with (next) actions
 
 	for my $fg (@fg) {
 		for my $bg (@bg) {
-			color(undef, $fg, $bg);
+			color($fg, $bg);
 			printf "%-4.4s/%.2s ", $fg,$bg;
 		}
-		color(undef, 'NONE', 'NONE');
+		color('NONE', 'NONE');
 		print "\n";
 	}
 }

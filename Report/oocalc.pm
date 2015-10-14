@@ -238,12 +238,12 @@ sub save_row {
 		if ($old_width < $new_width) {
 			$Widths[$col] = $new_width;
 		}
-		color($g) if $col == 1;
-		color($p) if $col == 3;
-		color($t) if $col == 5;
+		color_ref($g) if $col == 1;
+		color_ref($p) if $col == 3;
+		color_ref($t) if $col == 5;
 
 		$Calc->set_data_xy($col++, $line, $value, $type);
-		color(0);
+		color();
 	}
 }
 

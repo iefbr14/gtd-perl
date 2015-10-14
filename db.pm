@@ -72,9 +72,10 @@ my(%Key_type) = (
 	_gtd_context	=> 0x21,
 
 	palm_id         => 0x11,
-	type            => 0x31,
+	type            => 0x21,
 	doit            => 0x11,
 	effort		=> 0x11,
+	'state'		=> 0x11,
 	resource	=> 0x11,
 	depends         => 0x11,
 	percent         => 0x11,
