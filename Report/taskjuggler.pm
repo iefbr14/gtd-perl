@@ -221,7 +221,7 @@ sub end_detail {
 	unless ($ref->{_effort}) {
 		my($task) = $ref->get_task();
 
-		print {$fd} $indent, qq(   effort 1h  # Need planning \n);
+		print {$fd} $indent, qq(   effort 2h  # Need planning \n);
 		warn "Task $tid: $task Need effort planning\n";
 
 		++$ref->{_effort};
