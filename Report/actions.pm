@@ -153,8 +153,8 @@ sub report_actions {
 
 		if ($last_goal != $gid) {
 			print '#', "=" x $cols, "\n" if $last_goal;
-			print "\t\tR $rid: ",$rref->get_task()," -- ";
-			print "G $gid: ",$gref->get_task(),"\n\n";
+			print "\t\tR $rid: ",$rref->get_title()," -- ";
+			print "G $gid: ",$gref->get_title(),"\n\n";
 			$last_goal = $gid;
 		} elsif ($last_proj != $pid) {
 			print '#', "-" x $cols, "\n";

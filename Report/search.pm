@@ -50,7 +50,7 @@ sub Report_search {	#-- Search for items
 sub match_desc {
 	my($ref, $desc) = @_;
 
-	return 1 if $ref->get_task() =~ m/$desc/i;
+	return 1 if $ref->get_title() =~ m/$desc/i;
 	return 1 if $ref->get_description() =~ m/$desc/i;
 	return 1 if $ref->get_note() =~ m/$desc/i;
 	return 0;

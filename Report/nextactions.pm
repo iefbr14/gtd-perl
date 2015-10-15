@@ -39,13 +39,13 @@ $pid, $pic, $parent,      $tid, $tic, $name,
 ##FILTER	next unless $ref->is_nextaction();
 ##FILTER	next if $ref->filtered();
 
-		$name = $ref->get_task() || '';
+		$name = $ref->get_title() || '';
 		$tic = action_disp($ref);
 
 		$pref = $ref->get_parent();
 #next unless $pref->is_nextaction();
 		if (defined $pref) {
-			$parent = $pref->get_task();
+			$parent = $pref->get_title();
 			$pid = $pref->get_tid();
 		} else {
 			$parent = '-orphined-';

@@ -106,19 +106,19 @@ sub find_hier {
 
 	for my $ref (meta_hier()) {
 		next unless $ref->get_type() eq $type;
-		next unless $ref->get_task() eq $goal;
+		next unless $ref->get_title() eq $goal;
 
 		return $ref->get_tid();
 	}
 	for my $ref (meta_hier()) {
 		next unless $ref->get_type() eq $type;
-		next unless lc($ref->get_task()) eq lc($goal);
+		next unless lc($ref->get_title()) eq lc($goal);
 
 		return $ref->get_tid();
 	}
 
 	for my $ref (meta_hier()) {
-		next unless $ref->get_task() eq $goal;
+		next unless $ref->get_title() eq $goal;
 	
 		my($type) = $ref->get_type();
 		my($tid) = $ref->get_tid();

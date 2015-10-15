@@ -106,7 +106,7 @@ sub disp {
 	my $pri = $ref->get_priority();
 	my $type = uc($ref->get_type());
 
-	return "$type:$tid $key <$pri> $ref->get_task()";
+	return "$type:$tid $key <$pri> $ref->get_title()";
 }
 
 sub by_task {

@@ -297,7 +297,7 @@ $tid,  $pri, $cat,       $doit,    $desc
 
 		$pri       = $ref->get_priority();
 
-		$task      = $ref->get_task() || $ref->get_context() || '';
+		$task      = $ref->get_title() || $ref->get_context() || '';
 		$cat       = $ref->get_category() || '';
 		$created   = $ref->get_created();
 		$modified  = $ref->get_modified() || $created;

@@ -43,7 +43,7 @@ sub print_ref {
 	my($nextaction)  = $ref->is_nextaction() ? ' Next-action' : '';
 	my($someday)      = $ref->is_someday() ? ' (someday)' :'';
 
-	my($task)        = $ref->get_task();
+	my($task)        = $ref->get_title();
 	my($description) = $ref->get_description();
 	my($note)        = $ref->get_note();
 

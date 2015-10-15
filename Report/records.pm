@@ -65,7 +65,7 @@ sub list_records {
 
 		printf ("%-15s %6d %s ", $f, $tid, $flags);
 
-		print "\t", $ref->get_task(), "\n";
+		print "\t", $ref->get_title(), "\n";
 	}
 }
 
@@ -78,7 +78,7 @@ sub disp {
 	my $pri = $ref->get_priority();
 	my $type = uc($ref->get_type());
 
-	return "$type:$tid $key <$pri> $ref->get_task()";
+	return "$type:$tid $key <$pri> $ref->get_title()";
 }
 
 1;  # don't forget to return a true value from the file

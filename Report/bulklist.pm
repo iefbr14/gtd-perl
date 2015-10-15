@@ -101,19 +101,19 @@ sub find_hier {
 
 	for my $ref (meta_hier()) {
 		next unless $ref->get_type() eq $type;
-		next unless $ref->get_task() eq $goal;
+		next unless $ref->get_title() eq $goal;
 
 		return $ref->get_tid();
 	}
 	for my $ref (meta_hier()) {
 		next unless $ref->get_type() eq $type;
-		next unless lc($ref->get_task()) eq lc($goal);
+		next unless lc($ref->get_title()) eq lc($goal);
 
 		return $ref->get_tid();
 	}
 
 	for my $ref (meta_hier()) {
-		next unless $ref->get_task() eq $goal;
+		next unless $ref->get_title() eq $goal;
 	
 		my($type) = $ref->get_type();
 		my($tid) = $ref->get_tid();
@@ -201,7 +201,7 @@ sub hier_detail {
 	my($indent) = $ref->indent();
 	my($resource) = new Hier::Resource($ref);
 	
-	$name = $ref->get_task() || '';
+	$name = $ref->get_title() || '';
 	$pri  = $ref->get_priority();
 	$desc = summary_line($ref->get_description(), '', 1);
 	$note = summary_line($ref->get_note(), '', 1);
@@ -377,7 +377,7 @@ sub report_actions {
 
 		if ($last_goal != $gid) {
 			print '#', "=" x $cols, "\n" if $last_goal;
-			print "$gid:\tG:",$gref->get_task(),"\n";
+			print "$gid:\tG:",$gref->get_title(),"\n";
 			$last_goal = $gid;
 		} 
 		print "$pid:\tP:", $pref->get_title(),"\n";

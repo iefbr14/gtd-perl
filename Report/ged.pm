@@ -94,7 +94,7 @@ sub hier_detail {
 
 	my($resource) = new Hier::Resource($ref);
 	
-	$name = $ref->get_task() || '';
+	$name = $ref->get_title() || '';
 	$tj_pri  = task_priority($ref);
 	$desc = summary_line($ref->get_description(), '', 1);
 	$note = summary_line($ref->get_note(), '', 1);
@@ -280,7 +280,7 @@ sub dep_path {
 	my($ref) = meta_find($tid);
 	return unless $ref;
 
-	my($task) = $ref->get_task($ref);
+	my($task) = $ref->get_title($ref);
 	my($path) = $ref->get_type() . '_' . $tid;
 	my($pref);
 

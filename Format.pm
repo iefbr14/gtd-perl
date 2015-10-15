@@ -284,7 +284,7 @@ sub disp_item {
 
 	my($tid) = $ref->get_tid();
 	my($type) = type_disp($ref);
-	my($title) = $ref->get_task();
+	my($title) = $ref->get_title();
 
 	my($desc) = format_summary($ref->get_description(), ' -- ');
 	print {$fd} "$tid\t  [_] $title$desc\n";
@@ -295,7 +295,7 @@ sub disp_simple {
 
 	my($tid) = $ref->get_tid();
 	my($type) = type_disp($ref);
-	my($title) = $ref->get_task();
+	my($title) = $ref->get_title();
 
 	if ($extra) {
 		$extra = ' '. $extra;
@@ -655,7 +655,7 @@ sub disp_task {
 	if ($type eq 'a') {
 		my($proj) = $ref->get_parent();
 		if ($proj) {
-			$project = $proj->get_task();
+			$project = $proj->get_title();
 			$project =~ s/ /_/g;
 			$project = "/$project/"
 		} else {
@@ -663,7 +663,7 @@ sub disp_task {
 	} else {
 		$project = ' '.type_name($type).':';
 	}
-	$action = $ref->get_task();
+	$action = $ref->get_title();
 	my($tid) = '['.$ref->get_tid().']';
 
 	if ($ref->is_nextaction()) {
@@ -709,7 +709,7 @@ sub disp_hier {
 	my $level = $ref->level();
 
 	my $tid  = $ref->get_tid();
-	my $name = $ref->get_task() || '';
+	my $name = $ref->get_title() || '';
 
 	if ($level == 1) {
 		color($fd, $ref);
@@ -776,7 +776,7 @@ sub disp_doit_csv {
 		$pname    = $pref->get_title();
 	}
 
-	$task      = $ref->get_task() || $ref->get_context() || '';
+	$task      = $ref->get_title() || $ref->get_context() || '';
 	$desc      = $ref->get_description();
 
 	$desc =~ s/\n.*//s;
@@ -814,7 +814,7 @@ $tid,  $pri, $cat,       $doit,    $desc
 
 	$pri       = $ref->get_priority();
 
-	$task      = $ref->get_task() || $ref->get_context() || '';
+	$task      = $ref->get_title() || $ref->get_context() || '';
 	$cat       = $ref->get_category() || '';
 	$created   = $ref->get_created();
 	$modified  = $ref->get_modified() || $created;
@@ -894,7 +894,7 @@ $tid,$key,$pri, $cat,        $due,    $task
 	$tid       = $ref->get_tid();
 	$pri       = $ref->get_priority();
 
-	$task      = $ref->get_task() || $ref->get_context() || '';
+	$task      = $ref->get_title() || $ref->get_context() || '';
 	$cat       = $ref->get_category() || '';
 	$created   = $ref->get_created();
 	$modified  = $ref->get_modified() || $created;

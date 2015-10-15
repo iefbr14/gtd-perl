@@ -51,11 +51,11 @@ sub merge_project {
 ###	Merge: description
 	my($desc) = $master->get_description();
 	chomp $desc; chomp $desc;
-	if ($master->get_task() ne $slave->get_task()) {
+	if ($master->get_title() ne $slave->get_title()) {
 		if ($desc) {
 			$desc .= "\n" . '-'x30;
 		}
-		$desc .= "\n" . $slave->get_task() ."\n";
+		$desc .= "\n" . $slave->get_title() ."\n";
 		$sep = 1;
 	}
 	if ($slave->get_description()) {

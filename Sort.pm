@@ -77,29 +77,31 @@ sub sort_tasks {
 
 	for my $ref (@list) {
 		my $tid = $ref->get_tid();
-		my $title = $ref->get_title();
-		print "$Meta_key{$tid} $tid => $title\n";
+		my $title = lc_title($ref);
+
+		my $key = $Meta_key{$tid} || '';
+		print "$tid => $title\n";
 	}
 	return @list;
 }
 
 my %Sort_cache;
 
-sub sorter($$) {
-	my($by, $itemlist) = @_;
-
-	###BUG### fetch command line option sort override
-	if ($by =~ s/^\^// and !defined $Criteria{$by}) {
-		die "Huh? sort '$by' unknown\n";
-	}
-
-	my $doby = $Criteria{$by};
-	if (option('Reverse')) {
-		return reverse sort { &$doby($a, $b) } @$itemlist;
-	} else {
-		return sort { &$doby($a, $b) } @$itemlist;
-	}
-}
+#sub sorter($$) {
+#	my($by, $itemlist) = @_;
+#
+#	###BUG### fetch command line option sort override
+#	if ($by =~ s/^\^// and !defined $Criteria{$by}) {
+#		die "Huh? sort '$by' unknown\n";
+#	}
+#
+#	my $doby = $Criteria{$by};
+#	if (option('Reverse')) {
+#		return reverse sort { &$doby($a, $b) } @$itemlist;
+#	} else {
+#		return sort { &$doby($a, $b) } @$itemlist;
+#	}
+#}
 
 sub sort_by {
 	my($criteria) = @_;
@@ -140,7 +142,7 @@ sub by_hier($$) {
 	}
 
 	# no parents or parents equal
-	return  $a->get_title() cmp $b->get_title()
+	return  lc_title($a) cmp lc_title($b)
 	||      $a->get_tid() <=> $b->get_tid();
 }
 
@@ -181,7 +183,7 @@ sub by_Task($$) {
 sub by_task($$) {
 	my($a, $b) = @_;
 
-	return lc($a->get_task()) cmp lc($b->get_task());
+	return lc_title($a) cmp lc_title($b);
 }
 
 sub by_pri($$) {
@@ -229,7 +231,7 @@ sub sort_goal {
 
 	my(@list);
 	for (;;) {
-		unshift(@list, $ref->get_title(), $tid);
+		unshift(@list, lc_title($ref), $tid);
 		last if $ref->get_type() eq 'g';
 		$ref = $ref->get_parent;
 		last if !defined $ref;
@@ -254,16 +256,16 @@ sub Meta_key {
 	my($val) = $Meta_key{$tid};
 	return $val  if defined $val;
 
-	my($title) = lc($ref->get_title());
+	my($title) = lc_title($ref);
 
 	my($p_title) = '--';
 	my($g_title) = '--';
 	my($p_ref) = $ref->get_parent();
 	if ($p_ref) {
-		$p_title = $p_ref->get_title();
+		$p_title = lc_title($p_ref);
 		my($g_ref) = $p_ref->get_parent();
 		if ($g_ref) {
-			$g_title = $g_ref->get_title();
+			$g_title = lc_title($g_ref);
 		}
 	} 
 	$val = "$g_title\t$p_title\t$title\t$tid",  
@@ -355,6 +357,17 @@ sub by_panic($$) {
 
 	return (calc_panic($a) cmp calc_panic($b))
 	    || by_hier($a, $b);
+}
+
+sub lc_title {
+	my($ref) = @_;
+
+	my($title) = $ref->get_title();
+
+	$title =~ s/\[\[//g;
+	$title =~ s/\]\]//g;
+
+	return lc($title);
 }
 
 1;

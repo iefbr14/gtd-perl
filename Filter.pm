@@ -613,7 +613,7 @@ sub apply_ref_filters {
 
 		if ($Debug) {
 			my($tid) = $ref->get_tid();
-			my($title) = $ref->get_task();
+			my($title) = $ref->get_title();
 			my($name) = $filter->{name};
 			warn "#?Filter($name): $reason apply $dir for $tid: $title\n"; 
 		}

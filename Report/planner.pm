@@ -65,7 +65,7 @@ sub hier_detail {
 	my($role) = $resource->resource($ref);
 	
 
-	$name = xml($ref->get_task() || '');
+	$name = xml($ref->get_title() || '');
 	$pri  = $ref->get_priority();
 	$desc = xml(summary_line($ref->get_description(), '', 1));
 	$note = xml(summary_line($ref->get_note(), '', 1));

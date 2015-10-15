@@ -42,12 +42,12 @@ $tid, $pid,$cnt,$cat,     $parent,     $name,      $desc
 		$cnt = $ref->count_children() || '';
 		
 		$cat = $ref->get_category() || '';
-		$name = $ref->get_task() || '';
+		$name = $ref->get_title() || '';
 		$desc = $ref->get_description() || '';
 
 		$pref = $ref->get_parent();
 		if (defined $pref) {
-			$parent = $pref->get_task();
+			$parent = $pref->get_title();
 			$pid = $pref->get_tid();
 		} else {
 			$parent = 'orphined';

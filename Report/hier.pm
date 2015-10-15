@@ -73,7 +73,7 @@ sub hier_detail_old {
 	my $level = $ref->level();
 
 	my $tid  = $ref->get_tid();
-	my $name = $ref->get_task() || '';
+	my $name = $ref->get_title() || '';
 
 	if ($level == 1) {
 		color_ref($ref);

@@ -132,7 +132,7 @@ sub get_nextaction   { my($self) = @_; return default($self->{nextaction}, 'n');
 sub get_note         { my($self) = @_; return default($self->{note}, ''); }
 sub get_priority     { my($self) = @_; return default($self->{priority}, 4); }
 sub get_title        { my($self) = @_; return default($self->{task}, ''); }
-sub get_task         { my($self) = @_; return default($self->{task}, ''); }
+sub get_task         { die "call get title"; }
 sub get_tickledate   { my($self) = @_; return default($self->{tickledate}, ''); }
 sub get_timeframe    { my($self) = @_; return default($self->{timeframe}, ''); }
 sub get_todo_only    { my($self) = @_; return default($self->{_todo_only}, 0); }

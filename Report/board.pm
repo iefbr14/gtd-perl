@@ -47,6 +47,7 @@ my @Class = qw(Done Someday Action Next Future Total);
 
 use Hier::util;
 use Hier::Meta;
+use Hier::Sort;
 use Hier::Format;
 use Hier::Option;
 use Hier::Resource;
@@ -56,10 +57,11 @@ my $Hours_task = 0;
 my $Hours_next = 0;
 
 my $Cols;
+my %Seen;
 
 sub Report_board {	#-- report board of projects/actions
 	# counts use it and it give a context
-	meta_filter('+active', '^tid', 'simple');	
+	meta_filter('+active', '^title', 'simple');	
 
 	my(@list) = meta_pick(@_);
 
@@ -99,28 +101,42 @@ sub check_roles {
 
 sub check_a_role {
 	my($role_ref) = @_;
+	my(@list) = ($role_ref);
 
 	my($anal,  @anal);
 	my($devel, @devel);
 	my($test,  @test);
 	my($done,  @done);
 
-	for my $gref ($role_ref->get_children()) {
-		for my $ref ($gref->get_children()) {
-			my $state = $ref->get_state();
+	my(@board);
 
-			check_group($ref, $state, '-', \@anal);
-			check_state($ref, $state, 'a', \$anal);
+	while (@list) {
+		my($ref) = shift @list;
+		next if $Seen{$ref}++;
+	
+		my($type) = $ref->get_type();
 
-			check_group($ref, $state, 'c', \@devel);
-			check_state($ref, $state, 'd', \$devel);
-
-			check_group($ref, $state, 'f', \@test);
-			check_state($ref, $state, 't', \$test);
-
-			check_group($ref, $state, 'w', \@done);
-			check_state($ref, $state, 'z', \$done);
+		if ($type =~ /[mvog]/) {
+			push(@list, $ref->get_children());
+			next;
 		}
+		push(@board, $ref);
+	}
+
+	for my $ref (sort_tasks @board) {
+		my $state = $ref->get_state();
+
+		check_group($ref, $state, '-', \@anal);
+		check_state($ref, $state, 'a', \$anal);
+
+		check_group($ref, $state, 'c', \@devel);
+		check_state($ref, $state, 'd', \$devel);
+
+		check_group($ref, $state, 'f', \@test);
+		check_state($ref, $state, 't', \$test);
+
+		check_group($ref, $state, 'w', \@done);
+		check_state($ref, $state, 'z', \$done);
 	}
 
 	display_rgpa($role_ref);
@@ -138,7 +154,10 @@ sub check_a_role {
 	color('GREEN'); col($done, "\n", 3);
 	color();
 
-	my($lines) = lines() - 5;
+	print '-'x (columns()-1), "\n";
+
+	my($lines) = lines() - 6;
+
 	while (scalar(@anal)
 	    || scalar(@devel)
 	    || scalar(@test)

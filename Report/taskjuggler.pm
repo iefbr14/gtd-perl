@@ -129,7 +129,7 @@ sub hier_detail {
 	my($indent) = indent($ref);
 	my($resource) = new Hier::Resource($ref);
 	
-	$name = $ref->get_task() || '';
+	$name = $ref->get_title() || '';
 	$tj_pri  = task_priority($ref);
 	$desc = summary_line($ref->get_description(), '', 1);
 	$note = summary_line($ref->get_note(), '', 1);
@@ -219,7 +219,7 @@ sub end_detail {
 	my($type) = $ref->get_type();
 
 	unless ($ref->{_effort}) {
-		my($task) = $ref->get_task();
+		my($task) = $ref->get_title();
 
 		print {$fd} $indent, qq(   effort 2h  # Need planning \n);
 		warn "Task $tid: $task Need effort planning\n";
@@ -413,7 +413,7 @@ sub dep_path {
 
 	my($path) = $Dep_list{$tid};
 
-	my($task) = $ref->get_task($ref);
+	my($task) = $ref->get_title($ref);
 
 	return "$path # $task" if $path;
 
