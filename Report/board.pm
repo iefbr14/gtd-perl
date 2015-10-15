@@ -34,7 +34,8 @@ my %Types = (
 );
 
 my %States = (
-	a => 'Analysis',
+	a => 'Analysis Needed',
+	b => 'Being Analysed',
 	c => 'Completed Analysis',
 	d => 'Doing',
 	f => 'Finished Doing',
@@ -89,7 +90,9 @@ TID: Keyword
 
 Colors:
 
-Green: inprogress
+Green:  inprogress
+Red:    data incomplete
+Purple: overcommited
 
 =cut
 
@@ -103,6 +106,7 @@ sub check_a_role {
 	my($role_ref) = @_;
 	my(@list) = ($role_ref);
 
+	my(        @want);
 	my($anal,  @anal);
 	my($devel, @devel);
 	my($test,  @test);
@@ -126,8 +130,10 @@ sub check_a_role {
 	for my $ref (sort_tasks @board) {
 		my $state = $ref->get_state();
 
-		check_group($ref, $state, '-', \@anal);
-		check_state($ref, $state, 'a', \$anal);
+		check_group($ref, $state, '-', \@want);
+
+		check_group($ref, $state, 'a', \@anal);
+		check_state($ref, $state, 'b', \$anal);
 
 		check_group($ref, $state, 'c', \@devel);
 		check_state($ref, $state, 'd', \$devel);
@@ -174,6 +180,20 @@ sub check_a_role {
 			last;
 		}
 	}
+
+	if (@want) {
+		print '-'x (columns()-1), "\n";
+	}
+	while (@want) {
+		if (--$lines <= 0) {
+			print "----- more ----\n";
+			last;
+		}
+		col(shift @want,  ' ' ,4);
+		col(shift @want,  ' ' ,4);
+		col(shift @want,  ' ' ,4);
+		col(shift @want, "\n" ,4);
+	}
 }
 
 sub col {
@@ -191,6 +211,9 @@ sub col {
 
 	} elsif ($how == 3) {
 		check_done($ref);
+
+	} elsif ($how == 4) {
+		check_want($ref) || check_empty($ref);
 	}
 
 	my($tid) = $ref->get_tid();
@@ -202,6 +225,18 @@ sub col {
 	printf("%5d %-${Cols}.${Cols}s%s", $tid, $title, $sep);
 
 	color();
+}
+
+sub check_want {
+	my($pref) = @_;
+
+	my($title) = $pref->get_title();
+
+	if ($title =~ /\[\[.*\]\]/) {
+		color('GREEN');
+		return 1;
+	};
+	return 0;
 }
 
 sub check_empty {

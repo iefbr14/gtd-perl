@@ -34,7 +34,8 @@ my %Types = (
 );
 
 my %States = (
-	a => 'Analysis',
+	a => 'Analysis Needed',
+	b => 'Being Analysed',
 	c => 'Completed Analysis',
 	d => 'Doing',
 	f => 'Finished Doing',
@@ -58,7 +59,26 @@ sub Report_kanban {	#-- report kanban of projects/actions
 	# counts use it and it give a context
 	meta_filter('+active', '^tid', 'simple');	
 
-	my(@list) = meta_pick(@_);
+	my(@args);
+	foreach my $arg (meta_argv(@_)) {
+		if ($arg =~ s/^\.//) {
+			kanban_bump($arg);
+			next;
+		}
+
+		if ($arg =~ m/^(\d+)=(.)$/) {
+			kanban_state($1, $2);
+			next;
+		}
+		push(@args, $arg);
+	}
+
+	# done if we had args but all were processed
+	if (scalar(@_) > 0 && scalar(@args) == 0) {
+		exit 0;
+	}
+
+	my(@list) = meta_pick(@args);
 
 	if (@list == 0) {
 		@list = meta_pick('roles');
@@ -100,6 +120,53 @@ We need to check in each role there is:
 
 =cut
 
+sub kanban_bump {
+	my(@arg) = @_;
+
+	my($fail) = 0;
+	my(@list);
+	while (@arg) {
+		my($arg) = shift @arg;
+		if ($arg =~ /,/) {
+			push(@arg, split(/,/, $arg));
+			next;
+		}
+
+		my($ref) = meta_find($arg);
+
+		unless (defined $ref) {
+			warn "Task $arg doesn't exits\n";
+			$fail++;
+			next;
+		}
+		push(@list, $ref);
+		next;
+	}
+	exit 1 if $fail;
+
+	for my $ref (@list) {
+		my($state) = $ref->get_state();
+
+		if ($state =~ tr/-abcdft/abcdftw/) {
+			$ref->set_state($state);
+		} else {
+			display_task($ref, "|<<< unknown state $state");
+		}
+	}
+}
+
+sub kanban_state {
+	my($tid, $state) = @_;
+
+	my($ref) = meta_find($tid);
+
+	unless (defined $ref) {
+		die "Task $tid doesn't exits\n";
+	}
+
+	$ref->set_state($state);
+}
+	
 sub check_hier {
 	my($count) = 0;
 
@@ -138,12 +205,13 @@ sub check_a_role {
 		for my $ref ($gref->get_children()) {
 			my $state = $ref->get_state();
 
-			unless ($state =~ m/[-acdftwz]/) {
+			unless ($state =~ m/[-abcdftwz]/) {
 				display_task($ref, "Unknown state $state");
 				next;
 			}
+			check_title($ref) if $state ne '-';
 
-			check_state($ref, $state, 'a', \$anal);
+			check_state($ref, $state, 'b', \$anal);
 			check_state($ref, $state, 'd', \$devel);
 			check_state($ref, $state, 't', \$test);
 			check_state($ref, $state, 'w', \$wiki);
@@ -154,7 +222,7 @@ sub check_a_role {
 	$needs .= ' analysys' unless $anal;
 	$needs .= ' devel' unless $devel;
 	$needs .= ' test' unless $test;
-	$needs .= ' wiki' unless $wiki;
+#	$needs .= ' wiki' unless $wiki;
 
 	display_task($role_ref, "\t|<<<Needs".$needs) if $needs;
 
@@ -208,6 +276,18 @@ sub check_liveproj {
 		++$count;
 	}
 	return $count;
+}
+
+sub check_title {
+	my($pref) = @_;
+
+	my($title) = $pref->get_title();
+
+	if ($title =~ /\[\[.*\]\]/) {
+		return;
+	}
+
+	display_task($pref, "\t| !!! no wiki title");
 }
 
 sub check_task {
