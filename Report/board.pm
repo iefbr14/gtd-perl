@@ -13,26 +13,6 @@ BEGIN {
 	@EXPORT      = qw( &Report_board );
 }
 
-my %Types = (
-        'Value'         => 'm',
-        'Vision'        => 'v',
-
-        'Role'          => 'o',
-        'Goal'          => 'g',
-
-        'Project'       => 'p',
-
-        'Action'        => 'a',
-        'Inbox'         => 'i',
-        'Waiting'       => 'w',
-
-        'Reference'     => 'r',
-
-        'List'          => 'L',
-        'Checklist'     => 'C',
-        'Item'          => 'T',
-);
-
 my %States = (
 	a => 'Analysis Needed',
 	b => 'Being Analysed',
@@ -62,7 +42,7 @@ my %Seen;
 
 sub Report_board {	#-- report board of projects/actions
 	# counts use it and it give a context
-	meta_filter('+active', '^title', 'simple');	
+	meta_filter('+active', '^age', 'simple');
 
 	my(@list) = meta_pick(@_);
 
