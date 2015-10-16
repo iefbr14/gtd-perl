@@ -88,20 +88,26 @@ sub is_type_action {
 
 # command line version
 sub new_task {
-	my($type, $task, $title) = @_;
+	my($type, $desc) = @_;
 
 	my($pri, $category, $note, $desc, $line);
 
-	$task     = option("Task") || $task;
+	$task     = option("Title");
 	$pri      = option('Priority') || 3;
-	$desc     = option("Title") || $title;
+	$desc     = option("Desc") || $desc;
 
 	$category = option('Category') || '';
 	$note     = option('Note'); 
 
 	my $ref = Hier::Tasks->new(undef);
 
+	if ($pri > 5) {
+		$pri -= 5;
+		$ref->set_isSomeday('y');
+	}
+	$ref->set_nextaction('y') if $pri < 3;
 	$ref->set_priority($pri);
+
 	$ref->set_category($category);
 	$ref->set_title($task);
 	$ref->set_description($desc);
@@ -109,8 +115,6 @@ sub new_task {
 
 	$ref->set_type($type);
 
-	$ref->set_nextaction('y') if $pri < 3;
-	$ref->set_isSomeday('y') if $pri > 3;
 
 	$ref->insert();
 
@@ -133,16 +137,19 @@ sub new_inbox {
 
 	my $ref = Hier::Tasks->new(undef);
 
+	if ($pri > 5) {
+		$pri -= 5;
+		$ref->set_isSomeday('y');
+	}
+	$ref->set_nextaction('y') if $pri < 3;
 	$ref->set_priority($pri);
+
 	$ref->set_category($category);
 	$ref->set_title($task);
 	$ref->set_description($desc);
 	$ref->set_note($note);
 
 	$ref->set_type($type);
-	$ref->set_nextaction('y') if $pri > 3;
-
-	$ref->set_isSomeday('y') if $pri < 3;
 
 	$ref->insert();
 
@@ -167,15 +174,16 @@ sub new_action {
 
 	$ref->set_type('a'); # action
 
+	if ($pri > 5) {
+		$pri -= 5;
+		$ref->set_isSomeday('y');
+	}
+	$ref->set_nextaction('y') if $pri < 3;
 	$ref->set_priority($pri);
 	$ref->set_category($category);
 	$ref->set_title($task);
 	$ref->set_description($desc);
 	$ref->set_note($note);
-
-	$ref->set_nextaction('y') if $pri > 3;
-
-	$ref->set_isSomeday('y') if $pri < 3;
 
 	$ref->insert();
 

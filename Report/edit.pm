@@ -25,8 +25,7 @@ sub Report_edit {	#-- Edit listed actions/projects
 
 	my(@list) = meta_pick(@_);
 	if (@list == 0) {
-		print "No items to edit\n";
-		exit;
+		die "No items to edit\n";
 	}
     
 	umask(0077);
@@ -67,8 +66,6 @@ sub Report_edit {	#-- Edit listed actions/projects
 	close($ifd);
 
 	unlink("/tmp/todo.$$");
-
-	exit 0;
 }
 
 sub save {

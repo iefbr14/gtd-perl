@@ -23,14 +23,30 @@ package Hier::Report::bulkload;
 
 =cut
 
+BEGIN {
+	use Exporter   ();
+	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
+
+	# set the version for version checking
+	$VERSION     = 1.00;
+	@ISA         = qw(Exporter);
+	@EXPORT      = qw(&Report_bulkload);
+}
+
 use strict;
 use warnings;
 
 use Hier::Meta;
 use Hier::Option;
+use Hier::Report::edit;
 
 my $Parent;
+my $Child;
 my $Type;
+my $Info = {};
+
+my $Prompt = '';
+my $Debug = 1;
 
 sub Report_bulkload { #-- Create Projects/Actions items from a file
 	my($pid);
@@ -42,16 +58,88 @@ sub Report_bulkload { #-- Create Projects/Actions items from a file
 
 	my(@lines);
 
+	if (-t STDIN) {
+		$Prompt = '> ';
+		$| = 1;
+	}
+
 	for (;;) {
 		if (@lines) {
 			$_ = shift @lines;
 		} else {
+			if ($desc && $Prompt) {
+				print '+ ';
+			} else {
+				print $Prompt;
+			}
+
 			$_ = <>;
 			last unless defined $_;
 			chomp;
 		}
 
 		next if /^#/;
+		if (/^debug/) {
+			$Debug = 1;
+			print "Debug on\n";
+			next;
+		}
+		#---------------------------------------------------
+		# default values
+                if (/^pri\D+(\d+)/) {
+			set_option('Priority', $1);
+                        next;
+                }
+                if (/^limit\D+(\d+)/) {
+                        set_option('Limit', $1);
+                        next;
+                }
+                if (/^format\s(\S+)/) {
+                        set_option('Format', $1);
+                        next;
+                }
+                if (/^header\s(\S+)/) {
+                        set_option('Header', $1);
+                        next;
+                }
+
+                if (/^sort\s(\S+)/) {
+                        set_option('Header', $1);
+                        next;
+                }
+		if (/^edit$/) {
+			eval {
+				Report_edit($pid, $Child);
+			}; if ($@) {
+				print "Trapped error: $@\n";
+			}
+			next;
+		}
+
+		#---------------------------------------------------
+
+		if (/^(\d+):$/) {
+			my($tid) = $1;
+			# get context
+			my($pref) = meta_find($tid);
+			unless ($pref) {
+				print "Can't find pid: $tid\n";
+				next;
+			}
+
+			$pid = $pref->get_tid();
+			my($type) = $pref->get_type();
+			$parents->{$type} = $pid;
+			
+			print "Parent($type): $tid - ", $pref->get_title(), "\n";
+			next;
+		}
+
+		if (s/^([a-z]+):\s*//) {
+			chomp;
+			$Info->{$1} = $_;
+			next;
+		}
 
 		if (s/^(\d+)\t[A-Z]:\s*//) {
 			&$action($parents, $desc);
@@ -129,7 +217,14 @@ sub find_hier {
 }
 
 sub add_nothing {
+	my($parents, $desc) = @_;
+
 	# do nothing
+	print "# nothing pending\n" if $Debug;
+
+	if ($desc) {
+		print "Lost description\n" if $desc;
+	}
 }
 
 sub add_goal {
@@ -139,10 +234,8 @@ sub add_goal {
 	$desc =~ s/^\n*//s;
 
 	$Parent = $parents->{'r'};
-	$Type = 'g';
 
-	$tid = add_task($desc);
-	print "Added goal $tid: $desc\n";
+	$tid = add_task('g', $desc);
 
 	$parents->{'g'} = $tid;
 }
@@ -154,10 +247,8 @@ sub add_project {
 	$desc =~ s/^\n*//s;
 
 	$Parent = $parents->{'g'};
-	$Type = 'p';
 
-	$tid = add_task($desc);
-	print "Added project $tid: $desc\n";
+	$tid = add_task('p', $desc);
 
 	$parents->{'p'} = $tid;
 }
@@ -168,10 +259,53 @@ sub add_action {
 
 	$desc =~ s/^\n*//s;
 	$Parent = $parents->{'p'};
-	$Type = 'n';
 
-	$tid = add_task($desc);
-	print "Added task $tid: $desc\n";
+	$tid = add_task('a', $desc);
+}
+
+sub add_task {
+	my($type, $desc) = @_;
+
+	my($pri, $title, $category, $note, $line);
+
+	$title    = option("Title");
+	$pri      = option('Priority') || 4;
+	$desc     = option("Desc") || $desc;
+
+	$category = option('Category') || '';
+	$note     = option('Note'); 
+
+	my $ref = Hier::Tasks->new(undef);
+
+	$ref->set_category($category);
+	$ref->set_title($title);
+	$ref->set_description($desc);
+	$ref->set_note($note);
+
+	$ref->set_type($type);
+
+	if ($pri > 5) {
+		$pri -= 5;
+		$ref->set_isSomeday('y');
+	}
+	$ref->set_nextaction('y') if $pri < 3;
+	$ref->set_priority($pri);
+
+	print "Parent: $Parent\n";
+
+	$Child = $ref->get_tid();
+
+	$ref->set_parents_ids($Parent);
+
+	print "Created ($type): ", $ref->get_tid(), "\n";
+
+	for my $key (keys %$Info) {
+		$ref->set_KEY($key, $Info->{$key});
+	}
+	$Info = {};
+
+	$ref->insert();
+	return $ref->get_tid();
 }
 
 1;  # don't forget to return a true value from the file
