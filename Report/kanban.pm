@@ -13,26 +13,6 @@ BEGIN {
 	@EXPORT      = qw( &Report_kanban );
 }
 
-my %Types = (
-        'Value'         => 'm',
-        'Vision'        => 'v',
-
-        'Role'          => 'o',
-        'Goal'          => 'g',
-
-        'Project'       => 'p',
-
-        'Action'        => 'a',
-        'Inbox'         => 'i',
-        'Waiting'       => 'w',
-
-        'Reference'     => 'r',
-
-        'List'          => 'L',
-        'Checklist'     => 'C',
-        'Item'          => 'T',
-);
-
 my %States = (
 	a => 'Analysis Needed',
 	b => 'Being Analysed',
@@ -44,9 +24,8 @@ my %States = (
 	z => 'Z all done', 		# should have a completed date
 );
 
-my @Class = qw(Done Someday Action Next Future Total);
-
 use Hier::util;
+use Hier::Color;
 use Hier::Meta;
 use Hier::Format;
 use Hier::Option;
@@ -54,6 +33,8 @@ use Hier::Resource;
 
 my $Hours_task = 0;
 my $Hours_next = 0;
+
+my %Fook;
 
 sub Report_kanban {	#-- report kanban of projects/actions
 	# counts use it and it give a context
@@ -224,19 +205,31 @@ sub check_a_role {
 	$needs .= ' test' unless $test;
 #	$needs .= ' wiki' unless $wiki;
 
+	print_color('RED');
 	display_task($role_ref, "\t|<<<Needs".$needs) if $needs;
+	print_color();
+
+	for my $tid (keys %Fook) {
+		my($ref) = Hier::Tasks::find($tid);
+		print_color('GREEN');
+		display_task($ref,   $Fook{$tid});
+		print_color();
+	}
+	%Fook = ();
 
 	if ($anal) {
-		print "A: "; display_task($anal)  
+		print "A: "; display_task($anal);
 	}
 	if ($devel) {
-		print "D: "; display_task($devel) 
+		print "D: "; display_task($devel);
 	}
 	if ($test) {
-		print "T: "; display_task($test)  
+		print "T: "; display_task($test); 
 	}
 	if ($wiki) {
-		print "W: "; display_task($wiki)  
+		print_color('PURPLE');
+		print "W: "; display_task($wiki);
+		print_color();
 	}
 }
 
@@ -245,9 +238,11 @@ sub check_state {
 
 	return unless $state eq $want;
 
-	if (defined $$var) {
-		display_task($$var,  "\t|<<<$state>>");
-		display_task($ref,   "\t|<<<$state>> also in state");
+	if (defined $$var && $$var ne $ref) {
+		my($msg) = "\t| <<<".$States{$state}.'>>>';
+
+		$Fook{$$var->get_tid()} = $msg;
+		$Fook{$ref->get_tid()} = $msg;
 		return;
 	}
 	$$var = $ref;
