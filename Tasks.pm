@@ -49,6 +49,7 @@ sub insert {
 	my($self) = @_;
 
 	Hier::db::gtd_insert($self);
+	delete $self->{_dirty};
 }
 
 sub max {
@@ -265,6 +266,7 @@ sub update {
 	my($self) = @_;
 
 	Hier::db::gtd_update($self);
+	delete $self->{_dirty};
 }
 
 END {
