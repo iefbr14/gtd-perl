@@ -10,7 +10,7 @@ BEGIN {
 	# set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
-	@EXPORT      = qw(&color &color_ref &nl);
+	@EXPORT      = qw(&color &print_color &color_ref &nl);
 }
 
 use Hier::Option;
@@ -73,20 +73,22 @@ my %Bg_terminal = (
 sub color {
 	my($fg, $bg) = @_;
 
+	my($color) = '';
+
 	### print "color: Type:$Type Incolor:$Incolor\n";
 	if ($Type == 0) {
 		guess_type();
 	}
 
 	if ($Type == 1) {
-		return;
+		return '';
 	}
 
 	if ($Type == 2) {
 		unless ($fg) {
-			print "\e[0m" if $Incolor;
+			$color .= "\e[0m" if $Incolor;
 			$Incolor = 0;
-			return;
+			return $color;
 		}
 
 		$fg = uc($fg);
@@ -97,11 +99,11 @@ sub color {
 
 	#print "$fg=>cv:$cv, $bg=>bv:$bv\n";
 
-		print "\e[". $cv . "m" if defined $cv;
-		print "\e[". $bv . "m" if defined $bv;
+		$color .= "\e[". $cv . "m" if defined $cv;
+		$color .= "\e[". $bv . "m" if defined $bv;
 
 		$Incolor = 1;
-		return;
+		return $color;
 	}
 
 	if ($Type == 3) {
@@ -112,11 +114,16 @@ sub color {
 		}
 
 		$fg = lc($fg);
-		print "</font>" if $Incolor;
+		$color .= "</font>" if $Incolor;
 
-		print "<font color=\"$fg\">";
+		$color .= "<font color=\"$fg\">";
 		$Incolor = 1;
+		return $color;
 	}
+}
+
+sub print_color {
+	print color(@_);
 }
 
 sub guess_type {
@@ -152,7 +159,7 @@ sub color_ref {
 	$fg ||= pick_color_fg($ref);
 #	$bg ||= pick_color_bg($ref);
 
-	color($fg, $bg);
+	print_color($fg, $bg);
 }
 
 sub pick_color_pri {
@@ -217,7 +224,7 @@ sub pick_color_bg {
 }
 
 sub nl {
-	color();
+	print color();
 	if ($Type == 3) {
 		print "<br>";
 	}

@@ -86,11 +86,11 @@ sub check_a_role {
 	my($role_ref) = @_;
 	my(@list) = ($role_ref);
 
-	my(        @want);
-	my($anal,  @anal);
-	my($devel, @devel);
-	my($test,  @test);
-	my($done,  @done);
+	my(          @want);
+	my(@b_anal,  @d_anal);
+	my(@b_devel, @d_devel);
+	my(@b_test,  @d_test);
+	my(@b_done,  @d_done);
 
 	my(@board);
 
@@ -110,20 +110,27 @@ sub check_a_role {
 	for my $ref (sort_tasks @board) {
 		my $state = $ref->get_state();
 
-		check_group($ref, $state, '-', \@want);
+		check_group($ref, $state, '-', 5, \@want);
 
-		check_group($ref, $state, 'a', \@anal);
-		check_state($ref, $state, 'b', \$anal);
+		check_group($ref, $state, 'a', 1, \@b_anal);
+		check_group($ref, $state, 'b', 1, \@d_anal);
 
-		check_group($ref, $state, 'c', \@devel);
-		check_state($ref, $state, 'd', \$devel);
+		check_group($ref, $state, 'c', 2, \@b_devel);
+		check_group($ref, $state, 'd', 2, \@d_devel);
 
-		check_group($ref, $state, 'f', \@test);
-		check_state($ref, $state, 't', \$test);
+		check_group($ref, $state, 'f', 3, \@b_test);
+		check_group($ref, $state, 't', 3, \@d_test);
 
-		check_group($ref, $state, 'w', \@done);
-		check_state($ref, $state, 'z', \$done);
+		check_group($ref, $state, 'w', 4, \@b_done);
+		check_group($ref, $state, 'z', 4, \@d_done);
 	}
+
+	
+	my($dash) = '-' x ($Cols+6);
+	my(@c_anal)  = ( @d_anal,  $dash, @b_anal);
+	my(@c_devel) = ( @d_devel, $dash, @b_devel);
+	my(@c_test)  = ( @d_test,  $dash, @b_test);
+	my(@c_done)  = ( @d_done,  $dash, @b_done);
 
 	display_rgpa($role_ref);
 
@@ -134,26 +141,23 @@ sub check_a_role {
 	printf("----- %s\n", "Complete");
 	color();
 
-	color('GREEN'); col($anal,  ' ', 1);
-	color('GREEN'); col($devel, ' ', 2);
-	color('GREEN'); col($test,  ' ', 2);
-	color('GREEN'); col($done, "\n", 3);
-	color();
-
-	print '-'x (columns()-1), "\n";
+	col(\@c_anal,  ' ');
+	col(\@c_devel, ' ');
+	col(\@c_test,  ' ');
+	col(\@c_done, "\n");
 
 	my($lines) = lines() - 6;
 
-	while (scalar(@anal)
-	    || scalar(@devel)
-	    || scalar(@test)
-	    || scalar(@done)
+	while (scalar(@c_anal)
+	    || scalar(@c_devel)
+	    || scalar(@c_test)
+	    || scalar(@c_done)
 		) {
 
-		col(shift @anal,  ' ' ,1);
-		col(shift @devel, ' ', 2);
-		col(shift @test,  ' ', 2);
-		col(shift @done, "\n", 3);
+		col(\@c_anal,  ' ');
+		col(\@c_devel, ' ');
+		col(\@c_test,  ' ');
+		col(\@c_done, "\n");
 
 		if (--$lines <= 0) {
 			print "----- more ----\n";
@@ -169,31 +173,49 @@ sub check_a_role {
 			print "----- more ----\n";
 			last;
 		}
-		col(shift @want,  ' ' ,4);
-		col(shift @want,  ' ' ,4);
-		col(shift @want,  ' ' ,4);
-		col(shift @want, "\n" ,4);
+		col(\@want,  ' ');
+		col(\@want,  ' ');
+		col(\@want,  ' ');
+		col(\@want, "\n");
 	}
 }
 
 sub col {
-	my($ref, $sep, $how) = @_;
+	my($aref, $sep) = @_;
 
-	unless ($ref) {
-		printf("%5s %-${Cols}.${Cols}s%s", '', '', $sep);
-		return;
-	}
+	my($val) = shift(@{$aref});
+	$val = '' unless $val;
+
+#	if ($sep eq ' ') {
+#		printf("%-${Cols}.${Cols}s%s", $val, $sep);
+#	} else {
+#		print $val, "\n";
+#	}
+
+	print $val, $sep;
+}
+
+sub check_group {
+	my($ref, $state, $want, $how, $var) = @_;
+
+	return unless $state eq $want;
+
+	my($color) = '';
+
 	if ($how == 1) {
-		check_empty($ref);
+		$color = check_empty($ref);
 
 	} elsif ($how == 2) {
-		check_children($ref);
+		$color = check_children($ref);
 
 	} elsif ($how == 3) {
-		check_done($ref);
+		$color = check_done($ref);
 
 	} elsif ($how == 4) {
-		check_want($ref) || check_empty($ref);
+		$color = check_done($ref);
+
+	} elsif ($how == 5) {
+		$color = check_want($ref) || check_empty($ref);
 	}
 
 	my($tid) = $ref->get_tid();
@@ -202,10 +224,13 @@ sub col {
 	$title =~ s/\[\[//g;
 	$title =~ s/\]\]//g;
 
-	printf("%5d %-${Cols}.${Cols}s%s", $tid, $title, $sep);
+	my($result) =  $color . 
+		sprintf("%5d %-${Cols}.${Cols}s", $tid, $title) .
+		color();
 
-	color();
+	push(@{$var}, $result);
 }
+
 
 sub check_want {
 	my($pref) = @_;
@@ -213,10 +238,9 @@ sub check_want {
 	my($title) = $pref->get_title();
 
 	if ($title =~ /\[\[.*\]\]/) {
-		color('GREEN');
-		return 1;
+		return color('GREEN');
 	};
-	return 0;
+	return '';
 }
 
 sub check_empty {
@@ -224,12 +248,16 @@ sub check_empty {
 
 	return unless $pref;
 
+	my($children) = 0;
 	for my $ref ($pref->get_children()) {
 		next if $ref->get_completed();
 		
-		color('PINK');
-		return;
+		return color('PINK');
+		++$children;
 	}
+
+	return color('PURPLE') if $children;
+	return '';
 }
 
 sub check_done {
@@ -240,9 +268,9 @@ sub check_done {
 	for my $ref ($pref->get_children()) {
 		next unless $ref->get_completed();
 		
-		color('BROWN');
-		return;
+		return color('BROWN');
 	}
+	return '';
 }
 
 sub check_children {
@@ -263,37 +291,16 @@ sub check_children {
 	}
 
 	if ($count == 0) {
-		color('RED');
-		return;
+		return color('BROWN');
 	}
 	if ($next <= 0) {
-		color('RED');
+		return color('RED');
 	}
 
 	if ($count == $done) {
-		color('PURPLE');
+		return color('PURPLE');
 	}
-}
-
-sub check_state {
-	my($ref, $state, $want, $var) = @_;
-
-	return unless $state eq $want;
-
-	if (defined $$var) {
-		display_task($$var,  "\t|<<<$state>>");
-		display_task($ref,   "\t|<<<$state>> also in state");
-		return;
-	}
-	$$var = $ref;
-}
-
-sub check_group {
-	my($ref, $state, $want, $var) = @_;
-
-	return unless $state eq $want;
-
-	push(@{$var}, $ref);
+	return color('GREEN');
 }
 
 sub check_proj {

@@ -243,11 +243,11 @@ sub save_row {
 		color_ref($t) if $col == 5;
 
 		$Calc->set_data_xy($col++, $line, $value, $type);
-		color();
+		set_color();
 	}
 }
 
-sub color {
+sub set_color {
 	my ($pri) = @_;
 
 	my(%c) = (

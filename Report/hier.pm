@@ -64,7 +64,7 @@ sub hier_detail {
 
 	color_ref($ref);
 	display_task($ref);
-	color();
+	print_color();
 }
 
 sub hier_detail_old {
