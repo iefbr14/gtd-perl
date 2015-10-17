@@ -23,7 +23,7 @@ sub Report_search {	#-- Search for items
 	my($tid, $title, $type);
 
 	meta_filter('+all', '^title', 'simple');
-	meta_desc(@ARGV);
+	meta_desc(@_);
 # type filtering?
 #	if ($name) {
 #		my($want) = type_val($name);
@@ -36,7 +36,7 @@ sub Report_search {	#-- Search for items
 #	}
 #	print "No items requested\n";
 
-	for my $name (split(/,/, $ARGV[0])) {
+	for my $name (split(/,/, $_[0])) {
 		for my $ref (meta_sorted()) {
 			next unless match_desc($ref, $name);
 			

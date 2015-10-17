@@ -25,7 +25,7 @@ sub Report_projects {	#-- List projects -- live, plan or someday
 	#meta_filter('+next', '^focus', 'rgpa');
 	meta_filter('+p:next', '^focus', 'simple');
 
-	report_projects(1, 'Projects', meta_desc(@ARGV));
+	report_projects(1, 'Projects', meta_desc(@_));
 }
 
 sub report_projects {

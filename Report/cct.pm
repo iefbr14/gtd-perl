@@ -27,7 +27,7 @@ my %Dups;
 
 sub Report_cct {	#-- List Categories/Contexts/Time Frames
 	meta_filter('+all', '^tid', 'simple');
-	meta_argv(@ARGV);
+	meta_argv(@_);
 
 	count_items();
 

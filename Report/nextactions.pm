@@ -21,7 +21,7 @@ sub Report_nextactions { #-- List next actions
 	my(@row);
 
 	meta_filter('+next', '^title', 'none');
-	meta_desc(@ARGV);
+	meta_desc(@_);
 
 print <<"EOF";
 -Par [-] Parent           -Tid [-] Next Action

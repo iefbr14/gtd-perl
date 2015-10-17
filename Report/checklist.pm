@@ -20,16 +20,16 @@ my $Debug = 0;
 
 sub Report_checklist {	#-- display a check list
 #	meta_argv();
-	my ($p) = shift @ARGV;
+	my ($p) = shift @_;
 	
 	my ($id);
 	if ($p) {
 		if ($p =~ /^\d+$/) {
-			list_records($id, "List: $p", meta_desc(@ARGV));
+			list_records($id, "List: $p", meta_desc($p, @_));
 			return;
 		} 
 		if ($id = find_list($p)) {
-			list_records($id, "List: $p", meta_desc(@ARGV));
+			list_records($id, "List: $p", meta_desc($p, @_));
 		} else {
 			print "Can't find a list by name of $p\n";
 		}

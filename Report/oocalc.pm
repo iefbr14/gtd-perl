@@ -19,7 +19,7 @@ use Hier::Resource;
 
 sub Report_oocalc {	#-- Project Summary for a role
 	meta_filter('+live', '^tid', 'none');
-	my @want = meta_argv(@ARGV);
+	my @want = meta_argv(@_);
 
 	new_calc();
 	

@@ -23,9 +23,9 @@ sub Report_records {	#-- detailed list all records for a type
 	# everybody into the pool
 	meta_filter('+active', '^tid', 'simple');
 
-	my($desc) = join(' ', @ARGV);
+	my($desc) = join(' ', @_);
 
-	my($name) = ucfirst(meta_desc(@ARGV));	# some out
+	my($name) = ucfirst(meta_desc(@_));	# some out
 	if ($name) {
 		my($want) = type_val($name);
 		unless ($want) {

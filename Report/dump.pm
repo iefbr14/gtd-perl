@@ -22,7 +22,7 @@ sub Report_dump {	#-- dump records in edit format
 	# everybody into the pool by id 
 	meta_filter('+any', '^tid', 'dump');	
 
-	my($name) = ucfirst(meta_desc(@ARGV));	# some out
+	my($name) = ucfirst(meta_desc(@_));	# some out
 	if ($name) {
 		if ($name =~ /^\d+/) {
 			dump_list($name);

@@ -19,7 +19,7 @@ use Hier::Resource;
 
 sub Report_spreadsheet {	#-- Project Summary for a role
 	meta_filter('+active', '^tid', 'none');
-	my @want = meta_argv(@ARGV);
+	my @want = meta_argv(@_);
 
 	if (@want == 0) {
 		my($roles) = load_roles();

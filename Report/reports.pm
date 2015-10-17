@@ -24,7 +24,7 @@ our $OurPath;
 my($Fname) = 0;
 
 sub Report_reports {	#-- List Reports
-	if (@ARGV && $ARGV[0] =~ /^f/) {
+	if (@_ && $_[0] =~ /^f/) {
 		$Fname = 1;
 	}
 	report_header('Reports');

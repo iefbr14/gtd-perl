@@ -29,7 +29,7 @@ sub Report_actions {	#-- Detailed list of projects with (next) actions
 
 	meta_filter('+a:next', '^focus', 'detail');
 
-	my($desc) = meta_desc(@ARGV);
+	my($desc) = meta_desc(@_);
 	report_select($desc);
 	if ($list) {
 		report_list();

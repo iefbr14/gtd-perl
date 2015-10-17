@@ -47,6 +47,8 @@ my %Option_keys = (
 	'Layout'      => 'Text', # Layout format
 
 	'Date'        => '',	# Date (completed etc)
+
+	'Mode'        => '',    # no mode set yet
 );
 
 my $Debug = 0;

@@ -30,7 +30,7 @@ sub Report_purge {	#-- interactive purge completed work
 die;
 	meta_filter('+dead', '^tid', 'simple');
 
-	my($criteria) = meta_desc(@ARGV);
+	my($criteria) = meta_desc(@_);
 
 	my($walk) = new Hier::Walk();
 	bless $walk;	# take ownership

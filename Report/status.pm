@@ -48,7 +48,7 @@ sub Report_status {	#-- report status of projects/actions
 	# counts use it and it give a context
 	meta_filter('+active', '^tid', 'none');	
 
-	my $desc = meta_desc(@ARGV);
+	my $desc = meta_desc(@_);
 
 	if (lc($desc) eq 'all') {
 		report_detail();

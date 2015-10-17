@@ -173,7 +173,7 @@ sub add_action {
 sub _report_hier {	
 	meta_filter('+active', '^title', 'bulk');
 
-	my($criteria) = meta_desc(@ARGV);
+	my($criteria) = meta_desc(@_);
 
 	my($walk) = new Hier::Walk();
 	$walk->filter();
@@ -329,7 +329,7 @@ use Hier::Tasks;
 
 sub _report_actions {	
 	meta_filter('+live', '^title', 'bulk');
-	report_actions(1, 'Actions', meta_desc(@ARGV));
+	report_actions(1, 'Actions', meta_desc(@_));
 }
 
 sub report_actions {

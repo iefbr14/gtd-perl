@@ -30,7 +30,7 @@ sub Report_ged {	#-- generate taskjuggler file from gtd db
 
 	$ToOld = pdate(get_today(-7));	# don't care about done items > 2 week
 
-	if (scalar(@ARGV) && $ARGV[0] eq 'all') {
+	if (scalar(@_) && $_[0] eq 'all') {
 		$Someday = 1;
 		meta_filter('+all', '^focus', 'none');
 		# 5 year plan everything plan
@@ -40,7 +40,7 @@ sub Report_ged {	#-- generate taskjuggler file from gtd db
 		# don't care about start more > 3 months
 		$ToFuture = pdate(get_today(60));	
 	}
-	meta_argv(@ARGV);
+	meta_argv(@_);
 	my($planner) = new Hier::Walk;
 	$planner->set_depth('a');
 	$planner->filter();

@@ -23,7 +23,7 @@ sub Report_items {	#-- list titles for any filtered class (actions/projects etc)
 	# everybody into the pool by name
 	meta_filter('+any', '^title', 'item');	
 
-	my($name) = meta_desc(@ARGV);
+	my($name) = meta_desc(@_);
 	if ($name) {
 		my($want) = type_val($name);
 		if ($want) {

@@ -29,30 +29,30 @@ my $First = '';
 sub Report_new {	#-- create a new action or project
 	meta_filter('+all', '^tid', 'none');
 
-	unless (@ARGV) {
-		new_inbox('i', meta_desc(@ARGV));
+	unless (@_) {
+		new_inbox('i', meta_desc(@_));
 		return;
 	}
 		
-        my($type) = shift @ARGV;
+        my($type) = shift @_;
 	my($name) = '';
 
 	my($want) = type_val($type);
 	# prompt path
         if ($want) {
-		$name = shift @ARGV if @ARGV;
+		$name = shift @_ if @_;
 	} else {
 		$name = $want;
 		$want = 'i';
 	}
 
 	# command line path
-	if (@ARGV) {
-		new_task('i', $name, meta_desc(@ARGV));
+	if (@_) {
+		new_task('i', $name, meta_desc(@_));
 		return;
 	}
 
-	my($title) = meta_desc(@ARGV);
+	my($title) = meta_desc(@_);
 
 	print "new: type=$type($want) name=$name title=$title\n";
 

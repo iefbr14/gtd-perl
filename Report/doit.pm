@@ -38,7 +38,7 @@ sub Report_doit {	#-- doit tracks which projects/actions have had movement
 	my($target) = 0;
 	my($action) = \&doit_list;
 
-	foreach my $arg (meta_argv(@ARGV)) {
+	foreach my $arg (meta_argv(@_)) {
 		if ($arg =~ /^\d+$/) {
 			my($ref) = meta_find($arg);
 

@@ -21,7 +21,7 @@ sub Report_hierlist {	#-- List all top level item (Project and above)
 	my(@row);
 
 	meta_filter('+p:live', '^title', 'simple');
-	meta_desc(@ARGV);
+	meta_desc(@_);
 
 print <<"EOF";
 -Gtd -Par Cnt Category  Parent       Name         Description

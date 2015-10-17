@@ -25,7 +25,7 @@ my($List) = 0; ###BUG### should be an option
 
 sub Report_review {	#-- Review all projects with actions
 	meta_filter('+active', '^doitdate', 'simple');
-	my $desc = meta_desc(@ARGV);
+	my $desc = meta_desc(@_);
 
 	$Mode = 'p';
 	if (lc($desc) eq 'doit') {
@@ -49,7 +49,7 @@ sub Report_review {	#-- Review all projects with actions
 
 sub reload {
 	if ($Mode eq 'p') {
-		mode_projects(1, 'Projects', meta_desc(@ARGV));
+		mode_projects(1, 'Projects', meta_desc(@_));
 	} elsif ($Mode eq 'd') {
 		mode_doit();
 	} elsif ($Mode eq 's') {
@@ -199,7 +199,7 @@ sub _report_doit {
 	my($target) = 0;
 	my($action) = \&doit_list;
 
-	foreach my $arg (Hier::util::meta_argv(@ARGV)) {
+	foreach my $arg (Hier::util::meta_argv(@_)) {
 		if ($arg =~ /^\d+$/) {
 			my($ref) = meta_find($arg);
 
