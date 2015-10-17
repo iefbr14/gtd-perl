@@ -63,8 +63,7 @@ sub Report_search {	#-- Search for items
 #			list_desc($want, $name);
 #			return;
 #		}
-#		print "**** Can't understand Type $name\n";
-#		exit 1;
+#		die "**** Can't understand Type $name\n";
 #	}
 #	print "No items requested\n";
 
@@ -76,7 +75,7 @@ sub Report_search {	#-- Search for items
 			$found = 1;
 		}
 	}
-	exit($found ? 0 : 1);
+	return ($found ? 0 : 1);
 }
 
 sub match_desc {

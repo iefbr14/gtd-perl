@@ -62,7 +62,7 @@ sub Report_tsort {	#-- write out hier as as set of nodes
 		for my $ref (meta_matching_type('m')) {
 			dpos($ref, 1);
 		}
-		exit 0;
+		return;
 	}
 
 

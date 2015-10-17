@@ -133,8 +133,7 @@ sub meta_argv {
 	while (scalar(@_)) {
 		$_ = shift @_;
 		if ($_ eq '!.') {
-			print "Stopped.\n";
-			exit 0;
+			die "Stopped.\n";
 		}
 
 		if (s/^\@//) {
@@ -201,17 +200,13 @@ sub meta_desc {
 sub meta_pick {
 	my(@list) = ();
 
-	my($fail) = 0;
-
 	foreach my $arg (meta_argv(@_)) {
 		# comma sperated list of tasks
                 while ($arg =~ s/^(\d+),(\d[\d,]*)$/$2/) {
                         my($ref) = meta_find($1);
 
                         unless (defined $ref) {
-                                warn "Task $arg doesn't exits\n";
-				$fail++;
-                                next;
+                                die "Task $arg doesn't exits\n";
                         }
 			push(@list, $ref);
                         next;
@@ -222,9 +217,7 @@ sub meta_pick {
                         my($ref) = meta_find($arg);
 
                         unless (defined $ref) {
-                                warn "Task $arg doesn't exits\n";
-				$fail++;
-                                next;
+                                die "Task $arg doesn't exits\n";
                         }
 			push(@list, $ref);
                         next;
@@ -255,10 +248,8 @@ sub meta_pick {
 			}
 			next;
 		}
-		print "**** Can't understand argument $arg\n";
-		exit 1;
+		die "**** Can't understand argument $arg\n";
 	}
-	exit(1) if $fail;
 	return @list;
 }
 

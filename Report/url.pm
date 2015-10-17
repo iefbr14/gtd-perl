@@ -89,8 +89,7 @@ sub Report_url {	#-- quick List by various methods
 sub guess_remote {
 	my $wholine = `who am i`;
 	if ($wholine !~ m/\((.*)\)/) {
-		warn "Can't guess who for $wholine\n";
-		exit 1;
+		die "Can't guess who for $wholine\n";
 	}
 	my($who) = $1;
 
@@ -98,8 +97,7 @@ sub guess_remote {
 	return "drugs.ss.org" if $who eq 'silver.ss.org';
 	return "rabbit" if $who eq 'fw.iplink.net';
 
-	warn "Can't map $who to remote site\n";
-	exit 1;
+	die "Can't map $who to remote site\n";
 }
 
 sub find_url {

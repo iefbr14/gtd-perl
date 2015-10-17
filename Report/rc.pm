@@ -62,6 +62,7 @@ use Term::ReadLine;
 use Hier::Meta;
 use Hier::Option;
 use Hier::Format;
+use Hier::Sort;
 use Hier::Report::edit;
 
 my $Parent;
@@ -136,13 +137,13 @@ sub rc {
 		return;
 	}
 
-	my($cmd, @args) = split(' ', $line);
-
-	# maybe we shouldn't split this?
-	if ($cmd =~ s/:$//) {
-		rc_set_key($cmd, @args);
+	# check for task member updates ie: 'key:value' pairs
+	if ($line =~ s/^(\w+)\:\s*//) {
+		rc_set_key($1, $line);
 		return;
 	}
+
+	my($cmd, @args) = split(' ', $line);
 
 	if (defined $Cmds->{$cmd}) {
 		my($func) = $Cmds->{$cmd};
@@ -163,7 +164,7 @@ sub rc_set_key {
 		print "No task set.\n";
 		return;
 	}
-	set_KEY($key, join(' ', $_));
+	$Pref->set_KEY($key, join(' ', @_));
 }
 
 sub rc_save {
@@ -299,7 +300,7 @@ sub load_task_ref {
 	$Pid = $ref->get_tid();
 
 	my($type) = $ref->get_type();
-	my($title) = $ref->get_titel();
+	my($title) = $ref->get_title();
 
 	$Parents->{$type} = $Pid;
 

@@ -51,21 +51,22 @@ use Hier::Color;
 
 sub Report_color {	#-- Detailed list of projects with (next) actions
 
-	my(@bg) = qw(WHITE BK  RED  GREEN YELLOW  BLUE PURPLE  CYAN GRAY );
+	my(@bg) = qw(WHITE BK  RED  GREEN YELLOW  BLUE PURPLE  CYAN );
 	my(@fg) = qw(
 	BLACK  RED  GREEN BROWN  NAVY PURPLE  CYAN GREY
 	SILVER PINK LIME  YELLOW BLUE MAGENTA AQUA WHITE
 	NONE);
 
-	for my $bg ('fg', @bg) {
-		printf "%-7s ", $bg;
+	for my $bg ('\fg/bg:', @bg) {
+		printf "%-8s ", $bg;
 	}
 	print "\n";
 
 	for my $fg (@fg) {
+		printf "%-8s ", $fg;
 		for my $bg (@bg) {
 			print_color($fg, $bg);
-			printf "%-4.4s/%.2s ", $fg,$bg;
+			printf "%-5.5s/%.2s ", $fg,$bg;
 		}
 		print_color();
 		print "\n";

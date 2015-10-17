@@ -61,8 +61,7 @@ sub Report_records {	#-- detailed list all records for a type
 	if ($name) {
 		my($want) = type_val($name);
 		unless ($want) {
-			print "**** Can't understand Type $name\n";
-			exit 1;
+			die "**** Can't understand Type $name\n";
 		}
 		list_records($want, $name.' '.$desc);
 		return;

@@ -84,7 +84,7 @@ sub Report_status {	#-- report status of projects/actions
 
 	if (lc($desc) eq 'all') {
 		report_detail();
-		exit 0;
+		return;
 	}
 	
 	my $hier = count_hier();

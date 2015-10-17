@@ -174,7 +174,7 @@ sub get_status {
 	}
 
 	if (/^q/) {
-		exit 0;
+		die "Ok\n";
 	}
 	if (/^m/) {
 		s/^\S+\s+//;

@@ -2,4 +2,6 @@
 .nfs*
 profile/nytprof/
 profile/nytprof.out
+Test/bl
+Test/gtd.db
 

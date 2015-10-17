@@ -88,7 +88,7 @@ sub Report_kanban {	#-- report kanban of projects/actions
 
 	# done if we had args but all were processed
 	if (scalar(@_) > 0 && scalar(@args) == 0) {
-		exit 0;
+		return;
 	}
 
 	my(@list) = meta_pick(@args);
@@ -155,7 +155,7 @@ sub kanban_bump {
 		push(@list, $ref);
 		next;
 	}
-	exit 1 if $fail;
+	die "Nothing bunped due to errors\n" if $fail;
 
 	for my $ref (@list) {
 		my($state) = $ref->get_state();

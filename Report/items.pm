@@ -63,7 +63,7 @@ sub Report_items {	#-- list titles for any filtered class (actions/projects etc)
 			return;
 		}
 		print "**** Can't understand Type $name\n";
-		exit 1;
+		return 1;
 	}
 	print "No items requested\n";
 }

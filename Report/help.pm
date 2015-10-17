@@ -54,10 +54,14 @@ use Hier::Format;
 our $OurPath;
 
 my(%Helps) = (
+#------------------------------------------------------------------------------
+# Obsolete Sac view of projects vs gts view of projects
 	'Sac' => <<'EOF',
 (gtd) Value => Vision => Role => Goal => Project => Action
 (sac)                  Client => Project => Task => Item
 EOF
+
+#------------------------------------------------------------------------------
 	'Selection' => <<'EOF',
   tid       -- task id
   /title    -- match any with title
@@ -65,6 +69,7 @@ EOF
                (T == A,P,G,R,V)
 EOF
 
+#------------------------------------------------------------------------------
 	'Filters' => <<'EOF',
 ~NAME -- exclude those of the type (check first)
 +NAME -- include those of the type (check last)
@@ -95,26 +100,44 @@ acts - hier has sub-actions
 
 EOF
 
-
+#------------------------------------------------------------------------------
 	'Sort' => <<'EOF',
+id/tid	      - by task id
+task/title    - by task name (title)
+
+hier          - by hier position, sub-sorted by title
+
+pri/priority  - by priority
+panic         - by panic (highest priority propigated up the hierarchy)
+focus         - by panic within {nextaction;action;someday}
+
+date/age      - by created date
+change        - by modified date
+doit/doitdate - by doit date
+status        - by completed if done otherwise by modified.
+
+rgpa/goaltask - by task withing goal
 EOF
 
-
+#------------------------------------------------------------------------------
 	'Types' => <<'EOF',
-[_] m value
-[_] v vision
-[_] r role
-[_] g goal
-[_] p project
-[_] a action
-[_] i inbox
-[_] w waiting
-[_] R reference
-[_] L list
-[_] C checklist
-[_] T item
+m - value
+v - vision
+o - role
+g - goal
+p - project
+a - action
+
+i - inbox
+w - waiting
+
+R - reference
+L - list
+C - checklist
+T - item
 EOF
 
+#------------------------------------------------------------------------------
 	'Project-Verbs' => <<'EOF',
 * Finalize
 * Resolve
@@ -133,6 +156,7 @@ EOF
 * Set-up 
 EOF
 
+#------------------------------------------------------------------------------
 	'Action-Verbs' => <<'EOF',
 * Call
 * Review
@@ -151,12 +175,19 @@ EOF
 * Sort
 EOF
 
+#------------------------------------------------------------------------------
 	'Planning' => <<'EOF',
 1. Define purpose & principles (why)
 2. Outcome visioning
 3. Brainstorming
-4. Organizing
+4. Organizing material
 5. Identify next actions
+EOF
+
+#------------------------------------------------------------------------------
+	'Agile' => <<'EOF',
+Using 'kanban' and 'board' commands to refine project state.
+Then by iterating over those items to create momentum.
 EOF
 
 );
@@ -172,6 +203,7 @@ sub Report_help {	#-- Help on commands
 		for my $key (sort keys %Helps) {
 			print "\t$key\n";
 		}
+		print "\nAlso try: help reports\n";
 		return;
 	}
 

@@ -58,7 +58,7 @@ sub Report_spreadsheet {	#-- Project Summary for a role
 		foreach my $role (sort keys %$roles) {
 			display_role($role, $roles->{$role});
 		}
-		exit 0;
+		return;
 	}
 
 	my($roles) = load_roles();

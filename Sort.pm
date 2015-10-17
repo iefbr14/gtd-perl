@@ -26,17 +26,24 @@ my(%Criteria) = (
 	tid	 => \&by_tid,
 	task	 => \&by_task,
 	title	 => \&by_task,
+
 	hier	 => \&by_hier,
-	status	 => \&by_status,
-	focus    => \&by_focus,
-	panic    => \&by_panic,
+
 	pri	 => \&by_pri,
 	priority => \&by_pri,
+	panic    => \&by_panic,
+	focus    => \&by_focus,
+
+	age      => \&by_age,		# created date
+	date     => \&by_age,		# ''
+
+	change   => \&by_change,	# modified date
+
 	doit     => \&by_doitdate,
 	doitdate => \&by_doitdate,
-	date     => \&by_age,
-	age      => \&by_age,
-	change   => \&by_change,
+
+	status	 => \&by_status,
+
 	rgpa     => \&by_goal_task,
 	goaltask => \&by_goal_task,
 );
@@ -159,7 +166,7 @@ sub by_status($$) {
 	return -1 if $ac;	# a completed but not b, sort early
 	return  1 if $bc;	# b completed but not a, sort late
 
-	return 0;
+	return by_change($a, $b);
 }
 
 sub by_change($$) {

@@ -63,7 +63,7 @@ sub Report_dump {	#-- dump records in edit format
 		my($want) = type_val($name);
 		unless ($want) {
 			warn "**** Can't understand Type $name\n";
-			exit 1;
+			return 1;
 		}
 		list_dump($want, $name);
 		return;
