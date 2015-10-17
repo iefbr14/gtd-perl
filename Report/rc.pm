@@ -1,25 +1,46 @@
 package Hier::Report::rc;
 
-=head1 Bulk Load Syntax
+=head1 NAME
 
-  num:	Id of Roal/Goal/Proj/Action (Tab/Empty for New)
-  type:	Type of Id (R/G/P) (if no num, will lookup this entry)
- or
-  [_]	Next Action
-  [ ]	Action
-  [*]	Done
-  [X]	Delete
-  [-]	Hidden
-  { }	Somday/maybe
- or
-  ?attr	Attribute
-  +	Description
-  =	Result
-  @cct	Category/Context/Timeframe
-  *tag	Tag(s)
-  #	comment
- or	
-	Blank line end of group
+rc
+
+=head1 USAGE
+
+rc 
+
+=head1 REQUIRED ARGUMENTS
+
+=head1 OPTION
+
+=head1 DESCRIPTION
+
+rc is 
+
+=head1 DIAGNOSTICS
+
+=head1 EXIT STATUS
+
+none
+
+=head1 CONFIGURATION
+
+=item format
+
+=item option
+
+=head1 DEPENDENCIES
+
+=head1 INCOMPATIBILITIES
+
+=head1 BUGS AND LIMITATIONS
+
+=head1 AUTHOR,  LICENSE and COPYRIGHT
+
+(C) Drew Sullivan 2015 -- LGPL 3.0 or latter
+
+=head1 HISTORY
+
+Started life as a copy of the bulkload but tuned for more interactive processing
 
 =cut
 
@@ -48,7 +69,7 @@ my $Info = {};
 
 my $Mode = option('Mode', 'task');
 my $Prompt = '';
-my $Debug = 1;
+my $Debug = 0;
 
 my($Pid) = '';	# current Parrent task;
 my($Pref);	# current Parrent task reference;
@@ -56,6 +77,8 @@ my($Pref);	# current Parrent task reference;
 my($Parents) = {};	# parrents we know about
 
 my($Cmds) = {
+	help    => \&rc_help,
+
 	'up'	=> \&rc_up,
 	'p'	=> \&rc_print,
 	'edit'	=> \&rc_edit,
@@ -105,8 +128,8 @@ sub rc {
 		return;
 	}
 
-	if ($line =~ /^\?/) {
-		help();
+	if ($line =~ s/^\?//) {
+		rc_help($line);
 		return;
 	}
 
@@ -167,6 +190,32 @@ sub rc_save {
 
 	$Pref->update();
 }
+
+sub rc_help {
+	if (@_ && $_[0] ne '') {
+		report('help', @_);
+		return;
+	}
+
+print << 'EOF';
+   #        comments (and blank lines ignored)
+   !        shell commands
+   /        search and set task
+
+   clear     clear screen before running command
+   option    set option
+   format    to set default formats
+   sort      to set default sort order
+
+   999       to set current task
+   p         to print current task
+   up        to go to current task's parrent
+   field:    to change any field in the current task
+
+   ....      to run any current report
+EOF
+}
+   
 
 sub rc_up {
 	unless (defined $Pref) {

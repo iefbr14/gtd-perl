@@ -1,5 +1,38 @@
 package Hier::Report::help;
 
+=head1 NAME
+
+=head1 USAGE
+
+=head1 REQUIRED ARGUMENTS
+
+=head1 OPTION
+
+=head1 DESCRIPTION
+
+=head1 DIAGNOSTICS
+
+=head1 EXIT STATUS
+
+=head1 CONFIGURATION
+
+=head1 DEPENDENCIES
+
+=head1 INCOMPATIBILITIES
+
+=head1 BUGS AND LIMITATIONS
+
+=head1 AUTHOR
+
+=head1 LICENSE and COPYRIGHT
+
+(C) Drew Sullivan 2015 -- LGPL 3.0 or latter
+
+=head1 HISTORY
+
+=cut
+
+
 use strict;
 use warnings;
 
@@ -10,53 +43,18 @@ BEGIN {
 	# set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
-	@EXPORT      = qw(&Report_report &get_reports);
+	@EXPORT      = qw(&Report_help);
 
 	our $OurPath = __FILE__;
 }
 
 use Hier::Meta;
+use Hier::Format;
 
 our $OurPath;
 
-sub Report_help {	#-- List Reports
-	report_header('Reports');
-
-	my @files  = get_reports();
-
-	print join("\n", @files), "\n\n";
-}
-
-sub get_reports {
-	my(@list, $name);
-	
-	my($f, $path);
-	my($dir) = $OurPath;
-
-	$dir =~ s=/report.pm==;
-	opendir(DIR, $dir) or die;
-	while ($f = readdir(DIR)) {
-		next unless $f =~ /\.pm$/;
-
-		$path = "$dir/$f";
-
-		open(R, "< $path") or die "Can't open $path ($!)\n";
-		while (<R>) {
-			next unless /^sub Report_(\w+)/;
-			$name = $1;
-			if (m/#--\s*(.*)/) {
-				push(@list, sprintf("%-12s -- %s", $name, $1));
-			} else {
-				push(@list, $name);
-			}
-		}
-		close(R);
-	}
-	return sort @list;
-}
-
 my(%Helps) = (
-	'Hier' => <<'EOF',
+	'Sac' => <<'EOF',
 (gtd) Value => Vision => Role => Goal => Project => Action
 (sac)                  Client => Project => Task => Item
 EOF
@@ -97,8 +95,10 @@ acts - hier has sub-actions
 
 EOF
 
+
 	'Sort' => <<'EOF',
 EOF
+
 
 	'Types' => <<'EOF',
 [_] m value
@@ -114,7 +114,8 @@ EOF
 [_] C checklist
 [_] T item
 EOF
-	'Project Verbs' => <<'EOF',
+
+	'Project-Verbs' => <<'EOF',
 * Finalize
 * Resolve
 * Handle
@@ -131,7 +132,8 @@ EOF
 * Implement
 * Set-up 
 EOF
-	'Action Verbs' => <<'EOF',
+
+	'Action-Verbs' => <<'EOF',
 * Call
 * Review
 * Buy
@@ -148,6 +150,7 @@ EOF
 * Email 
 * Sort
 EOF
+
 	'Planning' => <<'EOF',
 1. Define purpose & principles (why)
 2. Outcome visioning
@@ -158,7 +161,35 @@ EOF
 
 );
 
-sub help_subhelp {
+sub Report_help {	#-- Help on commands
+	my($f, $path);
+	my($dir) = $OurPath;
+
+	my($help) = @_;
+
+	if (scalar(@_) == 0 or $help eq 'help') {
+		print "Help is available for:\n";
+		for my $key (sort keys %Helps) {
+			print "\t$key\n";
+		}
+		return;
+	}
+
+	if (defined $Helps{$help}) {
+		print $Helps{$help};
+		return;
+	}
+
+	$dir =~ s=/help.pm==;
+	my($report) = "$dir/$help.pm";
+	if (-f $report) {
+		###BUG### should look at other args for perldoc args
+		system('perldoc', $report);
+		return;
+	}
+
+	print "? Don't understand help $help, try: help help\n";
+	
 }
 
 1;  # don't forget to return a true value from the file
