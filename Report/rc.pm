@@ -57,6 +57,8 @@ BEGIN {
 use strict;
 use warnings;
 
+use Term::ReadLine;
+
 use Hier::Meta;
 use Hier::Option;
 use Hier::Format;
@@ -68,7 +70,7 @@ my $Type;
 my $Info = {};
 
 my $Mode = option('Mode', 'task');
-my $Prompt = '';
+my $Prompt = '> ';
 my $Debug = 0;
 
 my($Pid) = '';	# current Parrent task;
@@ -91,24 +93,20 @@ my($Cmds) = {
 };
 
 sub Report_rc { #-- rc - Run Commands
+	my $term = Term::ReadLine->new('gtd');
 
-	if (-t STDIN) {
-		$Prompt = '>';
-		$| = 1;
-	}
+#	my $OUT = $term->OUT || \*STDOUT;
+#       print $OUT $res, "\n" unless $@;
 
 	for (;;) {
-		if ($Prompt) {
-			print "$Pid$Prompt ";	# 12>
-		}
+		$_ = $term->readline($Prompt);
 
-		$_ = <>;
 		last unless defined $_;
-		chomp;
 
 		next if /^\s*#/;
 		next if /^\s*$/;
 
+		$term->addhistory($_);
 		eval {
 			rc($_);
 		}; if ($@) {
@@ -153,24 +151,7 @@ sub rc {
 		return;
 	}
 
-	if (/^(\d+)$/) {
-		rc_save();
-
-		# get context
-		$Pref = meta_find($cmd);
-		unless ($Pref) {
-			$Pid = '';
-			print "Can't find pid: $cmd\n";
-			next;
-		}
-
-		$Pid = $Pref->get_tid();
-		my($type) = $Pref->get_type();
-		$Parents->{$type} = $Pid;
-		
-		print "Current($type): $cmd - ", $Pref->get_title(), "\n";
-		return;
-	}
+	return load_task($cmd) if $cmd =~ /^\d+$/;
 
 	report($cmd, @args);
 }
@@ -222,12 +203,8 @@ sub rc_up {
 		print "No task set.\n";
 		return;
 	}
-	$Pref = $Pref->get_parent();
-	$Pid = $Pref->get_tid();
-	my($type) = $Pref->get_type();
-	$Parents->{$type} = $Pid;
-	
-	print "Parent($type): $Pid - ", $Pref->get_title(), "\n";
+
+	load_task_ref('Parent', $Pref->get_parent());
 }
 
 sub rc_option {
@@ -295,6 +272,42 @@ sub rc_clear {
 	}
 }
 
+sub rc_prompt {
+	my($prompt) = @_;
+
+}
+
+sub load_task {
+	my($tid) = @_;
+
+	rc_save();
+
+	# get context
+	my($ref) = meta_find($tid);
+	unless ($ref) {
+		print "Can't find tid: $tid\n";
+		return;
+	}
+
+	load_task_ref('Current', $ref);
+}
+
+sub load_task_ref {
+	my($why, $ref) = @_;
+
+	$Pref = $ref;
+	$Pid = $ref->get_tid();
+
+	my($type) = $ref->get_type();
+	my($title) = $ref->get_titel();
+
+	$Parents->{$type} = $Pid;
+
+	$Prompt = "$Pid> ";
+		
+	print "$why($type): $Pid - $title\n";
+}
+
 #==============================================================================
 
 sub fixme {
@@ -339,7 +352,6 @@ sub fixme {
 
 
 	if (s/^([a-z]+):\s*//) {
-		chomp;
 		$Info->{$1} = $_;
 		next;
 	}
