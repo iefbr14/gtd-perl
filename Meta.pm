@@ -16,6 +16,7 @@ BEGIN {
 		&meta_selected &meta_sorted
 		&meta_find &meta_all
 		&meta_filter &meta_desc &meta_argv
+		&meta_reset_filters
 		&meta_pick
 	);
 }
@@ -40,6 +41,10 @@ my $Default_filter = '';
 
 sub hier {
 	return grep { $_->is_hier() } selected();
+}
+
+sub meta_reset_filters {
+	@Selected = ();		# nothing is selected/sorted.
 }
 
 sub meta_selected {
@@ -119,6 +124,7 @@ sub meta_filter {
 	sort_mode(option('Sort', $sort)) if $sort;
 	display_mode(option('Format', $display)) if $display;
 
+	option('Filter', $filter);
 	$Default_filter = $filter;
 }
 

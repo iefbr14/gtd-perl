@@ -1,4 +1,4 @@
-package Hier::db;  # assumes Some/Module.pm
+package Hier::Db;  # assumes Some/Module.pm
 
 use strict;
 use warnings;
@@ -18,7 +18,7 @@ BEGIN {
 #==============================================================================
 
 use DBI;
-use Config::YAML;
+use YAML::Syck qw(LoadFile);
 use Data::Dumper;
 
 use Hier::CCT;
@@ -72,9 +72,10 @@ my(%Key_type) = (
 	_gtd_context	=> 0x21,
 
 	palm_id         => 0x11,
-	type            => 0x31,
+	type            => 0x21,
 	doit            => 0x11,
 	effort		=> 0x11,
+	'state'		=> 0x11,
 	resource	=> 0x11,
 	depends         => 0x11,
 	percent         => 0x11,
@@ -259,23 +260,22 @@ EOF
 
 EOF
 	$sth = G_select('itemstatus');
-
-	G_learn(todo_id        => 'itemId');
-	G_learn(modified       => 'lastModified');
-	G_learn(created        => 'dateCreated');
-	G_learn(completed      => 'dateCompleted');
-	G_learn(type           => 'type');
-	G_learn(_gtd_category  => 'categoryId');
-
-	G_learn(isSomeday      => 'isSomeday');
-	G_learn(_gtd_context   => 'contextId');
-	G_learn(_gtd_timeframe => 'timeframeId');
-	G_learn(due            => 'deadline');
-	G_learn(nextaction     => 'nextaction');
-	G_learn(tickledate     => 'tickledate');
-
 	while ($row = $sth->fetchrow_hashref()) {
-		$ref = gtd_add($row);
+		gtdmap($row, todo_id        => 'itemId');
+		gtdmap($row, modified       => 'lastModified');
+		gtdmap($row, created        => 'dateCreated');
+		gtdmap($row, completed      => 'dateCompleted');
+		gtdmap($row, type           => 'type');
+		gtdmap($row, _gtd_category  => 'categoryId');
+
+		gtdmap($row, isSomeday      => 'isSomeday');
+		gtdmap($row, _gtd_context   => 'contextId');
+		gtdmap($row, _gtd_timeframe => 'timeframeId');
+		gtdmap($row, due            => 'deadline');
+		gtdmap($row, nextaction     => 'nextaction');
+		gtdmap($row, tickledate     => 'tickledate');
+
+		$ref = $Current_ref;
 		cset($ref, category  => $Category->name($row->{categoryId}));
 		cset($ref, context   => $Context->name($row->{contextId}));
 		cset($ref, timeframe => $Timeframe->name($row->{timeframeId}));
@@ -297,17 +297,15 @@ mysql> describe gtd_items;
 EOF
 
 	$sth = G_select('items');
-
-	G_learn(todo_id     => 'itemId');
-	G_learn(task        => 'title');
-	G_learn(description => 'description');
-	G_learn(note        => 'desiredOutcome');
-
-	G_learn(recurdesc   => 'recurdesc');
-	G_learn(recur       => 'recur');
-
 	while ($row = $sth->fetchrow_hashref) {
-		gtd_add($row);
+		gtdmap($row, todo_id     => 'itemId');
+		gtdmap($row, task        => 'title');
+		gtdmap($row, description => 'description');
+		gtdmap($row, note        => 'desiredOutcome');
+
+		gtdmap($row, recurdesc   => 'recurdesc');
+		gtdmap($row, recur       => 'recur');
+
 	}
 
 
@@ -367,38 +365,34 @@ sub add_relationship {
 	$pref->add_child($tref);
 }
 
-sub gtd_add {
-	my($db) = @_;
+sub gtdmap {
+	my($db, $t_key, $g_key) = @_;
+	# add mapping for $Table/g_key => t_key;
+#	$GTd{$t_key} = ...
 
-	my($t_key, $val);
-	for my $g_key (keys %$db) {
-		$t_key = G_map($g_key);
+	G_learn($t_key, $g_key);
 
-die "Can't map $g_key\n" unless $t_key;
+	my($val) = html_clean( $db->{$g_key} );
 
-		$val = html_clean( $db->{$g_key} );
-
-		# New master key
-		if ($t_key eq 'todo_id') {
-			my $ref = Hier::Tasks::find($val);
-			if (defined $ref) {
-				$Current_ref = $ref;
-				$Current_ref->{_todo_only} |= 0x02;
-				next;
-			}
-			unless ($val) {
-				die "Can't create todo whith todo_id=$val for table $Table\n";
-			}
-			warn "Hard Need Create $val\n" if $Debug;
-			$Current_ref = Hier::Tasks->new($val);
-			$Current_ref->{_todo_only} = 0x03;
-			sac_create($val, {});
-			next;
+	# New master key
+	if ($t_key eq 'todo_id') {
+		my $ref = Hier::Tasks::find($val);
+		if (defined $ref) {
+			$Current_ref = $ref;
+			$Current_ref->{_todo_only} |= 0x02;
+			return;
 		}
-
-		cset($Current_ref, $t_key, $val);
+		unless ($val) {
+			die "Can't create todo whith todo_id=$val for table $Table\n";
+		}
+		warn "Hard Need Create $val\n" if $Debug;
+		$Current_ref = Hier::Tasks->new($val);
+		$Current_ref->{_todo_only} = 0x03;
+		sac_create($val, {});
+		return;
 	}
-	return $Current_ref;
+
+	cset($Current_ref, $t_key, $val);
 }
 
 sub html_clean {
@@ -406,8 +400,7 @@ sub html_clean {
 
 	return undef unless defined $val;
 
-	return $val unless $val =~ m/(\&[a-z]+;)/;
-
+	return $val unless $val =~ m/&[a-z]+;/;
 	my %map = (
 		lt	=> '<',
 		gt	=> '>',
@@ -417,7 +410,7 @@ sub html_clean {
 	);
 
 	my($to) = '';
-	while ($val =~ s/^(.*)\&([A-Za-z]+);//) {
+	while ($val =~ s/^(.*)&([A-Za-z]+);//) {
 		if (defined $map{lc($2)}) {
 			$to .= $1 . $map{lc($2)};
 		} else {
@@ -706,6 +699,11 @@ my($GTD);
 my($GTD_map, $GTD_default);
 my($Prefix) = 'gtd_';
 
+sub db_load_defaults {
+	my($confname) = @_;
+
+}
+
 sub DB_init {
 	my($confname) = @_;
 
@@ -720,9 +718,7 @@ sub DB_init {
 	}
 
 	my $HOME = $ENV{'HOME'};
-	my $conf = new Config::YAML(
-			config => "$HOME/.todo/Access.yaml"
-		);
+	my $conf = LoadFile("$HOME/.todo/Access.yaml");
 
 	my($dbconf) = $conf->{$confname};
 
@@ -806,15 +802,9 @@ sub G_select {
 }
 
 sub G_learn {
-	my($t_key, $g_key) = @_;
+	my($from, $to) = @_;
 
-	$GTD_map->{$Table}->{$g_key} = $t_key;
-}
-
-sub G_map {
-	my($g_key) = @_;
-
-	return $GTD_map->{$Table}->{$g_key};
+	$GTD_map->{$Table}->{$from} = $to;
 }
 
 sub G_list {

@@ -7,7 +7,12 @@ BEGIN {
 	# set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
-	@EXPORT      = qw( option set_option get_today );
+	@EXPORT      = qw(
+		option set_option 
+		debug
+		load_report run_report
+		get_today
+	);
 }
 
 use strict;
@@ -43,6 +48,7 @@ my %Option_keys = (
 	'Header'      => 1,	# Header routine
 	'Format'      => 1,	# Formating routine
 	'Sort'        => 1,	# Sortting routine
+	'Filter'      => 1,     # Default filter mode
 
 	'Layout'      => 'Text', # Layout format
 
@@ -90,6 +96,81 @@ sub option {
 
 	return $Options{$key};
 }
+
+
+#==============================================================================
+# Debug
+#------------------------------------------------------------------------------
+sub debug {
+	my($what) = @_;
+
+	if ($main::Debug) {
+		warn "### Debug: $what\n";
+	}
+
+	if ($what =~ /^[A-Z]/) {
+		eval "Hier::$what::Debug = 1";
+		if ($@) {
+			warn "Debug Hier::$what failed\n";
+			return;
+		}
+		print "Debug of $what on\n";
+		return;
+	}
+
+	if ($what eq 'on') {
+		$Debug = 1;
+		set_option('Debug', 1);
+		return;
+	}
+
+	if ($what eq 'main') {
+		$main::Debug = 1;
+		return;
+	}
+
+	if ($what =~ /^[a-z]/) {
+		load_report($what);
+
+		eval "Hier::Report::$what::Debug = 1";
+		if ($@) {
+			warn "Debug Hier::Report::$what failed\n";
+			return;
+		}
+	}	
+}
+
+sub load_report {
+	my($report) = @_;
+
+	eval "use Hier::Report::$report";
+	if ($@) {
+		my($error) = "Report compile: $@\n";
+		if ($error =~ /Can't locate Hier.Report.$report/) {
+			print "Unknown command $report\n";
+			print "try:  reports # for a list of reports\n";
+			return 0;
+		}
+		die "Report compile failed: $@\n";
+	}
+	return 1;
+}
+
+sub run_report {
+	my($report) = shift @_;
+
+	my($func) = \&{"Report_$report"};
+
+	eval {
+		return $func->(@_);
+	};
+#	eval "Report_$report(\@_);";	# call report with argv
+	if ($@) {
+		die "Report $report failed: $@";
+	}
+	return;
+}
+
 #==============================================================================
 my $Today = _today();
 

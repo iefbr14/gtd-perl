@@ -19,8 +19,6 @@ BEGIN {
 
 use Hier::Option;
 
-my $Debug = 0;
-
 my %Types = (
 	'Value'		=> 'm',
 	'Vision'	=> 'v',
@@ -140,8 +138,6 @@ sub min_key {
 
 	return $list[0];
 }
-
-
 
 sub lines {
 #	if (! -t *STDIN) {

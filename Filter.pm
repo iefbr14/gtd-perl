@@ -57,6 +57,10 @@ sub tasks_matching_type {
 	return grep { $_->get_type() eq $type } Hier::Tasks::all();
 }
 
+sub reset_filters {
+	my($filter) = @_;
+}
+
 sub apply_filters {
 	#$Debug = option('Debug');
 

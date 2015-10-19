@@ -71,6 +71,11 @@ my $Type;
 my $Info = {};
 
 my $Mode = option('Mode', 'task');
+
+my $Filter;
+my $Format;
+my $Sort;
+
 my $Prompt = '> ';
 my $Debug = 0;
 
@@ -87,6 +92,7 @@ my($Cmds) = {
 	'edit'	=> \&rc_edit,
 
 	option	=> \&rc_option,
+	filter  => \&rc_filter,
 	format  => \&rc_format,
 	sort    => \&rc_sort,
 
@@ -95,6 +101,12 @@ my($Cmds) = {
 
 sub Report_rc { #-- rc - Run Commands
 	my $term = Term::ReadLine->new('gtd');
+
+	# init from command line.
+	# there are commands to override later
+	$Filter = option('Filter');
+	$Format = option('Format');
+	$Sort   = option('Sort');
 
 #	my $OUT = $term->OUT || \*STDOUT;
 #       print $OUT $res, "\n" unless $@;
@@ -246,17 +258,48 @@ sub rc_print {
 #==============================================================================
 # Mode setting
 #------------------------------------------------------------------------------
+sub rc_filter {
+	my($mode) = @_;
+
+	unless ($mode) {
+		print "Filter: $Filter\n";
+		return;
+	}
+	
+	print "Filter $Filter => $mode\n";
+
+	my($old) = set_option('Filter', $mode);
+	if ($old ne $Filter) {
+		print "Old Filter $old\n";
+	}
+	$Filter = $mode;
+
+	meta_reset_filters($mode);
+}
+
 sub rc_format {
 	my($mode) = @_;
 
-	set_option('Mode', $mode);
-	set_option('Format', $mode);
+	unless ($mode) {
+		print "Format $Format\n";
+		return;
+	}
+	
+	print "Format $Format => $mode\n";
 
+	set_option('Format', $mode);
 	display_mode($mode);
 }
 
 sub rc_sort {
 	my($mode) = @_;
+
+	unless ($mode) {
+		print "Sort $Sort\n";
+		return;
+	}
+	
+	print "Sort $Sort => $mode\n";
 
 	set_option('Sort', $mode);
 	sort_mode($mode);
@@ -526,28 +569,16 @@ sub add_task {
 sub report {
 	my($report) = shift @_;
 
-	eval "use Hier::Report::$report";
-	if ($@) {
-		my($error) = "Report compile: $@\n";
-		if ($error =~ /Can't locate Hier.Report.$report/) {
-			print "Unknown command $report\n";
-			print "try:  reports # for a list of reports\n";
-			return;
-		}
-		print "Report compile failed: $@\n";
-		return;
-	}
-
+	load_report($report);
 	print "### Report $report args: @_\n" if $Debug;
 
-	set_option('Format', undef);
-	eval "Report_$report(\@_);";	# call report with argv
-	if ($@) {
-		print "Report $report failed: $@";
-		return;
-	}
+	set_option('Filter', $Filter)  if $Filter;
+	set_option('Format', $Format)  if $Format;
+	set_option('Sort',   $Sort)    if $Sort;
+
 #	$Cmds->{$report} = \&"Report_$report";
 
+	run_report($report);
 	display_mode(option('Mode', 'task'));
 }
 

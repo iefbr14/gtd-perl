@@ -52,6 +52,8 @@ use Hier::Option;
 
 my $Mask = 0;
 
+my $Debug = 0;
+
 sub Report_noop {	#-- No Operation
 	meta_filter('+any', '^tid', 'none');
 
@@ -60,6 +62,9 @@ sub Report_noop {	#-- No Operation
 	my($walk) = new Hier::Walk();
 	$walk->filter();
 
+	if ($Debug) {
+		print "noop: ", join(' ', @_), "\n";
+	}
 	return;
 }
 

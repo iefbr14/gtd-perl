@@ -48,7 +48,7 @@ sub new {
 sub insert {
 	my($self) = @_;
 
-	Hier::db::gtd_insert($self);
+	Hier::Db::gtd_insert($self);
 	delete $self->{_dirty};
 }
 
@@ -92,8 +92,8 @@ sub delete {
 	my $tid = $self->{todo_id};
 	delete $Task{$tid};
 
-	Hier::db::sac_delete($tid);
-	Hier::db::gtd_delete($tid);	# remove from database
+	Hier::Db::sac_delete($tid);
+	Hier::Db::gtd_delete($tid);	# remove from database
 	return;
 }
 
@@ -183,7 +183,7 @@ sub set_tid          {
 		$ref->update();		
 	}
 
-	Hier::db::G_renumber($ref, $tid, $new);
+	Hier::Db::G_renumber($ref, $tid, $new);
 
         $Task{$new} = $Task{$tid};
         delete $Task{$tid};
@@ -265,7 +265,7 @@ sub dset {
 sub update {
 	my($self) = @_;
 
-	Hier::db::gtd_update($self);
+	Hier::Db::gtd_update($self);
 	delete $self->{_dirty};
 }
 
