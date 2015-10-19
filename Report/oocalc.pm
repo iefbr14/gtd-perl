@@ -152,7 +152,7 @@ sub get_actions {
 
 	if (@next == 0) {	# no next actions
 		if (@doit == 0 && @some == 0 && @done == 0) {
-			# needs planing			
+			# needs planning			
 			return ([ $gtitle, $pid, $ptitle,
 				'', "", '', 
 				join(':', pnum($gref), pnum($pref), '0')

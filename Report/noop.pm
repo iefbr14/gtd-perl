@@ -52,9 +52,11 @@ use Hier::Option;
 
 my $Mask = 0;
 
-my $Debug = 0;
+our $Debug = 0;
 
 sub Report_noop {	#-- No Operation
+	print "Debug noop = $Debug\n" if $Debug;
+
 	meta_filter('+any', '^tid', 'none');
 
 	my($criteria) = meta_desc(@_);

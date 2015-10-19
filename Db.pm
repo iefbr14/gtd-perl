@@ -29,7 +29,7 @@ use Hier::Option;
 my $Current_ref;	# current gtd mapped item
 
 my $Table;
-my $Debug = 0;
+our $Debug = 0;
 my $MetaFix = 1;
 
 my($Category, $Context, $Timeframe, $Tags);

@@ -644,7 +644,7 @@ sub disp_html {
 }
 
 sub disp_task {
-	my($fd, $ref) = @_;
+	my($fd, $ref, $note) = @_;
 
 	my($pri, $type, $context, $project, $action);
 	$type = $ref->get_type();
@@ -687,7 +687,9 @@ sub disp_task {
 
 	my($result) = join(' ', "($pri)", $context.$project, $action, $tid);
 	$result =~ s/\s\s+/ /g;
-	print $result, "\n";
+	print $result;
+	print " $note" if $note;
+	print "\n";
 }
 
 sub disp_rgpa {

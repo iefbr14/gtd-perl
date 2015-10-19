@@ -48,6 +48,7 @@ BEGIN {
 use Hier::util;
 use Hier::Format;
 use Hier::Meta;
+use Hier::Color;
 
 use Hier::CCT;		# DIRECT access to interals (Bleck)
 
@@ -116,7 +117,10 @@ sub report_counts {
 	my($id, $dup, $cnt, $sk);
 
 	my($cct_ref) = Hier::CCT->use($cct);
-	print "Val  Vis  Role Goal Proj Action Total Id: Name\n";
+	print_color('BOLD');
+	print "Val  Vis  Role Goal Proj Action Total Id: $header Name\n";
+	print_color();
+
 	for my $key (@keys) {
 		$id = $cct_ref->get($key) || '0';
 

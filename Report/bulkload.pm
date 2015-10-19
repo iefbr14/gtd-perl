@@ -78,7 +78,7 @@ my $Type;
 my $Info = {};
 
 my $Prompt = '';
-my $Debug = 1;
+our $Debug = 0;
 
 sub Report_bulkload { #-- Create Projects/Actions items from a file
 	my($pid);

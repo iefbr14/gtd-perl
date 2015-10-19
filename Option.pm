@@ -57,7 +57,7 @@ my %Option_keys = (
 	'Mode'        => '',    # no mode set yet
 );
 
-my $Debug = 0;
+our $Debug = 0;
 
 sub option_key {
 	my($key) = @_;
@@ -109,11 +109,14 @@ sub debug {
 	}
 
 	if ($what =~ /^[A-Z]/) {
-		eval "Hier::$what::Debug = 1";
-		if ($@) {
-			warn "Debug Hier::$what failed\n";
-			return;
-		}
+		no strict 'refs';
+		my($var) = "Hier::${what}::Debug";
+		$$var = 1;
+
+#		if ($@) {
+#			warn "Debug $var failed\n";
+#			return;
+#		}
 		print "Debug of $what on\n";
 		return;
 	}
@@ -132,11 +135,14 @@ sub debug {
 	if ($what =~ /^[a-z]/) {
 		load_report($what);
 
-		eval "Hier::Report::$what::Debug = 1";
-		if ($@) {
-			warn "Debug Hier::Report::$what failed\n";
-			return;
-		}
+		no strict 'refs';
+		my($var) = "Hier::Report::${what}::Debug";
+		$$var = 1;
+#		eval "Hier::Report::$what::Debug = 1";
+#		if ($@) {
+#			warn "Debug Hier::Report::$what failed\n";
+#			return;
+#		}
 	}	
 }
 

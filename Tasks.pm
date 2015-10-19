@@ -21,7 +21,7 @@ sub all {
 }
 
 my $Max_todo = 0; 	# Last todo id (unique for all tables)
-my $Debug = 1; 
+our $Debug = 0; 
 
 sub new {
 	my($class, $tid) = @_;
@@ -270,6 +270,7 @@ sub update {
 }
 
 END {
+	$Debug = 1;	# show what should have been updated.
 	foreach my $ref (Hier::Tasks::all()) {
 
 		next unless $ref->is_dirty();

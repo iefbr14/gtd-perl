@@ -50,7 +50,7 @@ use Hier::Meta;
 use Hier::Option;
 use Hier::Format;
 
-my $Debug = 0;
+our $Debug = 0;
 my %Depth;
 
 sub Report_tsort {	#-- write out hier as as set of nodes

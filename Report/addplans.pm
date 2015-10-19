@@ -51,7 +51,7 @@ use Hier::Sort;
 use Hier::Format;
 use Hier::Option;
 
-my $Debug;
+our $Debug = 0;
 
 my @List = ();
 
@@ -64,8 +64,6 @@ my %Seen;
 sub Report_addplans {	#-- add plan action items to unplaned projects
 	meta_filter('+live', '^focus', 'simple');
 
-	$Debug = option('Debug', 0);
-
 	@List = meta_pick(@_);
 	if (@List == 0) {
 		@List = meta_pick('Project');
@@ -73,7 +71,7 @@ sub Report_addplans {	#-- add plan action items to unplaned projects
 	} else {
 		$Limit = option('Limit', scalar(@List));
 	}
-	report_header('Projects needing planing');
+	report_header('Projects needing planning');
 
 	# find all next and remember there focus
 	while (@List) {

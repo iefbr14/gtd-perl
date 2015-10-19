@@ -29,7 +29,7 @@ use Hier::Format;
 use Hier::Sort;
 use Hier::util;
 
-my $Debug = 0;
+our $Debug = 0;
 
 use base qw(Hier::Hier Hier::Fields Hier::Filter);
 

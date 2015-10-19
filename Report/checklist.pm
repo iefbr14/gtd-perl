@@ -48,7 +48,7 @@ BEGIN {
 use Hier::util;
 use Hier::Meta;
 
-my $Debug = 0;
+our $Debug = 0;
 
 sub Report_checklist {	#-- display a check list
 #	meta_argv();

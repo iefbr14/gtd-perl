@@ -59,7 +59,7 @@ my($Proj_cnt) = 0;
 
 my($Dep) = '';   # Project depends on string
 
-my($Debug) = 0;
+our $Debug = 0;
 
 sub Report_focus {	#-- List focus -- live, plan or someday
 	my($cnt) = 0;

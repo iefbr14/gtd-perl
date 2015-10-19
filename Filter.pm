@@ -25,7 +25,7 @@ my $Today = get_today();
 my $Soon  = get_today(+7);
 
 my @Filters;	# types of actions to include
-my $Debug = 0;
+our $Debug = 0;
 
 my $Default_level = 'm';
 

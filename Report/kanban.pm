@@ -191,7 +191,7 @@ sub check_hier {
 		if ($ref->get_state() eq 'z') {
 			if ($ref->get_completed eq '') {
 				print "To tag as done:\n" if $count == 0;
-				display_task($ref);
+				display_task($ref, '(tag as done)');
 				++$count;
 			}
 		}
@@ -250,17 +250,17 @@ sub check_a_role {
 	%Fook = ();
 
 	if ($anal) {
-		print "A: "; display_task($anal);
+		print "A: "; display_task($anal, '(analyze)');
 	}
 	if ($devel) {
-		print "D: "; display_task($devel);
+		print "D: "; display_task($devel, '(do)');
 	}
 	if ($test) {
-		print "T: "; display_task($test); 
+		print "T: "; display_task($test, '(test)'); 
 	}
 	if ($wiki) {
 		print_color('PURPLE');
-		print "W: "; display_task($wiki);
+		print "W: "; display_task($wiki, 'update wiki');
 		print_color();
 	}
 }

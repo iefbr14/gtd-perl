@@ -20,7 +20,7 @@ BEGIN {
 	@EXPORT      = qw(&walk &detail);
 }
 
-my $Debug;
+our $Debug;
 
 sub new {
 	my($class) = @_;
@@ -31,8 +31,6 @@ sub new {
 	$walk->{depth} = type_depth('p');	# projects
 
 	bless $walk, $class;
-
-	$Debug = option('Debug');
 
 	return $walk;
 }

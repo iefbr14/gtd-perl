@@ -72,12 +72,13 @@ my $Info = {};
 
 my $Mode = option('Mode', 'task');
 
-my $Filter;
-my $Format;
-my $Sort;
+my $Filter = '-';
+my $Format = '-';
+my $Header = '-';
+my $Sort   = '-';
 
 my $Prompt = '> ';
-my $Debug = 0;
+our $Debug = 0;
 
 my($Pid) = '';	# current Parrent task;
 my($Pref);	# current Parrent task reference;
@@ -104,9 +105,9 @@ sub Report_rc { #-- rc - Run Commands
 
 	# init from command line.
 	# there are commands to override later
-	$Filter = option('Filter');
-	$Format = option('Format');
-	$Sort   = option('Sort');
+	$Filter = option('Filter') || '-';
+	$Format = option('Format') || '-';
+	$Sort   = option('Sort')   || '-';
 
 #	my $OUT = $term->OUT || \*STDOUT;
 #       print $OUT $res, "\n" unless $@;
@@ -133,9 +134,14 @@ sub Report_rc { #-- rc - Run Commands
 sub rc {
 	my($line) = @_;
 
-	if ($line =~ /^debug/) {
+	if ($line =~ s/^debug\s*//) {
+		if ($line) {
+			debug($line);
+			return;
+		}
+
 		$Debug = 1;
-		print "Debug on\n";
+		print "Debug rc on\n";
 		return;
 	}
 
@@ -268,13 +274,10 @@ sub rc_filter {
 	
 	print "Filter $Filter => $mode\n";
 
-	my($old) = set_option('Filter', $mode);
-	if ($old ne $Filter) {
-		print "Old Filter $old\n";
-	}
-	$Filter = $mode;
+	set_option('Filter', dash_null($mode));
+	meta_reset_filters($mode eq '-' ? '+live' : $mode);
 
-	meta_reset_filters($mode);
+	$Filter = $mode;
 }
 
 sub rc_format {
@@ -287,8 +290,26 @@ sub rc_format {
 	
 	print "Format $Format => $mode\n";
 
-	set_option('Format', $mode);
-	display_mode($mode);
+	set_option('Format', dash_null($mode));
+	display_mode($mode eq '-' ? 'task' : $mode);
+
+	$Format = $mode;
+}
+
+sub rc_header {
+	my($mode) = @_;
+
+	unless ($mode) {
+		print "Header $Header\n";
+		return;
+	}
+	
+	print "Header $Header => $mode\n";
+
+	set_option('Header', dash_null($mode));
+	display_mode($mode eq '-' ? 'task' : $mode);
+
+	$Header = $mode;
 }
 
 sub rc_sort {
@@ -298,11 +319,13 @@ sub rc_sort {
 		print "Sort $Sort\n";
 		return;
 	}
-	
+
 	print "Sort $Sort => $mode\n";
 
-	set_option('Sort', $mode);
-	sort_mode($mode);
+	set_option('Sort', dash_null($mode));
+	sort_mode($mode eq '-' ? '^title' : $mode);
+
+	$Sort = $mode;
 }
 
 #==============================================================================
@@ -572,14 +595,23 @@ sub report {
 	load_report($report);
 	print "### Report $report args: @_\n" if $Debug;
 
-	set_option('Filter', $Filter)  if $Filter;
-	set_option('Format', $Format)  if $Format;
-	set_option('Sort',   $Sort)    if $Sort;
+	# force options back to our defaults (including no defaults)
+	set_option('Filter', dash_null($Filter));
+	set_option('Format', dash_null($Format));
+	set_option('Header', dash_null($Header));
+	set_option('Sort',   dash_null($Sort));
 
 #	$Cmds->{$report} = \&"Report_$report";
 
-	run_report($report);
+	run_report($report, @_);
 	display_mode(option('Mode', 'task'));
+}
+
+sub dash_null {
+	my($val) = @_;
+
+	return undef if $val eq '-';
+	return $val;
 }
 
 1;  # don't forget to return a true value from the file
