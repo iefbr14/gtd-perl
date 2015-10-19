@@ -1,6 +1,6 @@
 [submodule "Programmer"]
 	path = Programmer
-	url = ./Programmer
+	url = git@git.ss.org:/maunal/gtd-programmer
 [submodule "User"]
 	path = User
-	url = ./User
+	url = git@git.ss.org:/maunal/gtd-user
