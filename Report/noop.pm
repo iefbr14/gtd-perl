@@ -55,11 +55,11 @@ my $Mask = 0;
 our $Debug = 0;
 
 sub Report_noop {	#-- No Operation
-	print "Debug noop = $Debug\n" if $Debug;
+	print "### Debug noop = $Debug\n" if $Debug;
 
-	meta_filter('+any', '^tid', 'none');
+	meta_filter('+live', '^tid', 'tid');
 
-	my($criteria) = meta_desc(@_);
+	my($list) = meta_pick(@_);
 
 	my($walk) = new Hier::Walk();
 	$walk->filter();
