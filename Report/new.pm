@@ -120,16 +120,16 @@ sub is_type_action {
 
 # command line version
 sub new_task {
-	my($type, $desc) = @_;
+	my($type, $title) = @_;
 
-	my($pri, $category, $note, $desc, $line);
+	my($pri, $task, $category, $note, $desc, $line);
 
-	$task     = option("Title");
+	$task     = option("Title") || $title;
 	$pri      = option('Priority') || 3;
-	$desc     = option("Desc") || $desc;
+	$desc     = option("Desc") || '';
 
 	$category = option('Category') || '';
-	$note     = option('Note'); 
+	$note     = option('Note') || ''; 
 
 	my $ref = Hier::Tasks->new(undef);
 
