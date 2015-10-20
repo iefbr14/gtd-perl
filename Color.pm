@@ -24,6 +24,7 @@ my %Pri_terminal = (
 );
 
 my %Fg_terminal = (
+	BOLD   =>	"1",
 	STRIKE =>	"9",
 
 	BLACK =>	"0;30",

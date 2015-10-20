@@ -98,6 +98,7 @@ my($Cmds) = {
 	sort    => \&rc_sort,
 
 	clear   => \&rc_clear,
+	gtd     => \&rc_clear,
 };
 
 sub Report_rc { #-- rc - Run Commands
@@ -120,7 +121,7 @@ sub Report_rc { #-- rc - Run Commands
 		next if /^\s*#/;
 		next if /^\s*$/;
 
-		$term->addhistory($_);
+#		$term->addhistory($_);
 		eval {
 			rc($_);
 		}; if ($@) {
@@ -161,7 +162,7 @@ sub rc {
 		return;
 	}
 
-	my($cmd, @args) = split(' ', $line);
+	my($cmd, @args) = split(/[\s;]+/, $line);
 
 	if (defined $Cmds->{$cmd}) {
 		my($func) = $Cmds->{$cmd};

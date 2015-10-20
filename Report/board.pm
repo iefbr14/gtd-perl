@@ -45,19 +45,6 @@ BEGIN {
 	@EXPORT      = qw( &Report_board );
 }
 
-my %States = (
-	a => 'Analysis Needed',
-	b => 'Being Analysed',
-	c => 'Completed Analysis',
-	d => 'Doing',
-	f => 'Finished Doing',
-	t => 'Test',
-	w => 'Wiki update',
-	z => 'Z all done', 		# should have a completed date
-);
-
-my @Class = qw(Done Someday Action Next Future Total);
-
 use Hier::util;
 use Hier::Meta;
 use Hier::Sort;
@@ -66,9 +53,26 @@ use Hier::Option;
 use Hier::Resource;
 use Hier::Color;
 
+my %States = (
+	a => 'Analysis Needed',
+	b => 'Being Analysed',
+	c => 'Completed Analysis',
+	d => 'Doing',
+	f => 'Finished Doing',
+	r => 'Reprocess',
+	t => 'Test',
+	w => 'Wiki update',
+	z => 'Z all done', 		# should have a completed date
+);
+
+my @Class = qw(Done Someday Action Next Future Total);
+
+our $Debug = 0;
+
 my $Hours_task = 0;
 my $Hours_next = 0;
 
+my $Lines;
 my $Cols;
 my %Seen;
 
@@ -82,7 +86,9 @@ sub Report_board {	#-- report board of projects/actions
 		@list = meta_pick('roles');
 	}
 
+	$Lines = lines();
 	$Cols = int(columns()/4)-(1+5+1);
+	%Seen = ();
 
 	### printf "Columns: %s split %s\n", columns(), $Cols;
 
@@ -144,17 +150,24 @@ sub check_a_role {
 
 		check_group($ref, $state, '-', 5, \@want);
 
-		check_group($ref, $state, 'a', 1, \@b_anal);
 		check_group($ref, $state, 'b', 1, \@d_anal);
+		#------------------------------------------
+		check_group($ref, $state, 'a', 1, \@b_anal);
 
+
+		check_group($ref, $state, 'd', 2, \@d_devel);	# Do
+		check_group($ref, $state, 'i', 2, \@d_devel);	# Ick 
+		#------------------------------------------
 		check_group($ref, $state, 'c', 2, \@b_devel);
-		check_group($ref, $state, 'd', 2, \@d_devel);
 
-		check_group($ref, $state, 'f', 3, \@b_test);
+		check_group($ref, $state, 'r', 3, \@d_test);
 		check_group($ref, $state, 't', 3, \@d_test);
+		#------------------------------------------
+		check_group($ref, $state, 'f', 3, \@b_test);
 
-		check_group($ref, $state, 'w', 4, \@b_done);
-		check_group($ref, $state, 'z', 4, \@d_done);
+		check_group($ref, $state, 'w', 4, \@d_done);
+		#------------------------------------------
+		check_group($ref, $state, 'z', 4, \@b_done);
 	}
 
 	
@@ -166,19 +179,14 @@ sub check_a_role {
 
 	display_rgpa($role_ref);
 
-	color('BOLD');
+	print_color('BOLD');
 	printf("----- %-${Cols}s ", "Analyse");
 	printf("----- %-${Cols}s ", "Devel");
 	printf("----- %-${Cols}s ", "Test");
 	printf("----- %s\n", "Complete");
-	color();
+	print_color();
 
-	col(\@c_anal,  ' ');
-	col(\@c_devel, ' ');
-	col(\@c_test,  ' ');
-	col(\@c_done, "\n");
-
-	my($lines) = lines() - 6;
+	return if last_lines(3);
 
 	while (scalar(@c_anal)
 	    || scalar(@c_devel)
@@ -191,26 +199,40 @@ sub check_a_role {
 		col(\@c_test,  ' ');
 		col(\@c_done, "\n");
 
-		if (--$lines <= 0) {
-			print "----- more ----\n";
-			last;
-		}
+		return if last_lines(1);
 	}
 
 	if (@want) {
 		print '-'x (columns()-1), "\n";
+		return if last_lines(1);
 	}
+
 	while (@want) {
-		if (--$lines <= 0) {
-			print "----- more ----\n";
-			last;
-		}
 		col(\@want,  ' ');
 		col(\@want,  ' ');
 		col(\@want,  ' ');
 		col(\@want, "\n");
+
+		return if last_lines(1);
 	}
 }
+
+sub last_lines {
+	my($lines) = @_;
+
+	printf "%-3d ", $Lines if $Debug;
+
+	return 1 if $Lines <= 0;
+
+	$Lines -= $lines;
+
+	if ($Lines <= 0) {
+		print "----- more ----\n";
+		return 1;
+	}
+	return;
+}
+
 
 sub col {
 	my($aref, $sep) = @_;
@@ -248,6 +270,14 @@ sub check_group {
 
 	} elsif ($how == 5) {
 		$color = check_want($ref) || check_empty($ref);
+	}
+
+	if ($state eq 'i' && color eq '') {
+		$color = color('CYAN');
+	}
+
+	if ($state eq 'r' && color eq '') {
+		$color = color('BROWN');
 	}
 
 	my($tid) = $ref->get_tid();
@@ -300,7 +330,7 @@ sub check_done {
 	for my $ref ($pref->get_children()) {
 		next unless $ref->get_completed();
 		
-		return color('BROWN');
+		return color('PURPLE');
 	}
 	return '';
 }

@@ -98,40 +98,7 @@ sub Report_kanban {	#-- report kanban of projects/actions
 	}
 	check_roles(@list);
 
-	my $proj = check_proj();
-	my $task = check_task();
-	my $next = check_next();
-	my $hier = check_hier();
-
-#	print "Options:\n";
-#	for my $option (qw(pri debug db title report)) {
-#		printf "%10s %s\n", $option, get_info($option);
-#	}
-#	print "\n";
-
-	print "----------------\n";
-	my($total) = $task + $next;
-	print "hier: $hier, projects: $proj, next,actions: $next+$task = $total\n";
-
-	my($t_p) = '-';
-	my($t_a) = $Hours_task;
-	my($t_n) = $Hours_next;
-
-	my($time) = '?';
-	print "time: $time, projects: $t_p, next,actions: $t_n,$t_a\n";
 }
-
-=head
-
-We need to check in each role there is:
-
-* only 1 project in analysis
-* only 1 project in development
-* only 1 project in test
-* only 1 project in wiki wait
-* and no projects in z that don't have completed date
-
-=cut
 
 sub kanban_bump {
 	my(@arg) = @_;
@@ -160,7 +127,8 @@ sub kanban_bump {
 	for my $ref (@list) {
 		my($state) = $ref->get_state();
 
-		if ($state =~ tr/-abcdft/abcdftw/) {
+		if ($state =~ tr{-abcdifrtw}
+                                {abcdfctcwz}) {
 			$ref->set_state($state);
 		} else {
 			display_task($ref, "|<<< unknown state $state");
@@ -209,33 +177,37 @@ sub check_roles {
 sub check_a_role {
 	my($role_ref) = @_;
 
-	my($anal);
-	my($devel);
-	my($test);
-	my($wiki);
+	my(@anal);
+	my(@devel);
+	my(@ick);
+	my(@test);
+	my(@wiki);
+	my(@repo);
 
+	$| = 1;
 	for my $gref ($role_ref->get_children()) {
 		for my $ref ($gref->get_children()) {
 			my $state = $ref->get_state();
 
-			unless ($state =~ m/[-abcdftwz]/) {
+			unless ($state =~ m/[-abcdfitrwz]/) {
 				display_task($ref, "Unknown state $state");
 				next;
 			}
 			check_title($ref) if $state ne '-';
 
-			check_state($ref, $state, 'b', \$anal);
-			check_state($ref, $state, 'd', \$devel);
-			check_state($ref, $state, 't', \$test);
-			check_state($ref, $state, 'w', \$wiki);
+			check_state($ref, $state, 'b', \@anal);
+			check_state($ref, $state, 'd', \@devel);
+			check_state($ref, $state, 'i', \@ick);
+			check_state($ref, $state, 'r', \@repo);
+			check_state($ref, $state, 't', \@test);
+			check_state($ref, $state, 'w', \@wiki);
 		}
 	}
 
 	my($needs) = '';
-	$needs .= ' analysys' unless $anal;
-	$needs .= ' devel' unless $devel;
-	$needs .= ' test' unless $test;
-#	$needs .= ' wiki' unless $wiki;
+	$needs .= ' analysys' unless @anal;
+	$needs .= ' devel' unless @devel;
+	$needs .= ' test' unless @test;
 
 	print_color('RED');
 	display_task($role_ref, "\t|<<<Needs".$needs) if $needs;
@@ -249,16 +221,31 @@ sub check_a_role {
 	}
 	%Fook = ();
 
-	if ($anal) {
+	for my $anal (@anal) {
 		print "A: "; display_task($anal, '(analyze)');
 	}
-	if ($devel) {
+
+	for my $devel (@devel) {
 		print "D: "; display_task($devel, '(do)');
 	}
-	if ($test) {
+
+	for my $ick (@ick) {
+		print_color('CYAN');
+		print "I: "; display_task($ick, '(ick)'); 
+		print_color
+	}
+
+	for my $test (@test) {
 		print "T: "; display_task($test, '(test)'); 
 	}
-	if ($wiki) {
+
+	for my $repo (@repo) {
+		print_color('BROWN');
+		print "R: "; display_task($repo, 'reprocess/reprint wiki');
+		print_color();
+	}
+
+	for my $wiki (@wiki) {
 		print_color('PURPLE');
 		print "W: "; display_task($wiki, 'update wiki');
 		print_color();
@@ -270,39 +257,7 @@ sub check_state {
 
 	return unless $state eq $want;
 
-	if (defined $$var && $$var ne $ref) {
-		my($msg) = "\t| <<<".$States{$state}.'>>>';
-
-		$Fook{$$var->get_tid()} = $msg;
-		$Fook{$ref->get_tid()} = $msg;
-		return;
-	}
-	$$var = $ref;
-}
-
-sub check_proj {
-	my($count) = 0;
-
-	# find all projects
-	foreach my $ref (meta_matching_type('p')) {
-
-		++$count;
-	}
-	return $count;
-}
-
-sub check_liveproj {
-	my($count) = 0;
-
-	# find all projects
-	foreach my $ref (meta_matching_type('p')) {
-###FILTER	next if $ref->filtered();
-
-		next unless project_live($ref);
-
-		++$count;
-	}
-	return $count;
+	push(@{$var}, $ref);
 }
 
 sub check_title {
@@ -316,111 +271,5 @@ sub check_title {
 
 	display_task($pref, "\t| !!! no wiki title");
 }
-
-sub check_task {
-	my($count) = 0;
-	my($time) = 0;
-
-	# find all records.
-	foreach my $ref (meta_selected()) {
-		next unless $ref->is_task();
-
-		next if $ref->filtered();
-
-		next unless project_live($ref);
-
-		++$count;
-
-		my($resource) = new Hier::Resource($ref);
-		$Hours_task += $resource->hours($ref);
-	}
-	return $count;
-}
-
-sub check_next {
-	my($count) = 0;
-	my($time) = 0;
-
-	# find all records.
-	foreach my $ref (meta_selected()) {
-		next unless $ref->is_task();
-
-		next if $ref->filtered();
-
-		next unless project_live($ref);
-
-		next unless $ref->is_nextaction();
-
-		++$count;
-
-		my($resource) = new Hier::Resource($ref);
-		$Hours_next += $resource->hours($ref);
-	}
-	return $count;
-}
-
-sub check_tasklive {
-	my($count) = 0;
-	my($time) = 0;
-
-	# find all records.
-	foreach my $ref (meta_selected()) {
-
-		next unless $ref->is_task();
-
-		next if $ref->filtered();
-		next unless project_live($ref);
-
-		++$count;
-	}
-	return $count;
-}
-
-sub project_live {
-	my($ref) = @_;
-
-	return $ref->get_live() if defined $ref;
-
-	my($type) = $ref->get_type();
-
-	if ($ref->is_task()) {
-		$ref->get_live() = ! task_filtered($ref);
-		return $ref->get_live();
-	}
-
-	if ($ref->is_hier()) {
-		foreach my $pref ($ref->get_parents()) {
-			$ref->get_live() |= project_live($pref);
-		}
-		foreach my $cref ($ref->get_children()) {
-			$ref->get_live() |= project_live($cref);
-		}
-	
-		$ref->get_live() = ! task_filtered($ref);
-		return $ref->get_live();
-	}
-
-	return 0;
-}
-
-sub calc_type {
-	my($ref) = @_;
-
-	return 'h' if $ref->is_hier();
-	return 'a' if $ref->is_task();
-	return 'l';
-}
-
-sub calc_class {
-	my($ref) = @_;
-
-	return 'd' if $ref->get_completed();
-	return 's' if $ref->is_someday();
-	return 'f' if $ref->is_later();
-
-	return 'n' if $ref->is_nextaction();
-	return 'a';
-}
-
 
 1;

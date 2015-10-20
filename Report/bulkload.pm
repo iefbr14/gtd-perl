@@ -68,6 +68,8 @@ BEGIN {
 use strict;
 use warnings;
 
+use Term::ReadLine;
+
 use Hier::Meta;
 use Hier::Option;
 use Hier::Report::edit;
@@ -88,29 +90,30 @@ sub Report_bulkload { #-- Create Projects/Actions items from a file
 
 	my($parents) = {};
 
-	my(@lines);
-
+	my($term);
 	if (-t STDIN) {
 		$Prompt = '> ';
+		$term = Term::ReadLine->new('gtd');
 		$| = 1;
 	}
 
 	for (;;) {
-		if (@lines) {
-			$_ = shift @lines;
+		if ($Prompt) {
+			$_ = $term->readline($Prompt);
+			last unless defined $_;
 		} else {
-			if ($desc && $Prompt) {
-				print '+ ';
-			} else {
-				print $Prompt;
-			}
-
-			$_ = <>;
+			$_ = <STDIN>;
 			last unless defined $_;
 			chomp;
 		}
 
-		next if /^#/;
+		next if /^\s*#/;
+		next if /^\s*$/;
+
+		if ($Prompt) {
+			$term->addhistory($_);
+		}
+
 		if (/^debug/) {
 			$Debug = 1;
 			print "Debug on\n";
@@ -208,7 +211,11 @@ sub Report_bulkload { #-- Create Projects/Actions items from a file
 			$desc = '';
 			next;
 		}
-		if (s/^\[_*\]\s*//) {
+		# lines that start with bullets or checkboxs:
+		# ie:
+		if (s/^\**\s*\[_*\]\s*//	#    * [_]  title
+		|| s/^\**\s*//			#or  *      title
+		|| s/^\[_*\]\s*//) {		#or  [_]    title
 			&$action($parents, $desc);
 
 			$action = \&add_action;
