@@ -238,7 +238,7 @@ sub col {
 	my($aref, $sep) = @_;
 
 	my($val) = shift(@{$aref});
-	$val = '' unless $val;
+	$val = ' 'x ($Cols+6)  unless $val;
 
 #	if ($sep eq ' ') {
 #		printf("%-${Cols}.${Cols}s%s", $val, $sep);
