@@ -151,6 +151,19 @@ sub rc {
 		return;
 	}
 
+	###   .tid  =>  kanban .tid
+	if ($line =~ m/^\./) {
+		report('kanban', split(' ', $line));
+		return;
+	}
+
+	###   /key  =>  search  key
+	if ($line =~ s/^\///) {
+		report('search', $line);
+		return;
+	}
+
+	###   !cmd  =>  shell out for cmd
 	if ($line =~ s/^\!//) {
 		system($line);
 		return;
@@ -202,6 +215,7 @@ print << 'EOF';
    #        comments (and blank lines ignored)
    !        shell commands
    /        search and set task
+   .tid     kanban bump tid
 
    clear     clear screen before running command
    option    set option
