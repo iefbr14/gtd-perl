@@ -66,6 +66,7 @@ sub Report_url {	#-- quick List by various methods
 	}
 	report_header('Tasks', $title);
 
+	@Urls = ();
 	for my $ref (sort_tasks @list) {
 		find_url($ref);
 	}
@@ -95,6 +96,7 @@ sub guess_remote {
 
 	return "drugs.ss.org" if $who eq 'tofw.optical-online.com';
 	return "drugs.ss.org" if $who eq 'silver.ss.org';
+	return "drugs.ss.org" if $who =~ /^\d216\.191\.137/;
 	return "rabbit" if $who eq 'fw.iplink.net';
 
 	die "Can't map $who to remote site\n";
