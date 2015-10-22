@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use Getopt::Std;
 
-use Hier::util;
+use Hier::Util;
 use Hier::Db;
 use Hier::Option;
 use Hier::Filter;
