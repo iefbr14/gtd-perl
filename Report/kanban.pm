@@ -211,13 +211,11 @@ sub check_a_role {
 
 	print_color('RED');
 	display_task($role_ref, "\t|<<<Needs".$needs) if $needs;
-	print_color();
 
 	for my $tid (keys %Fook) {
 		my($ref) = Hier::Tasks::find($tid);
 		print_color('GREEN');
 		display_task($ref,   $Fook{$tid});
-		print_color();
 	}
 	%Fook = ();
 
@@ -242,13 +240,11 @@ sub check_a_role {
 	for my $repo (@repo) {
 		print_color('BROWN');
 		print "R: "; display_task($repo, 'reprocess/reprint wiki');
-		print_color();
 	}
 
 	for my $wiki (@wiki) {
 		print_color('PURPLE');
 		print "W: "; display_task($wiki, 'update wiki');
-		print_color();
 	}
 }
 

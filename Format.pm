@@ -20,6 +20,7 @@ BEGIN {
 
 use Hier::util;
 use Hier::Option;
+use Hier::Color;
 
 
 my $Display = \&disp_simple;
@@ -234,9 +235,9 @@ sub header_report {
 	my($fd, $title) = @_;
 	my($cols) = columns() - 2;
 
-	print {$fd} '#',"=" x $cols, "\n";
-	print {$fd} "#== $title\n";
-	print {$fd} '#',"=" x $cols, "\n";
+	print {$fd} '#',"=" x $cols; nl($fd);
+	print {$fd} "#== $title";    nl($fd);
+	print {$fd} '#',"=" x $cols; nl($fd);
 }
 
 sub header_wiki {
@@ -268,7 +269,8 @@ sub disp_tid {
 
 	my($tid) = $ref->get_tid();
 
-	print {$fd} $tid, "\n";
+	print {$fd} $tid;
+	nl($fd);
 }
 
 sub disp_title {
@@ -276,7 +278,8 @@ sub disp_title {
 
 	my($title) = $ref->get_title();
 
-	print {$fd} $title, "\n";
+	print {$fd} $title;
+	nl($fd);
 }
 
 sub disp_item {
@@ -287,7 +290,8 @@ sub disp_item {
 	my($title) = $ref->get_title();
 
 	my($desc) = format_summary($ref->get_description(), ' -- ');
-	print {$fd} "$tid\t  [_] $title$desc\n";
+	print {$fd} "$tid\t  [_] $title$desc";
+	nl($fd);
 }
 
 sub disp_simple {
@@ -304,7 +308,8 @@ sub disp_simple {
 	}
 
 
-	print {$fd} "$tid:\t$type $title$extra\n";
+	print {$fd} "$tid:\t$type $title$extra";
+	nl($fd);
 }
 
 sub disp_detail {
@@ -314,7 +319,7 @@ sub disp_detail {
 
 	bulk_display('+', $ref->get_description());
 	bulk_display('=', $ref->get_note());
-	print "\n";
+	nl($fd);
 }
 
 sub disp_summary {
@@ -380,7 +385,8 @@ sub disp_print {
 	print $fd "Tags:\t", $ref->disp_tags(),"\n";
 	print $fd "Parents:\t", $ref->disp_parents(),"\n";
 	print $fd "Children:\t", $ref->disp_children(),"\n";
-	print $fd "=-=\n\n";
+	print $fd "=-=\n";
+	nl($fd);
 }
 
 sub disp_ordered_dump {
@@ -409,7 +415,8 @@ sub disp_ordered_dump {
 	print $fd "Tags:\t", $ref->disp_tags(),"\n";
 	print $fd "Parents:\t", $ref->disp_parents(),"\n";
 	print $fd "Children:\t", $ref->disp_children(),"\n";
-	print $fd "=-=\n\n";
+	print $fd "=-=\n";
+	nl($fd);
 }
 
 sub disp_unordered_dump {
@@ -433,7 +440,8 @@ sub disp_unordered_dump {
 	print $fd "Tags:\t", $ref->disp_tags(),"\n";
 	print $fd "Parents:\t", $ref->disp_parents(),"\n";
 	print $fd "Children:\t", $ref->disp_children(),"\n";
-	print $fd "=-=\n\n";
+	print $fd "=-=\n";
+	nl($fd);
 }
 
 my($Hier_stack) = { 'o' => 0, 'g' => 0, 'p' => 0 };
@@ -560,7 +568,7 @@ sub disp_wikiwalk {
 
 	print {$fd} " -- $note" if $note;
 
-	print {$fd} "\n";
+	nl({$fd});
 }
 
 sub disp_wiki {
@@ -598,7 +606,7 @@ sub disp_wiki {
 
 	print {$fd} ' ===' if $type eq 'g';
 	print {$fd} ' ==' if $type =~ /[ovm]/;
-	print {$fd} "\n";
+	nl($fd);
 }
 
 sub disp_html {
@@ -640,7 +648,7 @@ sub disp_html {
 
 	print {$fd} ' </h3>' if $type eq 'g';
 	print {$fd} ' </h2>' if $type =~ /[ovm]/;
-	print {$fd} "\n";
+	nl($fd);
 }
 
 sub disp_task {
@@ -689,7 +697,7 @@ sub disp_task {
 	$result =~ s/\s\s+/ /g;
 	print $result;
 	print " $note" if $note;
-	print "\n";
+	nl($fd);
 }
 
 sub disp_rgpa {
@@ -714,13 +722,13 @@ sub disp_hier {
 	my $name = $ref->get_title() || '';
 
 	if ($level == 1) {
-		color($fd, $ref);
+		color_ref($ref, $fd);
 		print {$fd} "===== $tid -- $name ====================";
 		nl($fd);
 		return;
 	}
 	if ($level == 2) {
-		color($fd, $ref);
+		color_ref($ref, $fd);
 		print {$fd} "----- $tid -- $name --------------------";
 		nl($fd);
 		return;
@@ -731,7 +739,7 @@ sub disp_hier {
 	my $desc = summary_line($ref->get_description(), '');
 	my $done = $ref->get_completed() || '';
 
-	color($ref);
+	color_ref($ref, $fd);
 
 	printf {$fd} "%5s %3s ", $tid, $cnt;
 	printf {$fd} "%-15s", $ref->task_mask_disp() if $mask;
@@ -744,17 +752,6 @@ sub disp_hier {
 	}
 	nl($fd);
 }
-
-sub color {
-	my($fd, $ref) = @_;
-}
-
-sub nl {
-	my($fd) = @_;
-
-	print {$fd} "\n";
-}
-
 
 my($Count) = 0;
 my @Lines;

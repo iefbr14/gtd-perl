@@ -68,8 +68,7 @@ sub Report_color {	#-- Detailed list of projects with (next) actions
 			print_color($fg, $bg);
 			printf "%-5.5s/%.2s ", $fg,$bg;
 		}
-		print_color();
-		print "\n";
+		nl();
 	}
 }
 

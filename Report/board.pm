@@ -183,8 +183,8 @@ sub check_a_role {
 	printf("----- %-${Cols}s ", "Analyse");
 	printf("----- %-${Cols}s ", "Devel");
 	printf("----- %-${Cols}s ", "Test");
-	printf("----- %s\n", "Complete");
-	print_color();
+	printf("----- %s", "Complete");
+	nl();
 
 	return if last_lines(3);
 

@@ -118,8 +118,8 @@ sub report_counts {
 
 	my($cct_ref) = Hier::CCT->use($cct);
 	print_color('BOLD');
-	print "Val  Vis  Role Goal Proj Action Total Id: $header Name\n";
-	print_color();
+	print "Val  Vis  Role Goal Proj Action Total Id: $header Name";
+	nl();
 
 	for my $key (@keys) {
 		$id = $cct_ref->get($key) || '0';

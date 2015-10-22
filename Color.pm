@@ -150,17 +150,20 @@ sub guess_type {
 }
 
 sub color_ref {
-	my($ref, $fg, $bg) = @_;
+	my($ref, $fd) = @_;
+
+	$fd = \*STDOUT unless $fd;
 
 	unless ($ref) {
-		print "\e[0m";
+		print {$fd} color();
 		return;
 	}
 		
-	$fg ||= pick_color_fg($ref);
-#	$bg ||= pick_color_bg($ref);
+	my($fg) = pick_color_fg($ref);
+#	my($bg) = pick_color_bg($ref);
+	my($bg) = '';
 
-	print_color($fg, $bg);
+	print {$fd} color($fg, $bg);
 }
 
 sub pick_color_pri {
@@ -225,9 +228,13 @@ sub pick_color_bg {
 }
 
 sub nl {
-	print color();
-	if ($Type == 3) {
-		print "<br>";
-	}
-	print "\n";
+	my($fd) = @_;
+
+	$fd = \*STDOUT unless $fd;
+
+	my($color) = color();
+
+	$color .= "<br>" if $Type == 3;
+
+	print {$fd} $color, "\n";
 }
