@@ -45,7 +45,7 @@ BEGIN {
 	@EXPORT      = qw(&Report_taskjuggler);
 }
 
-use Hier::util;
+use Hier::Util;
 use Hier::Walk;
 use Hier::Resource;
 use Hier::Meta;

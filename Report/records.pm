@@ -45,7 +45,7 @@ BEGIN {
 	@EXPORT      = qw( &Report_records );
 }
 
-use Hier::util;
+use Hier::Util;
 use Hier::Meta;
 use Hier::Filter;	# task_mask_disp
 use Hier::Format;

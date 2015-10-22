@@ -66,11 +66,10 @@ use strict;
 use warnings;
 
 use Hier::Meta;
-use Hier::util;
+use Hier::Util;
 use Hier::Walk;
 use Hier::Resource;
 use Hier::Option;
-use Hier::util;
 
 my($Parent);
 my($Type);
@@ -356,7 +355,9 @@ sub dep_path {
 }
 
 
-use Hier::util;
+###############################################################################
+### duplicate code....  clean up needed
+###############################################################################
 use Hier::Tasks;
 
 sub _report_actions {	

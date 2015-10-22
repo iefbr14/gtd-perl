@@ -47,7 +47,7 @@ BEGIN {
 
 use Hier::Meta;
 use Hier::Tasks;
-use Hier::util;
+use Hier::Util;
 use Hier::Option;
 
 my $First = '';

@@ -45,7 +45,7 @@ BEGIN {
 	@EXPORT      = qw(&Report_noop);
 }
 
-use Hier::util;
+use Hier::Util;
 use Hier::Walk;
 use Hier::Meta;
 use Hier::Option;

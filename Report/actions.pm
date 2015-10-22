@@ -45,7 +45,7 @@ BEGIN {
 	@EXPORT      = qw(&Report_actions report_actions);
 }
 
-use Hier::util;
+use Hier::Util;
 use Hier::Meta;
 use Hier::Option;
 use Hier::Sort;

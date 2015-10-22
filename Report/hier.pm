@@ -45,7 +45,7 @@ BEGIN {
 	@EXPORT      = qw(&Report_hier);
 }
 
-use Hier::util;
+use Hier::Util;
 use Hier::Color;
 use Hier::Walk;
 use Hier::Meta;

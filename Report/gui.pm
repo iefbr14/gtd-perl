@@ -52,7 +52,7 @@ use Tk;
 use Tk::Tree;
 use Tk::Text;
 
-use Hier::util;
+use Hier::Util;
 use Hier::Walk;
 use Hier::Meta;
 

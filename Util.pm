@@ -1,4 +1,4 @@
-package Hier::util;
+package Hier::Util;
 
 use strict;
 use warnings;

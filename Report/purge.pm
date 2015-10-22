@@ -45,7 +45,7 @@ BEGIN {
 	@EXPORT      = qw(&Report_purge);
 }
 
-use Hier::util;
+use Hier::Util;
 use Hier::Walk;
 use Hier::Meta;
 

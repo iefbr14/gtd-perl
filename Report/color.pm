@@ -46,7 +46,7 @@ BEGIN {
 	@EXPORT      = qw(&Report_color);
 }
 
-use Hier::util;
+use Hier::Util;
 use Hier::Color;
 
 sub Report_color {	#-- Detailed list of projects with (next) actions

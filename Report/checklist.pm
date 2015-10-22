@@ -45,7 +45,7 @@ BEGIN {
 	@EXPORT      = qw( &Report_checklist );
 }
 
-use Hier::util;
+use Hier::Util;
 use Hier::Meta;
 
 our $Debug = 0;

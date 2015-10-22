@@ -3,7 +3,7 @@ package Hier::Walk;
 use strict;
 use warnings;
 
-use Hier::util;
+use Hier::Util;
 use Hier::Tasks;
 use Hier::Option;
 use Hier::Sort;

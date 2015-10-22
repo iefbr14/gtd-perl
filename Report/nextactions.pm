@@ -45,7 +45,7 @@ BEGIN {
 	@EXPORT      = qw(&Report_nextactions);
 }
 
-use Hier::util;
+use Hier::Util;
 use Hier::Meta;
 
 sub Report_nextactions { #-- List next actions

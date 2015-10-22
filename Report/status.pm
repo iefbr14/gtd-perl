@@ -68,7 +68,7 @@ my %Types = (
 my @Class = qw(Done Someday Action Next Future Total);
 
 
-use Hier::util;
+use Hier::Util;
 use Hier::Meta;
 use Hier::Option;
 use Hier::Resource;

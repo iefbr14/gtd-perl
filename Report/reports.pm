@@ -47,7 +47,7 @@ BEGIN {
 	our $OurPath = __FILE__;
 }
 
-use Hier::util;
+use Hier::Util;
 use Hier::Meta;
 use Hier::Format;
 

@@ -27,7 +27,7 @@ use Hier::CCT;
 use Hier::Option;
 use Hier::Format;
 use Hier::Sort;
-use Hier::util;
+use Hier::Util;
 
 our $Debug = 0;
 

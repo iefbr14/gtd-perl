@@ -45,7 +45,7 @@ BEGIN {
 	@EXPORT      = qw(&Report_cct);
 }
 
-use Hier::util;
+use Hier::Util;
 use Hier::Format;
 use Hier::Meta;
 use Hier::Color;

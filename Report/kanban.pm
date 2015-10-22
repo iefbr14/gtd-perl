@@ -56,7 +56,7 @@ my %States = (
 	z => 'Z all done', 		# should have a completed date
 );
 
-use Hier::util;
+use Hier::Util;
 use Hier::Color;
 use Hier::Meta;
 use Hier::Format;

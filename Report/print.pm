@@ -47,7 +47,7 @@ BEGIN {
 	@EXPORT      = qw( &Report_print );
 }
 
-use Hier::util;
+use Hier::Util;
 use Hier::Tasks;
 use Hier::Meta;
 use Hier::Format;

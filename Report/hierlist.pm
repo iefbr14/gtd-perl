@@ -45,7 +45,7 @@ BEGIN {
 	@EXPORT      = qw(&Report_hierlist);
 }
 
-use Hier::util;
+use Hier::Util;
 use Hier::Meta;
 
 sub Report_hierlist {	#-- List all top level item (Project and above)

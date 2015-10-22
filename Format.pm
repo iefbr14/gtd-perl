@@ -18,7 +18,7 @@ BEGIN {
 	);
 }
 
-use Hier::util;
+use Hier::Util;
 use Hier::Option;
 use Hier::Color;
 
