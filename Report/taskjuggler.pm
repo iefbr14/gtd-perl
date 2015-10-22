@@ -249,6 +249,8 @@ sub indent {
 sub end_detail {
 	my($walk, $ref) = @_;
 
+	return if skip($walk, $ref);
+
 	my($tid) = $ref->get_tid();
 
 	my($fd) = $walk->{fd};
