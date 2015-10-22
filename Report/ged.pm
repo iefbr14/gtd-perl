@@ -73,13 +73,15 @@ sub Report_ged {	#-- generate a gedcom file from gtd db
 		$ToFuture = pdate(get_today(60));	
 	}
 	meta_argv(@_);
-	my($planner) = new Hier::Walk;
+	my($planner) = new Hier::Walk(
+		detail => \&hier_detail,
+		done   => \&end_detail,
+	);
 	$planner->set_depth('a');
 	$planner->filter();
 
 	ged_header();
 
-	bless $planner;
 	$planner->walk('m');
 	
 	ged_footer();

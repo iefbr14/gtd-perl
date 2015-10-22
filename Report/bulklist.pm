@@ -206,7 +206,10 @@ sub _report_hier {
 
 	my($criteria) = meta_desc(@_);
 
-	my($walk) = new Hier::Walk();
+	my($walk) = new Hier::Walk(
+		detail => \&hier_detail,
+		done   => \&end_detail,
+	);
 	$walk->filter();
 
 	if ($criteria) {

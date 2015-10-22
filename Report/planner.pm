@@ -67,14 +67,16 @@ sub Report_planner {	#-- Create a planner file from gtd db
 
 	meta_filter('+active', '^tid', 'none');
 	meta_argv(@_);
-	my($planner) = new Hier::Walk;
+	my($planner) = new Hier::Walk(
+		detail => \&hier_detail,
+		done   => \&end_detail,
+	);
 	$planner->set_depth('a');
 	$planner->filter();
 
 	planner_project();
 	planner_calendar();
 
-	bless $planner;
 	print "<tasks>\n";
 	$planner->walk('m');
 	print "</tasks>\n";

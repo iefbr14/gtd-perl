@@ -59,6 +59,10 @@ sub Report_delete {	#-- Delete listed actions/projects (will orphine items)
 			next;
 		}
 
+		for my $child ($ref->get_children) {
+			die "Delete ", $child->get_tid(), " first\n";
+		}
+
 		$ref->delete();
 		print "Task $task deleted\n";
 	}

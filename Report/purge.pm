@@ -59,21 +59,30 @@ my %Depth = (
 );
 
 sub Report_purge {	#-- interactive purge completed work
-die;
 	meta_filter('+dead', '^tid', 'simple');
 
 	my($criteria) = meta_desc(@_);
 
-	my($walk) = new Hier::Walk();
-	bless $walk;	# take ownership
+	my($walk) = new Hier::Walk(
+		done   => \&end_detail,
+	);
 
+	die "Criteria $criteria ignore for purge (re-write purge)\n";
 	$walk->walk('m');
 }
 
-sub hier_detail {
-}
+# purge deletes on walk back up.
+sub end_detail {
+	my($ref) = @_;
 
-###BUG### walk forward stopping on excludes
-###BUG### walk backward keeping on includes
+	my($done) = $ref->get_completed();
+
+	return unless $done;
+
+	my($tid) = $ref->get_tid();
+	my($title) = $ref->get_tid();
+
+	print "delete $tid\t# $done -- $title\n";
+}
 
 1;  # don't forget to return a true value from the file

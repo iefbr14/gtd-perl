@@ -62,6 +62,7 @@ sub Report_noop {	#-- No Operation
 	my($list) = meta_pick(@_);
 
 	my($walk) = new Hier::Walk();
+
 	$walk->filter();
 
 	if ($Debug) {

@@ -23,26 +23,21 @@ BEGIN {
 our $Debug;
 
 sub new {
-	my($class) = @_;
+	my($class, %opt) = @_;
 
 	my($walk) = {};
 
 	$walk->{fd} = \*STDOUT;
 	$walk->{depth} = type_depth('p');	# projects
 
-	Hier::Walk::clear_seen($walk);
+	$walk->{detail} = $opt{'detail'} || \&show_detail;
+	$walk->{done}   = $opt{'done'}   || \&end_detail;
+	$walk->{pre}    = $opt{'pre'}    || sub {};
+	$walk->{seen} = {};		
 
 	bless $walk, $class;
 
-
 	return $walk;
-}
-
-sub clear_seen {
-	my($walk) = @_;
-
-	# we have seen nothing on this walk
-	$walk->{seen} = {};		
 }
 
 sub walk {
@@ -60,6 +55,7 @@ sub walk {
 			} else {
 				$ref->set_level(2);
 			}
+			$walk->{pre}->($walk, $ref);
 			$walk->detail($ref);
 		} else {
 			warn "No such task: $toptype\n";
@@ -68,6 +64,11 @@ sub walk {
 	}
 
 	my(@top) = meta_matching_type($toptype);
+
+	for my $ref (sort_tasks @top) {
+		$ref->set_level(1);
+		$walk->{pre}->($walk, $ref);
+	}
 
 	for my $ref (sort_tasks @top) {
 		next if $ref->filtered();
@@ -160,7 +161,7 @@ sub detail {
 		return;
 	}
 
-	$walk->hier_detail($ref);
+	$walk->{detail}->($walk, $ref);
 
 	foreach my $child (sort_tasks $ref->get_children()) {
 		my $cid = $child->get_tid();
@@ -170,7 +171,25 @@ sub detail {
 		$walk->detail($child);
 	}
 
-	$walk->end_detail($ref);
+	$walk->{done}->($walk, $ref);
+}
+
+sub show_detail {
+	return unless $Debug;
+
+	my($ref) = @_;
+
+	my $tid = $ref->get_tid();
+	warn "### Hier::Walk::show_detail($tid)\n" if $Debug;
+}
+
+sub end_detail {
+	return unless $Debug;
+
+	my($ref) = @_;
+
+	my $tid = $ref->get_tid();
+	warn "### Hier::Walk::end_detail($tid)\n" if $Debug;
 }
 
 1; #<============================================================

@@ -78,11 +78,12 @@ sub Report_hier {	#-- Hiericial List of Values/Visions/Roles...
 	}
 
 	for my $top (@top) {
-		my($walk) = new Hier::Walk();
+		my($walk) = new Hier::Walk(
+			detail => \&hier_detail,
+			done   => \&end_detail,
+		);
 		$walk->filter();
 		$walk->set_depth($depth);
-
-		bless $walk;	# take ownership and walk the tree
 
 		$walk->walk($top);
 	}

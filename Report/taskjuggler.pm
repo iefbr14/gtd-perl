@@ -94,15 +94,16 @@ sub Report_taskjuggler {	#-- generate taskjuggler file from gtd db
 		$ToFuture = pdate(get_today(60));	
 	}
 
-	my($walk) = new Hier::Walk();
+	my($walk) = new Hier::Walk(
+		pre    => \&build_deps,
+		detail => \&hier_detail,
+		done   => \&end_detail,
+	);
 	$walk->set_depth('a');
 	$walk->filter();
 
-	Taskjuggler::build_deps($walk, $top);
-
 	tj_header();
 
-	bless $walk;	# take ownership and walk the tree
 	$walk->walk($top);
 }
 
@@ -209,7 +210,7 @@ sub hier_detail {
 	}
 
 	foreach my $depend (split(/[ ,]/, $depends)) {
-		my($dep_path) = Taskjuggler::dep_path($depend);
+		my($dep_path) = dep_path($depend);
 
 		unless ($dep_path) {
 			warn "depend $tid: needs $depend failed to produce path!";
@@ -259,7 +260,7 @@ sub end_detail {
 		my($task) = $ref->get_title();
 
 		print {$fd} $indent, qq(   effort 2h  # Need planning \n);
-		warn "Task $tid: $task Need effort planning\n";
+		warn "Task $tid: $task |<<< Needs effort planning\n";
 
 		++$ref->{_effort};
 	}
@@ -395,53 +396,43 @@ sub supress {
 	}
 }
 #==============================================================================
-package Taskjuggler;
-
-use Hier::Walk;
-use Hier::Meta;
-
 my %Dep_list;
 
 sub build_deps {
-	my($walk, $top) = @_;
+	my($walk, $ref, $level) = @_;
 
-	bless $walk;	# take ownership and walk the tree
-	$walk->walk($top);
+	$level ||= 1;
 
-	# we will be walking it twice
-	Hier::Walk::clear_seen($walk);
+	calc_depends($walk, $ref, $level);
+	for my $child ($ref->get_children()) {
+		build_deps($walk, $child, $level+1);
+	}
 }
 
-sub hier_detail {
-	my($walk, $ref) = @_;
+sub calc_depends {
+	my($walk, $ref, $level) = @_;
 
 	my($tid) = $ref->get_tid();
 	return if defined $Dep_list{$tid};
 
-	return if Hier::Report::taskjuggler::skip($walk, $ref);
+#	return if skip($walk, $ref);
 
 	my($path) = $ref->get_type() . '_' . $tid;
 
-	if ($ref->level() == 1) {
+	if ($level == 1) {
 		$Dep_list{$tid} = $path;
 		return;
 	}
 
-	my($fook) = '';
+	my $pref = $ref->get_parent();
+	my $pid = $pref->get_tid();
 
-	for my $pref ($ref->get_parents()) {
-		my $pid = $pref->get_tid();
-
-		if ($Dep_list{$pid}) {
-			$path = $Dep_list{$pid} . '.' . $path;
-			$Dep_list{$tid} = $path;
-			
-			return;
-		}
-
-		$fook .= " $pid ";
+	if ($Dep_list{$pid}) {
+		$path = $Dep_list{$pid} . '.' . $path;
+		$Dep_list{$tid} = $path;
+		
+		return;
 	}
-	warn "Can't find parent for $tid -> $fook\n";
 }
 
 
@@ -464,6 +455,4 @@ sub dep_path {
 }
 
 
-sub end_detail {
-}
 1;  # don't forget to return a true value from the file

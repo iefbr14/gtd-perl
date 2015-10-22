@@ -162,14 +162,18 @@ sub walk_tree {
 	$tree->delete('all');
 
 	meta_filter('+all', '^tid', 'simple');
-	my($walk) = new Hier::Walk;
+	my($walk) = new Hier::Walk(
+		detail => \&hier_detail,
+		done   => \&end_detail,
+	);
 	$walk->set_depth('a');
 	$walk->filter();
 
-	bless $walk;
 	$walk->{tree} = $tree;
 	$walk->walk('m');
-warn "Walked\n";
+
+	warn "Walked tree\n" if $Debug;
+
 	$tree->autosetmode;
         return $pkg;
 }
@@ -234,9 +238,6 @@ sub hier_detail {
 #		$tree->tag_bind($path, "<l>", \&hier_edit, $path);
 	}
 
-}
-
-sub end_detail {
 }
 
 sub connect {
