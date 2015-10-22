@@ -49,6 +49,7 @@ use Hier::Util;
 use Hier::Walk;
 use Hier::Resource;
 use Hier::Meta;
+use Hier::Format;
 use Hier::CCT;
 
 my $Today = `date +%04Y%02m%02dT080000Z`; chomp $Today;
@@ -92,7 +93,7 @@ sub hier_detail {
 	my($tid) = $ref->get_tid();
 
 
-	my($indent) = $ref->indent();
+	my($indent) = indent($ref);
 	my($resource) = new Hier::Resource($ref);
 	my($role) = $resource->resource($ref);
 	

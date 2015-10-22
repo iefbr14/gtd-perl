@@ -29,11 +29,20 @@ sub new {
 
 	$walk->{fd} = \*STDOUT;
 	$walk->{depth} = type_depth('p');	# projects
-	$walk->{seen} = {};		# we have seen nothing on this walk
+
+	Hier::Walk::clear_seen($walk);
 
 	bless $walk, $class;
 
+
 	return $walk;
+}
+
+sub clear_seen {
+	my($walk) = @_;
+
+	# we have seen nothing on this walk
+	$walk->{seen} = {};		
 }
 
 sub walk {
@@ -134,7 +143,7 @@ sub detail {
 	my $tid  = $ref->get_tid();
 	my $type = $ref->get_type();
 
-	warn "detail($tid:$type) level:$level\n" if $Debug;
+	warn "detail($tid:$type) level:$level of $depth\n" if $Debug;
 
 	return if $walk->{seen}{$tid}++;
 

@@ -83,7 +83,7 @@ our $Debug = 0;
 my($Pid) = '';	# current Parrent task;
 my($Pref);	# current Parrent task reference;
 
-my($Parents) = {};	# parrents we know about
+my($Parents) = {};	# parents we know about
 
 my($Cmds) = {
 	help    => \&rc_help,
@@ -224,7 +224,7 @@ print << 'EOF';
 
    999       to set current task
    p         to print current task
-   up        to go to current task's parrent
+   up        to go to current task's parent
    field:    to change any field in the current task
 
    ....      to run any current report

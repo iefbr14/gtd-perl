@@ -57,6 +57,8 @@ my $ToFuture;
 
 my $Someday = 0;
 
+our $Debug;
+
 sub Report_taskjuggler {	#-- generate taskjuggler file from gtd db
 	my($tid, $task, $cat, $ins, $due, $desc);
 
@@ -157,9 +159,11 @@ sub hier_detail {
 
 	my($tid) = $ref->get_tid();
 
+	print "# taskjuggler::hier_detail($tid)\n" if $Debug;
+
 	my($indent) = indent($ref);
 	my($resource) = new Hier::Resource($ref);
-	
+
 	$name = $ref->get_title() || '';
 	$tj_pri  = task_priority($ref);
 	$desc = summary_line($ref->get_description(), '', 1);
@@ -173,6 +177,8 @@ sub hier_detail {
 	$depends = $ref->get_depends();
 
 	$role = $resource->resource($ref);
+
+	print "## $tid $tj_pri $type $name\n" if $Debug;
 
 	return if skip($walk, $ref);
 
@@ -401,6 +407,9 @@ sub build_deps {
 
 	bless $walk;	# take ownership and walk the tree
 	$walk->walk($top);
+
+	# we will be walking it twice
+	Hier::Walk::clear_seen($walk);
 }
 
 sub hier_detail {
@@ -432,7 +441,7 @@ sub hier_detail {
 
 		$fook .= " $pid ";
 	}
-	warn "Can't find parrent for $tid -> $fook\n";
+	warn "Can't find parent for $tid -> $fook\n";
 }
 
 
