@@ -78,7 +78,6 @@ sub Report_hier {	#-- Hiericial List of Values/Visions/Roles...
 	}
 
 	for my $top (@top) {
-
 		my($walk) = new Hier::Walk();
 		$walk->filter();
 		$walk->set_depth($depth);

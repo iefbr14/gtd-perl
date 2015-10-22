@@ -29,6 +29,7 @@ sub new {
 
 	$walk->{fd} = \*STDOUT;
 	$walk->{depth} = type_depth('p');	# projects
+	$walk->{seen} = {};		# we have seen nothing on this walk
 
 	bless $walk, $class;
 
@@ -40,15 +41,16 @@ sub walk {
 
 	my($toptype) = @_;
 
-	# we have seen nothing on this walk
-	$walk->{seen} = {};
-
 	$toptype ||= 'm';
 
 	if ($toptype =~ /^\d+/) {
 		my($ref) = meta_find($toptype);
 		if ($ref) {
-			$ref->set_level(2);
+			if ($ref->get_type() eq 'm') {
+				$ref->set_level(1);
+			} else {
+				$ref->set_level(2);
+			}
 			$walk->detail($ref);
 		} else {
 			warn "No such task: $toptype\n";
@@ -155,11 +157,11 @@ sub detail {
 		my $cid = $child->get_tid();
 		warn "$tid => detail($cid)\n" if $Debug;
 
+		$child->set_level($level+1);
 		$walk->detail($child);
 	}
 
-	
 	$walk->end_detail($ref);
 }
 
-1;  # don't forget to return a true value from the file
+1; #<============================================================

@@ -51,7 +51,6 @@ use Hier::Resource;
 use Hier::Meta;
 use Hier::Format;
 use Hier::Option;	# get_today
-use Hier::Level;
 
 my $ToOld;
 my $ToFuture;

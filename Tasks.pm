@@ -5,7 +5,7 @@ use warnings;
 
 use Hier::Option;
 
-use base qw(Hier::Hier Hier::Fields Hier::Filter Hier::Format Hier::Level);
+use base qw(Hier::Hier Hier::Fields Hier::Filter Hier::Format);
 
 my %Task;		# all Todo items (including Hier)
 
@@ -320,6 +320,26 @@ sub is_nextaction {
 	return 1 if $ref->get_nextaction() eq 'y';
 
 	return 0;
+}
+
+# used by Hier::Walk to track depth of the current walk
+sub set_level {
+	my($self, $level) = @_;
+
+	die "set_level missing level value" unless defined $level;
+
+	# now remember our level;
+	$self->{_level} = $level;
+}
+
+sub level {
+	my($self) = @_;
+
+	my($level) = $self->{_level};
+
+	# we have alread defined it, return it.
+	return $level if defined $level;
+	die "level not set correctly?";
 }
 
 
