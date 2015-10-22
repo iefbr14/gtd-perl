@@ -57,7 +57,7 @@ my $ToFuture;
 
 my $Someday = 0;
 
-sub Report_ged {	#-- generate taskjuggler file from gtd db
+sub Report_ged {	#-- generate a gedcom file from gtd db
 	my($tid, $task, $cat, $ins, $due, $desc);
 
 	$ToOld = pdate(get_today(-7));	# don't care about done items > 2 week
@@ -85,14 +85,9 @@ sub Report_ged {	#-- generate taskjuggler file from gtd db
 	ged_footer();
 }
 
-sub calc_est {
-	return 180;
-}
-
 sub ged_header {
 	my($date) = ged_date(get_today(0));
-	my $est = calc_est();
-	my $projection = pdate(get_today($est));	
+
 print <<"EOF";
 0 HEAD
 1   SOUR GTD-perl
