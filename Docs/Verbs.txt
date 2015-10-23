@@ -2,39 +2,59 @@ Actions and Projects feel more actionable, thus making your brain want
 to take action, try using the following verbs to start each of your Next
 Actions and Project names.
 
-Project verbs
+== Project verbs ==
 
-    * Finalize
-    * Resolve
-    * Handle
-    * Look into
-    * Submit
-    * Maximize
-    * Organize
-    * Design
-    * Complete
-    * Ensure
-    * Roll out
-    * Update
-    * Install
-    * Implement
-    * Set-up 
+* Analyse
+* Complete
+* Decide
+* Design
+* Ensure
+* Finalize
+* Finish
+* Handle
+* Implement
+* Install
+* Launch
+* Look into
+* Look Into
+* Maximize
+* Organize
+* Research
+* Resolve
+* Roll-out
+* Set-up
+* Submit
+* Update (multi-step)
 
-Next-action verbs
+== Next-action verbs ==
 
-    * Call
-    * Organize
-    * Review
-    * Buy
-    * Fill out
-    * Find
-    * Purge
-    * Look into (Web)
-    * Gather
-    * Print
-    * Take
-    * Waiting for
-    * Load
-    * Draft
-    * Email 
+* Book
+* Brainstorm
+* Buy
+* Call
+* Copy
+* Discuss
+* Draft
+* Edit
+* Email
+* Fill out
+* Find
+* Gather
+* Load
+* Look into (Web)
+* Organize
+* Outline
+* Print
+* Purge
+* Read
+* Record
+* Register
+* Research
+* Review
+* Schedule
+* Take
+* Update (single-step)
+* Verify
+* Wait For
+* Write
 
