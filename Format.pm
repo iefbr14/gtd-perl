@@ -667,6 +667,7 @@ sub disp_task {
 			$project =~ s/ /_/g;
 			$project = "/$project/"
 		} else {
+			$project = "//";
 		}
 	} else {
 		$project = ' '.type_name($type).':';
