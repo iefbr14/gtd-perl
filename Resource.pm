@@ -145,6 +145,44 @@ sub predecessor {
 
 }
 
+#==============================================================================
+# Kanban states
+#------------------------------------------------------------------------------
+
+my %States = (
+	a => ['b', 'Analysis Needed',	],
+	b => ['c', 'Being Analysed',	],
+	c => ['d', 'Completed Analysis', ],
+	d => ['f', 'Doing',		],
+	f => ['t', 'Finished Doing',	],
+	i => ['c', 'Ick',		],	# task stuck.
+	r => ['c', 'Reprocess',		],	# Reprint
+	t => ['u', 'Test',		],
+	u => ['z', 'Update wiki',	],	# done, file paperwork
+	w => ['r', 'Waiting',		],	# Waiting on
+	z => ['z', 'Z all done',	], 	# should have a completed date
+);
+
+sub bump {
+	my($ref) = @_;
+
+	my ($state) = $ref->get_state();
+
+	return unless defined $States{$state};
+
+	my($new) = $States{$state}[0];
+
+	$ref->set_state($new);
+	return $new;
+}
+
+sub state {
+	my($state) = @_;
+
+	return "???$state???" unless defined $States{$state};
+
+	return $States{$state}[1];
+}
 
 1;  # don't forget to return a true value from the file
 

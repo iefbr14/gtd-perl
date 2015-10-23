@@ -45,17 +45,6 @@ BEGIN {
 	@EXPORT      = qw( &Report_kanban );
 }
 
-my %States = (
-	a => 'Analysis Needed',
-	b => 'Being Analysed',
-	c => 'Completed Analysis',
-	d => 'Doing',
-	f => 'Finished Doing',
-	t => 'Test',
-	w => 'Wiki update',
-	z => 'Z all done', 		# should have a completed date
-);
-
 use Hier::Util;
 use Hier::Color;
 use Hier::Meta;
@@ -125,12 +114,15 @@ sub kanban_bump {
 	die "Nothing bunped due to errors\n" if $fail;
 
 	for my $ref (@list) {
-		my($state) = $ref->get_state();
+		my($new) = Hier::Resource::bump($ref);
 
-		if ($state =~ tr{-abcdifrtw}
-                                {abcdfctcwz}) {
-			$ref->set_state($state);
+		if ($new) {
+			my($name) = Hier::Resource::state($new);
+
+			display_task($ref, "| now <<< $name >>>");
 		} else {
+			my($state) = $ref->get_state();
+
 			display_task($ref, "|<<< unknown state $state");
 		}
 	}
@@ -239,12 +231,12 @@ sub check_a_role {
 
 	for my $repo (@repo) {
 		print_color('BROWN');
-		print "R: "; display_task($repo, 'reprocess/reprint wiki');
+		print "R: "; display_task($repo, '(reprocess/reprint wiki)');
 	}
 
 	for my $wiki (@wiki) {
 		print_color('PURPLE');
-		print "W: "; display_task($wiki, 'update wiki');
+		print "W: "; display_task($wiki, '(update wiki)');
 	}
 }
 

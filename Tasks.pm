@@ -123,7 +123,6 @@ sub get_description  { my($self) = @_; return default($self->{description}, '');
 sub get_doit         { my($self) = @_; return default($self->{doit}, ''); }
 sub get_due          { my($self) = @_; return default($self->{due}, ''); }
 sub get_effort       { my($self) = @_; return default($self->{effort}, ''); }
-sub get_state        { my($self) = @_; return default($self->{state}, '-'); }
 sub get_isSomeday    { my($self) = @_; return default($self->{isSomeday}, 'n'); }
 sub get_later        { my($self) = @_; return default($self->{later}, ''); }
 sub get_live         { my($self) = @_; return default($self->{live}, 1); }
@@ -342,5 +341,19 @@ sub level {
 	die "level not set correctly?";
 }
 
+sub get_state        {
+	my($self) = @_; 
+
+	my($state) = default($self->{state}, '-');
+
+	if ($self->get_type() eq 'w') {
+		if ($state != 'w') {
+			$self->set_state('w');
+			$state = 'w';
+		}
+	}
+
+	return $state;
+}
 
 1;  # don't forget to return a true value from the file

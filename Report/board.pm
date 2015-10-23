@@ -53,18 +53,6 @@ use Hier::Option;
 use Hier::Resource;
 use Hier::Color;
 
-my %States = (
-	a => 'Analysis Needed',
-	b => 'Being Analysed',
-	c => 'Completed Analysis',
-	d => 'Doing',
-	f => 'Finished Doing',
-	r => 'Reprocess',
-	t => 'Test',
-	w => 'Wiki update',
-	z => 'Z all done', 		# should have a completed date
-);
-
 my @Class = qw(Done Someday Action Next Future Total);
 
 our $Debug = 0;
@@ -165,8 +153,9 @@ sub check_a_role {
 		#------------------------------------------
 		check_group($ref, $state, 'f', 3, \@b_test);
 
-		check_group($ref, $state, 'w', 4, \@d_done);
+		check_group($ref, $state, 'u', 4, \@d_done);	# update
 		#------------------------------------------
+		check_group($ref, $state, 'w', 4, \@b_done);	# wait
 		check_group($ref, $state, 'z', 4, \@b_done);
 	}
 
