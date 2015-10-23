@@ -152,10 +152,10 @@ sub check_a_role {
 		check_group($ref, $state, 't', 3, \@d_test);
 		#------------------------------------------
 		check_group($ref, $state, 'f', 3, \@b_test);
+		check_group($ref, $state, 'w', 2, \@b_test);	# wait
 
 		check_group($ref, $state, 'u', 4, \@d_done);	# update
 		#------------------------------------------
-		check_group($ref, $state, 'w', 4, \@b_done);	# wait
 		check_group($ref, $state, 'z', 4, \@b_done);
 	}
 
@@ -261,6 +261,10 @@ sub check_group {
 		$color = check_want($ref) || check_empty($ref);
 	}
 
+	if ($state eq 'w' && color eq '') {
+		$color = color('CYAN');
+	}
+
 	if ($state eq 'i' && color eq '') {
 		$color = color('CYAN');
 	}
@@ -350,6 +354,10 @@ sub check_children {
 
 	if ($count == $done) {
 		return color('PURPLE');
+	}
+
+	if ($pref->get_state() eq 'w') {
+		return color('CYAN');
 	}
 	return color('GREEN');
 }
