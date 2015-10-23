@@ -45,34 +45,14 @@ BEGIN {
 	@EXPORT      = qw( &Report_status );
 }
 
-my %Types = (
-        'Value'         => 'm',
-        'Vision'        => 'v',
-
-        'Role'          => 'o',
-        'Goal'          => 'g',
-
-        'Project'       => 'p',
-
-        'Action'        => 'a',
-        'Inbox'         => 'i',
-        'Waiting'       => 'w',
-
-        'Reference'     => 'r',
-
-        'List'          => 'L',
-        'Checklist'     => 'C',
-        'Item'          => 'T',
-);
-
 my @Class = qw(Done Someday Action Next Future Total);
 
-
-use Hier::Util;
+use Hier::Util;		# %Types and typemap
 use Hier::Meta;
 use Hier::Option;
 use Hier::Resource;
 
+my $Hours_proj = 0;
 my $Hours_task = 0;
 my $Hours_next = 0;
 
@@ -100,14 +80,27 @@ sub Report_status {	#-- report status of projects/actions
 
 	print "For: $desc " if $desc;
 	my($total) = $task + $next;
-	print "hier: $hier, projects: $proj, next,actions: $next+$task = $total\n";
 
-	my($t_p) = '-';
-	my($t_a) = $Hours_task;
-	my($t_n) = $Hours_next;
+	printf "hier: %6s  projects: %6s  next,actions: %6s %6s  = %s\n",
+		$hier, $proj, $next, $task, $total;
 
-	my($time) = '?';
-	print "time: $time, projects: $t_p, next,actions: $t_n,$t_a\n";
+	my($t_p) = f_h($Hours_proj);
+	my($t_a) = f_h($Hours_task);
+	my($t_n) = f_h($Hours_next);
+
+	my($time) = f_h($Hours_proj+$Hours_task+$Hours_next);
+
+	printf "time:  %6s projects:  %6s next,actions:  %6s %6s = %s\n",
+		$time, $t_p, $t_n, $t_a, f_h($Hours_next+$Hours_task);
+}
+
+sub f_h {
+	my($hours) = @_;
+
+	return $hours.' '                     if $hours < 8;
+	return sprintf("%.1fd", $hours/8)     if $hours < 8*20;
+	return sprintf("%.2fm", $hours/8/20)  if $hours < 8*20*15;
+	return sprintf("%.3fy", $hours/8/20/12);
 }
 
 sub count_hier {
@@ -131,6 +124,19 @@ sub count_proj {
 ###FILTER	next if $ref->filtered();
 
 		++$count;
+
+		my($resource) = new Hier::Resource($ref);
+		my($hours) = $resource->hours($ref);
+		if ($hours == 0) {
+			if ($ref->get_children()) {
+				$hours = 1;
+				# to manage done.
+			} else {
+				$hours = 4;
+				# to start planning.
+			}
+		}
+		$Hours_proj += $hours;
 	}
 	return $count;
 }
