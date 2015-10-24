@@ -67,6 +67,8 @@ sub Report_status {	#-- report status of projects/actions
 		return;
 	}
 	
+	$Hours_proj = $Hours_task = $Hour_next = 0;
+
 	my $hier = count_hier();
 	my $proj = count_proj();
 	my $task = count_task();
@@ -78,7 +80,11 @@ sub Report_status {	#-- report status of projects/actions
 #	}
 #	print "\n";
 
-	print "For: $desc " if $desc;
+	if ($desc) {
+		print "For: $desc \n";
+#		my ($ref) = meta_task($desc);
+#		print $ref->get_title(), "\n";
+	}
 	my($total) = $task + $next;
 
 	printf "hier: %6s  projects: %6s  next,actions: %6s %6s  = %s\n",

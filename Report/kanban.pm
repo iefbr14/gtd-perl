@@ -192,7 +192,7 @@ sub check_a_role {
 			check_state($ref, $state, 'i', \@ick);
 			check_state($ref, $state, 'r', \@repo);
 			check_state($ref, $state, 't', \@test);
-			check_state($ref, $state, 'w', \@wiki);
+			check_state($ref, $state, 'u', \@wiki);
 		}
 	}
 
