@@ -50,6 +50,7 @@ use Hier::Meta;
 use Hier::Sort;
 use Hier::Format;
 use Hier::Option;
+use Hier::Color;
 
 our $Debug = 0;
 
@@ -83,7 +84,9 @@ sub Report_addplans {	#-- add plan action items to unplaned projects
 		my($reason) = check_task($ref);
 		next unless $reason;
 
-		display_rgpa($ref, "(PLAN: $reason)");
+		$reason = color('RED') . $reason . color();
+		display_rgpa($ref, "($reason)");
+
 		last if --$Limit <= 0;
 	}
 }
@@ -102,9 +105,7 @@ sub check_task {
 
 	my(@children) = $ref->get_children();
 
-#   if ($type ne 'p' or iscomplex(@children)) {
 	return "Needs wiki ref" unless $title =~ /\[\[.*\]\]/;
-#   }
 
 	return if $ref->get_completed();
 
@@ -113,10 +114,15 @@ sub check_task {
 
 	return "Needs children"  unless @children;
 
-	my($work, $children) = count_children($ref);
-	print "$pid: $children\n" if $Debug;
+	my($work) = scalar(@children);
 
-	return "Needs next action" unless $work;
+	if ($type ne 'a') {
+		return "Needs actions" unless $work;
+	}
+
+#	if (iscomplex(@children)) {
+#		return "Needs progress";
+#	}
 
 	push(@List, @children);
 
@@ -124,11 +130,11 @@ sub check_task {
 }
 
 sub iscomplex {
-	return 1 if scalar(@_) > 5;	# has more than 5 children
+	return 1 if scalar(@_) >= 8;	# has 8 or more children
 
 	for my $ref (@_) {
 		# has a non action ie: complex child
-		return 1if $ref->get_type() ne 'a';	
+		return 1 if $ref->get_type() ne 'a';	
 	}
 	return 0;
 }
