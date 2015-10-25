@@ -57,7 +57,12 @@ sub Report_edit {	#-- Edit listed actions/projects
 
 	my(@list) = meta_pick(@_);
 	if (@list == 0) {
-		die "No items to edit\n";
+		my $parent = option('Current');
+		if ($parent) {
+			@list = ( $parent );
+		} else {
+			die "No items to edit\n";
+		}
 	}
     
 	umask(0077);

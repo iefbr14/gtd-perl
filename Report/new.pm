@@ -51,7 +51,8 @@ use Hier::Util;
 use Hier::Option;
 
 my $First = '';
-
+my $Parent;
+my $P_ref;
 
 #
 # there are two paths here.  The first is the command line
@@ -69,6 +70,15 @@ sub Report_new {	#-- create a new action or project
         my($type) = shift @_;
 	my($name) = '';
 
+	my $parent = option('Current');
+	if ($parent) {
+		$P_ref = find_task($parent);
+		unless ($P_ref) {
+			die "Can't use $parent no such task\n";
+		}
+		$Parent = $parent;
+	}
+
 	my($want) = type_val($type);
 	# prompt path
         if ($want) {
@@ -76,13 +86,17 @@ sub Report_new {	#-- create a new action or project
 	} else {
 		$name = $want;
 		$want = 'i';
+		if ($parent) {
+			$want = $P_ref->get_type();
+			$want =~ tr{mvogpa}{vogpaa};
+		}
 	}
 
 	# command line path
-	if (@_) {
-		new_task('i', $name, meta_desc(@_));
-		return;
-	}
+#	if (@_) {
+#		new_task('i', $name, meta_desc(@_));
+#		return;
+#	}
 
 	my($title) = meta_desc(@_);
 
@@ -147,7 +161,7 @@ sub new_task {
 
 	$ref->set_type($type);
 
-
+	$ref->set_parent_ids($Parent) if $Parent;
 	$ref->insert();
 
 	print "Created: ", $ref->get_tid(), "\n";
@@ -161,7 +175,7 @@ sub new_inbox {
 
 	first("Enter Item, Desc, Category, Notes...");
 	$task     = prompt("Task", $task);
-	$pri      = option('Priority') || 3;
+	$pri      = option('Priority') || 4;
 	$desc     = prompts("Desc", $title);
 
 	$category = prompt("Category", option('Category'));
@@ -183,6 +197,7 @@ sub new_inbox {
 
 	$ref->set_type($type);
 
+	$ref->set_parent_ids($Parent) if $Parent;
 	$ref->insert();
 
 	print "Created: ", $ref->get_tid(), "\n";
@@ -217,6 +232,7 @@ sub new_action {
 	$ref->set_description($desc);
 	$ref->set_note($note);
 
+	$ref->set_parent_ids($Parent) if $Parent;
 	$ref->insert();
 
 	print "Created: ", $ref->get_tid(), "\n";
@@ -252,6 +268,7 @@ sub new_project {
 	$ref->set_description($desc);
 	$ref->set_note($note);
 
+	$ref->set_parent_ids($Parent) if $Parent;
 	$ref->insert();
 
 	print "Created: ", $ref->get_tid(), "\n";

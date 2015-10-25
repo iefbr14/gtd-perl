@@ -27,6 +27,9 @@ my %Option_keys = (
 	'MetaFix'     => 1,
 	'Mask'        => 1,
 
+	'Current'      => 1,		# current task (used as parent in new)
+					# used as default in edit
+
 	'Title'       => 1, 'Subject'     => 'Title',
 	'Task'        => 1, 'Desc'        => 'Task', 'Description' => 'Task',
 	'Note'        => 1, 'Result'      => 'Result',

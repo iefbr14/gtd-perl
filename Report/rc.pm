@@ -159,7 +159,7 @@ sub rc {
 
 	###   /key  =>  search  key
 	if ($line =~ s/^\///) {
-		report('search', $line);
+		rc_find_tasks($line);
 		return;
 	}
 
@@ -386,6 +386,7 @@ sub load_task_ref {
 	$Parents->{$type} = $Pid;
 
 	$Prompt = "$Pid> ";
+	set_option('Current', $Pid);
 		
 	print "$why($type): $Pid - $title\n";
 }
@@ -484,6 +485,21 @@ sub fixme {
 	$desc .= "\n" . $_;
 }
 
+
+sub rc_find_tasks {
+	my($pattern) = @_;
+
+	$pattern =~ s=/$==;	# remove trailing /
+
+	my(@list);
+
+	for my $ref (Hier::Tasks::all()) {
+		my($title) = $ref->get_title();
+		if ($title =~ /$pattern/i) {
+			display_task($ref);
+		}
+	}
+}
 
 sub find_hier {
 	my($type, $goal) = @_;

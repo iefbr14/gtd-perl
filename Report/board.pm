@@ -273,6 +273,15 @@ sub check_group {
 		$color = color('BROWN');
 	}
 
+	save_item($color, $ref, $var);
+	if ($state eq 'd') {
+		grab_child($ref, $var);
+	}
+}
+
+sub save_item {
+	my($color, $ref, $var) = @_;
+
 	my($tid) = $ref->get_tid();
 	my($title) = $ref->get_title();
 
@@ -286,6 +295,18 @@ sub check_group {
 	push(@{$var}, $result);
 }
 
+sub grab_child {
+	my($pref, $var) = @_;
+
+	for my $child ($pref->get_children()) {
+		next if $child->get_completed();
+		next if $child->is_someday();
+		next unless $child->is_nextaction();
+
+		save_item(color('LIME'), $child, $var);
+		return;
+	}
+}
 
 sub check_want {
 	my($pref) = @_;
