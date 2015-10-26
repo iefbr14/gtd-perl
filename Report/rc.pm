@@ -63,7 +63,6 @@ use Hier::Meta;
 use Hier::Option;
 use Hier::Format;
 use Hier::Sort;
-use Hier::Report::edit;
 
 my $Parent;
 my $Child;
@@ -90,7 +89,6 @@ my($Cmds) = {
 
 	'up'	=> \&rc_up,
 	'p'	=> \&rc_print,
-	'edit'	=> \&rc_edit,
 
 	option	=> \&rc_option,
 	filter  => \&rc_filter,
@@ -247,16 +245,6 @@ sub rc_option {
 	my($old) = option($option, $value);
 
 	print "Option $option: $old => $value\n";
-}
-
-sub rc_edit {
-	use Hier::Report::edit;
-
-	if (@_) {
-		Report_edit(@_);
-	} else {
-		Report_edit($Pid);
-	}
 }
 
 sub rc_print {
@@ -420,14 +408,6 @@ sub fixme {
 
 	if (/^sort\s(\S+)/) {
 		set_option('Header', $1);
-		next;
-	}
-	if (/^edit$/) {
-		eval {
-			Report_edit($Pid, $Child);
-		}; if ($@) {
-			print "Trapped error: $@\n";
-		}
 		next;
 	}
 
@@ -623,6 +603,7 @@ sub add_task {
 sub report {
 	my($report) = shift @_;
 
+	Hier::Tasks::clean_up_database();
 	load_report($report);
 	print "### Report $report args: @_\n" if $Debug;
 
@@ -636,6 +617,7 @@ sub report {
 
 	run_report($report, @_);
 	display_mode(option('Mode', 'task'));
+	Hier::Tasks::reload_if_needed_database();
 }
 
 sub dash_null {
