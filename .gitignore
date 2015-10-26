@@ -4,6 +4,7 @@ profile/nytprof/
 profile/nytprof.out
 Test/bl
 Test/gtd.db
+Test/gtd.db.gz
 User/
 Programmer/
 

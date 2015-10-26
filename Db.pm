@@ -710,6 +710,7 @@ sub DB_init {
 	$Debug = option('Debug');
 	$MetaFix = option('MetaFix');
 
+
 	if ($confname) {
 		warn "#-Using $confname in Access.yaml\n" if $Debug;
 	} else {
@@ -744,6 +745,8 @@ sub DB_init {
 	$GTD = DBI->connect("dbi:mysql:dbname=$dbname;host=$host", $user, $pass);
 	die "confname=$confname;dbname=$dbname;host=$host;user=$user;pass=$pass\n" unless $GTD;
 
+	option('Changed', G_val('todo', 'max(modified)'));
+
 #warn "Start ".localtime()."\n";
 	load_meta();
 #warn "Mid   ".localtime()."\n";
@@ -762,7 +765,7 @@ sub T_select {
 	my($sql) = "select * from todo";
 
 	my($sth) = $GTD->prepare($sql);
-	my($rv) = $sth->execute;
+	my($rv) = $sth->execute();
 	if ($rv < 0) {
 		die "sql=$sql";
 	}
@@ -840,6 +843,23 @@ sub G_renumber {
         for my $table (@list) {
                 G_sql("update gtd_$table set itemId=$new where itemId=$tid");
         }
+}
+
+sub G_val {
+	my($table, $query) = @_;
+
+	my($sql) = "select $query from $table";
+	my($sth) = $GTD->prepare($sql);
+	my($rv) = $sth->execute();
+	if ($rv < 0) {
+		die "sql=$sql";
+	}
+
+	my($row, $changed);
+	while (($row) = $sth->fetchrow_array()) {
+		$changed = $row;
+	}
+	return $changed;
 }
 
 1;  # don't forget to return a true value from the file

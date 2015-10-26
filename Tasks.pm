@@ -28,6 +28,8 @@ sub new {
 
 	my($self) = {};
 
+	$Max_todo = Hier::Db::G_val('todo', 'max(todo_id)') unless $Max_todo;
+
 	if (defined $tid) {
 		$Max_todo = $tid if $Max_todo < $tid;
 	} else {
@@ -94,6 +96,9 @@ sub delete {
 
 	Hier::Db::sac_delete($tid);
 	Hier::Db::gtd_delete($tid);	# remove from database
+
+	###BUG### need to reflect back database changed.
+	###G_sql("update");
 	return;
 }
 
@@ -268,7 +273,7 @@ sub update {
 	delete $self->{_dirty};
 }
 
-END {
+sub clean_up_database {
 	$Debug = 1;	# show what should have been updated.
 	foreach my $ref (Hier::Tasks::all()) {
 
@@ -279,6 +284,21 @@ END {
 		warn "Dirty: $tid\n";
 		$ref->update();
 	}
+}
+
+sub reload_if_needed_database {
+	my($changed) = option('Changed');
+	my($cur) = Hier::Db::G_val('todo', 'max(modified)');
+
+	if ($cur ne $changed) {
+		print "Database changed from $changed => $cur\n";
+		###BUG### reload database
+		set_option('Changed', $cur);
+	}
+}
+
+END {
+	clean_up_database();
 }
 
 
@@ -341,7 +361,7 @@ sub level {
 	die "level not set correctly?";
 }
 
-sub get_state        {
+sub get_state {
 	my($self) = @_; 
 
 	my($state) = default($self->{state}, '-');

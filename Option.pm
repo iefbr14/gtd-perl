@@ -27,6 +27,7 @@ my %Option_keys = (
 	'MetaFix'     => 1,
 	'Mask'        => 1,
 
+	'Changed'      => 1,		# time of last db changed.
 	'Current'      => 1,		# current task (used as parent in new)
 					# used as default in edit
 

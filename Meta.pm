@@ -138,6 +138,9 @@ sub meta_argv {
 	Hier::Filter::add_filter_tags();
 	while (scalar(@_)) {
 		$_ = shift @_;
+
+		next unless defined $_;	 # option('Current') may be undef
+
 		if ($_ eq '!.') {
 			die "Stopped.\n";
 		}

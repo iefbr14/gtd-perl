@@ -494,7 +494,6 @@ sub header_rgpa {
 
 sub display_rgpa {
 	my($ref, $note, $nosep) = @_;
-
 	if ($nosep) {
 		$Prev_role = 0;
 	}
