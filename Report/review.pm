@@ -140,7 +140,7 @@ sub mode_projects {
 		next if $ref->filtered();
 		next if $ref->is_later();
 
-		my($work, $counts) = count_children($ref);
+		my($work, $counts) = summary_children($ref);
 		$work_load += $work;
 		display_rgpa($ref, $counts);
 		++$proj_cnt;

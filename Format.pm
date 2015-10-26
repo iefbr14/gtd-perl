@@ -11,7 +11,7 @@ BEGIN {
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw( 
-		&report_header &count_children &summary_line
+		&report_header &summery_children &summary_line
 		&display_mode &display_fd_task &display_task
 		&display_rgpa &display_hier
 		&disp_ordered_dump
@@ -111,9 +111,9 @@ sub display_mode {
 		'print'    => \&disp_print,
 
 		'dump'     => \&disp_ordered_dump,
+		'odump'    => \&disp_ordered_dump,
 
 		'udump'    => \&disp_unordered_dump,
-		'odump'    => \&disp_ordered_dump,
 	);
 
 	my(%report) = (
@@ -197,7 +197,7 @@ sub report_header {
 	&$Header(\*STDOUT, $title);
 }
 
-sub count_children {
+sub summery_children {
 	my($pref) = @_;
 
 	my $work_load = 0;
@@ -373,6 +373,9 @@ sub disp_print {
 		$val = $ref->get_KEY($key);
 		if (defined $val) {
 			chomp $val;
+
+			next if $val eq '';
+
 			$val =~ s/\r//gm;	# all returns
 			$val =~ s/^/\t\t/gm;	# tab at start of line(s)
 			$val =~ s/^\t// if length($key) >= 7;

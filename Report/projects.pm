@@ -103,7 +103,7 @@ sub report_projects {
 
 	for my $ref (sort by_goal_task values %wanted) {
 
-		my($work, $counts) = count_children($ref);
+		my($work, $counts) = summary_children($ref);
 		$work_load += $work;
 		display_rgpa($ref, $counts);
 #		display_task($ref, $counts);

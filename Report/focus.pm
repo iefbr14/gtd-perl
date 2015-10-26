@@ -146,7 +146,7 @@ sub check_task {
 
 		my($work, $counts);
 		if ($ref->get_type() eq 'p') {
-			$work = count_children($p_ref);
+			($work, $counts) = summary_children($p_ref);
 			$Work_load += $work;
 			++$Proj_cnt;
 		}

@@ -97,8 +97,12 @@ sub children_ids {
 
 #------------------------------------------------------------------------------
 # helper routines they do useful things, but don't know interals
+
 sub count_children {
 	my(@children) = get_children(@_);
+
+	### see Hier::Format::summray_children for counts
+	### based on filters
 
 	return scalar @children;
 }
