@@ -11,7 +11,7 @@ BEGIN {
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw( 
-		&report_header &summery_children &summary_line
+		&report_header &summary_children &summary_line
 		&display_mode &display_fd_task &display_task
 		&display_rgpa &display_hier
 		&disp_ordered_dump
@@ -197,7 +197,7 @@ sub report_header {
 	&$Header(\*STDOUT, $title);
 }
 
-sub summery_children {
+sub summary_children {
 	my($pref) = @_;
 
 	my $work_load = 0;
