@@ -782,8 +782,15 @@ sub G_sql {
 		return;
 	}
 
-	my($rv) = $GTD->do($sql, undef, @_);
-	warn "-> $rv\n" if $Debug;
+	my($rv);
+	eval {
+		$rv = $GTD->do($sql, undef, @_);
+		warn "-> $rv\n" if $Debug;
+	}; if ($@ or !defined $rv) {
+		print "Failed sql: $sql ($rv)\n";
+		print "..........: $@";
+	}
+	
 	return $rv;
 }
 
