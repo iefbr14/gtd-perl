@@ -79,6 +79,8 @@ my(%Key_type) = (
 	resource	=> 0x11,
 	depends         => 0x11,
 	percent         => 0x11,
+
+	_hint		=> 0x01,	# resource hint
 );
 
 sub load_meta {
@@ -699,6 +701,8 @@ my($GTD);
 my($GTD_map, $GTD_default);
 my($Prefix) = 'gtd_';
 
+our $Resource;	# used by Hier::Resource
+
 sub db_load_defaults {
 	my($confname) = @_;
 
@@ -720,6 +724,8 @@ sub DB_init {
 
 	my $HOME = $ENV{'HOME'};
 	my $conf = LoadFile("$HOME/.todo/Access.yaml");
+
+	$Hier::Resource::Resource = $conf->{resource};
 
 	my($dbconf) = $conf->{$confname};
 

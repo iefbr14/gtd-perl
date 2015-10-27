@@ -144,6 +144,7 @@ sub get_todo_only    { my($self) = @_; return default($self->{_todo_only}, 0); }
 sub get_type         { my($self) = @_; return default($self->{type}, '?'); }
 
 sub get_resource     { my($self) = @_; return default($self->{resource}, ''); }
+sub get_hint         { my($self) = @_; return default($self->{_hint}, ''); }
 
 sub set_category     {return dset('category', @_); }
 sub set_completed    {return dset('completed', @_); }
@@ -171,6 +172,7 @@ sub set_todo_only    {return dset('_todo_only', @_); }
 sub set_type         {return dset('type', @_); }
 
 sub set_resource     {return dset('resource', @_); }
+sub set_hint         {return dset('_hint', @_); }
 sub hint_resource    {return clean_set('resource', @_); }
 
 sub set_tid          {
@@ -248,6 +250,7 @@ sub dset {
 		die "Can't set tags yet";
 	}
 
+
 #	unless (defined $val) {
 #		die "Won't set $field to undef\n";
 #	}
@@ -256,9 +259,11 @@ sub dset {
 	return $ref if defined($ref->{$field}) && defined($val)
 		    && $ref->{$field} eq $val;
 
-	$ref->{_dirty}{$field}++;
-
 	$ref->{$field} = $val;
+
+	return $ref if ($field eq '_hint'); # don't drop into dirty
+
+	$ref->{_dirty}{$field}++;
 
 	my($warn_val) = $val || '';
 	warn "Dirty $field => $warn_val\n" if $Debug;

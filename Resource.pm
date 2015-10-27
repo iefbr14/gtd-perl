@@ -10,6 +10,8 @@ use base qw(Hier::Hier Hier::Fields Hier::Filter);
 my $Max_todo = 0; 	# Last todo id (unique for all tables)
 my %Task;		# all Todo items (including Hier)
 
+our $Resource;
+
 sub new {
 	my($class, $ref) = @_;
 
@@ -24,48 +26,62 @@ sub new {
 sub resource {
 	my($self, $ref) = @_;
 
-	my($role) = $ref->get_resource();
-	return $role if $role;
+	my($resource) = $ref->get_resource();
+	return $resource if $resource;
 
-	$role = calc_resource($ref);
-	if ($role) {
-		$ref->hint_resource($role);
-		return $role;
-	}
+	my($reason);
+	($resource, $reason) = calc_resource($ref);
 
-	$role = $self->resource($ref->get_parent());
-	$ref->hint_resource($role);
-	return $role;
+	$ref->hint_resource($resource);
+	$ref->set_hint($reason);
+	return $resource;
 }
 
 sub calc_resource {
 	my($ref) = @_;
 
-	my($type) = $ref->get_type();
+	my($resource) = $ref->get_resource();
+	return ($resource, 'resource') if $resource;	# handle recursion
 
-	if ($type eq 'm') {
-		return 'personal';
-	}
+	my($type) = $ref->get_type();
 
 	my($title) = $ref->get_title();
 	my($context) = $ref->get_context();
 	my($category) = $ref->get_category();
 	my($desc) = $ref->get_description();
 
-	###BUG### Need to YAML suck in these context,role,category => resource 
-	if ($context eq 'Maureen') {
-		return 'maureen';
-	}
-
 	if ($desc =~ /^allocate:(\S+)$/) {
 		###TODO verify $1 in resource list
-		return $1;
+		return ($1, 'allocate');
+	}
+
+	if (defined $Resource->{category}{$category}) {
+		return ($Resource->{category}{$category}, 'category');
+	}
+	if (defined $Resource->{context}{$context}) {
+		return ($Resource->{context}{$context}, 'context');
+	}
+	if ($type eq 'g') {
+		if (defined $Resource->{goal}{$title}) {
+			return ($Resource->{goal}{$title}, 'goal');
+		}
+	}
+	if ($type eq 'r') {
+		if (defined $Resource->{role}{$title}) {
+			return ($Resource->{role}{$title}, 'role');
+		}
 	}
 
 	my(@tags) = $ref->get_tags();
 	###TODO look up data in resource list
 
-	return;
+	# ok maybe the parent resource.
+	my($pref) = $ref->get_parent();
+
+	# nope, we are orfaned or top level;
+	return ('personal', 'top') unless $pref;
+
+	return calc_resource($pref);
 }
 
 sub effort {

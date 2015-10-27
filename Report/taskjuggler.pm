@@ -155,7 +155,7 @@ sub hier_detail {
 	my($walk, $ref) = @_;
 	my($sid, $name, $cnt, $desc, $type, $note);
 	my($per, $start, $end, $done, $due, $we);
-	my($who, $doit, $role, $depends);
+	my($who, $doit, $depends);
 	my($tj_pri);
 
 	my($tid) = $ref->get_tid();
@@ -177,7 +177,8 @@ sub hier_detail {
 	$doit = pdate($ref->get_doit());
 	$depends = $ref->get_depends();
 
-	$role = $resource->resource($ref);
+	my $user = $resource->resource($ref);
+	my $hint = $ref->get_hint();
 
 	print "## $tid $tj_pri $type $name\n" if $Debug;
 
@@ -204,9 +205,9 @@ sub hier_detail {
 
 	if ($indent eq '') {
 		print {$fd} $indent, qq(   start \${now}\n);
-		print {$fd} $indent, qq(   allocate $role\n);
-	} elsif ($role && parent_role($ref) ne $role) {
-		print {$fd} $indent, qq(   allocate $role { mandatory }\n);
+		print {$fd} $indent, qq(   allocate $user # $hint\n);
+	} elsif ($user && parent_user($ref) ne $user) {
+		print {$fd} $indent, qq(   allocate $user { mandatory } # $hint\n);
 	}
 
 	foreach my $depend (split(/[ ,]/, $depends)) {
@@ -287,7 +288,7 @@ sub pdate {
 	return $date;
 }
 
-sub parent_role {
+sub parent_user {
 	my($ref) = @_;
 
 	my($pref) = $ref->get_parent();

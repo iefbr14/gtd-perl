@@ -133,6 +133,10 @@ sub Report_rc { #-- rc - Run Commands
 sub rc {
 	my($line) = @_;
 
+	if ($line =~ s/^set\s+//) {
+		## continue as if set wasn't said
+	}
+
 	if ($line =~ s/^debug\s*//) {
 		if ($line) {
 			debug($line);
