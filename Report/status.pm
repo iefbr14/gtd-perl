@@ -67,7 +67,7 @@ sub Report_status {	#-- report status of projects/actions
 		return;
 	}
 	
-	$Hours_proj = $Hours_task = $Hour_next = 0;
+	$Hours_proj = $Hours_task = $Hours_next = 0;
 
 	my $hier = count_hier();
 	my $proj = count_proj();
