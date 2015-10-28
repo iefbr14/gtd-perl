@@ -54,24 +54,32 @@ sub Report_init {	#-- Init ~/.todo structure
 		print "mkdir $todo\n";
 	}
 
-	my($ini) = "$todo/Access.ini";
+	my($ini) = "$todo/Access.yaml";
 	unless (-f $ini) {
 		open(my $fh, '>', $ini) or die "Can't create $ini ($!)\n";
 		print {$fh} <<'EOF';
-[gtd]
-        host   = localhost
-        dbname = gtd
-        user   = gtd-user
-        pass   = gtd-pass
-        prefix = gtd_
+gtd:
+    host:      localhost
+    dbname:    gtd
+    user:      gtd
+    pass:      gtd-time
+    prefix:    gtd_
+
+resource:
+    category:
+	Where: personal
+    context:
+	Context: personal
+    goal:
+        Golename: personal
+    role:
+        Rolename: personal
 EOF
+
 		close($fh);
 		print "created $ini\n";
 		print "Please set/verify the values in [gtd] section\n";
 	}
-
-		
 }
-
 
 1;  # don't forget to return a true value from the file
