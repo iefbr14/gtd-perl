@@ -93,7 +93,7 @@ sub load_roles {
 sub display_role {
 	my($role, $ref) = @_;
 
-	print "\fGoal\tProj-id\tProject\tItem-id\tNext-Action\tHours\tTotal-$role\n";
+	print "\fGoal:$role\tProj-id\tProject\tItem-id\tNext-Action\tHours\tTotal-$role\n";
 
 	my(@list);
 	foreach my $gref ($ref->get_children()) {

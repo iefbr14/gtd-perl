@@ -55,6 +55,11 @@ my $Sorter = \&by_task;
 sub sort_mode {
 	my($mode) = @_;
 
+	unless (defined $mode) {
+		$Sorter = \&by_task;
+		return;
+	}
+
 	$mode =~ s/^\^//;	# default is asending 
 	if ($mode =~ s/^\~//) {	# desending
 		option('Reverse', 1);
