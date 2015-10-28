@@ -21,7 +21,7 @@ BEGIN {
 use Hier::Util;
 use Hier::Option;
 use Hier::Color;
-
+use Hier::Resource;
 
 my $Display = \&disp_simple;
 my $Header  = undef;
@@ -95,6 +95,8 @@ sub display_mode {
 		'task'     => \&disp_task,
 		'doit'     => \&disp_task,
 
+		'plan'     => \&disp_plan,
+
 		'html'     => \&disp_html,
 		'wiki'     => \&disp_wiki,
 		'walk'     => \&disp_wikiwalk,
@@ -127,7 +129,9 @@ sub display_mode {
 		'summary'  => 'report',
 		'detail'   => 'report',
 		'action'   => 'report',
+
 		'task'     => 'none',
+		'plan'     => 'none',
 
 		'doit'     => 'report',
 		'html'     => 'html',
@@ -328,6 +332,33 @@ sub disp_summary {
 	my($desc) = format_summary($ref->get_description(), ' -- ');
 	disp_simple(@_, $desc);
 }
+
+sub disp_plan {
+	my($fd, $ref, $extra) = @_;
+
+	my($tid) = $ref->get_tid();
+	my($type) = type_disp($ref);
+	my($title) = $ref->get_title();
+
+	my($resource) = new Hier::Resource($ref);
+	my($effort)  = $resource->effort();
+	my($user)    = $resource->resource();
+	my($why)     = $resource->hint();
+
+	if ($extra) {
+		$extra = ' '.$extra;
+	} elsif ($why) {
+		$extra = ' '.color('BROWN')."$user ($why)".color();
+	} else {
+		$extra = '';
+	}
+
+	print {$fd} "$tid:\t".
+		color('GREEN')."$effort\t".color().
+		"$type $title$extra";
+	nl($fd);
+}
+
 
 sub format_summary {
 	my($val, $sep, $ishtml) = @_;

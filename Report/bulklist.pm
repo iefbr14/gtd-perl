@@ -228,7 +228,7 @@ sub hier_detail {
 	my($planner, $ref) = @_;
 	my($sid, $name, $cnt, $desc, $pri, $type, $note);
 	my($per, $start, $end, $done, $due, $we);
-	my($who, $doit, $role, $depends);
+	my($who, $doit, $user, $depends);
 
 	my($tid) = $ref->get_tid();
 
@@ -247,7 +247,7 @@ sub hier_detail {
 	$doit = pdate($ref->get_doit());
 	$depends = $ref->get_depends();
 
-	$role = $resource->resource($ref);
+	$user = $resource->resource();
 
 	if ($done && $done lt '2010-') {
 		$planner->{want}{$tid} = 0;
@@ -256,7 +256,7 @@ sub hier_detail {
 
 	$who = 'drew';
 
-	my($effort) = $resource->effort($ref);
+	my($effort) = $resource->effort();
 
 	# pri 1=>200 and 5=>1000 so tj 1=>900 and 5=>100
 	my $tj_pri = 1100 - $pri * 200;
@@ -275,8 +275,8 @@ sub hier_detail {
 	if ($type eq 'm') {
 		print {$fd} $indent, qq(  start \${now}\n);
 	}
-	if ($role && parent_role($ref) ne $role) {
-		print {$fd} $indent, qq(  allocate $role\n);
+	if ($user && parent_user($ref) ne $user) {
+		print {$fd} $indent, qq(  allocate $user\n);
 	}
 	foreach my $depend (split(/[ ,]/, $depends)) {
 		my($dep_path) = dep_path($depend);
@@ -330,13 +330,14 @@ sub pdate {
 	return $date;
 }
 
-sub parent_role {
+sub parent_user {
 	my($ref) = @_;
 
 	my($pref) = $ref->get_parent();
 	return '' unless $pref;
 
-	return $pref->get_resource();
+	my($resource) = new Hier::Resource($pref);
+	return $resource->resource();
 }
 
 sub dep_path {

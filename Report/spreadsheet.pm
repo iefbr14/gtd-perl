@@ -136,7 +136,7 @@ sub get_actions {
 		next if $ref->filtered();
 
 		my($resource) = new Hier::Resource($ref);
-		my($effort) = $resource->hours($ref);
+		my($effort) = $resource->hours();
 		$effort = .5 unless $effort;
 
 		unless ($tid) {

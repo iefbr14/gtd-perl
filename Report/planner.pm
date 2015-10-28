@@ -97,8 +97,7 @@ sub hier_detail {
 
 	my($indent) = indent($ref);
 	my($resource) = new Hier::Resource($ref);
-	my($role) = $resource->resource($ref);
-	
+	my($user) = $resource->resource();
 
 	$name = xml($ref->get_title() || '');
 	$pri  = $ref->get_priority();
@@ -129,8 +128,8 @@ sub hier_detail {
 		qq(percent-complete="$per" priority="$pri" type="normal" scheduling="fixed-work">), "\n";
 
 	if ($type eq 'a') {
-		my($pred) = $Pred{$role} || '';
-		#print "# $type $tid $role $pred\n";
+		my($pred) = $Pred{$user} || '';
+		#print "# $type $tid $user $pred\n";
 		if ($pred) {
 			++$Pred_id;
 			print {$fd}
@@ -138,7 +137,7 @@ sub hier_detail {
 				$indent, "    <predecessor id=\"1\" predecessor-id=\"$pred\" type=\"FS\"/>\n",
 				$indent, "  </predecessors>\n",
 		}
-		$Pred{$role} = $tid;
+		$Pred{$user} = $tid;
 		
 	
 		my($context) = $ref->get_context();

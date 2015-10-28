@@ -193,7 +193,7 @@ sub get_actions {
 	my(@list);
 	for my $ref (@next) {
 		my($resource) = new Hier::Resource($ref);
-		my($effort) = $resource->hours($ref);
+		my($effort) = $resource->hours();
 		$effort = .5 unless $effort;
 
 		$tid = $ref->get_tid();

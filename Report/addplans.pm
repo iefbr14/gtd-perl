@@ -63,7 +63,7 @@ my $Limit;
 my %Seen;
 
 sub Report_addplans {	#-- add plan action items to unplaned projects
-	meta_filter('+live', '^focus', 'simple');
+	meta_filter('+live', '^focus', 'plan');
 
 	@List = meta_pick(@_);
 	if (@List == 0) {

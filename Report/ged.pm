@@ -115,7 +115,7 @@ sub hier_detail {
 	my($planner, $ref) = @_;
 	my($sid, $name, $cnt, $desc, $type, $note);
 	my($per, $start, $end, $done, $due, $we);
-	my($who, $doit, $role, $depends);
+	my($who, $doit, $user, $depends);
 	my($birth, $moded);
 	my($tj_pri);
 
@@ -137,7 +137,7 @@ sub hier_detail {
 	$doit = pdate($ref->get_doit());
 	$depends = $ref->get_depends();
 
-	$role = $resource->resource($ref);
+	$user = $resource->resource();
 
 	return if $type eq 'C'; # Checklists
 	return if $type eq 'L'; # Lists
@@ -145,7 +145,7 @@ sub hier_detail {
 
 	$who = 'drew';
 
-	my($effort) = $resource->effort($ref);
+	my($effort) = $resource->effort();
 
 	$due = '' if $due && $due lt '2010-';
 	$we    = $due || '';
@@ -153,14 +153,6 @@ sub hier_detail {
 	my($fd) = $planner->{fd};
 
 	$name =~ s=/=.=g;
-#	print {$fd} qq(task $type\_$tid "$name" \{\n);
-
-#	if ($type eq 'o') {
-#		print {$fd} qq(   start \${now}\n);
-#		print {$fd} qq(   allocate $role\n);
-#	} elsif ($role && parent_role($ref) ne $role) {
-#		print {$fd} qq(   allocate $role { mandatory }\n);
-#	}
 
 	foreach my $depend (split(/[ ,]/, $depends)) {
 		my($dep_path) = dep_path($depend);
@@ -181,9 +173,9 @@ sub hier_detail {
 
 	print {$fd} "0 ".id('I',$ref)." INDI\n";
 
-	$role = ucfirst($role);
+	$user = ucfirst($user);
 
-	print {$fd} "  1 NAME $name /$role/\n";
+	print {$fd} "  1 NAME $name /$user/\n";
 
    if ($desc) {
 	print {$fd} "  1 DSCR $desc\n";
@@ -291,16 +283,6 @@ sub pdate {
 
 	$date =~ s/ .*$//;
 	return ged_date($date);
-}
-
-sub parent_role {
-	my($ref) = @_;
-
-	my($pref) = $ref->get_parent();
-	return '' unless $pref;
-
-	my($resource) = new Hier::Resource($pref);
-	return $resource->resource($pref);
 }
 
 sub dep_path {

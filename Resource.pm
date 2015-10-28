@@ -26,6 +26,8 @@ sub new {
 sub resource {
 	my($self, $ref) = @_;
 
+	$ref = $self->task() unless $ref;
+
 	my($resource) = $ref->get_resource();
 	return $resource if $resource;
 
@@ -84,8 +86,23 @@ sub calc_resource {
 	return calc_resource($pref);
 }
 
+sub task {
+	my($self) = @_;
+
+	return $self->{'object'};
+}
+
+sub hint {
+	my($self) = @_;
+
+	my($ref) = $self->task();
+	return $ref->get_hint();
+}
+
 sub effort {
-	my($self, $ref) = @_;
+	my($self) = @_;
+
+	my($ref) = $self->task();
 
 	my($effort) = $ref->get_effort();
 	if ($effort) { 
@@ -122,7 +139,9 @@ sub effort {
 		if ($tf && defined $efforts{$tf}) {
 			$effort = $efforts{$tf};
 		} else {
-			$effort = '3h';
+			$effort = '1h # action';
+			$effort = '2h # project needs planning' if $type eq 'p';
+			$effort = '8h # goal need planning' if $type eq 'g';
 		}
 	}
 
@@ -134,13 +153,15 @@ sub effort {
 		return $effort;
 	}
 
-	return;
+	return $effort;
 }
 
 sub hours {
 	my($self, $ref) = @_;
 
-	my($effort) = $self->effort($ref);
+	$ref = $self->task() unless $ref;
+
+	my($effort) = $self->effort();
 	return 0 unless $effort;
 
 	if ($effort =~ m/^([.\d]+)h.*$/) {

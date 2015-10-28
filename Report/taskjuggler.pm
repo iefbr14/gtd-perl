@@ -177,7 +177,7 @@ sub hier_detail {
 	$doit = pdate($ref->get_doit());
 	$depends = $ref->get_depends();
 
-	my $user = $resource->resource($ref);
+	my $user = $resource->resource();
 	my $hint = $ref->get_hint();
 
 	print "## $tid $tj_pri $type $name\n" if $Debug;
@@ -190,7 +190,7 @@ sub hier_detail {
 
 	$who = 'drew';
 
-	my($effort) = $resource->effort($ref);
+	my($effort) = $resource->effort();
 
 	$due = '' if $due && $due lt '2010-';
 	$we    = $due || '';
@@ -261,8 +261,12 @@ sub end_detail {
 
 	unless ($ref->{_effort}) {
 		my($task) = $ref->get_title();
+		my($type) = $ref->get_type();
+		my ($effort) = '1h # action';
+		$effort = '2h # Need planning' if $type eq 'p';
+		$effort = '8h # Need planning' if $type eq 'g';
 
-		print {$fd} $indent, qq(   effort 2h  # Need planning \n);
+		print {$fd} $indent, qq(   effort $effort\n);
 		warn "Task $tid: $task |<<< Needs effort planning\n";
 
 		++$ref->{_effort};
@@ -295,10 +299,8 @@ sub parent_user {
 	return '' unless $pref;
 
 	my($resource) = new Hier::Resource($pref);
-	return $resource->resource($pref);
+	return $resource->resource();
 }
-
-
 
 sub old_task_priority {
 	my($ref) = @_;
