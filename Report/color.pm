@@ -49,6 +49,8 @@ BEGIN {
 use Hier::Util;
 use Hier::Color;
 
+our $Debug = 1;
+
 sub Report_color {	#-- Detailed list of projects with (next) actions
 
 	my(@bg) = qw(WHITE BK  RED  GREEN YELLOW  BLUE PURPLE  CYAN );
@@ -57,16 +59,33 @@ sub Report_color {	#-- Detailed list of projects with (next) actions
 	SILVER PINK LIME  YELLOW BLUE MAGENTA AQUA WHITE
 	NONE);
 
-	for my $bg ('\fg/bg:', @bg) {
-		printf "%-8s ", $bg;
+	my($col) = columns();
+	my($wid) = int($col/9)-1;
+	my($sw) = $wid - 3;
+
+	if ($Debug) {
+		my($use) = $wid*10;
+		print "col: $col, wid: $wid, sw: $sw, use: $use\n";
+		my($dash) = substr('----+----|'x20, 0, $wid*10-1);
+		print "$dash\n";
 	}
-	print "\n";
+
+	my($title) = '';
+	for my $bg ('\fg/bg:', @bg) {
+		$title .= sprintf "%-${wid}.${wid}s ", $bg;
+	}
+	$title =~ s/ *$//;
+	print $title; nl();
 
 	for my $fg (@fg) {
-		printf "%-8s ", $fg;
+		printf "%-${wid}.${wid}s", $fg;
+
 		for my $bg (@bg) {
+			my($label) = sprintf " %-${wid}.${wid}s",
+				substr($fg,0,$sw).'/'.$bg;
+
 			print_color($fg, $bg);
-			printf "%-5.5s/%.2s ", $fg,$bg;
+			print $label;
 		}
 		nl();
 	}
