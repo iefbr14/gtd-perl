@@ -176,10 +176,10 @@ sub new_inbox {
 	first("Enter Item, Desc, Category, Notes...");
 	$task     = prompt("Task", $task);
 	$pri      = option('Priority') || 4;
-	$desc     = prompts("Desc", $title);
+	$desc     = lines("Desc", $title);
 
-	$category = prompt("Category", option('Category'));
-	$note     = prompts("Note", option('Note')); 
+	$category = input("Category", option('Category'));
+	$note     = lines("Note", option('Note')); 
 
 	my $ref = Hier::Tasks->new(undef);
 
@@ -210,12 +210,12 @@ sub new_action {
 
 	first("Enter Action, Priority, Desc, palm Category, Notes...");
 
-	$task     = prompt("Task", $task);
-	$pri      = prompt("Priority", option('Priority')) || 3;
-	$desc     = prompts("Desc", $desc);
+	$task     = input("Task", $task);
+	$pri      = input("Priority", option('Priority')) || 3;
+	$desc     = lines("Desc", $desc);
 
-	$category = prompt("Category", option('Category'));
-	$note     = prompts("Note", option('Note')); 
+	$category = input("Category", option('Category'));
+	$note     = lines("Note", option('Note')); 
 
 	my $ref = Hier::Tasks->new(undef);
 
@@ -248,14 +248,14 @@ sub new_project {
 
 	first("Enter $type_name, Category, Description, Outcome...");
 
-	$category = prompt("Category", option('Category'));
-	$title    = prompt("Title", $title);
+	$category = input("Category", option('Category'));
+	$title    = input("Title", $title);
 	$pri      = option('Priority') || 3;
 	if ($desc) {
 		$note = option('Note');
 	} else {
-		$desc     = prompts("Description", $desc);
-		$note     = prompts("Outcome", option('Note'));
+		$desc     = lines("Description", $desc);
+		$note     = lines("Outcome", option('Note'));
 	}
 
 	my $ref = Hier::Tasks->new(undef);
@@ -280,28 +280,30 @@ sub first {
 	 "  enter ^D to stop, entry not added\n" . 
 	 "  use '.' to stop adding notes.\n";
 }
-sub prompts {
+sub lines {
 	my($prompt, $default) = @_;
 
 	return $default if $default;
 	my($text) = '';
 
 	my($line) = prompt($prompt);
-	for ($text=''; $line; $line=prompt("+ ")) {
+	for ($text=''; $line; $line=prompt("+")) {
+		last if !defined $line;
 		last if $line eq '.';
+
 		$text .= $line . "\n";
 	}
 	chomp $text;
 	return $text;
 }
 
-sub prompt {
+sub input {
 	my($prompt, $default) = @_;
 
 	return $default if defined $default && $default ne '';
 
 	if ($prompt =~ /^[A-Z]/) {
-		$prompt = sprintf("Add %-10s", $prompt . ':');
+		$prompt = sprintf("Add %-9s", $prompt . ':');
 	}
 
 	local($|) = 1;
@@ -311,14 +313,7 @@ sub prompt {
 	}
 
 
-	print $prompt;
-	if (defined($_ = <STDIN>)) {
-		chomp;
-
-		return $_;
-	}
-	print "^D -- End --\n";
-	return '';
+	return prompt($prompt, '#');
 }
 
 1;  # don't forget to return a true value from the file

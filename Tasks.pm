@@ -246,7 +246,7 @@ sub dset {
 		return;
 	}
 	if ($field eq 'Tags') {
-		#--BUG-- tag setting not done yet
+		###BUG### tag setting not done yet
 		die "Can't set tags yet";
 	}
 
