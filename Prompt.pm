@@ -15,9 +15,8 @@ BEGIN {
 use strict;
 use warnings;
 
-our $Debug;
+our $Debug = 0;
 
-my $Prompt = '> ';
 my $Term;
 
 my $Mode = 0;	# 0 - unknown
@@ -25,7 +24,7 @@ my $Mode = 0;	# 0 - unknown
 		# 2 - term input
 
 sub prompt {
-	my($prompt);
+	my($prompt, $ignore_comment) = @_;
 
 	init_mode();
 
@@ -37,17 +36,23 @@ sub prompt {
 
 			chomp $_;
 		} else {
-			$_ = $Term->readline($Prompt.' ');
+			$_ = $Term->readline($prompt.' ');
 
-			print "# eof\n";
-			return unless defined $_;
+			unless (defined $_) {
+				print ":quit # eof\n";
+				return;
+			}
 		}
 
-		next if /^\s*#/;
-		next if /^\s*$/;
+		print "Prompt($prompt) read: $_\n" if $Debug;
+
+		if ($ignore_comments) {
+			next if /^\s*#/;
+			next if /^\s*$/;
+		}
 
 		if ($Mode == 1) {
-			print "$Prompt\t$_\n";
+			print "$prompt\t$_\n";
 		} else {
 	#		$term->addhistory($_);
 		}

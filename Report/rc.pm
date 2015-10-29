@@ -77,7 +77,7 @@ my $Format = '-';
 my $Header = '-';
 my $Sort   = '-';
 
-my $Prompt = '_>';
+my $Prompt = '>';
 our $Debug = 0;
 
 my($Pid) = '';	# current Parrent task;
@@ -111,7 +111,7 @@ sub Report_rc { #-- rc - Run Commands
 #       print $OUT $res, "\n" unless $@;
 
 	for (;;) {
-		prompt($Prompt);
+		prompt($Prompt, '#');
 		last unless defined $_;
 
 		eval {
@@ -121,11 +121,15 @@ sub Report_rc { #-- rc - Run Commands
 		}
 	}
 	rc_save();
-	print "quit # eof\n";
 }
 
 sub rc {
 	my($line) = @_;
+
+	###   :cmd  =>  rc command mode (noop here)
+	if ($line =~ s/^\://) {
+		### continue this is redundent
+	}
 
 	if ($line =~ s/^set\s+//) {
 		## continue as if set wasn't said
@@ -182,6 +186,7 @@ sub rc {
 
 	return load_task($cmd) if $cmd =~ /^\d+$/;
 
+	rc_save();
 	report($cmd, @args);
 }
 
@@ -198,7 +203,7 @@ sub rc_set_key {
 sub rc_save {
 	return unless $Pref;
 
-	$Pref->update();
+	$Pref->update() if $Pref->is_dirty();
 }
 
 sub rc_help {
@@ -333,6 +338,10 @@ sub rc_sort {
 # Utility builtins
 #------------------------------------------------------------------------------
 sub rc_clear {
+	###BUG### this should call ff and have it
+	######### clear the screen in termial mode
+
+	local($|) = 1;
 	print "\e[H\e[2J";
 
 	if (@_) {
@@ -371,7 +380,7 @@ sub load_task_ref {
 
 	$Parents->{$type} = $Pid;
 
-	$Prompt = "$Pid> ";
+	$Prompt = "$Pid>";
 	set_option('Current', $Pid);
 		
 	print "$why($type): $Pid - $title\n";
