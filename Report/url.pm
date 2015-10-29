@@ -55,7 +55,7 @@ our($Debug) = 0;
 my(@Urls);
 my($Host);
 
-sub Report_url {	#-- quick List by various methods
+sub Report_url {	#-- open browser window for wiki and gtd
 	meta_filter('+g:live', '^title', 'task');	# Tasks filtered by goals
 
 	my($title) = join(' ', @_);
@@ -118,7 +118,8 @@ sub find_url {
 	}
 		
 
-	my($base) = "http://wiki.ss.org";
+	###BUG### this should't be hard wired.
+	my($base) = "https://wiki.ss.org";
 	if (@urls) {
 		for my $match (@urls) {
 			$match =~ s/ /_/g;
