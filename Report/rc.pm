@@ -63,6 +63,7 @@ use Hier::Meta;
 use Hier::Option;
 use Hier::Format;
 use Hier::Sort;
+use Hier::Prompt;
 
 my $Parent;
 my $Child;
@@ -76,7 +77,7 @@ my $Format = '-';
 my $Header = '-';
 my $Sort   = '-';
 
-my $Prompt = '> ';
+my $Prompt = '_>';
 our $Debug = 0;
 
 my($Pid) = '';	# current Parrent task;
@@ -100,8 +101,6 @@ my($Cmds) = {
 };
 
 sub Report_rc { #-- rc - Run Commands
-	my $term = Term::ReadLine->new('gtd');
-
 	# init from command line.
 	# there are commands to override later
 	$Filter = option('Filter') || '-';
@@ -112,14 +111,9 @@ sub Report_rc { #-- rc - Run Commands
 #       print $OUT $res, "\n" unless $@;
 
 	for (;;) {
-		$_ = $term->readline($Prompt);
-
+		prompt($Prompt);
 		last unless defined $_;
 
-		next if /^\s*#/;
-		next if /^\s*$/;
-
-#		$term->addhistory($_);
 		eval {
 			rc($_);
 		}; if ($@) {
