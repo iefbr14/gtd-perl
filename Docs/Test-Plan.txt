@@ -312,28 +312,9 @@ sort_by sets the sort criteria
 [_] walk	by_name
 
 #==============================================================================
-# Grep for Bug and fix
+# Grep(sift) for Bug and fix
 #==============================================================================
-[_] CCT.pm:	warn "###BUG### Can't insert $key => $val\n";
-[_] CCT.pm:	warn "###BUG### Can't update $key => $val\n";
-[_] CCT.pm: 	###BUG### $CCT->name is horibly expensive
-[_] CCT.pm: 	die "###BUG### Can't rename $key => $newname\n";
-[_] db.pm:	###BUG### we need to create it?
-[_] db.pm:	###BUG### we need to create it?
-[_] Sort.pm:	###BUG### fetch command line option sort override
-[_] Sort.pm:	###BUG### make by_Sort an eval?
-[_] Sort.pm:	###BUG### junk sub need to walk to hier
-
-[_] Report/actions.pm:	###BUG### should walk down from here via get_children
-[_] Report/actions.pm:	###BUG### rather walk up in has_parent
-[_] Report/doit.pm:	my($List) = 0; ###BUG### should be an option
-[_] Report/dump.pm:	###BUG### handle missing keys from @Ordered
-[_] Report/edit.pm:	###BUG### handle missing keys from @Ordered (see Report/dump.pm)
-[_] Report/new.pm:	###BUG### make this fast and simple.
-[_] Report/purge.pm:	###BUG### walk forward stopping on excludes
-[_] Report/purge.pm:	###BUG### walk backward keeping on includes
-[_] Report/review.pm: my($List) = 0; ###BUG### should be an option
-[_] Report/review.pm: my($Done) = 0; ###BUG### should be an option
+sift '###BUG###'
 
 #==============================================================================
 # Future
