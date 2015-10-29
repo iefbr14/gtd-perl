@@ -175,11 +175,13 @@ sub display_mode {
 	$mode = option('Header', $mode);
 
 	$mode = $report{$mode} if defined $report{$mode};
+	$mode = 'none' if ! defined $mode;
+
+	$Header = \&header_none;
 	$Header = $header{$mode} if defined $header{$mode};
+
 	# pick sorting?
 	return;
-
-	
 }
 
 #==============================================================================

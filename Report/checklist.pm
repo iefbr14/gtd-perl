@@ -47,10 +47,12 @@ BEGIN {
 
 use Hier::Util;
 use Hier::Meta;
+use Hier::Format;
 
 our $Debug = 0;
 
 sub Report_checklist {	#-- display a check list
+	meta_filter('+any', '^title', 'item');	
 #	meta_argv();
 	my ($p) = shift @_;
 	
