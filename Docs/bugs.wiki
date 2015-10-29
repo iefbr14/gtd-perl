@@ -1,0 +1,37 @@
+
+== Bugs ==
+
+* Hier::Prompt needs to be writeen
+
+* rc needs to use new prompt logic
+
+* bulkload needs to use new prompt logic
+
+* review needs to use new prompt logic
+
+* renumber doesn't update tid
+** renumber a project then edit it.
+
+* new needs to combine all the difference kinds into one routine
+** new needs a what to prompt for list by type
+** new needs to export it ability to bulkload
+
+
+== Enhancements ==
+
+* renumber a tid... needs to renumber tid and its children
+
+* entering a list (L)
+
+* entering a checklist (C)
+
+* entering a checklist/list item (T)
+
+* checklist/list items need to be able to form a true hierarchy
+
+* entering a Reference
+
+* mode switching (ie type) for Action/Inbox/Wait
+
+* maybe depends should be integrated with wait.
+** depend's parent can be list of actions/project waiting on?
