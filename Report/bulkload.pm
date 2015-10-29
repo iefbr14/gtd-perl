@@ -68,18 +68,16 @@ BEGIN {
 use strict;
 use warnings;
 
-use Term::ReadLine;
-
 use Hier::Meta;
 use Hier::Option;
 use Hier::Report::edit;
+use Hier::Prompt;
 
 my $Parent;
 my $Child;
 my $Type;
 my $Info = {};
 
-my $Prompt = '';
 our $Debug = 0;
 
 sub Report_bulkload { #-- Create Projects/Actions items from a file
@@ -90,29 +88,9 @@ sub Report_bulkload { #-- Create Projects/Actions items from a file
 
 	my($parents) = {};
 
-	my($term);
-	if (-t STDIN) {
-		$Prompt = '> ';
-		$term = Term::ReadLine->new('gtd');
-		$| = 1;
-	}
-
 	for (;;) {
-		if ($Prompt) {
-			$_ = $term->readline($Prompt);
-			last unless defined $_;
-		} else {
-			$_ = <STDIN>;
-			last unless defined $_;
-			chomp;
-		}
-
-		next if /^\s*#/;
-		next if /^\s*$/;
-
-		if ($Prompt) {
-			$term->addhistory($_);
-		}
+		prompt('+>', '#');
+		last unless defined $_;
 
 		if (/^debug/) {
 			$Debug = 1;
@@ -139,7 +117,7 @@ sub Report_bulkload { #-- Create Projects/Actions items from a file
                 }
 
                 if (/^sort\s(\S+)/) {
-                        set_option('Header', $1);
+                        set_option('Sort', $1);
                         next;
                 }
 		if (/^edit$/) {

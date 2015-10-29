@@ -24,7 +24,7 @@ my $Mode = 0;	# 0 - unknown
 		# 2 - term input
 
 sub prompt {
-	my($prompt, $ignore_comment) = @_;
+	my($prompt, $ignore_comments) = @_;
 
 	init_mode();
 
