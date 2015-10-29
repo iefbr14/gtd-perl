@@ -157,15 +157,13 @@ sub get_status {
 	local($|) = 1;
 	local($_) = 1;
 
-	print "? ";
-
-	$_ = <STDIN>;
+	$_ = prompt('?', '#');
 	return unless defined $_;
 
-	chomp;
-	return if /^\s*$/;
-
-	# add '!' command
+	###BUG### '!' command should be part of prompt Term mode
+	###BUG### ':' command should be part of prompt to call rc
+	###BUG### ^C need to be handled in Prompt
+	###BUG### ^D eof need to propigate up nicely
 
     foreach $_ (split(';', $_)) {
 	if (/^h/ or /^\?/) {
@@ -174,7 +172,9 @@ sub get_status {
 	}
 
 	if (/^q/) {
-		die "Ok\n";
+		###BUG### quit need to propigate up nicely
+		###BUG### :quit need to propigate up nicely from rc
+		die "Quit\n";
 	}
 	if (/^m/) {
 		s/^\S+\s+//;
