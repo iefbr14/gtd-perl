@@ -94,18 +94,24 @@ sub map_depth {
 
 	return $depth if $depth;
 
+	my($type) = 'm';
+
+	# not a reference to a task
 	if (!ref $ref) {
+		# is it a tid?
 		if ($ref =~ /^\d+$/) {
 			$ref = Hier::Tasks::find($ref);
+			$type = $ref->get_type();
 		} else {
-			return 'g';
+			# use the type that was pass
+			$type = $ref;
 		}
 	}
-	my($type) = $ref->get_type();
 
 	return 'a' if $type eq 'p';
 	return 'p' if $type eq 'g';
-	return 'g';
+	return 'g' if $type eq 'o'; # o == ROLE
+	return 'o';
 }
 
 sub hier_detail {

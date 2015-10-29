@@ -80,6 +80,8 @@ sub type_depth {
 		'i' => 7,
 		'w' => 7,
 	);
+
+	die "Bad type '$type'" unless defined $depth{$type};
 	return $depth{$type};
 }
 
