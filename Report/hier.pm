@@ -60,7 +60,7 @@ sub Report_hier {	#-- Hiericial List of Values/Visions/Roles...
 	$Mask  = option('Mask');
 
 	my(@top);
-	my($depth) = 'p';
+	my($depth) = '';
 	for my $criteria (meta_argv(@_)) {
 		if ($criteria =~ /^\d+$/) {
 			push(@top, $criteria);
@@ -83,10 +83,29 @@ sub Report_hier {	#-- Hiericial List of Values/Visions/Roles...
 			done   => \&end_detail,
 		);
 		$walk->filter();
-		$walk->set_depth($depth);
+		$walk->set_depth(map_depth($top, $depth));
 
 		$walk->walk($top);
 	}
+}
+
+sub map_depth {
+	my($ref, $depth) = @_;
+
+	return $depth if $depth;
+
+	if (!ref $ref) {
+		if ($ref =~ /^\d+$/) {
+			$ref = Hier::Tasks::find($ref);
+		} else {
+			return 'g';
+		}
+	}
+	my($type) = $ref->get_type();
+
+	return 'a' if $type eq 'p';
+	return 'p' if $type eq 'g';
+	return 'g';
 }
 
 sub hier_detail {
