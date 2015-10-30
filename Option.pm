@@ -150,15 +150,21 @@ sub debug {
 	}	
 }
 
+# load_report -- return 1 if it compile correctly
 sub load_report {
 	my($report) = @_;
+
+	if ($report !~ /^[a-z]+$/) {
+		print "#:? Bad command: $report\n";
+		return;
+	}
 
 	eval "use Hier::Report::$report";
 	if ($@) {
 		my($error) = "Report compile: $@\n";
 		if ($error =~ /Can't locate Hier.Report.$report/) {
 			print "Unknown command $report\n";
-			print "try:  reports # for a list of reports\n";
+			print "try:  reports   #### for a list of reports\n";
 			return 0;
 		}
 		die "Report compile failed: $@\n";
@@ -166,17 +172,26 @@ sub load_report {
 	return 1;
 }
 
+# run report but protect caller from report failure 
 sub run_report {
 	my($report) = shift @_;
 
+	if ($report !~ /^[a-z]+$/) {
+		print "#:? Bad command: $report\n";
+		return;
+	}
+
 	my($func) = \&{"Report_$report"};
 
+	###BUG### run_report has too unneeded eval
+	######### is this eval needed now that load_report does
+	######### basic report name syntax checking.
+	######### if it load then failure to run is still just a failure
 	eval {
 		return $func->(@_);
-	};
-#	eval "Report_$report(\@_);";	# call report with argv
-	if ($@) {
-		die "Report $report failed: $@";
+	}; if ($@) {
+#		return if $@ =~ /Undefined subroutine.*Report_\Q$report\E/;
+		die "#:? Report $report failed: $@";
 	}
 	return;
 }

@@ -611,7 +611,8 @@ sub report {
 	my($report) = shift @_;
 
 	Hier::Tasks::clean_up_database();
-	load_report($report);
+
+	return unless load_report($report);
 	print "### Report $report args: @_\n" if $Debug;
 
 	# force options back to our defaults (including no defaults)
