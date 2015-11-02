@@ -55,7 +55,7 @@ sub Report_clean {	#-- clean unused categories
 	my($done, $tickle, $type);
 	
 	for my $ref (meta_selected()) {
-		$done = $ref->get_completed();
+		$done = $ref->is_completed();
 		if ($done) {
 			set_active($ref);
 			fix_done_0000($ref, $done);
@@ -81,11 +81,11 @@ sub Report_clean {	#-- clean unused categories
 sub set_active {
 	my($ref) = @_;
 
-	return unless $ref->get_isSomeday() eq 'y';
-
-	display_task($ref, 'active');
-
-	$ref->set_isSomeday('n');
+	if ($ref->is_someday()) {
+		$ref->set_isSomeday('n');
+		display_task($ref, 'active');
+		return;
+	}
 	return;
 }
 

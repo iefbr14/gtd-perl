@@ -28,6 +28,7 @@ my $Header  = undef;
 
 my $Wiki = 0;		#### display is in wiki format ####
 
+# task field order used by dump
 my @Order = (qw(
 	todo_id
 	type
@@ -62,6 +63,7 @@ my @Order = (qw(
 	percent
 .
 ) );
+
 sub display_mode {
 	my($mode) = @_;
 
@@ -116,6 +118,8 @@ sub display_mode {
 		'odump'    => \&disp_ordered_dump,
 
 		'udump'    => \&disp_unordered_dump,
+
+		'debug'    => \&disp_debug,
 	);
 
 	my(%report) = (
@@ -213,7 +217,7 @@ sub summary_children {
 	my $actions = 0;
 
 	for my $child ($pref->get_children()) {
-		$complet++ if $child->get_completed();
+		$complet++ if $child->is_completed();
 		$actions++;
 
 		next unless $child->is_nextaction();
@@ -589,7 +593,7 @@ sub disp_wikiwalk {
 	my($type) = $ref->get_type();
 	my($tid) =  $ref->get_tid();
 	my($title) =  $ref->get_title();
-	my($done) =  $ref->get_completed();
+	my($done) =  $ref->is_completed();
 
 	$type = '?' unless defined $type{$type};
 	
@@ -623,7 +627,7 @@ sub disp_wiki {
 	my($type) = $ref->get_type();
 	my($tid) =  $ref->get_tid();
 	my($title) =  $ref->get_title();
-	my($done) =  $ref->get_completed();
+	my($done) =  $ref->is_completed();
 
 	$type = '?' unless defined $type{$type};
 	
@@ -661,7 +665,7 @@ sub disp_html {
 	my($type) = $ref->get_type();
 	my($tid) =  $ref->get_tid();
 	my($title) =  $ref->get_title();
-	my($done) =  $ref->get_completed();
+	my($done) =  $ref->is_completed();
 
 	$title =~ s|\[\[(.+?)\]\]|<a href=/dev/index.php?$1>$1</a>|;
 
@@ -716,8 +720,8 @@ sub disp_task {
 		$pri = chr(ord('c') + $ref->get_priority() - 1);
 	}
 
-	$pri = 'S' if $ref->is_someday() eq 'y';
-	$pri = 'X' if $ref->get_completed();
+	$pri = 'S' if $ref->is_someday();
+	$pri = 'X' if $ref->is_completed();
 	$pri = 'V' if $type =~ /[mv]/;
 
 	$pri = 'I' if $type eq 'i';
@@ -735,6 +739,44 @@ sub disp_task {
 	print " $note" if $note;
 	nl($fd);
 }
+
+sub disp_debug {
+	my($fd, $ref, $note) = @_;
+
+	my($pri, $type, $context, $project, $title);
+	$type = $ref->get_type();
+
+	$context = $ref->get_context() || '';
+	$context = "\@$context" if $context;
+
+	$title = $ref->get_title();
+
+	$pri = $type;
+
+	$pri .= '.' . $ref->get_priority();
+	$pri .= '.' . $ref->get_panic();
+	$pri .= '.' . $ref->get_focus();
+	$pri .= '.' .  '['.$ref->get_tid().']';
+
+	$pri .= 'N' if $ref->is_nextaction();
+	$pri .= 'S' if $ref->is_someday();
+	$pri .= 'X' if $ref->is_completed();
+
+	if ($ref->get_tickledate()) {
+		if ($ref->get_tickledate() gt get_today()) {
+			$pri .= 'T'
+		} else {
+			$pri .= 't'
+		}
+	}
+	$pri =~ s/\.$//;
+
+	my($result) = join(' ', $pri, $context, $title);
+	$result =~ s/\s\s+/ /g;
+	print $result;
+	nl($fd);
+}
+
 
 sub disp_rgpa {
 	my($fd, $ref, $extra) = @_;
@@ -773,7 +815,6 @@ sub disp_hier {
 	my $cnt  = $ref->count_actions() || '';
 	my $pri  = $ref->get_priority();
 	my $desc = summary_line($ref->get_description(), '');
-	my $done = $ref->get_completed() || '';
 
 	color_ref($ref, $fd);
 

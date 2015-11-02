@@ -146,6 +146,9 @@ sub get_type         { my($self) = @_; return default($self->{type}, '?'); }
 sub get_resource     { my($self) = @_; return default($self->{resource}, ''); }
 sub get_hint         { my($self) = @_; return default($self->{_hint}, ''); }
 
+sub get_focus { return Hier::Sort::calc_focus(@_)};
+sub get_panic { return Hier::Sort::calc_panic(@_)};
+
 sub set_category     {return dset('category', @_); }
 sub set_completed    {return dset('completed', @_); }
 sub set_context      {return dset('context', @_); }
@@ -335,6 +338,14 @@ sub is_active {
 
 	return 1;
 }
+
+sub is_completed {
+	my($ref) = @_;
+
+	return 1 if $ref->get_completed();
+	return 0;
+}
+
 
 sub is_nextaction {
 	my($ref) = @_;

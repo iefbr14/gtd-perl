@@ -368,7 +368,7 @@ sub task_mask {
 
 	my($mask) = 0x0000;
 
-	my($done) = $ref->get_completed();
+	my($done) = $ref->is_completed();
 	my($due)  = $ref->get_due();
 	my($type) = $ref->get_type();
 
@@ -742,7 +742,7 @@ sub filter_task {
 sub filter_done {
 	my($ref, $arg) = @_;
 
-	return '+done' if $ref->get_completed();
+	return '+done' if $ref->is_completed();
 	return '?';
 }
 
@@ -759,7 +759,7 @@ sub filter_pure_next {
 sub filter_tickle {
 	my($ref, $arg) = @_;
 
-	return '+tickle' if $ref->get_completed();
+	return '+tickle' if $ref->get_tickle();
 	return '?';
 }
 

@@ -199,13 +199,13 @@ sub task_mask {
 
 	my($mask) = 0x0000;
 
-	my($done) = $ref->get_completed();
+	my($done) = $ref->is_completed();
 	my($due)  = $ref->get_due();
 	my($type) = $ref->get_type();
 
 	$mask |= T_DONE		if $done;  # step on next/somday/tickle
 	$mask |= T_NEXT		if $ref->get_nextaction() eq 'y';
-	$mask |= T_SOMEDAY	if $ref->get_isSomeday() eq 'y';
+	$mask |= T_SOMEDAY	if $ref->is_someday();
 	$mask |= T_TICKLE	if $ref->get_tickledate() gt $Today;
 	$mask |= T_WAITING	if $type eq 'w';
 

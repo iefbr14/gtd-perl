@@ -48,7 +48,7 @@ my(%Criteria) = (
 	goaltask => \&by_goal_task,
 );
 
-my(%Meta_key);
+my(%Meta_key, %Focus_key, %Panic_key);
 
 my $Sorter = \&by_task;
 
@@ -294,16 +294,20 @@ sub item_focus {
 
 	my($pri) = $ref->get_priority();
 
-	if ($ref->get_nextaction() eq 'y') {
-		# cool
-	} elsif ($ref->is_someday() eq 'y') {
-		$pri += 10;
+	if ($ref->is_nextaction()) {
+				# cool	1-5  == abcde
+	} elsif ($ref->is_someday()) {
+		$pri += 10;	# slow 11-15 == jklmn
 	} else {
-		$pri += 5;
+		$pri += 5;	# ok    6-10 == fghij
 	}
+
+	$pri = 1  if $pri < 1;
+	$pri = 15 if $pri > 15;
+
 	$pri = chr(ord('a') + $pri - 1);
 
-	$pri = 'z' if $ref->get_completed();
+	$pri = 'z' if $ref->is_completed();
 
 	return $pri;
 }
@@ -317,13 +321,13 @@ sub calc_focus {
 
 	my($tid) = $ref->get_tid();
 
-	my($val) = $Meta_key{$tid};
+	my($val) = $Focus_key{$tid};
 	return $val  if defined $val;
 
 	my($pri) = item_focus($ref);
 
 	$val = calc_focus($ref->get_parent()) . $pri;
-	$Meta_key{$tid} = $val;
+	$Focus_key{$tid} = $val;
 
 	return $val;
 }
@@ -348,7 +352,7 @@ sub calc_panic {
 
 	my($tid) = $ref->get_tid();
 
-	my($val) = $Meta_key{$tid};
+	my($val) = $Panic_key{$tid};
 	return $val if defined $val;
 
 	$val = item_focus($ref);
@@ -357,7 +361,7 @@ sub calc_panic {
 		$val = $pri if $pri lt $val;
 	}
 	
-	$Meta_key{$tid} = $val;
+	$Panic_key{$tid} = $val;
 
 	return $val;
 }
