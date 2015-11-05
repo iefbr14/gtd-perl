@@ -226,10 +226,15 @@ sub hier_detail {
 		print {$fd} $indent, qq(   depends $dep_path\n);
 	}
 
-	if ($effort) {
-		++$ref->{_effort};
+	###BUG### taskjuggler need to check for un-filtered children for effort
+	if ($ref->get_children()) {
+		# nope has children, we just accumlate effor in them
+	} else {
+		if ($effort) {
+			++$ref->{_effort};
+		}
+		print {$fd} $indent, qq(   effort $effort\n) if $effort;
 	}
-	print {$fd} $indent, qq(   effort $effort\n) if $effort;
 	print {$fd} $indent, qq(   priority $tj_pri\n) if $tj_pri;
 	
 	print {$fd} $indent, qq(   start $start\n) if $start && $we eq '';
