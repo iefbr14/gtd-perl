@@ -187,17 +187,18 @@ sub predecessor {
 #------------------------------------------------------------------------------
 
 my %States = (
-	a => ['b', 'Analysis Needed',	],
-	b => ['c', 'Being Analysed',	],
-	c => ['d', 'Completed Analysis', ],
-	d => ['f', 'Doing',		],
-	f => ['t', 'Finished Doing',	],
-	i => ['c', 'Ick',		],	# task stuck.
-	r => ['c', 'Reprocess',		],	# Reprint
-	t => ['u', 'Test',		],
-	u => ['z', 'Update wiki',	],	# done, file paperwork
-	w => ['r', 'Waiting',		],	# Waiting on
-	z => ['z', 'Z all done',	], 	# should have a completed date
+	'-' => ['a', '-new-', ],		# never processed state.
+	'a' => ['b', 'Analysis Needed',	],
+	'b' => ['c', 'Being Analysed',	],
+	'c' => ['d', 'Completed Analysis', ],
+	'd' => ['f', 'Doing',		],
+	'f' => ['t', 'Finished Doing',	],
+	'i' => ['c', 'Ick',		],	# task stuck.
+	'r' => ['c', 'Reprocess',	],	# Reprint
+	't' => ['u', 'Test',		],
+	'u' => ['z', 'Update wiki',	],	# done, file paperwork
+	'w' => ['r', 'Waiting',		],	# Waiting on
+	'z' => ['z', 'Z all done',	], 	# should have a completed date
 );
 
 sub bump {
