@@ -184,7 +184,7 @@ sub set_tid          {
 	my $tid = $ref->get_tid();
 
 	if (defined $Task{$new}) {
-		die "Can't rename tid $tid => $new (already exists)\n";
+		die "Can't renumber tid $tid => $new (already exists)\n";
 	}
 
 	if ($ref->is_dirty()) {
