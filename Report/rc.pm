@@ -126,6 +126,9 @@ sub Report_rc { #-- rc - Run Commands
 sub rc {
 	my($line) = @_;
 
+	### remove leading white space from commands.
+	$line =~ s/^\s+//;
+
 	###   :cmd  =>  rc command mode (noop here)
 	if ($line =~ s/^\://) {
 		### continue this is redundent
