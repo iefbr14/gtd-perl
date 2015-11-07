@@ -42,10 +42,21 @@ BEGIN {
 	# set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
-	@EXPORT      = qw(&Report_renumber);
+	@EXPORT      = qw(&Report_renumber &next_avail_task);
 }
 
 use Hier::Meta;
+use Hier::Tasks;
+
+my %Dep_info = (
+  'a' => [ \&is_action,   2000, 9999, 'Actions' ],
+  's' => [ \&is_subject,  1000, 1999, 'Sub-Projects' ],
+  'p' => [ \&is_project,   200,  999, 'Projects' ],
+  'g' => [ \&is_goals,      30,  199, 'Goals' ],
+  'o' => [ \&is_roles,      10,   29, 'Roles' ],
+  'v' => [ \&is_vision,      5,    9, 'Vision' ],
+  'm' => [ \&is_value,       1,    4, 'Values' ],
+);
 
 my %Dep_map;
 
@@ -62,14 +73,29 @@ sub Report_renumber { #-- Renumber task Ids
 	}
 }
 
+sub min_type {
+	my($type) = @_;
+
+	min_task(\&is_action,   2000, 9999, 'Actions')      if $type eq 'a';
+ 	min_task(\&is_subject,  1000, 1999, 'Sub-Projects') if $type eq 's';
+	min_task(\&is_project,   200,  999, 'Projects')     if $type eq 'p';
+	min_task(\&is_goals,      30,  199, 'Goals')        if $type eq 'g';
+	min_task(\&is_roles,      10,   29, 'Roles')        if $type eq 'o';
+	min_task(\&is_vision,      5,    9, 'Vision')       if $type eq 'v';
+	min_task(\&is_value,       1,    4, 'Values')       if $type eq 'm';
+
+	die;
+}
+
 sub renumber_all { #-- Renumber task Ids 
-	renumb(\&is_action,   2000, 9999, 'Actions');
- 	renumb(\&is_subject,  1000, 1999, 'Sub-Projects');
-	renumb(\&is_project,   200,  999, 'Projects');
-	renumb(\&is_goals,      30,  199, 'Goals');
-	renumb(\&is_roles,      10,   29, 'Roles');
-	renumb(\&is_vision,      5,    9, 'Vision');
-	renumb(\&is_value,       1,    4, 'Values');
+	## for i in qw(a s p g o v m) 
+	renumb('a');	# Actions
+ 	renumb('s');	# Sub-Projects
+	renumb('p');	# Projects
+	renumb('g');	# Goals
+	renumb('o');	# roles
+	renumb('v');	# Vision
+	renumb('m');	# values
 }
 
 sub renumber_pair {
@@ -142,18 +168,36 @@ sub is_action {
 	return $ref->is_task();
 }
 
+
+sub next_avail_task {
+	my($type) = @_;
+
+	my($test, $min, $max, $who) = @{ $Dep_info{$type} };
+
+	for (my $tid = $min; $tid < $max; ++$tid) {
+		next if Hier::Tasks::find($tid);
+
+		return $tid;
+	}
+	return undef;
+}
+
 sub renumb {
-	my($test, $min, $max, $who) = @_;
+	my($type) = @_;
+
+	my($test, $min, $max, $who) = @{ $Dep_info{$type} };
 
 	print "Processing $who range: $min $max\n";
 	my(%inuse, $tid, @try);
 
-	for my $ref (meta_selected()) {
+	for my $ref (Hier::Tasks::all()) {
 		$tid = $ref->get_tid();
 
 		if ($min <= $tid && $tid <= $max) {
 			$inuse{$tid} = 1;
 		}
+
+		###BUG### need to check if filtered
 		if ($tid < $min) {
 			if (&$test($ref)) {
 				push(@try, $tid);

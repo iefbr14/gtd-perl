@@ -31,6 +31,8 @@ sub new {
 	$Max_todo = Hier::Db::G_val('todo', 'max(todo_id)') unless $Max_todo;
 
 	if (defined $tid) {
+		die "Task $tid exists won't create it." if defined $Task{$tid};
+
 		$Max_todo = $tid if $Max_todo < $tid;
 	} else {
 		$tid = ++$Max_todo;

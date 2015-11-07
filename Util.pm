@@ -27,6 +27,7 @@ my %Types = (
 	'Goal'		=> 'g',
 
 	'Project'	=> 'p',
+	'Sub-Project'	=> 's',		# we can as for this
 
 	'Action'	=> 'a',
 	'Inbox'		=> 'i',
@@ -74,11 +75,12 @@ sub type_depth {
 		'o' => 3,
 		'g' => 4,
 		'p' => 5,
+		's' => 6,		# sub-projects
 
-		'n' => 6,		# next actions
-		'a' => 6,		# actions (tasks)
-		'i' => 7,
-		'w' => 7,
+		'n' => 7,		# next actions
+		'a' => 7,		# actions (tasks)
+		'i' => 8,		# inbox
+		'w' => 8,		# wait for
 	);
 
 	die "Bad type '$type'" unless defined $depth{$type};

@@ -78,6 +78,7 @@ sub Report_taskjuggler {	#-- generate taskjuggler file from gtd db
 		} 
 		my($type) = type_val($criteria);
 		if ($type) {
+			$type = 'p' if $type eq 's';
 			$top = $type;
 		} else {
 			die "unknown type $criteria\n";

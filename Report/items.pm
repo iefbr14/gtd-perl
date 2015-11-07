@@ -59,6 +59,7 @@ sub Report_items {	#-- list titles for any filtered class (actions/projects etc)
 	if ($name) {
 		my($want) = type_val($name);
 		if ($want) {
+			$want = 'p' if $want eq 's';
 			list_items($want, $name);
 			return;
 		}

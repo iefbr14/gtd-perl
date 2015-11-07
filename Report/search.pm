@@ -60,6 +60,7 @@ sub Report_search {	#-- Search for items
 #	if ($name) {
 #		my($want) = type_val($name);
 #		if ($want) {
+#			$want = 's' if $type eq 'p';
 #			list_desc($want, $name);
 #			return;
 #		}

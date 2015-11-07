@@ -65,6 +65,8 @@ sub Report_dump {	#-- dump records in edit format
 			warn "**** Can't understand Type $name\n";
 			return 1;
 		}
+		###BUG### dump needs to handle sub-projects properly
+		$want = 'p' if $want eq 's';	# sub-project are real
 		list_dump($want, $name);
 		return;
 	}

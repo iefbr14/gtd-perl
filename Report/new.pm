@@ -49,11 +49,27 @@ use Hier::Meta;
 use Hier::Tasks;
 use Hier::Util;
 use Hier::Option;
+use Hier::Prompt;
+
+use Hier::Report::renumber;	# qw(next_avail_task);
 
 my $First = '';
 my $Parent;
 my $P_ref;
 
+# Usage:
+#    new                               # type: inbox
+#    new task                          # type: task
+#    new proj                          # type: proj
+#    new        I have to do this      # type: inbox (done)
+#    new task   I have to do this      # type: task (done)
+# and we mix in with a parent: 
+#    new				# type: map parent
+#    new task				# type: is task
+#    new proj                           # type: is sub-project
+#    new        I have to do this       # type: map parent (done)
+#    new task   I have to do this       # type: is task (done)
+#    new proj   I have to do this       # type: is proj (done)
 #
 # there are two paths here.  The first is the command line
 # where everything is on the command line and is a one shot
@@ -62,13 +78,15 @@ my $P_ref;
 sub Report_new {	#-- create a new action or project
 	meta_filter('+all', '^tid', 'none');
 
-	unless (@_) {
-		new_inbox('i', meta_desc(@_));
-		return;
-	}
+	my($want) = '';
 		
-        my($type) = shift @_;
-	my($name) = '';
+	if (@_) {
+		my($type_arg) = type_val($_[0]);
+		if ($type_arg) {
+			$want = $type_arg;
+			shift @_;
+		}
+	}
 
 	my $parent = option('Current');
 	if ($parent) {
@@ -77,44 +95,32 @@ sub Report_new {	#-- create a new action or project
 			die "Can't use $parent no such task\n";
 		}
 		$Parent = $parent;
-	}
-
-	my($want) = type_val($type);
-	# prompt path
-        if ($want) {
-		$name = shift @_ if @_;
-	} else {
-		$name = $want;
-		$want = 'i';
-		if ($parent) {
+		unless ($want) {
 			$want = $P_ref->get_type();
-			$want =~ tr{mvogpa}{vogpaa};
+			$want =~ tr{mvogpawi}
+				   {vogpaXXX};
+		###BUG### in mapping sub-type prompmote actions to projects?
+		die "Won't create sub-actions of actions" if $want eq 'X';
 		}
 	}
 
-	# command line path
-#	if (@_) {
-#		new_task('i', $name, meta_desc(@_));
-#		return;
-#	}
+	$want ||= 'i';	# still unknown at this point!
 
 	my($title) = meta_desc(@_);
 
-	print "new: type=$type($want) name=$name title=$title\n";
+	print "new: want=$want title=$title\n";
+
+	# command line path
+	if ($title) {
+		new_item($want, $title);
+		return;
+	}
 
 	if (is_type_hier($want)) {
-		new_project($want, $name, $title);
-		return;
+		new_project($want);
+	} else {
+		new_action($want);
 	}
-	if ($want eq 'i') {
-		new_inbox('i', $name, $title);
-		return;
-	}
-	if (is_type_action($want)) {
-		new_action($want, $name, $title);
-		return;
-	} 
-	die "Can't happen, don't know how to handle request\n";
 }
 
 sub is_type_hier {
@@ -124,16 +130,8 @@ sub is_type_hier {
 	return 0;
 }
 
-sub is_type_action {
-	my($type) = @_;
-
-	return 1 if $type =~ /^[awi]/;
-	return 0;
-}
-
-
-# command line version
-sub new_task {
+# command line version, no prompting
+sub new_item {
 	my($type, $title) = @_;
 
 	my($pri, $task, $category, $note, $desc, $line);
@@ -167,59 +165,27 @@ sub new_task {
 	print "Created: ", $ref->get_tid(), "\n";
 }
 
-sub new_inbox {
-	my($type, $task, $title) = @_;
-
-	###BUG### make this fast and simple.
-	my($pri, $category, $note, $desc, $line);
-
-	first("Enter Item, Desc, Category, Notes...");
-	$task     = prompt("Task", $task);
-	$pri      = option('Priority') || 4;
-	$desc     = lines("Desc", $title);
-
-	$category = input("Category", option('Category'));
-	$note     = lines("Note", option('Note')); 
-
-	my $ref = Hier::Tasks->new(undef);
-
-	if ($pri > 5) {
-		$pri -= 5;
-		$ref->set_isSomeday('y');
-	}
-	$ref->set_nextaction('y') if $pri < 3;
-	$ref->set_priority($pri);
-
-	$ref->set_category($category);
-	$ref->set_title($task);
-	$ref->set_description($desc);
-	$ref->set_note($note);
-
-	$ref->set_type($type);
-
-	$ref->set_parent_ids($Parent) if $Parent;
-	$ref->insert();
-
-	print "Created: ", $ref->get_tid(), "\n";
-}
-
+# detailed task
 sub new_action {
-	my($type, $task, $desc) = @_;
+	my($type) = @_;
 
-	my($pri, $category, $note, $line);
+	my($title, $pri, $category, $desc, $note, $line);
 
-	first("Enter Action, Priority, Desc, palm Category, Notes...");
+	my($type_name) = type_name($type);
 
-	$task     = input("Task", $task);
+	first("Enter $type_name: Task, Desc, Category, Notes...");
+
+	$title    = input("Title", option('Title'));
 	$pri      = input("Priority", option('Priority')) || 3;
-	$desc     = lines("Desc", $desc);
+	$desc     = prompt_desc("Desc", $desc);
 
 	$category = input("Category", option('Category'));
-	$note     = lines("Note", option('Note')); 
+	$note     = prompt_desc("Note", option('Note')); 
 
-	my $ref = Hier::Tasks->new(undef);
+	my($tid) = next_avail_task('a');
+	my $ref = Hier::Tasks->new($tid);
 
-	$ref->set_type('a'); # action
+	$ref->set_type($type); # action/inbox/wait
 
 	if ($pri > 5) {
 		$pri -= 5;
@@ -228,7 +194,7 @@ sub new_action {
 	$ref->set_nextaction('y') if $pri < 3;
 	$ref->set_priority($pri);
 	$ref->set_category($category);
-	$ref->set_title($task);
+	$ref->set_title($title);
 	$ref->set_description($desc);
 	$ref->set_note($note);
 
@@ -240,25 +206,23 @@ sub new_action {
 
 
 sub new_project {
-	my($type, $title, $desc) = @_;
+	my($type) = @_;
 
-	my($pri, $category, $parent, $note);
+	my($pri, $category, $title, $desc, $note);
 
 	my($type_name) = type_name($type);
 
-	first("Enter $type_name, Category, Description, Outcome...");
+	first("Enter $type_name: Category, Title, Description, Outcome...");
 
 	$category = input("Category", option('Category'));
-	$title    = input("Title", $title);
+	$title    = input("Title", option('Title'));
 	$pri      = option('Priority') || 3;
-	if ($desc) {
-		$note = option('Note');
-	} else {
-		$desc     = lines("Description", $desc);
-		$note     = lines("Outcome", option('Note'));
-	}
 
-	my $ref = Hier::Tasks->new(undef);
+	$desc     = prompt_desc("Description", option('Desc'));
+	$note     = prompt_desc("Outcome", option('Note'));
+
+	my($tid) = next_avail_task($type);
+	my $ref = Hier::Tasks->new($type);
 
 	$ref->set_type($type); 
 
@@ -280,7 +244,8 @@ sub first {
 	 "  enter ^D to stop, entry not added\n" . 
 	 "  use '.' to stop adding notes.\n";
 }
-sub lines {
+
+sub prompt_desc {
 	my($prompt, $default) = @_;
 
 	return $default if $default;

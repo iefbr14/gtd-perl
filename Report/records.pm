@@ -63,6 +63,7 @@ sub Report_records {	#-- detailed list all records for a type
 		unless ($want) {
 			die "**** Can't understand Type $name\n";
 		}
+		$want = 'p' if $want eq 's';
 		list_records($want, $name.' '.$desc);
 		return;
 	}
