@@ -225,7 +225,7 @@ sub new_project {
 	$note     = prompt_desc("Outcome", option('Note'));
 
 	my($tid) = next_avail_task($type);
-	my $ref = Hier::Tasks->new($type);
+	my $ref = Hier::Tasks->new($tid);
 
 	$ref->set_type($type); 
 
