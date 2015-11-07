@@ -243,7 +243,7 @@ sub dset {
 	my($field, $ref, $val) = @_;
 
 	if ($field eq 'Parents') {
-		$ref->set_parents_ids($val);
+		$ref->set_parent_ids($val);
 		return;
 	}
 	if ($field eq 'Children') {

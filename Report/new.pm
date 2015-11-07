@@ -45,6 +45,7 @@ BEGIN {
 	@EXPORT      = qw(&Report_new);
 }
 
+use Hier::Hier;
 use Hier::Meta;
 use Hier::Tasks;
 use Hier::Util;
@@ -56,6 +57,8 @@ use Hier::Report::renumber;	# qw(next_avail_task);
 my $First = '';
 my $Parent;
 my $P_ref;
+
+###BUG### ^c in new kills report rc
 
 # Usage:
 #    new                               # type: inbox
@@ -90,7 +93,7 @@ sub Report_new {	#-- create a new action or project
 
 	my $parent = option('Current');
 	if ($parent) {
-		$P_ref = find_task($parent);
+		$P_ref = Hier::Tasks::find($parent);
 		unless ($P_ref) {
 			die "Can't use $parent no such task\n";
 		}

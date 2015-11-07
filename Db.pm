@@ -165,7 +165,7 @@ sub set {
 
 	###ToDo check for parents, call set_parents.
 	if ($field eq 'Parents') {
-		$ref->set_parents_ids($value);
+		$ref->set_parent_ids($value);
 		return;
 	}
 

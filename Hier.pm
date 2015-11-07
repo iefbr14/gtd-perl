@@ -172,7 +172,7 @@ sub has_parent_id {
 #------------------------------------------------------------------------------
 ## set_parent_ids is used by dset in Tasks.pm
 #
-sub set_parents_ids {
+sub set_parent_ids {
         my($self, $val) = @_;
 
 	my(@pid) = split(',', $val);	# parent ids

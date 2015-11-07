@@ -312,7 +312,7 @@ sub add_task {
 
 	$Child = $ref->get_tid();
 
-	$ref->set_parents_ids($Parent);
+	$ref->set_parent_ids($Parent);
 
 	print "Created ($type): ", $ref->get_tid(), "\n";
 
