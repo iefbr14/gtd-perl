@@ -74,7 +74,12 @@ sub Report_hier {	#-- Hiericial List of Values/Visions/Roles...
 		}
 	}
 	if (@top == 0) {
-		@top = ( 'm' );
+		my $parent = option('Current');
+		if ($parent) {
+			@top = ( $parent );
+		} else {
+			@top = ( 'm' );
+		}
 	}
 
 	for my $top (@top) {
