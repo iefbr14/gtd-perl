@@ -243,9 +243,10 @@ sub renumber_a_task {
 
 	print "$tid => $new\n";
 
-	print "Can't yet renumber singletons($tid), use TO=FROM syntax\n";
-	return;
+#	print "Can't yet renumber singletons($tid), use TO=FROM syntax\n";
+#	return;
 	$ref->set_tid($new);
+	$ref->update();
 }
 
 sub renumber_task {
@@ -259,6 +260,7 @@ sub renumber_task {
 	print "$tid => $new\n";
 
 	$ref->set_tid($new);
+	$ref->update();
 }
 
 sub dependent {
