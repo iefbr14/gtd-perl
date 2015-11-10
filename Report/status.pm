@@ -51,6 +51,7 @@ use Hier::Util;		# %Types and typemap
 use Hier::Meta;
 use Hier::Option;
 use Hier::Resource;
+use Hier::Report::renumber;
 
 my $Hours_proj = 0;
 my $Hours_task = 0;
@@ -98,6 +99,14 @@ sub Report_status {	#-- report status of projects/actions
 
 	printf "time:  %6s projects:  %6s next,actions:  %6s %6s = %s\n",
 		$time, $t_p, $t_n, $t_a, f_h($Hours_next+$Hours_task);
+
+	print "Next";
+	for my $type (qw(m v o g p s a)) {
+		my($n_tid) = next_avail_task($type);
+		$n_tid ||= '-';
+
+		print "\t$type => $n_tid\n";
+	}
 }
 
 sub f_h {

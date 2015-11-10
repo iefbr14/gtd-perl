@@ -73,20 +73,6 @@ sub Report_renumber { #-- Renumber task Ids
 	}
 }
 
-sub min_type {
-	my($type) = @_;
-
-	min_task(\&is_action,   2000, 9999, 'Actions')      if $type eq 'a';
- 	min_task(\&is_subject,  1000, 1999, 'Sub-Projects') if $type eq 's';
-	min_task(\&is_project,   200,  999, 'Projects')     if $type eq 'p';
-	min_task(\&is_goals,      30,  199, 'Goals')        if $type eq 'g';
-	min_task(\&is_roles,      10,   29, 'Roles')        if $type eq 'o';
-	min_task(\&is_vision,      5,    9, 'Vision')       if $type eq 'v';
-	min_task(\&is_value,       1,    4, 'Values')       if $type eq 'm';
-
-	die;
-}
-
 sub renumber_all { #-- Renumber task Ids 
 	## for i in qw(a s p g o v m) 
 	renumb('a');	# Actions
@@ -95,7 +81,7 @@ sub renumber_all { #-- Renumber task Ids
 	renumb('g');	# Goals
 	renumb('o');	# roles
 	renumb('v');	# Vision
-	renumb('m');	# values
+	renumb('m');	# Values
 }
 
 sub renumber_pair {
@@ -105,7 +91,7 @@ sub renumber_pair {
 
 		renumber_task($tid, $to);
 	} else {
-		print "Can't yet renumber singletons($pair), use TO=FROM syntax\n";
+		renumber_a_task($pair);
 	}
 }
 
@@ -172,9 +158,14 @@ sub is_action {
 sub next_avail_task {
 	my($type) = @_;
 
+	$type = 'a' if $type eq 'n';	# next action => min action
+	$type = 'a' if $type eq 'w';	# wait        => min action
+
 	my($test, $min, $max, $who) = @{ $Dep_info{$type} };
 
-	for (my $tid = $min; $tid < $max; ++$tid) {
+	die "***BUG*** next_avail_task: Unknown type '$type'\n" unless $test;
+
+	for (my $tid=$min; $tid <= $max; ++$tid) {
 		next if Hier::Tasks::find($tid);
 
 		return $tid;
@@ -230,6 +221,31 @@ sub renumb {
 		return;
 	}
 	print "Completed $who.\n";
+}
+
+sub renumber_a_task {
+	my($tid) = @_;
+
+	my $ref = meta_find($tid);
+
+	die "Can't renumber task $tid (doesn't exists)\n" unless $ref;
+
+	die "Can't renumber task $tid (has depedencies)\n" if dependent($ref);
+
+	my($type) = $ref->get_type();
+
+	my($new) = next_avail_task($type);
+
+	if ($tid < $new) {
+		print "First slot $new > task $tid (skipped)\n";
+		return;
+	}
+
+	print "$tid => $new\n";
+
+	print "Can't yet renumber singletons($tid), use TO=FROM syntax\n";
+	return;
+	$ref->set_tid($new);
 }
 
 sub renumber_task {

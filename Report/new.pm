@@ -110,6 +110,7 @@ sub Report_new {	#-- create a new action or project
 	$want ||= 'i';	# still unknown at this point!
 
 	my($title) = meta_desc(@_);
+	$title =~ s/^--\s*//;
 
 	print "new: want=$want title=$title\n";
 
@@ -146,7 +147,8 @@ sub new_item {
 	$category = option('Category') || '';
 	$note     = option('Note') || ''; 
 
-	my $ref = Hier::Tasks->new(undef);
+	my($tid) = next_avail_task($type);
+	my $ref = Hier::Tasks->new($tid);
 
 	if ($pri > 5) {
 		$pri -= 5;

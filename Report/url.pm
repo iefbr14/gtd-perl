@@ -52,6 +52,7 @@ use Hier::Format;
 
 our($Debug) = 0;
 
+my(%Seen);
 my(@Urls);
 my($Host);
 
@@ -60,12 +61,15 @@ sub Report_url {	#-- open browser window for wiki and gtd
 
 	my($title) = join(' ', @_);
 
+	my(%seen);
+
 	my(@list) = meta_pick(@_);
 	if (@list == 0) {
 		@Urls = ('Main_Page');
 	}
 	report_header('Tasks', $title);
 
+	%Seen = ();
 	@Urls = ();
 	for my $ref (sort_tasks @list) {
 		find_url($ref);
@@ -123,11 +127,15 @@ sub find_url {
 	if (@urls) {
 		for my $match (@urls) {
 			$match =~ s/ /_/g;
+			next if $Seen{$match}++;
+
 			push(@Urls, "$base/dev/index.php/$match");
 		}
 	}
 	if (@gtds) {
 		for my $id (@gtds) {
+			next if $Seen{$id}++;
+
 			push(@Urls, "$base/todo/r617/itemReport.php?itemId=$id");
 		}
 	}

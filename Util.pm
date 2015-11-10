@@ -30,6 +30,7 @@ my %Types = (
 	'Sub-Project'	=> 's',		# we can as for this
 
 	'Action'	=> 'a',
+	'Next'		=> 'n',		# next action
 	'Inbox'		=> 'i',
 	'Wait'		=> 'w',
 	'Waiting'	=> 'w',
