@@ -211,6 +211,12 @@ sub bump {
 	my($new) = $States{$state}[0];
 
 	$ref->set_state($new);
+
+	##  doing          and action then
+	if ($new eq 'd' && $ref->get_type() eq 'a') {
+		# make sure its a next action
+		$ref->set_nextaction('y');
+	}
 	return $new;
 }
 
