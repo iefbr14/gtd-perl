@@ -96,6 +96,20 @@ sub delete {
 	my $tid = $self->{todo_id};
 	delete $Task{$tid};
 
+	# remove my children from self
+	for my $child ($self->get_parents) {
+		$self->orphin_child($child);
+	}
+	$self->update();
+
+	# remove self from my parents
+	for my $parent ($self->get_parents) {
+		$parent->orphin_child($self);
+		$parent->update();
+	}
+
+
+	# commit suicide
 	Hier::Db::sac_delete($tid);
 	Hier::Db::gtd_delete($tid);	# remove from database
 
