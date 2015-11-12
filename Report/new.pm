@@ -154,7 +154,12 @@ sub new_item {
 		$pri -= 5;
 		$ref->set_isSomeday('y');
 	}
-	$ref->set_nextaction('y') if $pri < 3;
+	if ($type eq 'n') {
+		$type = 'a';
+		$ref->set_nextaction('y');
+	}
+
+	$ref->set_type($type);
 	$ref->set_priority($pri);
 
 	$ref->set_category($category);
@@ -162,7 +167,6 @@ sub new_item {
 	$ref->set_description($desc);
 	$ref->set_note($note);
 
-	$ref->set_type($type);
 
 	$ref->set_parent_ids($Parent) if $Parent;
 	$ref->insert();
@@ -190,13 +194,16 @@ sub new_action {
 	my($tid) = next_avail_task('a');
 	my $ref = Hier::Tasks->new($tid);
 
+	if ($type eq 'n') {
+		$type = 'a';
+		$ref->set_nextaction('y');
+	}
 	$ref->set_type($type); # action/inbox/wait
 
 	if ($pri > 5) {
 		$pri -= 5;
 		$ref->set_isSomeday('y');
 	}
-	$ref->set_nextaction('y') if $pri < 3;
 	$ref->set_priority($pri);
 	$ref->set_category($category);
 	$ref->set_title($title);

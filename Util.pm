@@ -3,6 +3,8 @@ package Hier::Util;
 use strict;
 use warnings;
 
+use Carp;
+
 BEGIN {
 	use Exporter   ();
 	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
@@ -84,7 +86,7 @@ sub type_depth {
 		'w' => 8,		# wait for
 	);
 
-	die "Bad type '$type'" unless defined $depth{$type};
+	confess "Bad type '$type'" unless defined $depth{$type};
 	return $depth{$type};
 }
 

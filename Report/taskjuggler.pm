@@ -348,28 +348,23 @@ sub old_task_priority {
 	}
 	return $tj_pri . " # $prival.$boost";
 }
+
 sub task_priority {
 	my($ref) = @_;
 
-	my($pri) = $ref->get_priority();
-	$pri += 4 if $ref->is_someday();
+	my($pf) = Hier::Sort::calc_focus($ref);
 
-	return '' unless $pri;
-	return '' if $pri == 4;
+	my($tj_pri) = substr($pf.'zzzzzz', 2, 3);
+	$pf =~ s/^(..)/$1./;
 
-	my($type) = $ref->get_type();
-#	return '' if $type eq 'o';
-#	return '' if $type eq 'g';
-#	return '' if $type eq 'p';
-
-	my($boost) = $ref->is_nextaction();
-
-	my($tj_pri) = (1000 - ($pri*100)) + $boost*50;
+	#         123451234512345
+	$tj_pri =~ tr{abcdefghijklmnoz}
+                     {9987766544321000};
 
 	$tj_pri = 1000 if $tj_pri >= 1000;
 	$tj_pri = 1 if $tj_pri <= 0;
 
-	return $tj_pri . " # $pri.$boost";
+	return $tj_pri . " # $pf";
 }
 
 sub skip {

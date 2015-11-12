@@ -3,6 +3,8 @@ package Hier::Walk;
 use strict;
 use warnings;
 
+use Carp;
+
 use Hier::Util;
 use Hier::Tasks;
 use Hier::Option;
@@ -156,6 +158,11 @@ sub detail {
 		return;
 	}
 
+	unless ($type) {
+		#***BUG*** fixed: type was not set by new
+		confess "$tid: bad type '$type'\n"; 
+		return;
+	}
 	if (type_depth($type) > $depth) {
 		warn "+ detail($tid)\n" if $Debug;
 		return;
