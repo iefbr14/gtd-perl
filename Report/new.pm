@@ -141,7 +141,7 @@ sub new_item {
 	my($pri, $task, $category, $note, $desc, $line);
 
 	$task     = option("Title") || $title;
-	$pri      = option('Priority') || 3;
+	$pri      = option('Priority') || 4;
 	$desc     = option("Desc") || '';
 
 	$category = option('Category') || '';
@@ -153,13 +153,17 @@ sub new_item {
 	if ($pri > 5) {
 		$pri -= 5;
 		$ref->set_isSomeday('y');
+	} else {
+		$ref->set_isSomeday('n');
 	}
 	if ($type eq 'n') {
 		$type = 'a';
 		$ref->set_nextaction('y');
+	} else {
+		$ref->set_nextaction('n');
 	}
-
 	$ref->set_type($type);
+
 	$ref->set_priority($pri);
 
 	$ref->set_category($category);
@@ -185,7 +189,7 @@ sub new_action {
 	first("Enter $type_name: Task, Desc, Category, Notes...");
 
 	$title    = input("Title", option('Title'));
-	$pri      = input("Priority", option('Priority')) || 3;
+	$pri      = input("Priority", option('Priority')) || 4;
 	$desc     = prompt_desc("Desc", $desc);
 
 	$category = input("Category", option('Category'));
@@ -197,12 +201,16 @@ sub new_action {
 	if ($type eq 'n') {
 		$type = 'a';
 		$ref->set_nextaction('y');
+	} else {
+		$ref->set_nextaction('n');
 	}
 	$ref->set_type($type); # action/inbox/wait
 
 	if ($pri > 5) {
 		$pri -= 5;
 		$ref->set_isSomeday('y');
+	} else {
+		$ref->set_isSomeday('n');
 	}
 	$ref->set_priority($pri);
 	$ref->set_category($category);
@@ -228,7 +236,7 @@ sub new_project {
 
 	$category = input("Category", option('Category'));
 	$title    = input("Title", option('Title'));
-	$pri      = option('Priority') || 3;
+	$pri      = option('Priority') || 4;
 
 	$desc     = prompt_desc("Description", option('Desc'));
 	$note     = prompt_desc("Outcome", option('Note'));
@@ -237,6 +245,8 @@ sub new_project {
 	my $ref = Hier::Tasks->new($tid);
 
 	$ref->set_type($type); 
+	$ref->set_nextaction('n');
+	$ref->set_isSomeday('n');
 
 	$ref->set_priority($pri);
 	$ref->set_category($category);
