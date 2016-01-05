@@ -1,6 +1,7 @@
 package report
 
-=head1 NAME
+/*
+NAME:
 
 =head1 USAGE
 
@@ -30,7 +31,7 @@ package report
 
 =head1 HISTORY
 
-=cut
+*/
 
 use strict;
 use warnings;
@@ -100,7 +101,7 @@ Green:  inprogress
 Red:    data incomplete
 Purple: overcommited
 
-=cut
+*/
 
 sub check_roles {
 	foreach my $ref (@_) {

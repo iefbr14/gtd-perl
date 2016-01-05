@@ -1,6 +1,7 @@
 package report
 
-=head1 NAME
+/*
+NAME:
 
 =head1 USAGE
 
@@ -30,7 +31,7 @@ package report
 
 =head1 HISTORY
 
-=cut
+*/
 
 use strict;
 use warnings;

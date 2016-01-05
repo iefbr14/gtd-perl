@@ -1,6 +1,7 @@
 package report
 
-=head1 NAME
+/*
+NAME:
 
 =head1 USAGE
 
@@ -30,7 +31,7 @@ package report
 
 =head1 HISTORY
 
-=cut
+*/
 
 =head1 Bulk Load Syntax
 
@@ -53,7 +54,7 @@ package report
  or	
 	Blank line end of group
 
-=cut
+*/
 
 BEGIN {
 	use Exporter   ();

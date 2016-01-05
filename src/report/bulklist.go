@@ -1,6 +1,7 @@
 package report
 
-=head1 NAME
+/*
+NAME:
 
 =head1 USAGE
 
@@ -30,7 +31,7 @@ package report
 
 =head1 HISTORY
 
-=cut
+*/
 
 use strict;
 use warnings;
@@ -60,7 +61,7 @@ sub Report_bulklist { #-- Bulk List project for use in bulk load
  or	
 	Blank line end of group
 
-=cut
+*/
 
 use strict;
 use warnings;

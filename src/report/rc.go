@@ -1,6 +1,7 @@
 package report
 
-=head1 NAME
+/*
+NAME:
 
 rc
 
@@ -42,7 +43,7 @@ none
 
 Started life as a copy of the bulkload but tuned for more interactive processing
 
-=cut
+*/
 
 BEGIN {
 	use Exporter   ();
