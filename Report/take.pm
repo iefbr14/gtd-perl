@@ -73,11 +73,8 @@ sub Report_take {	#-- take listed actions/projects
 	}
 
 	get_ancestors($p_ref);
-	for my $child (@list) {
-		my($c_ref) = find($child);
-		unless ($c_ref) {
-			die "No such child $child\n";
-		}
+	for my $c_ref (@list) {
+		my($child) = $c_ref->get_tid();
 
 		my($tid) = is_ancestor($c_ref);
 		if ($tid) {
@@ -99,14 +96,13 @@ sub get_ancestors {
 	}
 }
 
-sub is_ancestors {
+sub is_ancestor {
 	my($ref) = @_;
 
+	my($tid) = $ref->get_tid();
+	return $tid if defined $Ancestors{$tid};
+
 	for my $child ($ref->get_children()) {
-		my($tid) = $child->get_tid();
-
-		return $tid if defined $Ancestors{$tid};
-
 		# check my children recursivly as well
 		$tid = is_ancestor($child);
 		return $tid if $tid;	# yup.
@@ -116,6 +112,12 @@ sub is_ancestors {
 
 	# nope no child is an ancestor
 	return 0;
+}
+
+sub find {
+	my($tid) = @_;
+
+	return Hier::Tasks::find($tid);
 }
 
 1;  # don't forget to return a true value from the file
