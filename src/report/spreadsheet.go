@@ -51,7 +51,7 @@ use Hier::Meta;
 use Hier::Resource;
 
 sub Report_spreadsheet {	//-- Project Summary for a role
-	gtd.Meta_filter('+active', '^tid', 'none');
+	gtd.Meta_filter("+active", '^tid', "none");
 	my @want = gtd.Meta_argv(@_);
 
 	if (@want == 0) {
@@ -154,7 +154,7 @@ sub get_actions {
 	unless ($tid) {
 		$pid = $pref->get_tid();
 		$ptitle = $pref->get_title();
-		return [ $gtitle, $pid, $ptitle, '', '', 2, '' ];
+		return [ $gtitle, $pid, $ptitle, '", "', 2, '' ];
 	}
 	return [ $gtitle, $pid, $ptitle, $tid, $title, $hours, $total];
 }

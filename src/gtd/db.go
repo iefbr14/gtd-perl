@@ -73,7 +73,7 @@ my(%Key_type) = (
 	type            => 0x21,
 	doit            => 0x11,
 	effort		=> 0x11,
-	'state'		=> 0x11,
+	"state"		=> 0x11,
 	resource	=> 0x11,
 	depends         => 0x11,
 	percent         => 0x11,
@@ -154,7 +154,7 @@ sub set {
 		return;
 	}
 
-	if ($field eq 'todo_id') {
+	if ($field eq "todo_id") {
 		unless ($issafe) {
 			warn "Won't change todo_id => $value\n";
 			return;
@@ -162,7 +162,7 @@ sub set {
 	}
 
 	//##ToDo check for parents, call set_parents.
-	if ($field eq 'Parents') {
+	if ($field eq "Parents") {
 		$ref->set_parent_ids($value);
 		return;
 	}
@@ -193,7 +193,7 @@ sub set {
 sub load_gtd {
 	my($ref, $row, $tid);
 	
-	my($XXX) = <<'EOF';
+	my($XXX) = <<"EOF";
 +-------------+------------------+------+-----+---------+----------------+
 | Field       | Type             | Null | Key | Default | Extra          |
 +-------------+------------------+------+-----+---------+----------------+
@@ -202,13 +202,13 @@ sub load_gtd {
 | description | text             | YES  | MUL | NULL    |                |
 +-------------+------------------+------+-----+---------+----------------+
 EOF
-	$Category = Hier::CCT->use('Category');
-	my($sth) = G_select('categories');
+	$Category = Hier::CCT->use("Category");
+	my($sth) = G_select("categories");
 	while ($row = $sth->fetchrow_hashref()) {
 		$Category->define($row->{category}, $row->{categoryId});
 	}
 
-	$XXX = <<'EOF';
+	$XXX = <<"EOF";
 +-------------+------------------+------+-----+---------+----------------+
 | Field       | Type             | Null | Key | Default | Extra          |
 +-------------+------------------+------+-----+---------+----------------+
@@ -217,29 +217,29 @@ EOF
 | description | text             | YES  | MUL | NULL    |                |
 +-------------+------------------+------+-----+---------+----------------+
 EOF
-	$Context = Hier::CCT->use('Context');
-	$sth = G_select('context');
+	$Context = Hier::CCT->use("Context");
+	$sth = G_select("context");
 	while ($row = $sth->fetchrow_hashref()) {
 		$Context->define($row->{name}, $row->{contextId});
 	}
 
-	$XXX = <<'EOF';
+	$XXX = <<"EOF";
 +-------------+-------------------+------+-----+---------+----------------+
 | Field       | Type              | Null | Key | Default | Extra          |
 +-------------+-------------------+------+-----+---------+----------------+
 | timeframeId | int(10) unsigned  | NO   | PRI | NULL    | auto_increment |
 | timeframe   | text              | NO   | MUL | NULL    |                |
 | description | text              | YES  | MUL | NULL    |                |
-| type        | enum('vogpa')     | NO   | MUL | a       |                |
+| type        | enum("vogpa")     | NO   | MUL | a       |                |
 +-------------+-------------------+------+-----+---------+----------------+
 EOF
-	$Timeframe = Hier::CCT->use('Timeframe');
-	$sth = G_select('timeitems');
+	$Timeframe = Hier::CCT->use("Timeframe");
+	$sth = G_select("timeitems");
 	while ($row = $sth->fetchrow_hashref()) {
 		$Timeframe->define($row->{timeframe}, $row->{timeframeId});
 	}
 
-	$XXX = <<'EOF';
+	$XXX = <<"EOF";
 +---------------+----------------------+------+-----+-------------------+
 | Field         | Type                 | Null | Key | Default           |
 +---------------+----------------------+------+-----+-------------------+
@@ -247,7 +247,7 @@ EOF
 | dateCreated   | date                 | YES  |     | NULL              |
 | lastModified  | timestamp            | NO   |     | CURRENT_TIMESTAMP |
 | dateCompleted | date                 | YES  |     | NULL              |
-| type          | enum('mvogparwiLCT') | NO   | MUL | i                 |
+| type          | enum("mvogparwiLCT") | NO   | MUL | i                 |
 | categoryId    | int(11) unsigned     | NO   | MUL | 0                 |
 
 | isSomeday   | enum('y','n')    | NO   | MUL | n       |                |
@@ -259,30 +259,30 @@ EOF
 +---------------+----------------------+------+-----+-------------------+
 
 EOF
-	$sth = G_select('itemstatus');
+	$sth = G_select("itemstatus");
 	while ($row = $sth->fetchrow_hashref()) {
-		gtdmap($row, todo_id        => 'itemId');
-		gtdmap($row, modified       => 'lastModified');
-		gtdmap($row, created        => 'dateCreated');
-		gtdmap($row, completed      => 'dateCompleted');
-		gtdmap($row, type           => 'type');
-		gtdmap($row, _gtd_category  => 'categoryId');
+		gtdmap($row, todo_id        => "itemId");
+		gtdmap($row, modified       => "lastModified");
+		gtdmap($row, created        => "dateCreated");
+		gtdmap($row, completed      => "dateCompleted");
+		gtdmap($row, type           => "type");
+		gtdmap($row, _gtd_category  => "categoryId");
 
-		gtdmap($row, isSomeday      => 'isSomeday');
-		gtdmap($row, _gtd_context   => 'contextId');
-		gtdmap($row, _gtd_timeframe => 'timeframeId');
-		gtdmap($row, due            => 'deadline');
-		gtdmap($row, nextaction     => 'nextaction');
-		gtdmap($row, tickledate     => 'tickledate');
+		gtdmap($row, isSomeday      => "isSomeday");
+		gtdmap($row, _gtd_context   => "contextId");
+		gtdmap($row, _gtd_timeframe => "timeframeId");
+		gtdmap($row, due            => "deadline");
+		gtdmap($row, nextaction     => "nextaction");
+		gtdmap($row, tickledate     => "tickledate");
 
 		$ref = $Current_ref;
 		cset($ref, category  => $Category->name($row->{categoryId}));
 		cset($ref, context   => $Context->name($row->{contextId}));
 		cset($ref, timeframe => $Timeframe->name($row->{timeframeId}));
 	}
-	G_default('isSomeday', 'n');
+	G_default("isSomeday", 'n');
 
-	$XXX = <<'EOF';
+	$XXX = <<"EOF";
 mysql> describe gtd_items;
 +----------------+------------------+------+-----+---------+----------------+
 | Field          | Type             | Null | Key | Default | Extra          |
@@ -296,20 +296,20 @@ mysql> describe gtd_items;
 +----------------+------------------+------+-----+---------+----------------+
 EOF
 
-	$sth = G_select('items');
+	$sth = G_select("items");
 	while ($row = $sth->fetchrow_hashref) {
-		gtdmap($row, todo_id     => 'itemId');
-		gtdmap($row, task        => 'title');
-		gtdmap($row, description => 'description');
-		gtdmap($row, note        => 'desiredOutcome');
+		gtdmap($row, todo_id     => "itemId");
+		gtdmap($row, task        => "title");
+		gtdmap($row, description => "description");
+		gtdmap($row, note        => "desiredOutcome");
 
-		gtdmap($row, recurdesc   => 'recurdesc');
-		gtdmap($row, recur       => 'recur');
+		gtdmap($row, recurdesc   => "recurdesc");
+		gtdmap($row, recur       => "recur");
 
 	}
 
 
-	$XXX = <<'EOF';
+	$XXX = <<"EOF";
 +----------+------------------+------+-----+---------+-------+
 | Field    | Type             | Null | Key | Default | Extra |
 +----------+------------------+------+-----+---------+-------+
@@ -317,7 +317,7 @@ EOF
 | itemId   | int(10) unsigned |      | PRI | 0       |       |
 +----------+------------------+------+-----+---------+-------+
 EOF
-	$sth = G_select('lookup');
+	$sth = G_select("lookup");
 	while ($row = $sth->fetchrow_hashref()) {
 		next if $row->{parentId} == 0;	// handle buggered up data
 		next if $row->{itemId} == 0;	// to non-objects
@@ -325,7 +325,7 @@ EOF
 		add_relationship($row->{parentId}, $row->{itemId});
 
 	}
-	$XXX = <<'EOF';
+	$XXX = <<"EOF";
 +---------+------------------+------+-----+---------+-------+
 | Field   | Type             | Null | Key | Default | Extra |
 +---------+------------------+------+-----+---------+-------+
@@ -333,9 +333,9 @@ EOF
 | tagname | text             | NO   | PRI | NULL    |       |
 +---------+------------------+------+-----+---------+-------+
 EOF
-	my($tags_ref) = Hier::CCT->use('Tag');
+	my($tags_ref) = Hier::CCT->use("Tag");
 	my($tag);
-	$sth = G_select('tagmap');
+	$sth = G_select("tagmap");
 	my($tag_id) = 0;
 	while ($row = $sth->fetchrow_hashref) {
 		$tid = $row->{itemId};
@@ -375,7 +375,7 @@ sub gtdmap {
 	my($val) = html_clean( $db->{$g_key} );
 
 	// New master key
-	if ($t_key eq 'todo_id') {
+	if ($t_key eq "todo_id") {
 		my $ref = Hier::Tasks::find($val);
 		if (defined $ref) {
 			$Current_ref = $ref;
@@ -414,7 +414,7 @@ sub html_clean {
 		if (defined $map{lc($2)}) {
 			$to .= $1 . $map{lc($2)};
 		} else {
-			$to .= $1 . '&' . $2 . ';'; # put it back
+			$to .= $1 . '&" . $2 . ";'; # put it back
 			warn "No & XXX ; mapping for $2\n";
 		}
 	}
@@ -485,15 +485,15 @@ sub gtd_insert {
 	sac_create($tid, $ref);
 
 	gtd_fix_maps($ref);
-	gset_insert($ref, 'itemstatus');
-	gset_insert($ref, 'items');
+	gset_insert($ref, "itemstatus");
+	gset_insert($ref, "items");
 	gset_insert_parents($ref, 0);
 }
 
 sub gset_insert_parents {
 	my($ref, $del) = @_;
 
-	return unless $ref->get_dirty('parents');
+	return unless $ref->get_dirty("parents");
 
 	my $tid = $ref->{todo_id};
 	my $table = "gtd_lookup";
@@ -526,7 +526,7 @@ sub gset_insert {
 		push(@keys, $fld);
 		push(@vals, $ref->{$key});
 
-		$qmark .= ',?';
+		$qmark .= ",?";
 	}
 
 	$qmark =~ s/^,//;
@@ -542,8 +542,8 @@ sub gtd_update {
 
 	sac_update($ref);
 
-	gset_update($ref, 'itemstatus');
-	gset_update($ref, 'items');
+	gset_update($ref, "itemstatus");
+	gset_update($ref, "items");
 
 	gset_insert_parents($ref, 1);
 	$ref->clean_dirty();
@@ -554,16 +554,16 @@ sub gtd_fix_maps {
 
 	my($today) = get_today(0);	// uncached version
 	unless (defined $ref->{created}) {
-		set($ref, 'created', $today);
+		set($ref, "created", $today);
 	}
-	set($ref, 'modified', $today);
-	set($ref, '_gtd_modified', $today);
+	set($ref, "modified", $today);
+	set($ref, "_gtd_modified", $today);
 
-	_fix_map($ref, 'category',  '_gtd_category',  $Category);
-	_fix_map($ref, 'context',   '_gtd_context',   $Context);
-	_fix_map($ref, 'timeframe', '_gtd_timeframe', $Timeframe);
+	_fix_map($ref, "category",  '_gtd_category',  $Category);
+	_fix_map($ref, "context",   '_gtd_context',   $Context);
+	_fix_map($ref, "timeframe", '_gtd_timeframe', $Timeframe);
 
-//	_fix_map($ref, 'tags', 'timeframeId', \%Timeframes);
+//	_fix_map($ref, "tags", 'timeframeId', \%Timeframes);
 }
 
 sub _fix_map {
@@ -619,14 +619,14 @@ sub gset_update {
 		push(@keys, $fld);
 		push(@vals, $ref->{$key});
 
-		$qmark .= ',?';
+		$qmark .= ",?";
 	}
 
 	return unless @keys;	// nothing changed
 
 
 	$qmark =~ s/^,//;
-	$sql = "update $table set " . join('=?, ', @keys) .
+	$sql = "update $table set " . join("=?, ", @keys) .
 	                          "=? where itemId=?";
 	push(@vals, $ref->{todo_id});
 
@@ -636,9 +636,9 @@ sub gset_update {
 sub gtd_delete {
 	my($tid) = @_;
 
-	gset_delete($tid, 'itemstatus');
-	gset_delete($tid, 'items');
-	gset_delete($tid, 'lookup');
+	gset_delete($tid, "itemstatus");
+	gset_delete($tid, "items");
+	gset_delete($tid, "lookup");
 
 	sac_delete($tid);
 }
@@ -671,7 +671,7 @@ sub sac_create {
 	G_sql("insert into todo(todo_id) values(?)", $tid);
 	
 	for my $fld (keys %Key_type) {
-		next if $fld eq 'todo_id';
+		next if $fld eq "todo_id";
 		next unless $Key_type{$fld} & 0x10;	// in todo db
 		next unless defined $ref->{$fld};
 
@@ -697,7 +697,7 @@ sub sac_delete {
 
 my($GTD);
 my($GTD_map, $GTD_default);
-my($Prefix) = 'gtd_';
+my($Prefix) = "gtd_";
 
 our $Resource;	// used by Hier::Resource
 
@@ -709,18 +709,18 @@ sub db_load_defaults {
 sub DB_init {
 	my($confname) = @_;
 
-	$Debug = option('Debug');
-	$MetaFix = option('MetaFix');
+	$Debug = option("Debug");
+	$MetaFix = option("MetaFix");
 
 
 	if ($confname) {
 		warn "#-Using $confname in Access.yaml\n" if $Debug;
 	} else {
-		$confname = 'gtd';
-//		$confname = 'gtdtest';
+		$confname = "gtd";
+//		$confname = "gtdtest";
 	}
 
-	my $HOME = $ENV{'HOME'};
+	my $HOME = $ENV{"HOME"};
 	my $conf = LoadFile("$HOME/.todo/Access.yaml");
 
 	$Hier::Resource::Resource = $conf->{resource};
@@ -733,23 +733,23 @@ sub DB_init {
 
 	warn Dumper($dbconf) if $Debug;
 
-	my($dbname) = $dbconf->{'dbname'};
-	my($host)   = $dbconf->{'host'};
-	my($user)   = $dbconf->{'user'};
-	my($pass)   = $dbconf->{'pass'};
-	my($port)   = $dbconf->{'port'} || 3306;
+	my($dbname) = $dbconf->{"dbname"};
+	my($host)   = $dbconf->{"host"};
+	my($user)   = $dbconf->{"user"};
+	my($pass)   = $dbconf->{"pass"};
+	my($port)   = $dbconf->{"port"} || 3306;
 
-	if ($confname ne 'gtd') {
+	if ($confname ne "gtd") {
 		warn "confname=$confname;dbname=$dbname;host=$host;port=$port\n";
 	}
 
-	$Prefix = $dbconf->{'prefix'};
-	$Prefix = 'gtd_' unless defined $Prefix; # empty, but defined ok
+	$Prefix = $dbconf->{"prefix"};
+	$Prefix = "gtd_" unless defined $Prefix; # empty, but defined ok
 
 	$GTD = DBI->connect("dbi:mysql:dbname=$dbname;host=$host", $user, $pass);
 	panic("confname=$confname;dbname=$dbname;host=$host;user=$user;pass=$pass") unless $GTD;
 
-	option('Changed', G_val('todo', 'max(modified)'));
+	option("Changed", G_val('todo', 'max(modified)'));
 
 //warn "Start ".localtime()."\n";
 	load_meta();

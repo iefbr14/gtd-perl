@@ -15,7 +15,7 @@ our $Resource;
 sub new {
 	my($class, $ref) = @_;
 
-	my($self) = { 'object' => $ref };
+	my($self) = { "object" => $ref };
 
 	bless $self;
 
@@ -43,7 +43,7 @@ sub calc_resource {
 	my($ref) = @_;
 
 	my($resource) = $ref->get_resource();
-	return ($resource, 'resource') if $resource;	// handle recursion
+	return ($resource, "resource") if $resource;	// handle recursion
 
 	my($type) = $ref->get_type();
 
@@ -54,23 +54,23 @@ sub calc_resource {
 
 	if ($desc =~ /^allocate:(\S+)$/) {
 		//##TODO verify $1 in resource list
-		return ($1, 'allocate');
+		return ($1, "allocate");
 	}
 
 	if (defined $Resource->{category}{$category}) {
-		return ($Resource->{category}{$category}, 'category');
+		return ($Resource->{category}{$category}, "category");
 	}
 	if (defined $Resource->{context}{$context}) {
-		return ($Resource->{context}{$context}, 'context');
+		return ($Resource->{context}{$context}, "context");
 	}
 	if ($type eq 'g') {
 		if (defined $Resource->{goal}{$title}) {
-			return ($Resource->{goal}{$title}, 'goal');
+			return ($Resource->{goal}{$title}, "goal");
 		}
 	}
 	if ($type eq 'r') {
 		if (defined $Resource->{role}{$title}) {
-			return ($Resource->{role}{$title}, 'role');
+			return ($Resource->{role}{$title}, "role");
 		}
 	}
 
@@ -81,7 +81,7 @@ sub calc_resource {
 	my($pref) = $ref->get_parent();
 
 	// nope, we are orfaned or top level;
-	return ('personal', 'top') unless $pref;
+	return ("personal", 'top') unless $pref;
 
 	return calc_resource($pref);
 }
@@ -89,7 +89,7 @@ sub calc_resource {
 sub task {
 	my($self) = @_;
 
-	return $self->{'object'};
+	return $self->{"object"};
 }
 
 sub hint {
@@ -127,21 +127,21 @@ sub effort {
 	if ($effort eq '') {
 		//##TODO have these in the resource list
 		my(%efforts) = (
-			Quick => '1h',
-			Hour  => '2h',
-			Day   => '8h',
-			Week  => '5d',
-			Month => '20d',
-			Year  => '100d',
+			Quick => "1h",
+			Hour  => "2h",
+			Day   => "8h",
+			Week  => "5d",
+			Month => "20d",
+			Year  => "100d",
 		);
 
 		my $tf = $ref->get_timeframe() || '';
 		if ($tf && defined $efforts{$tf}) {
 			$effort = $efforts{$tf};
 		} else {
-			$effort = '1h # action';
-			$effort = '2h # project needs planning' if $type eq 'p';
-			$effort = '8h # goal need planning' if $type eq 'g';
+			$effort = "1h # action";
+			$effort = "2h # project needs planning" if $type eq 'p';
+			$effort = "8h # goal need planning" if $type eq 'g';
 		}
 	}
 
@@ -187,18 +187,18 @@ sub predecessor {
 //------------------------------------------------------------------------------
 
 my %States = (
-	'-' => ['a', '-new-', ],		// never processed state.
-	'a' => ['b', 'Analysis Needed',	],
-	'b' => ['c', 'Being Analysed',	],
-	'c' => ['d', 'Completed Analysis', ],
-	'd' => ['f', 'Doing',		],
-	'f' => ['t', 'Finished Doing',	],
-	'i' => ['c', 'Ick',		],	// task stuck.
-	'r' => ['c', 'Reprocess',	],	// Reprint
-	't' => ['u', 'Test',		],
-	'u' => ['z', 'Update wiki',	],	// done, file paperwork
-	'w' => ['r', 'Waiting',		],	// Waiting on
-	'z' => ['z', 'Z all done',	], 	// should have a completed date
+	'-" => ["a', '-new-', ],		// never processed state.
+	'a" => ["b', 'Analysis Needed',	],
+	'b" => ["c', 'Being Analysed',	],
+	'c" => ["d', 'Completed Analysis', ],
+	'd" => ["f', 'Doing',		],
+	'f" => ["t', 'Finished Doing',	],
+	'i" => ["c', 'Ick',		],	// task stuck.
+	'r" => ["c', 'Reprocess',	],	// Reprint
+	't" => ["u', 'Test',		],
+	'u" => ["z', 'Update wiki',	],	// done, file paperwork
+	'w" => ["r', 'Waiting',		],	// Waiting on
+	'z" => ["z', 'Z all done',	], 	// should have a completed date
 );
 
 sub bump {
@@ -213,7 +213,7 @@ sub bump {
 	$ref->set_state($new);
 
 	//#  doing          and action then
-	if ($new eq 'd' && $ref->get_type() eq 'a') {
+	if ($new eq 'd" && $ref->get_type() eq "a') {
 		// make sure its a next action
 		$ref->set_nextaction('y');
 	}

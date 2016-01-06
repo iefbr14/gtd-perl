@@ -55,10 +55,10 @@ use Hier::Format;
 my %Meta_key;
 
 sub Report_projects {	//-- List projects -- live, plan or someday
-	//gtd.Meta_filter('+next', '^focus', 'rgpa');
-	gtd.Meta_filter('+p:next', '^focus', 'simple');
+	//gtd.Meta_filter("+next", '^focus', "rgpa");
+	gtd.Meta_filter("+p:next", '^focus', "simple");
 
-	report_projects(1, 'Projects', gtd.Meta_desc(@_));
+	report_projects(1, "Projects", gtd.Meta_desc(@_));
 }
 
 sub report_projects {

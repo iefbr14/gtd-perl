@@ -23,42 +23,42 @@ use POSIX qw(strftime);
 //=============================================================================
 var options map[string]int;
 var option_keys map[string]int = {
-	'Debug'       , 1,
-	'MetaFix'     , 1,
-	'Mask'        , 1,
+	"Debug"       , 1,
+	"MetaFix"     , 1,
+	"Mask"        , 1,
 
-	'Changed'      , 1,		// time of last db changed.
-	'Current'      , 1,		// current task (used as parent in new)
+	"Changed"      , 1,		// time of last db changed.
+	"Current"      , 1,		// current task (used as parent in new)
 					// used as default in edit
 
-	'Title'       , 1, // 'Subject'     => 'Title',
-	'Task'        , 1, // 'Desc'        => 'Task', 'Description' => 'Task',
-	'Note'        , 1, // 'Result'      => 'Result',
+	"Title"       , 1, // 'Subject'     => 'Title',
+	"Task"        , 1, // 'Desc'        => 'Task', 'Description' => 'Task',
+	"Note"        , 1, // 'Result'      => 'Result',
 
-	'Category'    , 1,
-	'Context'     , 1,
-	'Timeframe'   , 1,
-	'Priority'    , 1,
-	'Complete'    , 1,
-	'Tag'         , 1, // 'Tags'        => 'Tag',
+	"Category"    , 1,
+	"Context"     , 1,
+	"Timeframe"   , 1,
+	"Priority"    , 1,
+	"Complete"    , 1,
+	"Tag"         , 1, // 'Tags'        => 'Tag',
 
-	'Color'       , 1, // 'Colour'      => 'Color',
+	"Color"       , 1, // 'Colour'      => 'Color',
 
-	'List'        , 0,
+	"List"        , 0,
 
-	'Limit'       , 1,
-	'Reverse'     , 1,	// reverse sort
+	"Limit"       , 1,
+	"Reverse"     , 1,	// reverse sort
 
-	'Header'      , 1,	// Header routine
-	'Format'      , 1,	// Formating routine
-	'Sort'        , 1,	// Sortting routine
-	'Filter'      , 1,     # Default filter mode
+	"Header"      , 1,	// Header routine
+	"Format"      , 1,	// Formating routine
+	"Sort"        , 1,	// Sortting routine
+	"Filter"      , 1,     # Default filter mode
 
-	'Layout'      , 1,// 'Text', # Layout format
+	"Layout"      , 1,// 'Text', # Layout format
 
-	'Date'        , 1,// '',	// Date (completed etc)
+	"Date"        , 1,// '',	// Date (completed etc)
 
-	'Mode'        , 1,// '',    # no mode set yet
+	"Mode"        , 1,// '',    # no mode set yet
 );
 
 our $Debug = 0;
@@ -122,7 +122,7 @@ func Debug(what string) {
 	}
 
 	if ($what =~ /^[A-Z]/) {
-		no strict 'refs';
+		no strict "refs";
 		my($var) = "Hier::${what}::Debug";
 		$$var = 1;
 
@@ -148,7 +148,7 @@ func Debug(what string) {
 	if ($what =~ /^[a-z]/) {
 		load_report($what);
 
-		no strict 'refs';
+		no strict "refs";
 		my($var) = "Hier::Report::${what}::Debug";
 		$$var = 1;
 //		eval "Hier::Report::$what::Debug = 1";

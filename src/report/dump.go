@@ -53,7 +53,7 @@ use Hier::Format;
 
 sub Report_dump {	//-- dump records in edit format
 	// everybody into the pool by id 
-	gtd.Meta_filter('+any', '^tid', 'dump');	
+	gtd.Meta_filter("+any", '^tid', "dump");	
 
 	my($name) = ucfirst(gtd.Meta_desc(@_));	// some out
 	if ($name) {
@@ -67,11 +67,11 @@ sub Report_dump {	//-- dump records in edit format
 			return 1;
 		}
 		//##BUG### dump needs to handle sub-projects properly
-		$want = 'p' if $want eq 's';	// sub-project are real
+		$want = 'p" if $want eq "s';	// sub-project are real
 		list_dump($want, $name);
 		return;
 	}
-	list_dump('', 'All');
+	list_dump('', "All");
 }
 
 sub dump_list {
@@ -98,7 +98,7 @@ sub list_dump {
 	my($Dates) = '';
 
 	// find all records.
-	for my $ref (gtd.Meta_sorted('^tid')) {
+	for my $ref (gtd.Meta_sorted("^tid")) {
 		$type = $ref->get_type();
 		next if $want_type && $type ne $want_type;
 

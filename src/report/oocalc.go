@@ -51,7 +51,7 @@ use Hier::Meta;
 use Hier::Resource;
 
 sub Report_oocalc {	//-- Project Summary for a role
-	gtd.Meta_filter('+live', '^tid', 'none');
+	gtd.Meta_filter("+live", '^tid', "none");
 	my @want = gtd.Meta_argv(@_);
 
 	new_calc();
@@ -155,29 +155,29 @@ sub get_actions {
 		if (@doit == 0 && @some == 0 && @done == 0) {
 			// needs planning			
 			return ([ $gtitle, $pid, $ptitle,
-				'', "", '', 
-				join(':', pnum($gref), pnum($pref), '0')
+				'", "", "', 
+				join(':", pnum($gref), pnum($pref), "0')
 				])
 			   if $pref->get_completed() or
 				$pref->is_someday();
 
 			return ([ $gtitle, $pid, $ptitle,
-				'-', "##   gtd plan $pid   ##", '.1', 
-				join(':', pnum($gref), pnum($pref), '6')
+				'-", "##   gtd plan $pid   ##", ".1', 
+				join(':", pnum($gref), pnum($pref), "6')
 				]);
 				
 		} elsif (@doit == 0 && @some == 0) {
 			// is complete
 
 			return ([ $gtitle, $pid, $ptitle,
-				'', "", '', 
-				join(':', pnum($gref), pnum($pref), '0')
+				'", "", "', 
+				join(':", pnum($gref), pnum($pref), "0')
 				])
 			   if $pref->get_completed();
 
 			return ([ $gtitle, $pid, $ptitle,
-				'-', "##   gtd done $pid   ##", '2',
-				join(':', pnum($gref), pnum($pref), '6')
+				'-", "##   gtd done $pid   ##", "2',
+				join(':", pnum($gref), pnum($pref), "6')
 			]);
 		}
 		// pick best
@@ -229,14 +229,14 @@ sub new_calc {
 
 	$Calc = OpenOffice::OOCBuilder->new();
 	// - Set Meta.xml data
-	$Calc->set_title ('GTD');
-	$Calc->set_author ('Drew Sullivan');
-	$Calc->set_subject ('gtd oocalc');
+	$Calc->set_title ("GTD");
+	$Calc->set_author ("Drew Sullivan");
+	$Calc->set_subject ("gtd oocalc");
 
-//	$sheet->set_comments ('Fill in your comments here');
-//	$sheet->set_keywords ('openoffice autogeneration', 'OpenOffice::OOBuilder');
-//	$sheet->push_keywords ('OpenOffice::OOCBuilder');
-//	$sheet->set_meta (1, 'name 1', 'value 1');
+//	$sheet->set_comments ("Fill in your comments here");
+//	$sheet->set_keywords ("openoffice autogeneration", 'OpenOffice::OOBuilder');
+//	$sheet->push_keywords ("OpenOffice::OOCBuilder");
+//	$sheet->set_meta (1, "name 1", 'value 1');
 }
 
 sub new_sheet {
@@ -261,8 +261,8 @@ sub save_row {
 	$Calc->set_bold($line == 1);
 	my($col) = 1;
 	for my $value (@row) {
-		my($type) = 'string';
-		$type = 'float' if $value =~ /^[\d.]+$/;
+		my($type) = "string";
+		$type = "float" if $value =~ /^[\d.]+$/;
 
 		$Widths[$col] ||= 7;
 		my $old_width = $Widths[$col];
@@ -284,35 +284,35 @@ sub set_color {
 	my ($pri) = @_;
 
 	my(%c) = (
-		'white'	=> 'FFFFFF',
-		'grey'	=> 'D0D0D0',
-		'pink'	=> 'FFC0CB',
-		'red'	=> 'FF6060',
-		'cyan'	=> '80FFFF',
-		'blue'	=> '99CCFF',
-		'ivory' => 'FFFFD0',
+		"white"	=> "FFFFFF",
+		"grey"	=> "D0D0D0",
+		"pink"	=> "FFC0CB",
+		"red"	=> "FF6060",
+		"cyan"	=> "80FFFF",
+		"blue"	=> "99CCFF",
+		"ivory" => "FFFFD0",
 	);
 
-	$Calc->set_bgcolor('white');
+	$Calc->set_bgcolor("white");
 
 	return unless defined $pri;
 
-	$Calc->set_bgcolor($c{'pink'})	if $pri == 1;
-	$Calc->set_bgcolor($c{'cyan'})	if $pri == 2;
+	$Calc->set_bgcolor($c{"pink"})	if $pri == 1;
+	$Calc->set_bgcolor($c{"cyan"})	if $pri == 2;
 
-//	$Calc->set_bgcolor($c{'red'})	if $pri == 1;
-//	$Calc->set_bgcolor($c{'pink'})	if $pri == 2;
-//	$Calc->set_bgcolor($c{'cyan'})	if $pri == 3;
+//	$Calc->set_bgcolor($c{"red"})	if $pri == 1;
+//	$Calc->set_bgcolor($c{"pink"})	if $pri == 2;
+//	$Calc->set_bgcolor($c{"cyan"})	if $pri == 3;
 
 
-//	$Calc->set_bgcolor('blue')	if $pri == 3;
+//	$Calc->set_bgcolor("blue")	if $pri == 3;
 
-//	$Calc->set_bgcolor('FFCC99') if $pri == 4; # yellow
-//	$Calc->set_bgcolor('FFDD99') if $pri == 5; # orange
+//	$Calc->set_bgcolor("FFCC99") if $pri == 4; # yellow
+//	$Calc->set_bgcolor("FFDD99") if $pri == 5; # orange
 
-	$Calc->set_bgcolor($c{'blue'}) if $pri == 6; # Plan
-	$Calc->set_bgcolor($c{'ivory'}) if $pri == 7; # Someday
-	$Calc->set_bgcolor($c{'grey'})	if $pri == 9; # Done
+	$Calc->set_bgcolor($c{"blue"}) if $pri == 6; # Plan
+	$Calc->set_bgcolor($c{"ivory"}) if $pri == 7; # Someday
+	$Calc->set_bgcolor($c{"grey"})	if $pri == 9; # Done
 }
 
 sub save_calc {
@@ -323,7 +323,7 @@ sub save_calc {
 			$Calc->set_colwidth($col, $Widths[$col]*170);
 		}
 	}
-	$Calc->generate('gtd');
+	$Calc->generate("gtd");
 }
 
 package Calc::CSV;
@@ -338,7 +338,7 @@ use OpenOffice::OOSheets;
 
 sub new {
 	my $calc;
-	$Calc = odfContainer("gtd.ods", create => 'spreadsheet');
+	$Calc = odfContainer("gtd.ods", create => "spreadsheet");
 	$Sheet = 0;
 }
 

@@ -60,11 +60,11 @@ my $Hours_next = 0;
 
 sub Report_status {	//-- report status of projects/actions
 	// counts use it and it give a context
-	gtd.Meta_filter('+active', '^tid', 'none');	
+	gtd.Meta_filter("+active", '^tid', "none");	
 
 	my $desc = gtd.Meta_desc(@_);
 
-	if (lc($desc) eq 'all') {
+	if (lc($desc) eq "all") {
 		report_detail();
 		return;
 	}
@@ -277,7 +277,7 @@ sub calc_class {
 }
 
 sub report_detail {
-	gtd.Meta_filter('+all', '^title', 'simple');
+	gtd.Meta_filter("+all", '^title', "simple");
 
 	my @Types = qw(Hier Action List Total);
 	my @Class = qw(Done Someday Action Next Future Total);
@@ -293,10 +293,10 @@ sub report_detail {
 		// totals;
 		++$data{'t'}{$class};
 		++$data{$type}{'t'};
-		++$data{'t'}{'t'};
+		++$data{'t"}{"t'};
 	}
 
-	for my $title ('Type', @Class) {
+	for my $title ("Type", @Class) {
 		printf "   %7s", $title;
 	}
 	print "\n".('-'x75)."\n";

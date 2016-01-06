@@ -52,35 +52,35 @@ sub Report_fixcct {	//-- Fix Categories/Contexts/Time Frames
 	my($new_id, $id);
 
 	report_header("Categories");
-	my($Category) = Hier::CCT->use('Category');
+	my($Category) = Hier::CCT->use("Category");
 	for my $key (sort $Category->keys()) {
 		$id = $Category->get($key);
 
 		next unless $key =~ s/^(\d+)://;
 		$new_id =  $1;
 	
-		sql_fix_cct('category', $id, $new_id, $key);
+		sql_fix_cct("category", $id, $new_id, $key);
 	}
 	report_header("Contexts");
-	my($Context) = Hier::CCT->use('Context');
+	my($Context) = Hier::CCT->use("Context");
 	for my $key (sort $Context->keys()) {
 		$id = $Context->get($key);
 
 		next unless $key =~ s/^(\d+)://;
 		$new_id =  $1;
 	
-		sql_fix_cct('context', $id, $new_id, $key);
+		sql_fix_cct("context", $id, $new_id, $key);
 	}
 	print "\n";
 	report_header("Time Frames");
-	my($Timeframe) = Hier::CCT->use('Timeframe');
+	my($Timeframe) = Hier::CCT->use("Timeframe");
 	for my $key (sort $Timeframe->keys()) {
 		$id = $Timeframe->get($key) || '';
 
 		next unless $key =~ s/^(\d+)://;
 		$new_id =  $1;
 	
-		sql_fix_cct('timeframe', $id, $new_id, $key);
+		sql_fix_cct("timeframe", $id, $new_id, $key);
 	}
 	print "\n";
 }
@@ -89,22 +89,22 @@ sub sql_fix_cct {
 	my($hint, $old_id, $new_id, $val) = @_;
 
 	my($table, $keycol, $valcol);
-	if ($hint eq 'category') {
-		$table = G_table('categories');
-		$keycol = 'categoryId';
-		$valcol = 'category';
-	} elsif ($hint eq 'context') {
-		$table = G_table('context');
-		$keycol = 'contextId';
-		$valcol = 'name';
-	} elsif ($hint eq 'timeframe') {
-		$table = G_table('timeitems');
-		$keycol = 'timeframeId';
-		$valcol = 'timeframe';
+	if ($hint eq "category") {
+		$table = G_table("categories");
+		$keycol = "categoryId";
+		$valcol = "category";
+	} elsif ($hint eq "context") {
+		$table = G_table("context");
+		$keycol = "contextId";
+		$valcol = "name";
+	} elsif ($hint eq "timeframe") {
+		$table = G_table("timeitems");
+		$keycol = "timeframeId";
+		$valcol = "timeframe";
 	} else {
 		panic("sql_fix_cct");
 	}
-	my($itemstatus) = G_table('itemstatus');
+	my($itemstatus) = G_table("itemstatus");
 
 	G_sql("update $table set $keycol=$new_id, $valcol=? where $keycol = $old_id", $val);
 	G_sql("update $itemstatus set $keycol=$new_id where $keycol = $old_id");

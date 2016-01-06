@@ -65,11 +65,11 @@ sub Report_ged {	//-- generate a gedcom file from gtd db
 
 	if (scalar(@_) && $_[0] eq "all") {
 		$Someday = 1;
-		gtd.Meta_filter("+all", '^focus', "none");
+		gtd.Meta_filter('+all', '^focus', "none");
 		// 5 year plan everything plan
 		$ToFuture = pdate(get_today(5*365));	
 	} else {
-		gtd.Meta_filter("+active", '^focus', "none");
+		gtd.Meta_filter('+active', '^focus', "none");
 		// don't care about start more > 3 months
 		$ToFuture = pdate(get_today(60));	
 	}
@@ -148,7 +148,7 @@ sub hier_detail {
 
 	my($effort) = $resource->effort();
 
-	$due = '" if $due && $due lt "2010-';
+	$due = '' if $due && $due lt '2010-';
 	$we    = $due || '';
 
 	my($fd) = $planner->{fd};
@@ -205,7 +205,7 @@ sub hier_detail {
 	print {$fd} "    2 DATE ", ged_date($done),"\n";	
    }
 
-	my($sex) = $ref->is_nextaction() ? 'F" : "M';
+	my($sex) = $ref->is_nextaction() ? 'F' : 'M';
 	print {$fd} "  1 SEX $sex\n";
 
 //	print {$fd} qq(   effort $effort\n) if $effort;
@@ -279,7 +279,7 @@ sub id {
 sub pdate {
 	my($date) = @_;
 
-	return '" if $date eq "';
+	return '' if $date eq '';
 	return '' if $date =~ /^0000/;
 
 	$date =~ s/ .*$//;
@@ -304,7 +304,7 @@ sub dep_path {
 		$ref = $ref->get_parent();
 		last unless $ref;
 
-		$path = $ref->get_type() . '_" . $ref->get_tid() . ".' . $path;
+		$path = $ref->get_type() . '_' . $ref->get_tid() . '.' . $path;
 		last if $ref->get_type() eq 'o';
 	}
 	return $path . " # $task";
@@ -330,9 +330,9 @@ sub old_task_priority {
 	return '' unless $pri;
 
 	my($type) = $ref->get_type();
-	return '" if $type eq "o';
-	return '" if $type eq "g';
-	return '" if $type eq "p';
+	return '' if $type eq 'o';
+	return '' if $type eq 'g';
+	return '' if $type eq 'p';
 
 	my($boost) = $ref->is_nextaction();
 
@@ -372,9 +372,9 @@ sub task_priority {
 	return '' if $pri == 4;
 
 	my($type) = $ref->get_type();
-//	return '" if $type eq "o';
-//	return '" if $type eq "g';
-//	return '" if $type eq "p';
+//	return '' if $type eq 'o';
+//	return '' if $type eq 'g';
+//	return '' if $type eq 'p';
 
 	my($boost) = $ref->is_nextaction();
 
@@ -404,7 +404,7 @@ sub ged_date {
 sub note {
 	my($note) = @_;
 
-	my $res = "  1 NOTE ";
+	my $res = '  1 NOTE ';
 	while (length($note) > 70) {
 		$res .= substr($note, 0, 70) . "\n    2 CONT ";
 		$note = substr($note, 70);

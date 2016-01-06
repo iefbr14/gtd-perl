@@ -53,7 +53,7 @@ sub Report_nextactions { #-- List next actions
 	my($tid, $pid, $pref, $tic, $parent, $pic, $name, $desc);
 	my(@row);
 
-	gtd.Meta_filter('+next', '^title', 'none');
+	gtd.Meta_filter("+next", '^title', "none");
 	gtd.Meta_desc(@_);
 
 print <<"EOF";
@@ -67,7 +67,7 @@ $pid, $pic, $parent,      $tid, $tic, $name,
 .
 	$~ = "HIER";	// set STDOUT format name to HIER
 
-	for my $ref (gtd.Meta_pick('actions')) {
+	for my $ref (gtd.Meta_pick("actions")) {
 		$tid = $ref->get_tid();
 //#FILTER	next unless $ref->is_nextaction();
 //#FILTER	next if $ref->filtered();
@@ -81,8 +81,8 @@ $pid, $pic, $parent,      $tid, $tic, $name,
 			$parent = $pref->get_title();
 			$pid = $pref->get_tid();
 		} else {
-			$parent = '-orphined-';
-			$pid = '--';
+			$parent = "-orphined-";
+			$pid = "--";
 		}
 		$pic = type_disp($pref);
 

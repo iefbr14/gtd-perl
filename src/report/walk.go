@@ -64,48 +64,48 @@ sub Report_walk {	//-- Command line walk of a hier
 	my($action) = \&noop;
 	my($val) = '';
 
-	gtd.Meta_filter('+all', '^tid', 'simple');
+	gtd.Meta_filter("+all", '^tid', "simple");
 
 	while (@_) {
 		my($task) = shift @_;
 
-		if ($task eq 'set') {
+		if ($task eq "set") {
 			$action = \&set;
 			next;
 		}
 
-		if ($task eq 'active') {
+		if ($task eq "active") {
 			$action = \&active;
 			next;
 		}
-		if ($task eq 'someday') {
+		if ($task eq "someday") {
 			$action = \&someday;
 			next;
 		}
 
-		if ($task eq 'doit'  or $task eq 'task') {
-			display_mode('doit');
+		if ($task eq "doit"  or $task eq "task") {
+			display_mode("doit");
 			next;
 		}
-		if ($task eq 'wiki') {
-			display_mode('wiki');
+		if ($task eq "wiki") {
+			display_mode("wiki");
 			next;
 		}
-		if ($task eq 'list') {
-			display_mode('list');
-			next;
-		}
-
-		if ($task eq 'tid') {
-			display_mode('tid');
+		if ($task eq "list") {
+			display_mode("list");
 			next;
 		}
 
-		if ($task eq 'up') {
+		if ($task eq "tid") {
+			display_mode("tid");
+			next;
+		}
+
+		if ($task eq "up") {
 			$dir = \&up;
 			next;
 		}
-		if ($task eq 'down') {
+		if ($task eq "down") {
 			$dir = \&down;
 			next;
 		}
@@ -131,31 +131,31 @@ sub set {
 
 	my $val;
 
-	if ($val = option('Category')) {
+	if ($val = option("Category")) {
 		$ref->set_category($val);
 	}
 
-	if ($val = option('Context')) {
+	if ($val = option("Context")) {
 		$ref->set_context($val);
 	}
 
-	if ($val = option('Timeframe')) {
+	if ($val = option("Timeframe")) {
 		$ref->set_timeframe($val);
 	}
 
-	if ($val = option('Note')) {
+	if ($val = option("Note")) {
 		$ref->set_note($val);
 	}
 
-	if ($val = option('Priority')) {
+	if ($val = option("Priority")) {
 		$ref->set_priority($val);
 	}
 
-	if ($val = option('Complete')) {
+	if ($val = option("Complete")) {
 		$ref->set_priority($val);
 	}
 
-	if ($val = option('Task')) {
+	if ($val = option("Task")) {
 		$ref->set_description($val);
 	}
 

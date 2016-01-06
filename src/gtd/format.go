@@ -68,8 +68,8 @@ sub display_mode {
 	my($mode) = @_;
 
 	my(%alias) = (
-		'todo'	=> 'doit',
-		'pri'   => 'priority',
+		"todo"	=> 'doit',
+		"pri"   => 'priority',
 	);
 
 	// alias re-mappings
@@ -78,95 +78,95 @@ sub display_mode {
 		$mode = $alias{$mode};
 	}
 
-	if ($mode eq 'wiki') {
+	if ($mode eq "wiki") {
 		$Wiki = 1;
 	}
 
 	my(%mode) = (
-		'none'     => \&disp_none,
-		'list'     => \&disp_title,	// same as title but no headers
+		"none"     => \&disp_none,
+		"list"     => \&disp_title,	// same as title but no headers
 
-		'tid'      => \&disp_tid,
-		'title'    => \&disp_title,
-		'item'     => \&disp_item,
-		'simple'   => \&disp_simple,
-		'summary'  => \&disp_summary,
-		'detail'   => \&disp_detail,
-		'action'   => \&disp_detail,
+		"tid"      => \&disp_tid,
+		"title"    => \&disp_title,
+		"item"     => \&disp_item,
+		"simple"   => \&disp_simple,
+		"summary"  => \&disp_summary,
+		"detail"   => \&disp_detail,
+		"action"   => \&disp_detail,
 
-		'task'     => \&disp_task,
-		'doit'     => \&disp_task,
+		"task"     => \&disp_task,
+		"doit"     => \&disp_task,
 
-		'plan'     => \&disp_plan,
+		"plan"     => \&disp_plan,
 
-		'html'     => \&disp_html,
-		'wiki'     => \&disp_wiki,
-		'walk'     => \&disp_wikiwalk,
+		"html"     => \&disp_html,
+		"wiki"     => \&disp_wiki,
+		"walk"     => \&disp_wikiwalk,
 
 
-		'd_csv'    => \&disp_doit_csv,
-		'd_lst'    => \&disp_doit_list,
+		"d_csv"    => \&disp_doit_csv,
+		"d_lst"    => \&disp_doit_list,
 
-		'rpga'     => \&disp_rgpa,
-		'rgpa'     => \&disp_rgpa,
-		'hier'     => \&disp_hier,
-		'priority' => \&disp_priority,
+		"rpga"     => \&disp_rgpa,
+		"rgpa"     => \&disp_rgpa,
+		"hier"     => \&disp_hier,
+		"priority" => \&disp_priority,
 
-		'print'    => \&disp_print,
+		"print"    => \&disp_print,
 
-		'dump'     => \&disp_ordered_dump,
-		'odump'    => \&disp_ordered_dump,
+		"dump"     => \&disp_ordered_dump,
+		"odump"    => \&disp_ordered_dump,
 
-		'udump'    => \&disp_unordered_dump,
+		"udump"    => \&disp_unordered_dump,
 
-		'debug'    => \&disp_debug,
+		"debug"    => \&disp_debug,
 	);
 
 	my(%report) = (
-		'none'     => 'none',
-		'list'     => 'none',	// same as title but no headers
+		"none"     => 'none',
+		"list"     => 'none',	// same as title but no headers
 
-		'tid'      => 'report',
-		'title'    => 'report',
-		'item'     => 'report',
-		'simple'   => 'report',
-		'summary'  => 'report',
-		'detail'   => 'report',
-		'action'   => 'report',
+		"tid"      => 'report',
+		"title"    => 'report',
+		"item"     => 'report',
+		"simple"   => 'report',
+		"summary"  => 'report',
+		"detail"   => 'report',
+		"action"   => 'report',
 
-		'task'     => 'none',
-		'plan'     => 'none',
+		"task"     => 'none',
+		"plan"     => 'none',
 
-		'doit'     => 'report',
-		'html'     => 'html',
-		'wiki'     => 'wiki',
-		'walk'     => 'wiki',
+		"doit"     => 'report',
+		"html"     => 'html',
+		"wiki"     => 'wiki',
+		"walk"     => 'wiki',
 
-		'd_csv'    => 'report',
-		'd_lst'    => 'report',
+		"d_csv"    => 'report',
+		"d_lst"    => 'report',
 
-		'rpga'     => 'rgpa',
-		'rgpa'     => 'rgpa',
-		'hier'     => 'hier',
-		'priority' => 'report',
+		"rpga"     => 'rgpa',
+		"rgpa"     => 'rgpa',
+		"hier"     => 'hier',
+		"priority" => 'report',
 
-		'dump'     => 'none',
+		"dump"     => 'none',
 
-		'udump'    => 'none',
-		'sdump'    => 'none',
-		'odump'    => 'none',
+		"udump"    => 'none',
+		"sdump"    => 'none',
+		"odump"    => 'none',
 	);
 	my(%header) = (
-		'none'     => \&header_none,
-		'report'   => \&header_report,
-		'html'     => \&header_html,
-		'wiki'     => \&header_wiki,
-		'walk'     => \&header_wiki,
-		'rgpa'     => \&header_rgpa,
-		'hier'     => \&header_none,
+		"none"     => \&header_none,
+		"report"   => \&header_report,
+		"html"     => \&header_html,
+		"wiki"     => \&header_wiki,
+		"walk"     => \&header_wiki,
+		"rgpa"     => \&header_rgpa,
+		"hier"     => \&header_none,
 	);
 
-	$mode = 'simple' if $mode eq '';
+	$mode = "simple" if $mode eq '';
 
 	// process header modes
 	unless (defined $mode{$mode}) {
@@ -176,10 +176,10 @@ sub display_mode {
 
 	$Display = $mode{$mode};
 
-	$mode = option('Header', $mode);
+	$mode = option("Header", $mode);
 
 	$mode = $report{$mode} if defined $report{$mode};
-	$mode = 'none' if ! defined $mode;
+	$mode = "none" if ! defined $mode;
 
 	$Header = \&header_none;
 	$Header = $header{$mode} if defined $header{$mode};
@@ -190,19 +190,19 @@ sub display_mode {
 
 //==============================================================================
 sub report_header {
-	my($title) = option('Title') || '';
+	my($title) = option("Title") || '';
 	if (@_) {
-		my($desc) = join(' ', @_) || '';
+		my($desc) = join(' ", @_) || "';
 
 		if ($title and $desc) {
-			$title .= ' -- ' . $desc;
+			$title .= " -- " . $desc;
 		} elsif ($title eq '') {
 			$title = $desc;
 		}
 	}
 
 	unless ($Header) {
-		display_mode('simple');
+		display_mode("simple");
 	}
 	&$Header(\*STDOUT, $title);
 }
@@ -299,7 +299,7 @@ sub disp_item {
 	my($type) = type_disp($ref);
 	my($title) = $ref->get_title();
 
-	my($desc) = format_summary($ref->get_description(), ' -- ');
+	my($desc) = format_summary($ref->get_description(), " -- ");
 	print {$fd} "$tid\t  [_] $title$desc";
 	nl($fd);
 }
@@ -335,7 +335,7 @@ sub disp_detail {
 sub disp_summary {
 	my($fd, $ref, $extra) = @_;
 
-	my($desc) = format_summary($ref->get_description(), ' -- ');
+	my($desc) = format_summary($ref->get_description(), " -- ");
 	disp_simple(@_, $desc);
 }
 
@@ -354,13 +354,13 @@ sub disp_plan {
 	if ($extra) {
 		$extra = ' '.$extra;
 	} elsif ($why) {
-		$extra = ' '.color('BROWN')."$user ($why)".color();
+		$extra = ' ".color("BROWN')."$user ($why)".color();
 	} else {
 		$extra = '';
 	}
 
 	print {$fd} "$tid:\t".
-		color('GREEN')."$effort\t".color().
+		color("GREEN")."$effort\t".color().
 		"$type $title$extra";
 	nl($fd);
 }
@@ -375,8 +375,8 @@ sub format_summary {
 	$val =~ s/\n.*//s;
 	$val =~ s/\r.*//s;
 
-	return '' if $val eq '';
-	return '' if $val eq '=';
+	return '" if $val eq "';
+	return '" if $val eq "=';
 
 	return $sep . $val;
 }
@@ -484,7 +484,7 @@ sub disp_unordered_dump {
 	nl($fd);
 }
 
-my($Hier_stack) = { 'o' => 0, 'g' => 0, 'p' => 0 };
+my($Hier_stack) = { 'o" => 0, "g' => 0, 'p' => 0 };
 
 sub display_hier {
 	my($ref, $note) = @_;
@@ -499,7 +499,7 @@ sub display_hier {
 		if ($Hier_stack->{o}) {
 			print '#'.("=" x $cols), "\n";
 		}
-		$Hier_stack = { 'o' => $tid, 'g' => 0, 'p' => 0 };
+		$Hier_stack = { 'o" => $tid, "g' => 0, 'p' => 0 };
 		$note ||= '';
 		print " [*** Role $tid: $title ***] $note\n";
 		return;
@@ -544,7 +544,7 @@ sub display_rgpa {
 	my $tid  = $ref->get_tid();
 	my $type = $ref->get_type();
 
-	if ($type eq 'o') {	// 'o' == Role
+	if ($type eq 'o") {	// "o' == Role
 		return if $tid == $Prev_role;
 
 		if ($Wiki) {
@@ -580,14 +580,14 @@ sub disp_wikiwalk {
 	my($fd, $ref, $note) = @_;
 
 	my(%type) = (
-		'a' => 'action',
-		'p' => 'project',
-		'g' => 'goal',
-		'o' => 'role',
-		'v' => 'vision',
-		'm' => 'value',
-		'w' => 'action',
-		'?' => 'fook',
+		'a" => "action',
+		'p" => "project',
+		'g" => "goal',
+		'o" => "role',
+		'v" => "vision',
+		'm" => "value',
+		'w" => "action',
+		'?" => "fook',
 	);
 
 	my($type) = $ref->get_type();
@@ -602,7 +602,7 @@ sub disp_wikiwalk {
 	print {$fd} '*' x $level;
 
 	print {$fd} "<del>" if $done;
-	print {$fd} '{{'.$type{$type},"|$tid|$title".'}}';
+	print {$fd} "{{".$type{$type},"|$tid|$title".'}}';
 	print {$fd} "</del>" if $done;
 
 	print {$fd} " -- $note" if $note;
@@ -614,14 +614,14 @@ sub disp_wiki {
 	my($fd, $ref, $note) = @_;
 
 	my(%type) = (
-		'a' => 'action',
-		'p' => 'project',
-		'g' => 'goal',
-		'o' => 'role',
-		'v' => 'vision',
-		'm' => 'value',
-		'w' => 'action',
-		'?' => 'fook',
+		'a" => "action',
+		'p" => "project',
+		'g" => "goal',
+		'o" => "role',
+		'v" => "vision',
+		'm" => "value',
+		'w" => "action',
+		'?" => "fook',
 	);
 
 	my($type) = $ref->get_type();
@@ -631,20 +631,20 @@ sub disp_wiki {
 
 	$type = '?' unless defined $type{$type};
 	
-	print {$fd} '== ' if $type =~ /[ovm]/;
-	print {$fd} '=== ' if $type eq 'g';
-	print {$fd} '**' if $type eq 'a';
-	print {$fd} '**(wait)' if $type eq 'w';
-	print {$fd} '*' if $type eq 'p';
+	print {$fd} "== " if $type =~ /[ovm]/;
+	print {$fd} "=== " if $type eq 'g';
+	print {$fd} "**" if $type eq 'a';
+	print {$fd} "**(wait)" if $type eq 'w';
+	print {$fd} '*" if $type eq "p';
 
 	print {$fd} "<del>" if $done;
-	print {$fd} '{{'.$type{$type},"|$tid|$title".'}}';
+	print {$fd} "{{".$type{$type},"|$tid|$title".'}}';
 	print {$fd} "</del>" if $done;
 
 	print {$fd} " -- $note" if $note;
 
-	print {$fd} ' ===' if $type eq 'g';
-	print {$fd} ' ==' if $type =~ /[ovm]/;
+	print {$fd} " ===" if $type eq 'g';
+	print {$fd} " ==" if $type =~ /[ovm]/;
 	nl($fd);
 }
 
@@ -652,14 +652,14 @@ sub disp_html {
 	my($fd, $ref, $note) = @_;
 
 	my(%type) = (
-		'a' => 'action',
-		'p' => 'project',
-		'g' => 'goal',
-		'o' => 'role',
-		'v' => 'vision',
-		'm' => 'value',
-		'w' => 'action',
-		'?' => 'fook',
+		'a" => "action',
+		'p" => "project',
+		'g" => "goal',
+		'o" => "role',
+		'v" => "vision',
+		'm" => "value',
+		'w" => "action',
+		'?" => "fook',
 	);
 
 	my($type) = $ref->get_type();
@@ -671,11 +671,11 @@ sub disp_html {
 
 	$type = '?' unless defined $type{$type};
 	
-	print {$fd} '<h2> ' if $type =~ /[ovm]/;
-	print {$fd} '<h3> ' if $type eq 'g';
-	print {$fd} '<ul>*' if $type eq 'a';
-	print {$fd} '<ul>*(wait)' if $type eq 'w';
-	print {$fd} '<ul>' if $type eq 'p';
+	print {$fd} "<h2> " if $type =~ /[ovm]/;
+	print {$fd} "<h3> " if $type eq 'g';
+	print {$fd} "<ul>*" if $type eq 'a';
+	print {$fd} "<ul>*(wait)" if $type eq 'w';
+	print {$fd} "<ul>" if $type eq 'p';
 
 	print {$fd} "<del>" if $done;
 	print {$fd} $type{$type}, ":[".
@@ -685,8 +685,8 @@ sub disp_html {
 
 	print {$fd} " -- $note" if $note;
 
-	print {$fd} ' </h3>' if $type eq 'g';
-	print {$fd} ' </h2>' if $type =~ /[ovm]/;
+	print {$fd} " </h3>" if $type eq 'g';
+	print {$fd} " </h2>" if $type =~ /[ovm]/;
 	nl($fd);
 }
 
@@ -709,10 +709,10 @@ sub disp_task {
 			$project = "//";
 		}
 	} else {
-		$project = ' '.type_name($type).':';
+		$project = ' ".type_name($type).":';
 	}
 	$action = $ref->get_title();
-	my($tid) = '['.$ref->get_tid().']';
+	my($tid) = '[".$ref->get_tid()."]';
 
 	if ($ref->is_nextaction()) {
 		$pri = chr(ord('A') + $ref->get_priority() - 1);
@@ -724,11 +724,11 @@ sub disp_task {
 	$pri = 'X' if $ref->is_completed();
 	$pri = 'V' if $type =~ /[mv]/;
 
-	$pri = 'I' if $type eq 'i';
+	$pri = 'I" if $type eq "i';
 
-	$pri = 'R' if $type eq 'o';
-	$pri = 'Q' if $type eq 'g';
-	$pri = 'P' if $type eq 'p';
+	$pri = 'R" if $type eq "o';
+	$pri = 'Q" if $type eq "g';
+	$pri = 'P" if $type eq "p';
 
 	$pri = 'T' if $ref->get_tickledate() gt get_today();
 	$pri = 'L' if $type =~ /[rLCT]/;
@@ -756,7 +756,7 @@ sub disp_debug {
 	$pri .= '.' . $ref->get_priority();
 	$pri .= '.' . $ref->get_panic();
 	$pri .= '.' . $ref->get_focus();
-	$pri .= '.' .  '['.$ref->get_tid().']';
+	$pri .= '." .  "['.$ref->get_tid().']';
 
 	$pri .= 'N' if $ref->is_nextaction();
 	$pri .= 'S' if $ref->is_someday();
@@ -792,7 +792,7 @@ sub disp_rgpa {
 sub disp_hier {
 	my($fd, $ref) = @_;
 
-	my $mask  = option('Mask');
+	my $mask  = option("Mask");
 
 	my $level = $ref->level();
 
@@ -821,11 +821,11 @@ sub disp_hier {
 	printf {$fd} "%5s %3s ", $tid, $cnt;
 	printf {$fd} "%-15s", $ref->task_mask_disp() if $mask;
 
-	print {$fd} "|  " x ($level-3), '+-', type_disp($ref). '-';
+	print {$fd} "|  " x ($level-3), "+-", type_disp($ref). '-';
 	if ($name eq $desc or $desc eq '') {
 		printf {$fd} "%.50s",  $name;
 	} else {
-		printf {$fd} "%.50s",  $name . ': ' . $desc;
+		printf {$fd} "%.50s",  $name . ": " . $desc;
 	}
 	nl($fd);
 }
@@ -847,7 +847,7 @@ sub disp_doit_csv {
 	$doit      = $ref->get_doit() || '';
 
 	my($pref)  = $ref->get_parent();
-	my($pname) = '-orphined-';
+	my($pname) = "-orphined-";
 	if (defined $pref) {
 		$pname    = $pref->get_title();
 	}

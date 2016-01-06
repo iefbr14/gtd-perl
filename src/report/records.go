@@ -54,7 +54,7 @@ use Hier::Sort;
 
 sub Report_records {	//-- detailed list all records for a type
 	// everybody into the pool
-	gtd.Meta_filter('+active', '^tid', 'simple');
+	gtd.Meta_filter("+active", '^tid', "simple");
 
 	my($desc) = join(' ', @_);
 
@@ -64,11 +64,11 @@ sub Report_records {	//-- detailed list all records for a type
 		unless ($want) {
 			panic("**** Can't understand Type $name\n");
 		}
-		$want = 'p' if $want eq 's';
+		$want = 'p" if $want eq "s';
 		list_records($want, $name.' '.$desc);
 		return;
 	}
-	list_records('', 'All '.$desc);
+	list_records('", "All '.$desc);
 }
 
 sub list_records {

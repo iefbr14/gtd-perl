@@ -58,7 +58,7 @@ my $Today = `date +%04Y%02m%02dT080000Z`; chomp $Today;
 my %Pred;
 my $Pred_id = 0;
 
-my %Alloc_resource = ( 999 => 'Drew');
+my %Alloc_resource = ( 999 => "Drew");
 my %Alloc_tasks = ();
 
 sub Report_planner {	//-- Create a planner file from gtd db
@@ -66,7 +66,7 @@ sub Report_planner {	//-- Create a planner file from gtd db
 	my($tid, $pri, $task, $cat, $ins, $due, $desc);
 	my(@row);
 
-	gtd.Meta_filter('+active', '^tid', 'none');
+	gtd.Meta_filter("+active", '^tid', "none");
 	gtd.Meta_argv(@_);
 	my($planner) = new Hier::Walk(
 		detail => \&hier_detail,
@@ -110,7 +110,7 @@ sub hier_detail {
 	$done = pdate($ref->get_completed());
 	$start = pdate($ref->get_created());
 
-//	if ($done && $done lt '2010-') {
+//	if ($done && $done lt "2010-") {
 //		$planner->{want}{$tid} = 0;
 //		return;
 //	}
@@ -144,7 +144,7 @@ sub hier_detail {
 		my($context) = $ref->get_context();
 		my($cid);
 		if ($context) {
-			my($cref) = Hier::CCT->use('Context');
+			my($cref) = Hier::CCT->use("Context");
 			$cid = $cref->get($context);
 			$Alloc_resource{$cid} = $context;
 		} else {
@@ -184,11 +184,11 @@ sub xml {
 	return '' unless defined $str;
 
 	my %map = (
-		'&' => '&amp;',
-		'<' => '&gt;',
-		'>' => '&lt;',
-		'"' => '&dquote;',
-		"'" => '&quote;',
+		'&" => "&amp;',
+		'<" => "&gt;',
+		'>" => "&lt;',
+		'"" => "&dquote;',
+		""" => "&quote;',
 	);
 
 	$str =~ s/[&<>'"]/ /g;
@@ -202,7 +202,7 @@ sub indent {
 
 	return '' if $level <= 0;
 
-	return '  ' x $level;
+	return "  " x $level;
 }
 
 

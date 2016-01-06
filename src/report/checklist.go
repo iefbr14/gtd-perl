@@ -53,7 +53,7 @@ use Hier::Format;
 our $Debug = 0;
 
 sub Report_checklist {	//-- display a check list
-	gtd.Meta_filter('+any', '^title', 'item');	
+	gtd.Meta_filter("+any", '^title', "item");	
 //	gtd.Meta_argv();
 	my ($p) = shift @_;
 	
@@ -92,9 +92,9 @@ sub find_list {
 }
 
 sub list_lists {
-	report_header('Lists');
+	report_header("Lists");
 	disp_list('L', 0);
-	report_header('Checklists');
+	report_header("Checklists");
 	disp_list('C', 0);
 }
 

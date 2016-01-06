@@ -65,31 +65,31 @@ sub Report_update {	//-- Command line update of an action/project
 
 	my $val;
 
-	if ($val = option('Category')) {
+	if ($val = option("Category")) {
 		$ref->set_category($val);
 	}
 
-	if ($val = option('Context')) {
+	if ($val = option("Context")) {
 		$ref->set_context($val);
 	}
 
-	if ($val = option('Timeframe')) {
+	if ($val = option("Timeframe")) {
 		$ref->set_timeframe($val);
 	}
 
-	if ($val = option('Note')) {
+	if ($val = option("Note")) {
 		$ref->set_note($val);
 	}
 
-	if ($val = option('Priority')) {
+	if ($val = option("Priority")) {
 		$ref->set_priority($val);
 	}
 
-	if ($val = option('Complete')) {
+	if ($val = option("Complete")) {
 		$ref->set_priority($val);
 	}
 
-	if ($val = option('Description')) {
+	if ($val = option("Description")) {
 		$ref->set_description($val);
 	}
 

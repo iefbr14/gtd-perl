@@ -65,19 +65,19 @@ our $Debug = 0;
 sub Report_focus {	//-- List focus -- live, plan or someday
 	my($cnt) = 0;
 
-	$Debug = option('Debug', 0);
+	$Debug = option("Debug", 0);
 
-	gtd.Meta_filter('+next', '^focus', 'simple');
+	gtd.Meta_filter("+next", '^focus', "simple");
 	my(@list) = gtd.Meta_pick(@_);
 	if (@list == 0) {
-		@list = gtd.Meta_pick('Role');
+		@list = gtd.Meta_pick("Role");
 	}
 
 	if (scalar(@_) > 0) {
 		if ($_[0] =~ m/^\d+$/) {
 			my($ref) = $list[0];
 
-			my($title) = $ref->get_tid().': '.$ref->get_title();
+			my($title) = $ref->get_tid().": ".$ref->get_title();
 
 			report_header(join(' ', "Focus", $title));
 		} else {
@@ -131,7 +131,7 @@ sub check_task {
 
 	if ($p_ref->get_type() eq 'a') {
 		if ($Dep) {
-			display_rgpa($Dep, '(DEP)');
+			display_rgpa($Dep, "(DEP)");
 			print ("--- ( Depends On ) ----\n");
 			display_rgpa($p_ref, '', 1);
 		} else {

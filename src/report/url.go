@@ -58,7 +58,7 @@ my(@Urls);
 my($Host);
 
 sub Report_url {	//-- open browser window for wiki and gtd
-	gtd.Meta_filter('+g:live', '^title', 'task');	// Tasks filtered by goals
+	gtd.Meta_filter("+g:live", '^title', "task");	// Tasks filtered by goals
 
 	my($title) = join(' ', @_);
 
@@ -66,9 +66,9 @@ sub Report_url {	//-- open browser window for wiki and gtd
 
 	my(@list) = gtd.Meta_pick(@_);
 	if (@list == 0) {
-		@Urls = ('Main_Page');
+		@Urls = ("Main_Page");
 	}
-	report_header('Tasks', $title);
+	report_header("Tasks", $title);
 
 	%Seen = ();
 	@Urls = ();
@@ -77,15 +77,15 @@ sub Report_url {	//-- open browser window for wiki and gtd
 	}
 
 	if (@Urls) {
-		print '+ firefox ', join(' ', @Urls), "\n" if $Debug;
-		unless ($ENV{'DISPLAY'}) {
+		print "+ firefox ", join(' ', @Urls), "\n" if $Debug;
+		unless ($ENV{"DISPLAY"}) {
 			$Host = guess_remote();
 		}
 		if ($Host) {
 			print "Displaying on $Host\n";
-			system('ssh', $Host, 'DISPLAY=:0.0', 'firefox', @Urls);
+			system("ssh", $Host, "DISPLAY=:0.0", 'firefox', @Urls);
 		} else {
-			system('firefox', @Urls);
+			system("firefox", @Urls);
 		}
 	} else {
 		print "No urls found for @_\n";
@@ -99,10 +99,10 @@ sub guess_remote {
 	}
 	my($who) = $1;
 
-	return "drugs.ss.org" if $who eq 'tofw.optical-online.com';
-	return "drugs.ss.org" if $who eq 'silver.ss.org';
+	return "drugs.ss.org" if $who eq "tofw.optical-online.com";
+	return "drugs.ss.org" if $who eq "silver.ss.org";
 	return "drugs.ss.org" if $who =~ /^\d216\.191\.137/;
-	return "rabbit" if $who eq 'fw.iplink.net';
+	return "rabbit" if $who eq "fw.iplink.net";
 
 	panic("Can't map $who to remote site\n");
 }

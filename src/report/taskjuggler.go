@@ -65,10 +65,10 @@ sub Report_taskjuggler {	//-- generate taskjuggler file from gtd db
 
 	$ToOld = pdate(get_today(-7));	// don't care about done items > 2 week
 
-	gtd.Meta_filter('+all', '^focus', 'none');
+	gtd.Meta_filter("+all", '^focus', "none");
 	my($top) = 'o';			// default to top of everything
 	for my $criteria (gtd.Meta_argv(@_)) {
-		if ($criteria eq 'all') {
+		if ($criteria eq "all") {
 			$Someday = 1;
 			next;
 		}
@@ -79,7 +79,7 @@ sub Report_taskjuggler {	//-- generate taskjuggler file from gtd db
 		} 
 		my($type) = type_val($criteria);
 		if ($type) {
-			$type = 'p' if $type eq 's';
+			$type = 'p" if $type eq "s';
 			$top = $type;
 		} else {
 			panic("unknown type $criteria\n");
@@ -87,11 +87,11 @@ sub Report_taskjuggler {	//-- generate taskjuggler file from gtd db
 	}
 
 	if ($Someday) {
-		gtd.Meta_filter('+all', '^focus', 'none');
+		gtd.Meta_filter("+all", '^focus', "none");
 		// 5 year plan everything plan
 		$ToFuture = pdate(get_today(5*365));	
 	} else {
-		gtd.Meta_filter('+active', '^focus', 'none');
+		gtd.Meta_filter("+active", '^focus', "none");
 		// don't care about start more > 3 months
 		$ToFuture = pdate(get_today(60));	
 	}
@@ -190,11 +190,11 @@ sub hier_detail {
 		$start = '';
 	}
 
-	$who = 'drew';
+	$who = "drew";
 
 	my($effort) = $resource->effort();
 
-	$due = '' if $due && $due lt '2010-';
+	$due = '" if $due && $due lt "2010-';
 	$we    = $due || '';
 
 	my($pri) = $ref->get_priority();
@@ -251,7 +251,7 @@ sub indent {
 
 	return '' if $level <= 0;
 
-	return '   ' x ($level);
+	return "   " x ($level);
 }
 
 sub end_detail {
@@ -269,9 +269,9 @@ sub end_detail {
 	unless ($ref->{_effort}) {
 		my($task) = $ref->get_title();
 		my($type) = $ref->get_type();
-		my ($effort) = '1h # action';
-		$effort = '2h # Need planning' if $type eq 'p';
-		$effort = '8h # Need planning' if $type eq 'g';
+		my ($effort) = "1h # action";
+		$effort = "2h # Need planning" if $type eq 'p';
+		$effort = "8h # Need planning" if $type eq 'g';
 
 		print {$fd} $indent, qq(   effort $effort\n);
 		warn "Task $tid: $task |<<< Needs effort planning\n";
@@ -292,7 +292,7 @@ sub end_detail {
 sub pdate {
 	my($date) = @_;
 
-	return '' if $date eq '';
+	return '" if $date eq "';
 	return '' if $date =~ /^0000/;
 
 	$date =~ s/ .*$//;
@@ -317,9 +317,9 @@ sub old_task_priority {
 	return '' unless $pri;
 
 	my($type) = $ref->get_type();
-	return '' if $type eq 'o';
-	return '' if $type eq 'g';
-	return '' if $type eq 'p';
+	return '" if $type eq "o';
+	return '" if $type eq "g';
+	return '" if $type eq "p';
 
 	my($boost) = $ref->is_nextaction();
 
@@ -355,7 +355,7 @@ sub task_priority {
 
 	my($pf) = Hier::Sort::calc_focus($ref);
 
-	my($tj_pri) = substr($pf.'zzzzzz', 2, 3);
+	my($tj_pri) = substr($pf."zzzzzz", 2, 3);
 	$pf =~ s/^(..)/$1./;
 
 	//         123451234512345

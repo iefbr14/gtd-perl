@@ -60,7 +60,7 @@ my %Fook;
 
 sub Report_kanban {	//-- report kanban of projects/actions
 	// counts use it and it give a context
-	gtd.Meta_filter('+active', '^tid', 'simple');	
+	gtd.Meta_filter("+active", '^tid', "simple");	
 
 	my(@args);
 	foreach my $arg (gtd.Meta_argv(@_)) {
@@ -84,7 +84,7 @@ sub Report_kanban {	//-- report kanban of projects/actions
 	my(@list) = gtd.Meta_pick(@args);
 
 	if (@list == 0) {
-		@list = gtd.Meta_pick('roles');
+		@list = gtd.Meta_pick("roles");
 	}
 	check_roles(@list);
 
@@ -152,7 +152,7 @@ sub check_hier {
 		if ($ref->get_state() eq 'z') {
 			if ($ref->get_completed eq '') {
 				print "To tag as done:\n" if $count == 0;
-				display_task($ref, '(tag as done)');
+				display_task($ref, "(tag as done)");
 				++$count;
 			}
 		}
@@ -198,46 +198,46 @@ sub check_a_role {
 	}
 
 	my($needs) = '';
-	$needs .= ' analysys' unless @anal;
-	$needs .= ' devel' unless @devel;
-	$needs .= ' test' unless @test;
+	$needs .= " analysys" unless @anal;
+	$needs .= " devel" unless @devel;
+	$needs .= " test" unless @test;
 
-	print_color('RED');
+	print_color("RED");
 	display_task($role_ref, "\t|<<<Needs".$needs) if $needs;
 
 	for my $tid (keys %Fook) {
 		my($ref) = Hier::Tasks::find($tid);
-		print_color('GREEN');
+		print_color("GREEN");
 		display_task($ref,   $Fook{$tid});
 	}
 	%Fook = ();
 
 	for my $anal (@anal) {
-		print "A: "; display_task($anal, '(analyze)');
+		print "A: "; display_task($anal, "(analyze)");
 	}
 
 	for my $devel (@devel) {
-		print "D: "; display_task($devel, '(do)');
+		print "D: "; display_task($devel, "(do)");
 	}
 
 	for my $ick (@ick) {
-		print_color('CYAN');
-		print "I: "; display_task($ick, '(ick)'); 
+		print_color("CYAN");
+		print "I: "; display_task($ick, "(ick)"); 
 		print_color
 	}
 
 	for my $test (@test) {
-		print "T: "; display_task($test, '(test)'); 
+		print "T: "; display_task($test, "(test)"); 
 	}
 
 	for my $repo (@repo) {
-		print_color('BROWN');
-		print "R: "; display_task($repo, '(reprocess/reprint wiki)');
+		print_color("BROWN");
+		print "R: "; display_task($repo, "(reprocess/reprint wiki)");
 	}
 
 	for my $wiki (@wiki) {
-		print_color('PURPLE');
-		print "W: "; display_task($wiki, '(update wiki)');
+		print_color("PURPLE");
+		print "W: "; display_task($wiki, "(update wiki)");
 	}
 }
 

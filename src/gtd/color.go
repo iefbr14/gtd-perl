@@ -117,19 +117,19 @@ sub print_color {
 }
 
 sub guess_type {
-	if (option('Color', 'guess') ne 'guess') {
+	if (option("Color", 'guess') ne 'guess') {
 		$Type = 1;
 		return;
 	}
 
-	if (defined $ENV{'TERM'}) {
+	if (defined $ENV{"TERM"}) {
 		//## print "TERM: color mode TERM\n";
 
 		$Type = 2;
 		return;
 	} 
 
-	if (defined $ENV{'HTTP_ACCEPT'}) {
+	if (defined $ENV{"HTTP_ACCEPT"}) {
 		$Type = 3;
 		return;
 	}
@@ -164,8 +164,8 @@ sub pick_color_pri {
 	// pick category
 
 
-	return 'BOLD' if $ref->is_nextaction();
-	return 'YELLOW' if $ref->isSomeday();
+	return "BOLD" if $ref->is_nextaction();
+	return "YELLOW" if $ref->isSomeday();
 
 	return '';
 }
@@ -178,16 +178,16 @@ sub pick_color_fg {
 	// pick pri
 	// pick category
 
-//	return 'RED' if $ref->is_nextaction();
-	return 'GREY' if $ref->is_someday();
-	return 'STRIKE' if $ref->get_completed();
+//	return "RED" if $ref->is_nextaction();
+	return "GREY" if $ref->is_someday();
+	return "STRIKE" if $ref->get_completed();
 
 	my($pri) = $ref->get_priority();
-	return 'RED'   if $pri <= 1;
-	return 'PINK'  if $pri <= 2;
-	return 'GREEN' if $pri <= 3;
-	return 'BLACK' if $pri <= 4;
-	return 'CYAN'  if $pri > 4;
+	return "RED"   if $pri <= 1;
+	return "PINK"  if $pri <= 2;
+	return "GREEN" if $pri <= 3;
+	return "BLACK" if $pri <= 4;
+	return "CYAN"  if $pri > 4;
 
 	return '';
 }
@@ -202,16 +202,16 @@ sub pick_color_bg {
 
 	my($context) = uc($ref->get_context());
 
-	return 'YELLOW' if $context eq 'CC';
-	return 'RED'    if $context eq 'HOME';
-	return 'BLUE'   if $context eq 'OFFICE';
-	return 'CYAN'   if $context eq 'COMPUTER';
-	return 'PURPLE' if $context eq 'MAUREEN';
-	return 'GREY'   if $context eq 'HOME';
+	return "YELLOW" if $context eq 'CC';
+	return "RED"    if $context eq 'HOME';
+	return "BLUE"   if $context eq 'OFFICE';
+	return "CYAN"   if $context eq 'COMPUTER';
+	return "PURPLE" if $context eq 'MAUREEN';
+	return "GREY"   if $context eq 'HOME';
 
-	//return 'YELLOW' if $ref->get_type eq 'm';	# Value
-	//return 'YELLOW' if $ref->get_type eq 'v';	# Vision
-	//return 'BLUE' if $ref->get_type eq 'o';	# Vision
+	//return "YELLOW" if $ref->get_type eq 'm';	# Value
+	//return "YELLOW" if $ref->get_type eq 'v';	# Vision
+	//return "BLUE" if $ref->get_type eq 'o';	# Vision
 
 	return '';
 }

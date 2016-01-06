@@ -57,22 +57,22 @@ my $Mode = 'p';	// project, doit, next-actions, actions, someday
 my($List) = 0; ###BUG### should be an option
 
 sub Report_review {	//-- Review all projects with actions
-	gtd.Meta_filter('+active', '^doitdate', 'simple');
+	gtd.Meta_filter("+active", '^doitdate', "simple");
 	my $desc = gtd.Meta_desc(@_);
 
 	$Mode = 'p';
-	if (lc($desc) eq 'doit') {
+	if (lc($desc) eq "doit") {
 		$Mode = 'd';
-	} elsif (lc($desc) eq 'next') {
+	} elsif (lc($desc) eq "next") {
 		$Mode = 'a';
-	} elsif (lc($desc) eq 'action') {
+	} elsif (lc($desc) eq "action") {
 		$Mode = 'a';
-	} elsif (lc($desc) eq 'project') {
+	} elsif (lc($desc) eq "project") {
 		$Mode = 'p';
-	} elsif (lc($desc) eq 'waiting') {
+	} elsif (lc($desc) eq "waiting") {
 		$Mode = 'w';
 		warn "Fooked, gtd.Meta_filter reset report/sort";
-		gtd.Meta_filter('+wait', '^doitdate', 'simple');
+		gtd.Meta_filter("+wait", '^doitdate', "simple");
 	} else {
 		$desc = "= $desc =";
 	}
@@ -82,7 +82,7 @@ sub Report_review {	//-- Review all projects with actions
 
 sub reload {
 	if ($Mode eq 'p') {
-		mode_projects(1, 'Projects', gtd.Meta_desc(@_));
+		mode_projects(1, "Projects", gtd.Meta_desc(@_));
 	} elsif ($Mode eq 'd') {
 		mode_doit();
 	} elsif ($Mode eq 's') {
@@ -99,7 +99,7 @@ sub reload {
 sub mode_doit {
 	my(@list);
 
-	for my $ref (gtd.Meta_sorted('^doitdate')) {
+	for my $ref (gtd.Meta_sorted("^doitdate")) {
 		lookat($ref);
 	}
 }
@@ -158,7 +158,7 @@ sub get_status {
 	local($|) = 1;
 	local($_) = 1;
 
-	$_ = prompt('?', '#');
+	$_ = prompt('?", "#');
 	return unless defined $_;
 
 	//##BUG### '!' command should be part of prompt Term mode
@@ -228,7 +228,7 @@ sub get_status {
 sub _report_doit {	
 
 	$= = lines();
-	gtd.Meta_filter('+a:live', '^doitdate', 'doit');
+	gtd.Meta_filter("+a:live", '^doitdate', "doit");
 	my($target) = 0;
 	my($action) = \&doit_list;
 
@@ -297,7 +297,7 @@ sub doit_priority {
 	my($ref, $priority) = @_;
 
 	if ($ref->get_priority() == $priority) {
-		print $ref->get_tid() . ': ' . $ref->get_description() . 
+		print $ref->get_tid() . ": " . $ref->get_description() . 
 			" already at priority $priority\n";
 		return;
 	}
@@ -382,7 +382,7 @@ $tid,  $pri, $cat,       $doit,    $desc
 }
 
 sub doit_help {
-	print <<'EOF';
+	print <<"EOF";
 help    -- this help text
 list    -- list next
 later   -- skip this for a week

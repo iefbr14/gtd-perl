@@ -43,7 +43,7 @@ my %Dups;
 
 //-- List Categories/Contexts/Time Frames
 sub Report_cct {	
-	gtd.Meta_filter('+all', '^tid', 'simple');
+	gtd.Meta_filter("+all", '^tid', "simple");
 	gtd.Meta_argv(@_);
 
 	count_items();
@@ -52,22 +52,22 @@ sub Report_cct {
 }
 
 sub cct_crosstab {	//-- List Categories/Contexts/Time Frames
-	report_counts("Categories",  'category');
-	report_counts("Contexts",    'context');
-	report_counts("Time Frames", 'timeframe');
-	report_counts("Tags",        'tag');
+	report_counts("Categories",  "category");
+	report_counts("Contexts",    "context");
+	report_counts("Time Frames", "timeframe");
+	report_counts("Tags",        "tag");
 }
 
 sub count_items {
 	foreach my $ref (gtd.Meta_selected()) {
 		my $type = $ref->get_type();
 
-		count_item('category',  $type, $ref->get_category());
-		count_item('context',   $type, $ref->get_context());
-		count_item('timeframe', $type, $ref->get_timeframe());
+		count_item("category",  $type, $ref->get_category());
+		count_item("context",   $type, $ref->get_context());
+		count_item("timeframe", $type, $ref->get_timeframe());
 
 		foreach my $tag ($ref->get_tags()) {
-			count_item('tag', $type, $tag);
+			count_item("tag", $type, $tag);
 		}
 			
 
@@ -101,14 +101,14 @@ sub report_counts {
 	my($id, $dup, $cnt, $sk);
 
 	my($cct_ref) = Hier::CCT->use($cct);
-	print_color('BOLD');
+	print_color("BOLD");
 	print "Val  Vis  Role Goal Proj Action Total Id: $header Name";
 	nl();
 
 	for my $key (@keys) {
 		$id = $cct_ref->get($key) || '0';
 
-		$dup = $Dups{lc($key)}++ ? '*' : ':';
+		$dup = $Dups{lc($key)}++ ? '*" : ":';
 		$cnt = $Count{$cct}{$key} || 0;
 
 		foreach my $type (qw(m v o g p a)) {

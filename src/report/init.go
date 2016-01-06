@@ -57,8 +57,8 @@ sub Report_init {	//-- Init ~/.todo structure
 
 	my($ini) = "$todo/Access.yaml";
 	unless (-f $ini) {
-		open(my $fh, '>', $ini) or panic("Can't create $ini ($!)\n");
-		print {$fh} <<'EOF';
+		open(my $fh, '>", $ini) or panic("Can"t create $ini ($!)\n");
+		print {$fh} <<"EOF";
 gtd:
     host:      localhost
     dbname:    gtd

@@ -54,13 +54,13 @@ use Hier::Meta;
 use Hier::Format;
 use Hier::Option;
 
-my $Layout = 'Text';
+my $Layout = "Text";
 
 sub Report_print {	//-- dump records in edit format
 	// everybody into the pool by id 
-	gtd.Meta_filter('+any', '^tid', 'doit');	
+	gtd.Meta_filter("+any", '^tid', "doit");	
 
-	$Layout = ucfirst(lc(option('Layout', 'Text')));
+	$Layout = ucfirst(lc(option("Layout", "Text")));
 
 	for my $ref (gtd.Meta_pick(@_)) {
 		print_ref($ref);
@@ -73,8 +73,8 @@ sub print_ref {
 	my($tid)         = $ref->get_tid();
 	my($type)        = $ref->get_type();
 	my($typename)    = type_name($type);
-	my($nextaction)  = $ref->is_nextaction() ? ' Next-action' : '';
-	my($someday)      = $ref->is_someday() ? ' (someday)' :'';
+	my($nextaction)  = $ref->is_nextaction() ? " Next-action" : '';
+	my($someday)      = $ref->is_someday() ? " (someday)" :'';
 
 	my($task)        = $ref->get_title();
 	my($description) = $ref->get_description();
@@ -146,27 +146,27 @@ sub pre {
 	chomp $text;
 
 	switch ($Layout) {
-	case 'Text' { print "$text\n"; }
-	case 'Wiki' { print "<pre>$text</pre>\n\n"; }
-	case 'Html' { print "<pre> $text <preh1>\n"; }
-	case 'Man'  { print ".EX\n$text\n.EE\n"; }
+	case "Text" { print "$text\n"; }
+	case "Wiki" { print "<pre>$text</pre>\n\n"; }
+	case "Html" { print "<pre> $text <preh1>\n"; }
+	case "Man"  { print ".EX\n$text\n.EE\n"; }
 	} 
 }
 
 sub br {
 	switch ($Layout) {
-	case 'Text' { }
-	case 'Wiki' { print "<br>\n";}
-	case 'Html' { print "<br>\n"; }
-	case 'Man'  { print ".br\n"; }
+	case "Text" { }
+	case "Wiki" { print "<br>\n";}
+	case "Html" { print "<br>\n"; }
+	case "Man"  { print ".br\n"; }
 	} 
 }
 sub hr {
 	switch ($Layout) {
-	case 'Text' { print '-'x78, "\n"; }
-	case 'Wiki' { print "------------------------------\n"; }
-	case 'Html' { print "<hr>\n"; }
-	case 'Man'  { print "\\l'6i\n"; }
+	case "Text" { print '-'x78, "\n"; }
+	case "Wiki" { print "------------------------------\n"; }
+	case "Html" { print "<hr>\n"; }
+	case "Man"  { print "\\l'6i\n"; }
 	} 
 }
 
@@ -176,10 +176,10 @@ sub para {
 	chomp $text;
 
 	switch ($Layout) {
-	case 'Text' { print $text,"\n"; }
-	case 'Wiki' { print "== $text ==\n\n"; }
-	case 'Html' { print "<h1> $text </h1>\n"; }
-	case 'Man'  { print ".SH \"$text\"\n"; }
+	case "Text" { print $text,"\n"; }
+	case "Wiki" { print "== $text ==\n\n"; }
+	case "Html" { print "<h1> $text </h1>\n"; }
+	case "Man"  { print ".SH \"$text\"\n"; }
 	} 
 }
 
@@ -189,10 +189,10 @@ sub title {
 	chomp $text;
 
 	switch ($Layout) {
-	case 'Text' { print "== $text ==\n\n"; }
-	case 'Wiki' { print "== $text ==\n\n"; }
-	case 'Html' { print "<h1> $text </h1>\n"; }
-	case 'Man'  { print ".SH \"$text\"\n"; }
+	case "Text" { print "== $text ==\n\n"; }
+	case "Wiki" { print "== $text ==\n\n"; }
+	case "Html" { print "<h1> $text </h1>\n"; }
+	case "Man"  { print ".SH \"$text\"\n"; }
 	} 
 }
 

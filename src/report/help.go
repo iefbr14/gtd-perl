@@ -57,13 +57,13 @@ our $OurPath;
 my(%Helps) = (
 //------------------------------------------------------------------------------
 // Obsolete Sac view of projects vs gts view of projects
-	'Sac' => <<'EOF',
+	"Sac" => <<"EOF",
 (gtd) Value => Vision => Role => Goal => Project => Action
 (sac)                  Client => Project => Task => Item
 EOF
 
 //------------------------------------------------------------------------------
-	'Selection' => <<'EOF',
+	"Selection" => <<"EOF",
   tid       -- task id
   /title    -- match any with title
   T:/title  -- match only type T,  with title
@@ -71,7 +71,7 @@ EOF
 EOF
 
 //------------------------------------------------------------------------------
-	'Filters' => <<'EOF',
+	"Filters" => <<"EOF",
 ~NAME -- exclude those of the type (check first)
 +NAME -- include those of the type (check last)
 
@@ -102,7 +102,7 @@ acts - hier has sub-actions
 EOF
 
 //------------------------------------------------------------------------------
-	'Sort' => <<'EOF',
+	"Sort" => <<"EOF",
 id/tid	      - by task id
 task/title    - by task name (title)
 
@@ -121,7 +121,7 @@ rgpa/goaltask - by task withing goal
 EOF
 
 //------------------------------------------------------------------------------
-	'Types' => <<'EOF',
+	"Types" => <<"EOF",
 m - value
 v - vision
 o - role
@@ -139,7 +139,7 @@ T - item
 EOF
 
 //------------------------------------------------------------------------------
-	'Project-Verbs' => <<'EOF',
+	"Project-Verbs" => <<"EOF",
 * Finalize
 * Resolve
 * Handle
@@ -158,7 +158,7 @@ EOF
 EOF
 
 //------------------------------------------------------------------------------
-	'Action-Verbs' => <<'EOF',
+	"Action-Verbs" => <<"EOF",
 * Call
 * Review
 * Buy
@@ -177,7 +177,7 @@ EOF
 EOF
 
 //------------------------------------------------------------------------------
-	'Planning' => <<'EOF',
+	"Planning" => <<"EOF",
 1. Define purpose & principles (why)
 2. Outcome visioning
 3. Brainstorming
@@ -186,8 +186,8 @@ EOF
 EOF
 
 //------------------------------------------------------------------------------
-	'Agile' => <<'EOF',
-Using 'kanban' and 'board' commands to refine project state.
+	"Agile" => <<"EOF",
+Using "kanban" and "board" commands to refine project state.
 Then by iterating over those items to create momentum.
 EOF
 
@@ -199,7 +199,7 @@ sub Report_help {	//-- Help on commands
 
 	my($help) = @_;
 
-	if (scalar(@_) == 0 or $help eq 'help') {
+	if (scalar(@_) == 0 or $help eq "help") {
 		print "Help is available for:\n";
 		for my $key (sort keys %Helps) {
 			print "\t$key\n";
@@ -217,7 +217,7 @@ sub Report_help {	//-- Help on commands
 	my($report) = "$dir/$help.pm";
 	if (-f $report) {
 		//##BUG### should look at other args for perldoc args
-		system('perldoc', $report);
+		system("perldoc", $report);
 		return;
 	}
 

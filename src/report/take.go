@@ -57,9 +57,9 @@ my %Ancestors;
 sub Report_take {	//-- take listed actions/projects
 	my($key, $val, $changed);
 
-	gtd.Meta_filter('+all', '^tid', 'none');
+	gtd.Meta_filter("+all", '^tid', "none");
 
-	my $parent = option('Current');
+	my $parent = option("Current");
 	unless ($parent) {
 		panic("No parent for take\n");
 	}

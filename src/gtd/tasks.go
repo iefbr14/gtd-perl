@@ -69,7 +69,7 @@ func New(tid int) {
 
 	if tid == 0 {
 		if (Max_todo == 0 {
-			Max_todo = Hier::Db::G_val('todo', 'max(todo_id)')
+			Max_todo = Hier::Db::G_val("todo", 'max(todo_id)')
 		}
 		tid = ++Max_todo;
 	} else {
@@ -158,8 +158,8 @@ sub default {
 
 	return $default unless defined $val;
 
-	return '' if $val eq '0000-00-00';
-	return '' if $val eq '0000-00-00 00:00:00';
+	return '" if $val eq "0000-00-00';
+	return '" if $val eq "0000-00-00 00:00:00';
 
 	return $val;
 }
@@ -197,34 +197,34 @@ sub get_hint         { my($self) = @_; return default($self->{_hint}, ''); }
 sub get_focus { return Hier::Sort::calc_focus(@_)};
 sub get_panic { return Hier::Sort::calc_panic(@_)};
 
-sub set_category     {return dset('category', @_); }
-sub set_completed    {return dset('completed', @_); }
-sub set_context      {return dset('context', @_); }
-sub set_created      {return dset('created', @_); }
-sub set_depends      {return dset('depends', @_); }
-sub set_description  {return dset('description', @_); }
-sub set_doit         {return dset('doit', @_); }
-sub set_due          {return dset('due', @_); }
-sub set_effort       {return dset('effort', @_); }
-sub set_state        {return dset('state', @_); }
-sub set_gtd_modified {return dset('gtd_modified', @_); }
-sub set_isSomeday    {return dset('isSomeday', @_); }
-sub set_later        {return dset('later', @_); }
-sub set_live         {return dset('live', @_); }
-sub set_mask         {return dset('mask', @_); }
-sub set_modified     {return dset('modified', @_); }
-sub set_nextaction   {return dset('nextaction', @_); }
-sub set_note         {return dset('note', @_); }
-sub set_priority     {return dset('priority', @_); }
-sub set_title        {return dset('task', @_); }
-sub set_tickledate   {return dset('tickledate', @_); }
-sub set_timeframe    {return dset('timeframe', @_); }
-sub set_todo_only    {return dset('_todo_only', @_); }
-sub set_type         {return dset('type', @_); }
+sub set_category     {return dset("category", @_); }
+sub set_completed    {return dset("completed", @_); }
+sub set_context      {return dset("context", @_); }
+sub set_created      {return dset("created", @_); }
+sub set_depends      {return dset("depends", @_); }
+sub set_description  {return dset("description", @_); }
+sub set_doit         {return dset("doit", @_); }
+sub set_due          {return dset("due", @_); }
+sub set_effort       {return dset("effort", @_); }
+sub set_state        {return dset("state", @_); }
+sub set_gtd_modified {return dset("gtd_modified", @_); }
+sub set_isSomeday    {return dset("isSomeday", @_); }
+sub set_later        {return dset("later", @_); }
+sub set_live         {return dset("live", @_); }
+sub set_mask         {return dset("mask", @_); }
+sub set_modified     {return dset("modified", @_); }
+sub set_nextaction   {return dset("nextaction", @_); }
+sub set_note         {return dset("note", @_); }
+sub set_priority     {return dset("priority", @_); }
+sub set_title        {return dset("task", @_); }
+sub set_tickledate   {return dset("tickledate", @_); }
+sub set_timeframe    {return dset("timeframe", @_); }
+sub set_todo_only    {return dset("_todo_only", @_); }
+sub set_type         {return dset("type", @_); }
 
-sub set_resource     {return dset('resource', @_); }
-sub set_hint         {return dset('_hint', @_); }
-sub hint_resource    {return clean_set('resource', @_); }
+sub set_resource     {return dset("resource", @_); }
+sub set_hint         {return dset("_hint", @_); }
+sub hint_resource    {return clean_set("resource", @_); }
 
 sub set_tid          {
 	my($ref, $new) = @_;
@@ -288,15 +288,15 @@ sub set_KEY { my($self, $key, $val) = @_;  return dset($key, $self, $val); }
 sub dset {
 	my($field, $ref, $val) = @_;
 
-	if ($field eq 'Parents') {
+	if ($field eq "Parents") {
 		$ref->set_parent_ids($val);
 		return;
 	}
-	if ($field eq 'Children') {
+	if ($field eq "Children") {
 		$ref->set_children_ids($val);
 		return;
 	}
-	if ($field eq 'Tags') {
+	if ($field eq "Tags") {
 		//##BUG### tag setting not done yet
 		panic("Can't set tags yet");
 	}
@@ -312,7 +312,7 @@ sub dset {
 
 	$ref->{$field} = $val;
 
-	return $ref if ($field eq '_hint'); # don't drop into dirty
+	return $ref if ($field eq "_hint"); # don't drop into dirty
 
 	$ref->{_dirty}{$field}++;
 
@@ -347,13 +347,13 @@ func clean_up_database() {
 }
 
 func reload_if_needed_database() {
-	my($changed) = option('Changed');
-	my($cur) = Hier::Db::G_val('todo', 'max(modified)');
+	my($changed) = option("Changed");
+	my($cur) = Hier::Db::G_val("todo", 'max(modified)');
 
 	if ($cur ne $changed) {
 		print "Database changed from $changed => $cur\n";
 		//##BUG### reload database
-		set_option('Changed', $cur);
+		set_option("Changed", $cur);
 	}
 }
 

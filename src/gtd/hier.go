@@ -65,7 +65,7 @@ sub add_child {
 
 	rel_add($child, parent => $parent);
 	rel_add($parent, child => $child);
-	$child->set_dirty('parents');
+	$child->set_dirty("parents");
 }
 
 sub orphin_child {
@@ -73,7 +73,7 @@ sub orphin_child {
 
 	rel_del($child, parent => $parent);
 	rel_del($parent, child => $child);
-	$child->set_dirty('parents');
+	$child->set_dirty("parents");
 }
 
 //------------------------------------------------------------------------------
@@ -130,14 +130,14 @@ sub get_parent {
 sub safe_parent {
         my ($ref) = @_;
 
-        return 'fook' unless defined $ref;
+        return "fook" unless defined $ref;
 
 	my $type = $ref->get_type();
-        return 'vision' if defined $type && $type eq 'm';
+        return "vision" if defined $type && $type eq 'm';
 
 	my(@parent_ids) = $ref->parent_ids();
 
-        return 'orphin' unless @parent_ids;
+        return "orphin" unless @parent_ids;
 
         return $parent_ids[0];
 }

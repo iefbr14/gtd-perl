@@ -116,43 +116,43 @@ sub merge_project {
 //##	Merge: category
 //##	Merge: context
 //##	Merge: timeframe
-	merge_cct($master, $slave, 'category');
-	merge_cct($master, $slave, 'context');
-	merge_cct($master, $slave, 'timeframe');
+	merge_cct($master, $slave, "category");
+	merge_cct($master, $slave, "context");
+	merge_cct($master, $slave, "timeframe");
 
 //##	Merge: created (dateCreated)
 //##	Merge: due (deadline)
 //##	Merge: tickledate (tickleDate)
-	merge_date($master, $slave, 'created');
-	merge_date($master, $slave, 'due');
-	merge_date($master, $slave, 'tickledate');
+	merge_date($master, $slave, "created");
+	merge_date($master, $slave, "due");
+	merge_date($master, $slave, "tickledate");
 
 //##	Merge: completed (dateCompleted)
 	merge_completed($master, $slave);
 
 //##	Merge: nextaction
 //##	Merge: isSomeday
-	merge_yn($master, $slave, 'nextaction', 'y');
-	merge_yn($master, $slave, 'isSomeday', 'n');
+	merge_yn($master, $slave, "nextaction", 'y');
+	merge_yn($master, $slave, "isSomeday", 'n');
 
 
 //##	Merge: recur
 //##	Merge: recurdesc
 
 //##	Merge: priority
-	merge_date($master, $slave, 'doit');
-	merge_first($master, $slave, 'owner');
-	merge_first($master, $slave, 'private');
-	merge_first($master, $slave, 'palm_id');
+	merge_date($master, $slave, "doit");
+	merge_first($master, $slave, "owner");
+	merge_first($master, $slave, "private");
+	merge_first($master, $slave, "palm_id");
 
 	$master->set_effort(
 		($master->get_effort() || 0) +
 		($slave->get_effort() || 0)
 	);
 		
-	merge_first($master, $slave, 'resource');
-	merge_tag($master, $slave, 'depends');
-	merge_tag($master, $slave, 'tags');
+	merge_first($master, $slave, "resource");
+	merge_tag($master, $slave, "depends");
+	merge_tag($master, $slave, "tags");
 
 //##	Merge: parentId
 	re_parent($master, $slave);

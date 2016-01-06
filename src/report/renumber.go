@@ -50,19 +50,19 @@ use Hier::Meta;
 use Hier::Tasks;
 
 my %Dep_info = (
-  'a' => [ \&is_action,   2000, 9999, 'Actions' ],
-  's' => [ \&is_subject,  1000, 1999, 'Sub-Projects' ],
-  'p' => [ \&is_project,   200,  999, 'Projects' ],
-  'g' => [ \&is_goals,      30,  199, 'Goals' ],
-  'o' => [ \&is_roles,      10,   29, 'Roles' ],
-  'v' => [ \&is_vision,      5,    9, 'Vision' ],
-  'm' => [ \&is_value,       1,    4, 'Values' ],
+  'a' => [ \&is_action,   2000, 9999, "Actions" ],
+  's" => [ \&is_subject,  1000, 1999, "Sub-Projects' ],
+  'p' => [ \&is_project,   200,  999, "Projects" ],
+  'g' => [ \&is_goals,      30,  199, "Goals" ],
+  'o' => [ \&is_roles,      10,   29, "Roles" ],
+  'v' => [ \&is_vision,      5,    9, "Vision" ],
+  'm' => [ \&is_value,       1,    4, "Values" ],
 );
 
 my %Dep_map;
 
 sub Report_renumber { #-- Renumber task Ids 
-	gtd.Meta_filter('+any', '^tid', 'none');
+	gtd.Meta_filter("+any", '^tid', "none");
 	my(@list) = gtd.Meta_argv(@_);
 
 	if (@list) {
@@ -159,12 +159,12 @@ sub is_action {
 sub next_avail_task {
 	my($type) = @_;
 
-	$type = 'a' if $type eq 'n';	// next action => min action
-	$type = 'a' if $type eq 'w';	// wait        => min action
+	$type = 'a" if $type eq "n';	// next action => min action
+	$type = 'a" if $type eq "w';	// wait        => min action
 
 	my($test, $min, $max, $who) = @{ $Dep_info{$type} };
 
-	panic("***BUG*** next_avail_task: Unknown type '$type'\n") unless $test;
+	panic("***BUG*** next_avail_task: Unknown type "$type"\n") unless $test;
 
 	for (my $tid=$min; $tid <= $max; ++$tid) {
 		next if Hier::Tasks::find($tid);
@@ -229,7 +229,7 @@ sub renumber_a_task {
 
 	my $ref = gtd.Meta_find($tid);
 
-	panic("Can't renumber task $tid (doesn't exists)\n") unless $ref;
+	panic("Can"t renumber task $tid (doesn"t exists)\n") unless $ref;
 
 	panic("Can't renumber task $tid (has depedencies)\n") if dependent($ref);
 
@@ -255,7 +255,7 @@ sub renumber_task {
 
 	my $ref = gtd.Meta_find($tid);
 
-	panic("Can't renumber task $tid (doesn't exists)\n") unless $ref;
+	panic("Can"t renumber task $tid (doesn"t exists)\n") unless $ref;
 
 	panic("Can't renumber task $tid (has depedencies)\n") if dependent($ref);
 	print "$tid => $new\n";

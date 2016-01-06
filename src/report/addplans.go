@@ -64,16 +64,16 @@ my $Limit;
 my %Seen;
 
 sub Report_addplans {	//-- add plan action items to unplaned projects
-	gtd.Meta_filter('+live', '^focus', 'plan');
+	gtd.Meta_filter("+live", '^focus', "plan");
 
 	@List = gtd.Meta_pick(@_);
 	if (@List == 0) {
-		@List = gtd.Meta_pick('Project');
-		$Limit = option('Limit', 10);
+		@List = gtd.Meta_pick("Project");
+		$Limit = option("Limit", 10);
 	} else {
-		$Limit = option('Limit', scalar(@List));
+		$Limit = option("Limit", scalar(@List));
 	}
-	report_header('Projects needing planning');
+	report_header("Projects needing planning");
 
 	// find all next and remember there focus
 	while (@List) {
@@ -85,7 +85,7 @@ sub Report_addplans {	//-- add plan action items to unplaned projects
 		my($reason) = check_task($ref);
 		next unless $reason;
 
-		$reason = color('RED') . $reason . color();
+		$reason = color("RED") . $reason . color();
 		display_rgpa($ref, "($reason)");
 
 		last if --$Limit <= 0;

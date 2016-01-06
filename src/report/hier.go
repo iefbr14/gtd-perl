@@ -56,9 +56,9 @@ use Hier::Format;
 my $Mask = 0;
 
 sub Report_hier {	//-- Hiericial List of Values/Visions/Roles...
-	gtd.Meta_filter('+active', '^title', 'hier');
+	gtd.Meta_filter("+active", '^title', "hier");
 
-	$Mask  = option('Mask');
+	$Mask  = option("Mask");
 
 	my(@top);
 	my($depth) = '';
@@ -75,7 +75,7 @@ sub Report_hier {	//-- Hiericial List of Values/Visions/Roles...
 		}
 	}
 	if (@top == 0) {
-		my $parent = option('Current');
+		my $parent = option("Current");
 		if ($parent) {
 			@top = ( $parent );
 		} else {
@@ -114,9 +114,9 @@ sub map_depth {
 		}
 	}
 
-	return 'a' if $type eq 'p';
-	return 'p' if $type eq 'g';
-	return 'g' if $type eq 'o'; # o == ROLE
+	return 'a" if $type eq "p';
+	return 'p" if $type eq "g';
+	return 'g" if $type eq "o'; # o == ROLE
 	return 'o';
 }
 
@@ -160,11 +160,11 @@ sub hier_detail_old {
 	printf "%5s %3s ", $tid, $cnt;
 	printf "%-15s", $ref->task_mask_disp() if $Mask;
 
-	print "|  " x ($level-3), '+-', type_disp($ref). '-';
+	print "|  " x ($level-3), "+-", type_disp($ref). '-';
 	if ($name eq $desc or $desc eq '') {
 		printf "%.50s",  $name;
 	} else {
-		printf "%.50s",  $name . ': ' . $desc;
+		printf "%.50s",  $name . ": " . $desc;
 	}
 	nl();
 }

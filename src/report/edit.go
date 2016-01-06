@@ -55,9 +55,9 @@ use Hier::Format;
 sub Report_edit {	//-- Edit listed actions/projects
 	my($key, $val, $changed);
 
-	gtd.Meta_filter('+all', '^tid', 'none');
+	gtd.Meta_filter("+all", '^tid', "none");
 
-	@_ = ( option('Current') )  if scalar(@_) == 0;
+	@_ = ( option("Current") )  if scalar(@_) == 0;
 
 	my(@list) = gtd.Meta_pick(@_);
 	if (@list == 0) {
@@ -71,7 +71,7 @@ sub Report_edit {	//-- Edit listed actions/projects
 	}
 	close($ofd);
    
-	system('vi', "/tmp/todo.$$");
+	system("vi", "/tmp/todo.$$");
  
 	open(my $ifd, '<', "/tmp/todo.$$") or panic;
 	while (<$ifd>) {
@@ -119,9 +119,9 @@ sub save {
 		$val = $ref->get_KEY($key);
 
 		// Specal values from disp_ordered_dump
-		$val = $ref->disp_tags() if $key eq 'Tags';
-		$val = $ref->disp_parents() if $key eq 'Parents';
-		$val = $ref->disp_children() if $key eq 'Children';
+		$val = $ref->disp_tags() if $key eq "Tags";
+		$val = $ref->disp_parents() if $key eq "Parents";
+		$val = $ref->disp_children() if $key eq "Children";
 
 		$newval = $changed->{$key};
 

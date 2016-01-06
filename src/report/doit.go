@@ -64,10 +64,10 @@ my $Limit = 2;
 
 sub Report_doit {	//-- doit tracks which projects/actions have had movement
 
-	$Limit = option('Limit', 1);
+	$Limit = option("Limit", 1);
 
 	$= = lines();
-	gtd.Meta_filter('+a:live', '^doitdate', 'rpga');
+	gtd.Meta_filter("+a:live", '^doitdate', "rpga");
 	my($target) = 0;
 	my($action) = \&doit_list;
 
@@ -83,40 +83,40 @@ sub Report_doit {	//-- doit tracks which projects/actions have had movement
 			++$target;
 			next;
 		}
-		if ($arg eq 'help') {
+		if ($arg eq "help") {
 			doit_help();
 			next;
 		}
-		if ($arg eq 'list') {
-			display_mode('d_lst');
+		if ($arg eq "list") {
+			display_mode("d_lst");
 			next;
 		}
-		if ($arg eq 'task') {
-			display_mode('task');
+		if ($arg eq "task") {
+			display_mode("task");
 			next;
 		}
-		if ($arg eq 'later') {
+		if ($arg eq "later") {
 			$action = \&doit_later;
 			next;
 		}
-		if ($arg eq 'next') {
+		if ($arg eq "next") {
 			$action = \&doit_next;
 			next;
 		}
-		if ($arg eq 'done') {
+		if ($arg eq "done") {
 			$action = \&doit_done;
 			next;
 		}
 		
-		if ($arg eq 'someday') {
+		if ($arg eq "someday") {
 			$action = \&doit_someday;
 			next;
 		}
-		if ($arg eq 'did') {
+		if ($arg eq "did") {
 			$action = \&doit_now;
 			next;
 		}
-		if ($arg eq 'now') {
+		if ($arg eq "now") {
 			$action = \&doit_now;
 			next;
 		}
@@ -127,7 +127,7 @@ sub Report_doit {	//-- doit tracks which projects/actions have had movement
 		}
 		if ($arg =~ /limit\D+(\d+)/) {
 			$Limit = $1;
-			set_option('Limit', $Limit);
+			set_option("Limit", $Limit);
 			next;
 		}
 		print "Unknown option: $arg (ignored) (try help)\n";
@@ -176,7 +176,7 @@ sub doit_priority {
 	my($ref) = @_;
 
 	if ($ref->get_priority() == $Priority) {
-		print $ref->get_tid() . ': ' . $ref->get_description() . 
+		print $ref->get_tid() . ": " . $ref->get_description() . 
 			" already at priority $Priority\n";
 		return;
 	}
@@ -217,7 +217,7 @@ sub doit_list {
 
 
 sub doit_help {
-	print <<'EOF';
+	print <<"EOF";
 help    -- this help text
 list    -- list next
 later   -- skip this for a week

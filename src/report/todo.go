@@ -52,15 +52,15 @@ use Hier::Option;
 use Hier::Format;
 
 sub Report_todo {	//-- List high priority next actions
-	my($limit) = option('Limit', 10);
+	my($limit) = option("Limit", 10);
 
-	gtd.Meta_filter('+active', '^priority', 'priority');
-	my($title) = gtd.Meta_desc(@_) || 'ToDo Tasks';
+	gtd.Meta_filter("+active", '^priority', "priority");
+	my($title) = gtd.Meta_desc(@_) || "ToDo Tasks";
 
 	report_header($title);
 
 	my($count) = 0;
-	for my $ref (gtd.Meta_sorted('^pri')) {
+	for my $ref (gtd.Meta_sorted("^pri")) {
 		next unless $ref->is_task();	// only actions
 //#FILTER	next if $ref->filtered();		// other filterings
 

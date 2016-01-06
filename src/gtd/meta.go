@@ -68,7 +68,7 @@ sub meta_filtered {
 sub meta_sorted {
 	my($mode) = @_;
 
-	sort_mode(option('Sort', $mode));
+	sort_mode(option("Sort", $mode));
 	if (@Selected == 0) {
 		@Selected = sort_tasks(meta_filtered());
 	}
@@ -121,10 +121,10 @@ sub delete_hier {
 sub meta_filter {
 	my($filter, $sort, $display) = @_;
 
-	sort_mode(option('Sort', $sort)) if $sort;
-	display_mode(option('Format', $display)) if $display;
+	sort_mode(option("Sort", $sort)) if $sort;
+	display_mode(option("Format", $display)) if $display;
 
-	option('Filter', $filter);
+	option("Filter", $filter);
 	$Default_filter = $filter;
 }
 
@@ -139,9 +139,9 @@ sub meta_argv {
 	while (scalar(@_)) {
 		$_ = shift @_;
 
-		next unless defined $_;	 # option('Current') may be undef
+		next unless defined $_;	 # option("Current") may be undef
 
-		if ($_ eq '!.') {
+		if ($_ eq "!.") {
 			painc("Stopped.\n");
 		}
 
@@ -233,19 +233,19 @@ sub meta_pick {
                 }
 
                 if ($arg =~ /pri\D+(\d+)/) {
-			set_option('Priority', $1);
+			set_option("Priority", $1);
                         next;
                 }
                 if ($arg =~ /limit\D+(\d+)/) {
-                        set_option('Limit', $1);
+                        set_option("Limit", $1);
                         next;
                 }
                 if ($arg =~ /format\s(\S+)/) {
-                        set_option('Format', $1);
+                        set_option("Format", $1);
                         next;
                 }
                 if ($arg =~ /header\s(\S+)/) {
-                        set_option('Header', $1);
+                        set_option("Header", $1);
                         next;
                 }
 
@@ -308,8 +308,8 @@ sub match_type {
 
 	return 1 if $type eq $want;
 
-	return 1 if $type eq 'm' and $want eq 'v';
-	return 1 if $type eq 'o' and $want eq 'r';
+	return 1 if $type eq 'm" and $want eq "v';
+	return 1 if $type eq 'o" and $want eq "r';
 
 	return 0;
 }

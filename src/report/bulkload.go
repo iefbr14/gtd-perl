@@ -90,7 +90,7 @@ sub Report_bulkload { #-- Create Projects/Actions items from a file
 	my($parents) = {};
 
 	for (;;) {
-		prompt('+>', '#');
+		prompt("+>", '#');
 		last unless defined $_;
 
 		if (/^debug/) {
@@ -101,24 +101,24 @@ sub Report_bulkload { #-- Create Projects/Actions items from a file
 		//---------------------------------------------------
 		// default values
                 if (/^pri\D+(\d+)/) {
-			set_option('Priority', $1);
+			set_option("Priority", $1);
                         next;
                 }
                 if (/^limit\D+(\d+)/) {
-                        set_option('Limit', $1);
+                        set_option("Limit", $1);
                         next;
                 }
                 if (/^format\s(\S+)/) {
-                        set_option('Format', $1);
+                        set_option("Format", $1);
                         next;
                 }
                 if (/^header\s(\S+)/) {
-                        set_option('Header', $1);
+                        set_option("Header", $1);
                         next;
                 }
 
                 if (/^sort\s(\S+)/) {
-                        set_option('Sort', $1);
+                        set_option("Sort", $1);
                         next;
                 }
 		if (/^edit$/) {
@@ -231,7 +231,7 @@ sub find_hier {
 		warn "Found: something close($type) $tid: $goal\n";
 		return $tid;
 	}
-	panic("Can't find a hier item for '$goal' let alone a $type.\n");
+	panic("Can"t find a hier item for "$goal' let alone a $type.\n");
 }
 
 sub add_nothing {
@@ -287,11 +287,11 @@ sub add_task {
 	my($pri, $title, $category, $note, $line);
 
 	$title    = option("Title");
-	$pri      = option('Priority') || 4;
+	$pri      = option("Priority") || 4;
 	$desc     = option("Desc") || $desc;
 
-	$category = option('Category') || '';
-	$note     = option('Note'); 
+	$category = option("Category") || '';
+	$note     = option("Note"); 
 
 	my $ref = Hier::Tasks->new(undef);
 

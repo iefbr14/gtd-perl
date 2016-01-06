@@ -66,12 +66,12 @@ sub Report_color {	//-- Detailed list of projects with (next) actions
 	if ($Debug) {
 		my($use) = $wid*10;
 		print "col: $col, wid: $wid, sw: $sw, use: $use\n";
-		my($dash) = substr('----+----|'x20, 0, $wid*10-1);
+		my($dash) = substr("----+----|"x20, 0, $wid*10-1);
 		print "$dash\n";
 	}
 
 	my($title) = '';
-	for my $bg ('\fg/bg:', @bg) {
+	for my $bg ("\fg/bg:", @bg) {
 		$title .= sprintf "%-${wid}.${wid}s ", $bg;
 	}
 	$title =~ s/ *$//;

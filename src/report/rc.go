@@ -71,7 +71,7 @@ my $Child;
 my $Type;
 my $Info = {};
 
-my $Mode = option('Mode', 'task');
+my $Mode = option("Mode", "task");
 
 my $Filter = '-';
 my $Format = '-';
@@ -89,7 +89,7 @@ my($Parents) = {};	// parents we know about
 my($Cmds) = {
 	help    => \&rc_help,
 
-	'up'	=> \&rc_up,
+	"up"	=> \&rc_up,
 	'p'	=> \&rc_print,
 
 	option	=> \&rc_option,
@@ -104,9 +104,9 @@ my($Cmds) = {
 sub Report_rc { #-- rc - Run Commands
 	// init from command line.
 	// there are commands to override later
-	$Filter = option('Filter') || '-';
-	$Format = option('Format') || '-';
-	$Sort   = option('Sort')   || '-';
+	$Filter = option("Filter") || '-';
+	$Format = option("Format") || '-';
+	$Sort   = option("Sort")   || '-';
 
 //	my $OUT = $term->OUT || \*STDOUT;
 //       print $OUT $res, "\n" unless $@;
@@ -157,7 +157,7 @@ sub rc {
 
 	//##   .tid  =>  kanban .tid
 	if ($line =~ m/^\./) {
-		report('kanban', split(' ', $line));
+		report("kanban", split(' ', $line));
 		return;
 	}
 
@@ -173,7 +173,7 @@ sub rc {
 		return;
 	}
 
-	// check for task member updates ie: 'key:value' pairs
+	// check for task member updates ie: "key:value" pairs
 	if ($line =~ s/^(\w+)\:\s*//) {
 		rc_set_key($1, $line);
 		return;
@@ -212,11 +212,11 @@ sub rc_save {
 
 sub rc_help {
 	if (@_ && $_[0] ne '') {
-		report('help', @_);
+		report("help", @_);
 		return;
 	}
 
-print << 'EOF';
+print << "EOF";
    #        comments (and blank lines ignored)
    !        shell commands
    /        search and set task
@@ -243,7 +243,7 @@ sub rc_up {
 		return;
 	}
 
-	load_task_ref('Parent', $Pref->get_parent());
+	load_task_ref("Parent", $Pref->get_parent());
 }
 
 sub rc_option {
@@ -284,8 +284,8 @@ sub rc_filter {
 	
 	print "Filter $Filter => $mode\n";
 
-	set_option('Filter', dash_null($mode));
-	gtd.Meta_reset_filters($mode eq '-' ? '+live' : $mode);
+	set_option("Filter", dash_null($mode));
+	gtd.Meta_reset_filters($mode eq '-" ? "+live' : $mode);
 
 	$Filter = $mode;
 }
@@ -300,8 +300,8 @@ sub rc_format {
 	
 	print "Format $Format => $mode\n";
 
-	set_option('Format', dash_null($mode));
-	display_mode($mode eq '-' ? 'task' : $mode);
+	set_option("Format", dash_null($mode));
+	display_mode($mode eq '-' ? "task" : $mode);
 
 	$Format = $mode;
 }
@@ -316,8 +316,8 @@ sub rc_header {
 	
 	print "Header $Header => $mode\n";
 
-	set_option('Header', dash_null($mode));
-	display_mode($mode eq '-' ? 'task' : $mode);
+	set_option("Header", dash_null($mode));
+	display_mode($mode eq '-' ? "task" : $mode);
 
 	$Header = $mode;
 }
@@ -332,8 +332,8 @@ sub rc_sort {
 
 	print "Sort $Sort => $mode\n";
 
-	set_option('Sort', dash_null($mode));
-	sort_mode($mode eq '-' ? '^title' : $mode);
+	set_option("Sort", dash_null($mode));
+	sort_mode($mode eq '-" ? "^title' : $mode);
 
 	$Sort = $mode;
 }
@@ -349,7 +349,7 @@ sub rc_clear {
 	print "\e[H\e[2J";
 
 	if (@_) {
-		rc(join(' ', @_));	// shouldn't have to do this
+		rc(join(' ", @_));	// shouldn"t have to do this
 	}
 }
 
@@ -370,7 +370,7 @@ sub load_task {
 		return;
 	}
 
-	load_task_ref('Current', $ref);
+	load_task_ref("Current", $ref);
 }
 
 sub load_task_ref {
@@ -385,7 +385,7 @@ sub load_task_ref {
 	$Parents->{$type} = $Pid;
 
 	$Prompt = "$Pid>";
-	set_option('Current', $Pid);
+	set_option("Current", $Pid);
 		
 	print "$why($type): $Pid - $title\n";
 }
@@ -401,24 +401,24 @@ sub fixme {
 	//---------------------------------------------------
 	// default values
 	if (/^pri\D+(\d+)/) {
-		set_option('Priority', $1);
+		set_option("Priority", $1);
 		next;
 	}
 	if (/^limit\D+(\d+)/) {
-		set_option('Limit', $1);
+		set_option("Limit", $1);
 		next;
 	}
 	if (/^format\s(\S+)/) {
-		set_option('Format', $1);
+		set_option("Format", $1);
 		next;
 	}
 	if (/^header\s(\S+)/) {
-		set_option('Header', $1);
+		set_option("Header", $1);
 		next;
 	}
 
 	if (/^sort\s(\S+)/) {
-		set_option('Header', $1);
+		set_option("Header", $1);
 		next;
 	}
 
@@ -516,7 +516,7 @@ sub find_hier {
 		warn "Found: something close($type) $tid: $goal\n";
 		return $tid;
 	}
-	panic("Can't find a hier item for '$goal' let alone a $type.\n");
+	panic("Can"t find a hier item for "$goal' let alone a $type.\n");
 }
 
 sub add_nothing {
@@ -572,11 +572,11 @@ sub add_task {
 	my($pri, $title, $category, $note, $line);
 
 	$title    = option("Title");
-	$pri      = option('Priority') || 4;
+	$pri      = option("Priority") || 4;
 	$desc     = option("Desc") || $desc;
 
-	$category = option('Category') || '';
-	$note     = option('Note'); 
+	$category = option("Category") || '';
+	$note     = option("Note"); 
 
 	my $ref = Hier::Tasks->new(undef);
 
@@ -620,15 +620,15 @@ sub report {
 	print "### Report $report args: @_\n" if $Debug;
 
 	// force options back to our defaults (including no defaults)
-	set_option('Filter', dash_null($Filter));
-	set_option('Format', dash_null($Format));
-	set_option('Header', dash_null($Header));
-	set_option('Sort',   dash_null($Sort));
+	set_option("Filter", dash_null($Filter));
+	set_option("Format", dash_null($Format));
+	set_option("Header", dash_null($Header));
+	set_option("Sort",   dash_null($Sort));
 
 //	$Cmds->{$report} = \&"Report_$report";
 
 	run_report($report, @_);
-	display_mode(option('Mode', 'task'));
+	display_mode(option("Mode", "task"));
 	Hier::Tasks::reload_if_needed_database();
 }
 

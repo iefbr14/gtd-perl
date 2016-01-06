@@ -80,7 +80,7 @@ my $P_ref;
 // the other is the prompter version with defaults
 //
 sub Report_new {	//-- create a new action or project
-	gtd.Meta_filter('+all', '^tid', 'none');
+	gtd.Meta_filter("+all", '^tid', "none");
 
 	my($want) = '';
 		
@@ -92,7 +92,7 @@ sub Report_new {	//-- create a new action or project
 		}
 	}
 
-	my $parent = option('Current');
+	my $parent = option("Current");
 	if ($parent) {
 		$P_ref = Hier::Tasks::find($parent);
 		unless ($P_ref) {
@@ -104,7 +104,7 @@ sub Report_new {	//-- create a new action or project
 			$want =~ tr{mvogpawi}
 				   {vogpaXXX};
 		//##BUG### in mapping sub-type prompmote actions to projects?
-		panic("Won't create sub-actions of actions") if $want eq 'X';
+		panic("Won"t create sub-actions of actions") if $want eq "X';
 		}
 	}
 
@@ -142,11 +142,11 @@ sub new_item {
 	my($pri, $task, $category, $note, $desc, $line);
 
 	$task     = option("Title") || $title;
-	$pri      = option('Priority') || 4;
+	$pri      = option("Priority") || 4;
 	$desc     = option("Desc") || '';
 
-	$category = option('Category') || '';
-	$note     = option('Note') || ''; 
+	$category = option("Category") || '';
+	$note     = option("Note") || ''; 
 
 	my($tid) = next_avail_task($type);
 	my $ref = Hier::Tasks->new($tid);
@@ -189,12 +189,12 @@ sub new_action {
 
 	first("Enter $type_name: Task, Desc, Category, Notes...");
 
-	$title    = input("Title", option('Title'));
-	$pri      = input("Priority", option('Priority')) || 4;
+	$title    = input("Title", option("Title"));
+	$pri      = input("Priority", option("Priority")) || 4;
 	$desc     = prompt_desc("Desc", $desc);
 
-	$category = input("Category", option('Category'));
-	$note     = prompt_desc("Note", option('Note')); 
+	$category = input("Category", option("Category"));
+	$note     = prompt_desc("Note", option("Note")); 
 
 	my($tid) = next_avail_task('a');
 	my $ref = Hier::Tasks->new($tid);
@@ -235,12 +235,12 @@ sub new_project {
 
 	first("Enter $type_name: Category, Title, Description, Outcome...");
 
-	$category = input("Category", option('Category'));
-	$title    = input("Title", option('Title'));
-	$pri      = option('Priority') || 4;
+	$category = input("Category", option("Category"));
+	$title    = input("Title", option("Title"));
+	$pri      = option("Priority") || 4;
 
-	$desc     = prompt_desc("Description", option('Desc'));
-	$note     = prompt_desc("Outcome", option('Note'));
+	$desc     = prompt_desc("Description", option("Desc"));
+	$note     = prompt_desc("Outcome", option("Note"));
 
 	my($tid) = next_avail_task($type);
 	my $ref = Hier::Tasks->new($tid);

@@ -90,7 +90,7 @@ sub init {
 
 //	$w->minsize(qw(200 200));
 	$w->title("GTD");
-	$w->configure(-background => 'cyan');
+	$w->configure(-background => "cyan");
 
 	my(@reports);
 	foreach my $report (get_reports()) {
@@ -136,22 +136,22 @@ sub init {
         );
 
 	my $tree;
-	$tree = $w->Scrolled('Tree', 
+	$tree = $w->Scrolled("Tree", 
 		-scrollbars => "ose", 	// Onlyneeded South and but always East
 		-width => 80,
 		-height => 40,
 	)->pack(
-		-fill => 'both',
+		-fill => "both",
 		-expand => 1,
 	);
 
 	$tree->configure(-command => sub { hier_edit($tree, @_) });
 	$pkg->{tree} = $tree;
 
-//	$tree->tag_configure('p', -foreground => 'pink');
-//	$tree->tag_configure('a', -background => 'gray');
-//	$tree->tag_configure('n', -background => 'cyan');
-//	$tree->tag_configure('deleted', 
+//	$tree->tag_configure('p', -foreground => "pink");
+//	$tree->tag_configure('a', -background => "gray");
+//	$tree->tag_configure('n', -background => "cyan");
+//	$tree->tag_configure("deleted", 
 	
 	walk_tree($pkg);
 }
@@ -160,9 +160,9 @@ sub walk_tree {
 	my($pkg) = @_;
 
 	my($tree) = $pkg->{tree};
-	$tree->delete('all');
+	$tree->delete("all");
 
-	gtd.Meta_filter('+all', '^tid', 'simple');
+	gtd.Meta_filter("+all", '^tid', "simple");
 	my($walk) = new Hier::Walk(
 		detail => \&hier_detail,
 		done   => \&end_detail,
@@ -226,7 +226,7 @@ sub hier_detail {
 		} else {
 			$ptext .= "$name: $desc";
 		}
-//		my($text) = new Tk::Text($ptext, -forground => 'pink');
+//		my($text) = new Tk::Text($ptext, -forground => "pink");
 
 		eval {
 			$tree->add($path, 
@@ -261,7 +261,7 @@ print "Edit: $path => $tid\n";
 	$path =~ s/_\d+\./:/g;
 
 	$w->title("GTD item $tid => $path");
-	$w->configure(-background => 'cyan');
+	$w->configure(-background => "cyan");
 
 	Menu($pkg, $w,
                 "Item", [
@@ -280,7 +280,7 @@ print "Edit: $path => $tid\n";
         );
 
 	my($t);
-        $pkg->{-textWin} = $t = $w->Scrolled('Text',
+        $pkg->{-textWin} = $t = $w->Scrolled("Text",
                 -width => 80,
                 -height => 20,
         )->pack;
@@ -288,7 +288,7 @@ print "Edit: $path => $tid\n";
 
         # Fill the textbox with a list of all the files in the directory.
 
-        $t->bind('<Button-3>' => sub {
+        $t->bind("<Button-3>" => sub {
                 my($l) = @_;
 
                 print "button-3: l=$l\n";
@@ -305,7 +305,7 @@ print "Edit: $path => $tid\n";
 
 		$val =~ s/\r/\n/g;
 
-		 $t->insert('insert', "$key\t\t$val\n");
+		 $t->insert("insert", "$key\t\t$val\n");
 	}
 	$t->see("insert");
 
@@ -325,7 +325,7 @@ print "Run: $report\n";
 		return;
 	}
 	my($pid);
-	$pid = open(REPORT, '-|');
+	$pid = open(REPORT, "-|");
 	if ($pid == 0) {
 		//### In child, do NOT use Tk's override exit ####
 		eval "Report_$report();";	// call report with argv
@@ -362,7 +362,7 @@ print "Run: $report\n";
 
 	my $t;
 
-        $pkg->{-textWin} = $t = $w->Scrolled('Text',
+        $pkg->{-textWin} = $t = $w->Scrolled("Text",
                 -width => 80,
                 -height => 30,
         )->pack();
@@ -371,7 +371,7 @@ print "Run: $report\n";
         # Fill the textbox with a list of all the files in the directory.
 
 	while(<REPORT>) {
-		 $t->insert('insert', $_);
+		 $t->insert("insert", $_);
 	}
 	$t->see("insert");
 
@@ -391,7 +391,7 @@ sub dep_path {
                 $ref = $ref->get_parent();
                 last unless $ref;
 
-                $path = $ref->get_type() . '_' . $ref->get_tid() . '.' . $path;
+                $path = $ref->get_type() . '_" . $ref->get_tid() . ".' . $path;
         }
         return $path;
 }

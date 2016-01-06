@@ -52,7 +52,7 @@ use Hier::Option;
 sub Report_clean {	//-- clean unused categories
 	my $Yesterday = get_today(-1);
 
-	gtd.Meta_filter('+all', '^tid', 'task');
+	gtd.Meta_filter("+all", '^tid', "task");
 	my($done, $tickle, $type);
 	
 	for my $ref (gtd.Meta_selected()) {
@@ -84,7 +84,7 @@ sub set_active {
 
 	if ($ref->is_someday()) {
 		$ref->set_isSomeday('n');
-		display_task($ref, 'active');
+		display_task($ref, "active");
 		return;
 	}
 	return;
@@ -95,7 +95,7 @@ sub fix_done_0000 {
 
 	return unless $done =~ /^0000/;
 
-	display_task($ref, 'clean done bug');
+	display_task($ref, "clean done bug");
 	$ref->set_completed(undef);
 	return;
 }
@@ -105,7 +105,7 @@ sub clear_next {
 
 	return unless $ref->get_nextaction() eq 'y';
 
-	display_task($ref, 'clear next action');
+	display_task($ref, "clear next action");
 	$ref->set_nextaction('n');
 }
 
@@ -114,7 +114,7 @@ sub clear_tickle {
 
 	return unless $ref->get_tickledate();
 
-	display_task($ref, 'clear tickle date');
+	display_task($ref, "clear tickle date");
 	$ref->set_tickledate(undef);
 }
 

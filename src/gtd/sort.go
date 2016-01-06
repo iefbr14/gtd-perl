@@ -62,7 +62,7 @@ sub sort_mode {
 
 	$mode =~ s/^\^//;	// default is asending 
 	if ($mode =~ s/^\~//) {	// desending
-		option('Reverse', 1);
+		option("Reverse", 1);
 	}
 	$mode = lc($mode);
 
@@ -77,7 +77,7 @@ sub sort_mode {
 }
 
 sub sort_tasks {
-	my($rev) = option('Reverse', 0);
+	my($rev) = option("Reverse", 0);
 
 	if ($rev) {
 		return reverse sort { &$Sorter($a,$b) } @_;
@@ -251,8 +251,8 @@ sub Meta_key {
 
 	my($title) = lc_title($ref);
 
-	my($p_title) = '--';
-	my($g_title) = '--';
+	my($p_title) = "--";
+	my($g_title) = "--";
 	my($p_ref) = $ref->get_parent();
 	if ($p_ref) {
 		$p_title = lc_title($p_ref);

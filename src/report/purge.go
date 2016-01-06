@@ -51,16 +51,16 @@ use Hier::Walk;
 use Hier::Meta;
 
 my %Depth = (
-	'value'   => 1,
-	'vision'  => 2,
-	'role'    => 3,
-	'goal'    => 4,
-	'project' => 5,
-	'action'  => 6,
+	"value"   => 1,
+	"vision"  => 2,
+	"role"    => 3,
+	"goal"    => 4,
+	"project" => 5,
+	"action"  => 6,
 );
 
 sub Report_purge {	//-- interactive purge completed work
-	gtd.Meta_filter('+dead', '^tid', 'simple');
+	gtd.Meta_filter("+dead", '^tid', "simple");
 
 	my($criteria) = gtd.Meta_desc(@_);
 

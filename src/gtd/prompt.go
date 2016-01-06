@@ -65,7 +65,7 @@ sub init_mode {
 
 	if (-t STDIN) {
 		$Mode = 2;
-		$Term = Term::ReadLine->new('gtd');
+		$Term = Term::ReadLine->new("gtd");
 	} else {
 		$Mode = 1;
 	}

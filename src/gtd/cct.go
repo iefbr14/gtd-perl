@@ -90,10 +90,10 @@ sub _table {
 
 	$type = lc($type);
 
-	return Categories if $type eq 'category';
-	return Contexts   if $type eq 'context';
-	return Timeframes if $type eq 'timeframe';
-	return Tags       if $type eq 'tag';
+	return Categories if $type eq "category";
+	return Contexts   if $type eq "context";
+	return Timeframes if $type eq "timeframe";
+	return Tags       if $type eq "tag";
 
 	panic("Unknown CCT table type: $type");
 }

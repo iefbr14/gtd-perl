@@ -52,15 +52,16 @@ use Hier::Format;
 use Hier::Option;
 use Hier::Sort;
 
-sub Report_items {	//-- list titles for any filtered class (actions/projects etc)
+//-- list titles for any filtered class (actions/projects etc)
+func Report_items(args ...string) {
 	// everybody into the pool by name
-	gtd.Meta_filter('+any', '^title', 'item');	
+	gtd.Meta_filter("+any", "^title", "item");	
 
 	my($name) = gtd.Meta_desc(@_);
 	if ($name) {
 		my($want) = type_val($name);
 		if ($want) {
-			$want = 'p' if $want eq 's';
+			$want = 'p" if $want eq "s';
 			list_items($want, $name);
 			return;
 		}

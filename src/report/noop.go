@@ -58,7 +58,7 @@ our $Debug = 0;
 sub Noop {	//-- No Operation
 	print "### Debug noop = $Debug\n" if $Debug;
 
-	gtd.Meta_filter('+live', '^tid', 'tid');
+	gtd.Meta_filter("+live", '^tid', "tid");
 
 	my($list) = gtd.Meta_pick(@_);
 

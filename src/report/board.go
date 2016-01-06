@@ -67,12 +67,12 @@ my %Seen;
 
 sub Report_board {	//-- report board of projects/actions
 	// counts use it and it give a context
-	gtd.Meta_filter('+active', '^age', 'simple');
+	gtd.Meta_filter("+active", '^age', "simple");
 
 	my(@list) = gtd.Meta_pick(@_);
 
 	if (@list == 0) {
-		@list = gtd.Meta_pick('roles');
+		@list = gtd.Meta_pick("roles");
 	}
 
 	$Lines = lines();
@@ -169,7 +169,7 @@ sub check_a_role {
 
 	display_rgpa($role_ref);
 
-	print_color('BOLD');
+	print_color("BOLD");
 	printf("----- %-${Cols}s ", "Analyse");
 	printf("----- %-${Cols}s ", "Devel");
 	printf("----- %-${Cols}s ", "Test");
@@ -262,16 +262,16 @@ sub check_group {
 		$color = check_want($ref) || check_empty($ref);
 	}
 
-	if ($state eq 'w' && color eq '') {
-		$color = color('CYAN');
+	if ($state eq 'w" && color eq "') {
+		$color = color("CYAN");
 	}
 
-	if ($state eq 'i' && color eq '') {
-		$color = color('CYAN');
+	if ($state eq 'i" && color eq "') {
+		$color = color("CYAN");
 	}
 
-	if ($state eq 'r' && color eq '') {
-		$color = color('BROWN');
+	if ($state eq 'r" && color eq "') {
+		$color = color("BROWN");
 	}
 
 	save_item($color, $ref, $var);
@@ -304,7 +304,7 @@ sub grab_child {
 		next if $child->is_someday();
 		next unless $child->is_nextaction();
 
-		save_item(color('LIME'), $child, $var);
+		save_item(color("LIME"), $child, $var);
 		return;
 	}
 }
@@ -315,7 +315,7 @@ sub check_want {
 	my($title) = $pref->get_title();
 
 	if ($title =~ /\[\[.*\]\]/) {
-		return color('GREEN');
+		return color("GREEN");
 	};
 	return '';
 }
@@ -329,11 +329,11 @@ sub check_empty {
 	for my $ref ($pref->get_children()) {
 		next if $ref->get_completed();
 		
-		return color('PINK');
+		return color("PINK");
 		++$children;
 	}
 
-	return color('PURPLE') if $children;
+	return color("PURPLE") if $children;
 	return '';
 }
 
@@ -345,7 +345,7 @@ sub check_done {
 	for my $ref ($pref->get_children()) {
 		next unless $ref->get_completed();
 		
-		return color('PURPLE');
+		return color("PURPLE");
 	}
 	return '';
 }
@@ -368,20 +368,20 @@ sub check_children {
 	}
 
 	if ($count == 0) {
-		return color('BROWN');
+		return color("BROWN");
 	}
 	if ($next <= 0) {
-		return color('RED');
+		return color("RED");
 	}
 
 	if ($count == $done) {
-		return color('PURPLE');
+		return color("PURPLE");
 	}
 
 	if ($pref->get_state() eq 'w') {
-		return color('CYAN');
+		return color("CYAN");
 	}
-	return color('GREEN');
+	return color("GREEN");
 }
 
 sub check_proj {

@@ -32,7 +32,7 @@ my $Default_level = 'm';
 sub filtered_reason {
 	my($ref) = @_;
 
-	return $ref->{_filtered} || '-filtered';
+	return $ref->{_filtered} || "-filtered";
 }
 
 sub filtered {
@@ -62,7 +62,7 @@ sub reset_filters {
 }
 
 sub apply_filters {
-	//$Debug = option('Debug');
+	//$Debug = option("Debug");
 
 	// learn about actions
 	for my $ref (tasks_matching_type('a')) {
@@ -150,7 +150,7 @@ sub apply_cct_filters {
 sub kill_children {
 	my($ref) = @_;
 
-	$ref->{_filtered} = '-cct';
+	$ref->{_filtered} = "-cct";
 	if ($Debug) {
 		warn "#-CCT ", $ref->get_tid(),
 			": ", $ref->get_title(), "\n";
@@ -253,41 +253,41 @@ sub add_filter {
 
 	warn "#-Parse filter: $rule\n" if $Debug;
 
-	if ($rule eq '~~') {
+	if ($rule eq "~~") {
 		warn "#-Filters reset\n" if $Debug;
 		@Filters = ();
 		return;
 	}
 
 	if ($rule =~ s/^~//) {	// tilde
-		task_filter($rule, '!', '');
+		task_filter($rule, '!", "');
 		return;
 	}
 
 	if ($rule =~ s/^\-//) {	// dash
-		task_filter($rule, '-', '');
+		task_filter($rule, '-", "');
 		return;
 	}
 	if ($rule =~ s/^\+=//) {
-		task_filter($rule, '', '=');
+		task_filter($rule, '", "=');
 		return;
 	}
 
 	if ($rule =~ s/^\+>//) {
-		task_filter($rule, '', '>');
+		task_filter($rule, '", ">');
 		return;
 	}
 	if ($rule =~ s/^\+<//) {
-		task_filter($rule, '', '<');
+		task_filter($rule, '", "<');
 		return;
 	}
 	if ($rule =~ s/^\+!//) {
-		task_filter($rule, '!', '');
+		task_filter($rule, '!", "');
 		return;
 	}
 
 	if ($rule =~ s/^\+//) {
-		task_filter($rule, '', '');
+		task_filter($rule, '", "');
 		return;
 	}
 
@@ -297,13 +297,13 @@ sub add_filter {
 sub dispflags {
 	my($flags) = @_;
 
-	return 'fook' unless defined $flags;
+	return "fook" unless defined $flags;
 
 	my($z) = '.';
 	my($t) = '.';
 
 	//         654321
-	my($a) = '------';
+	my($a) = "------";
 	//              Dn swt odsi
 
 	substr($a, -1, 1) = 'x' if $flags & A_DONE;
@@ -323,12 +323,12 @@ sub dispflags {
 	$z = 's' if ($flags & Z_MASK) == Z_SLOW;
 	$z = 'i' if ($flags & Z_MASK) == Z_IDEA;
 
-	my($p) = '--';
+	my($p) = "--";
 
 	substr($p,  0, 1) = 'F' if $flags & P_FUTURE;
 	substr($p,  1, 1) = 'X' if $flags & P_DONE;
 
-	my($g) = '---';
+	my($g) = "---";
 	substr($g,  0, 1) = 'l' if $flags & G_LIVE;
 	substr($g,  1, 1) = 'f' if $flags & G_FUTURE;
 	substr($g,  2, 1) = 'x' if $flags & G_DONE;
@@ -460,9 +460,9 @@ sub proj_mask {
 
 sub meta_find_context {
 	my($cct) = @_;
-	my($Category) = Hier::CCT->use('Category');
-	my($Context) = Hier::CCT->use('Context');
-	my($Timeframe) = Hier::CCT->use('Timeframe');
+	my($Category) = Hier::CCT->use("Category");
+	my($Context) = Hier::CCT->use("Context");
+	my($Timeframe) = Hier::CCT->use("Timeframe");
 
 	// match case sensative first
 	if ($Context->get($cct)) {
@@ -480,7 +480,7 @@ sub meta_find_context {
 		$Filter_Category = $cct;
 		return;
 	}
-	for my $key (Hier::CCT::keys('Tag')) {
+	for my $key (Hier::CCT::keys("Tag")) {
 		next unless $key eq $cct;
 
 		warn "#-Set tag:            $key\n" if $Debug;
@@ -510,7 +510,7 @@ sub meta_find_context {
 		$Filter_Category = $key;
 		return;
 	}
-	for my $key (Hier::CCT::keys('Tag')) {
+	for my $key (Hier::CCT::keys("Tag")) {
 		next unless lc($key) eq lc($cct);
 
 		warn "#-Set tag:            $key\n" if $Debug;
@@ -549,8 +549,8 @@ sub cct_wanted {
 }
 
 sub add_filter_tags {
-	if (option('Tag')) {
-		foreach my $tag (split(',', option('Tag'))) {
+	if (option("Tag")) {
+		foreach my $tag (split(',", option("Tag'))) {
 			$Filter_Tags{$tag}++;
 		}
 	}
@@ -568,11 +568,11 @@ sub map_filter_name {
 		$Default_level = $1;
 	}
 
-	return (\&filter_any, '=', '*')	if $word =~ /^any/i;
-	return (\&filter_any, '=', '=')	if $word =~ /^all/i;
-	return (\&filter_any, '=', 'l')	if $word =~ /^list/i;
-	return (\&filter_any, '=', 'h')	if $word =~ /^hier/i;
-	return (\&filter_any, '=', 't')	if $word =~ /^task/i;
+	return (\&filter_any, '=", "*')	if $word =~ /^any/i;
+	return (\&filter_any, '=", "=')	if $word =~ /^all/i;
+	return (\&filter_any, '=", "l')	if $word =~ /^list/i;
+	return (\&filter_any, '=", "h')	if $word =~ /^hier/i;
+	return (\&filter_any, '=", "t')	if $word =~ /^task/i;
 
 
 	return (\&filter_done, '>','')	if $word =~ /^done/i;
@@ -583,11 +583,11 @@ sub map_filter_name {
 //	return (\&filter_next, '<','')	if $word =~ /^pure_next/i;
 // we need to re-thing this live-next vs next
 
-	return (\&filter_next, '><','')	if $word =~ /^next/i;
-	return (\&filter_active, '><','')	if $word =~ /^active/i;
-	return (\&filter_live, '><','')	if $word =~ /^live/i;
-	return (\&filter_dead, '><','')	if $word =~ /^dead/i;
-	return (\&filter_idle, '><','')	if $word =~ /^idle/i;
+	return (\&filter_next, "><",'')	if $word =~ /^next/i;
+	return (\&filter_active, "><",'')	if $word =~ /^active/i;
+	return (\&filter_live, "><",'')	if $word =~ /^live/i;
+	return (\&filter_dead, "><",'')	if $word =~ /^dead/i;
+	return (\&filter_idle, "><",'')	if $word =~ /^idle/i;
 
 	return (\&filter_wait, '<','')	if $word =~ /^wait/i;
 	return (\&filter_wait, '<','')	if $word =~ /^tickle/i;
@@ -639,9 +639,9 @@ sub apply_ref_filters {
 			filter_walk_up($ref, $reason);
 		} elsif ($dir eq '>') {
 			filter_walk_down($ref, $reason);
-		} elsif ($dir eq '<>') {
+		} elsif ($dir eq "<>") {
 			filter_walk_up_down($ref, $reason);
-		} elsif ($dir eq '><') {
+		} elsif ($dir eq "><") {
 			filter_walk_down_up($ref, $reason);
 		}
 		return;
@@ -736,13 +736,13 @@ sub filter_task {
 	my($ref, $arg) = @_;
 
 	return '?' unless $ref->is_task();
-	return '+task';
+	return "+task";
 }
 
 sub filter_done {
 	my($ref, $arg) = @_;
 
-	return '+done' if $ref->is_completed();
+	return "+done" if $ref->is_completed();
 	return '?';
 }
 
@@ -751,7 +751,7 @@ sub filter_pure_next {
 	my($ref, $arg) = @_;
 
 	return '?' unless $ref->is_task();
-	return '+next' if $ref->get_nextaction() eq 'y';
+	return "+next" if $ref->get_nextaction() eq 'y';
 	return '?';
 }
 
@@ -759,7 +759,7 @@ sub filter_pure_next {
 sub filter_tickle {
 	my($ref, $arg) = @_;
 
-	return '+tickle' if $ref->get_tickle();
+	return "+tickle" if $ref->get_tickle();
 	return '?';
 }
 
@@ -767,7 +767,7 @@ sub filter_wait {
 	my($ref, $arg) = @_;
 
 	my($type) = $ref->get_type();
-	return '+wait' if $type eq 'w';
+	return "+wait" if $type eq 'w';
 	return '?';
 }
 
@@ -779,7 +779,7 @@ sub filter_late {
 	return '?' unless $due;
 
 	if ($due le $Today) {
-		return '+late'.$due;
+		return "+late".$due;
 	}
 	return '?';
 }
@@ -792,7 +792,7 @@ sub filter_due {
 	return '?' unless $due;
 
 	if ($due ge $Today and $due le $Soon) {
-		return '+due'.$due;
+		return "+due".$due;
 	}
 	return '?';
 }
@@ -802,7 +802,7 @@ sub filter_slow {
 	my($ref, $arg) = @_;
 
 	my($pri) = $ref->get_priority();
-	return '+slow' if $pri == 4;
+	return "+slow" if $pri == 4;
 	return '?';
 }
 
@@ -811,7 +811,7 @@ sub filter_idea {
 	my($ref, $arg) = @_;
 
 	my($pri) = $ref->get_priority();
-	return '+idea' if $pri == 5;
+	return "+idea" if $pri == 5;
 	return '?';
 }
 
@@ -820,7 +820,7 @@ sub filter_some {
 	my($ref, $arg) = @_;
 
 	my($mask) = task_mask($ref);
-	return '+some' if ($mask & T_MASK) == T_FUTURE;
+	return "+some" if ($mask & T_MASK) == T_FUTURE;
 	return '?';
 }
 
@@ -830,7 +830,7 @@ sub filter_next {
 	my($mask) = task_mask($ref);
 
 	if ($ref->is_task()) {
-		return '+live=n' if ($mask & T_MASK) == T_NEXT;
+		return "+live=n" if ($mask & T_MASK) == T_NEXT;
 	} else {
 		return filter_live($ref, $arg);
 	}
@@ -846,14 +846,14 @@ sub filter_active {
 
 	my($mask) = task_mask($ref);
 
-	return '-act=d' if ($mask & A_MASK) == A_DONE;
-	return '-act=s' if ($mask & A_MASK) == A_SOMEDAY;
-	return '-act=t' if ($mask & A_MASK) == A_TICKLE;
-	return '-act=w' if ($mask & A_MASK) == A_WAITING;
+	return "-act=d" if ($mask & A_MASK) == A_DONE;
+	return "-act=s" if ($mask & A_MASK) == A_SOMEDAY;
+	return "-act=t" if ($mask & A_MASK) == A_TICKLE;
+	return "-act=w" if ($mask & A_MASK) == A_WAITING;
 
 	if ($ref->is_task()) {
-		return '+act=n' if ($mask & T_MASK) == T_NEXT;
-		return '+act=a' if ($mask & T_MASK) == T_ACTIVE;
+		return "+act=n" if ($mask & T_MASK) == T_NEXT;
+		return "+act=a" if ($mask & T_MASK) == T_ACTIVE;
 	}
 
 	return '?';
@@ -867,12 +867,12 @@ sub filter_live {
 
 	my($mask) = task_mask($ref);
 
-	return '-live=d' if ($mask & A_MASK) == A_DONE;
+	return "-live=d" if ($mask & A_MASK) == A_DONE;
 
 	if ($ref->is_task()) {
-		return '+live=n' if ($mask & T_MASK) == T_NEXT;
-		return '+live=a' if ($mask & T_MASK) == T_ACTIVE;
-		return '+live=f' if ($mask & T_MASK) == T_FUTURE;
+		return "+live=n" if ($mask & T_MASK) == T_NEXT;
+		return "+live=a" if ($mask & T_MASK) == T_ACTIVE;
+		return "+live=f" if ($mask & T_MASK) == T_FUTURE;
 	}
 
 	return '?';
@@ -885,7 +885,7 @@ sub filter_dead {
 	return '?' unless $ref->is_task();
 
 	my($mask) = task_mask($ref);
-	return '+dead=d' if ($mask & T_MASK) == T_DONE;
+	return "+dead=d" if ($mask & T_MASK) == T_DONE;
 	return '?';
 }
 
