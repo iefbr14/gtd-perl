@@ -7,7 +7,7 @@ BEGIN {
 	use Exporter   ();
 	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
-	# set the version for version checking
+	// set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw( 
@@ -26,9 +26,9 @@ use Hier::Resource;
 my $Display = \&disp_simple;
 my $Header  = undef;
 
-my $Wiki = 0;		#### display is in wiki format ####
+my $Wiki = 0;		//### display is in wiki format ####
 
-# task field order used by dump
+// task field order used by dump
 my @Order = (qw(
 	todo_id
 	type
@@ -72,7 +72,7 @@ sub display_mode {
 		'pri'   => 'priority',
 	);
 
-	# alias re-mappings
+	// alias re-mappings
 	$mode = lc($mode);
 	if (defined $alias{$mode}) {
 		$mode = $alias{$mode};
@@ -84,7 +84,7 @@ sub display_mode {
 
 	my(%mode) = (
 		'none'     => \&disp_none,
-		'list'     => \&disp_title,	# same as title but no headers
+		'list'     => \&disp_title,	// same as title but no headers
 
 		'tid'      => \&disp_tid,
 		'title'    => \&disp_title,
@@ -124,7 +124,7 @@ sub display_mode {
 
 	my(%report) = (
 		'none'     => 'none',
-		'list'     => 'none',	# same as title but no headers
+		'list'     => 'none',	// same as title but no headers
 
 		'tid'      => 'report',
 		'title'    => 'report',
@@ -168,7 +168,7 @@ sub display_mode {
 
 	$mode = 'simple' if $mode eq '';
 
-	# process header modes
+	// process header modes
 	unless (defined $mode{$mode}) {
 		warn "Unknown display mode: $mode\n";
 		return;
@@ -184,11 +184,11 @@ sub display_mode {
 	$Header = \&header_none;
 	$Header = $header{$mode} if defined $header{$mode};
 
-	# pick sorting?
+	// pick sorting?
 	return;
 }
 
-#==============================================================================
+//==============================================================================
 sub report_header {
 	my($title) = option('Title') || '';
 	if (@_) {
@@ -233,7 +233,7 @@ sub summary_line {
 	return format_summary(@_);
 }
 
-#==============================================================================
+//==============================================================================
 sub display_header {
 	&$Header(\*STDOUT, @_);
 }
@@ -271,7 +271,7 @@ sub display_fd_task {
 }
 
 sub disp_none {
-	# no display
+	// no display
 }
 
 sub disp_tid {
@@ -413,15 +413,15 @@ sub disp_print {
 
 			next if $val eq '';
 
-			$val =~ s/\r//gm;	# all returns
-			$val =~ s/^/\t\t/gm;	# tab at start of line(s)
+			$val =~ s/\r//gm;	// all returns
+			$val =~ s/^/\t\t/gm;	// tab at start of line(s)
 			$val =~ s/^\t// if length($key) >= 7;
 			print $fd "$key:$val\n";
 		} else {
 			print $fd "#$key:\n";
 		}
 	}
-	###BUG### handle missing keys from @Ordered
+	//##BUG### handle missing keys from @Ordered
 	print $fd "Tags:\t", $ref->disp_tags(),"\n";
 	print $fd "Parents:\t", $ref->disp_parents(),"\n";
 	print $fd "Children:\t", $ref->disp_children(),"\n";
@@ -443,15 +443,15 @@ sub disp_ordered_dump {
 		$val = $ref->get_KEY($key);
 		if (defined $val) {
 			chomp $val;
-			$val =~ s/\r//gm;	# all returns
-			$val =~ s/^/\t\t/gm;	# tab at start of line(s)
+			$val =~ s/\r//gm;	// all returns
+			$val =~ s/^/\t\t/gm;	// tab at start of line(s)
 			$val =~ s/^\t// if length($key) >= 7;
 			print $fd "$key:$val\n";
 		} else {
 			print $fd "#$key:\n";
 		}
 	}
-	###BUG### handle missing keys from @Ordered
+	//##BUG### handle missing keys from @Ordered
 	print $fd "Tags:\t", $ref->disp_tags(),"\n";
 	print $fd "Parents:\t", $ref->disp_parents(),"\n";
 	print $fd "Children:\t", $ref->disp_children(),"\n";
@@ -469,8 +469,8 @@ sub disp_unordered_dump {
 		$val = $ref->get_KEY($key);
 		if (defined $val) {
 			chomp $val;
-			$val =~ s/\r//gm;	# all returns
-			$val =~ s/^/\t\t/gm;	# tab at start of line(s)
+			$val =~ s/\r//gm;	// all returns
+			$val =~ s/^/\t\t/gm;	// tab at start of line(s)
 			$val =~ s/^\t// if length($key) >= 7;
 			print $fd "$key:$val\n";
 		} else {
@@ -544,7 +544,7 @@ sub display_rgpa {
 	my $tid  = $ref->get_tid();
 	my $type = $ref->get_type();
 
-	if ($type eq 'o') {	# 'o' == Role
+	if ($type eq 'o') {	// 'o' == Role
 		return if $tid == $Prev_role;
 
 		if ($Wiki) {
@@ -857,7 +857,7 @@ sub disp_doit_csv {
 
 	$desc =~ s/\n.*//s;
 	print {$fd} join("\t", $tid, $pri, $cat, $doit, $pname, $task, $desc), "\n";
-	#print join("\t", $tid, $pri, $cat, $task, $due, $desc), "\n";
+	//print join("\t", $tid, $pri, $cat, $task, $due, $desc), "\n";
 }
 	
 sub header_doit_norm {
@@ -883,8 +883,8 @@ $tid,  $pri, $cat,       $doit,    $desc
                                    $desc
 .
 
-#	header_doit_list();
-	$~ = "DOIT";	# set STDOUT format name to HIER
+//	header_doit_list();
+	$~ = "DOIT";	// set STDOUT format name to HIER
 
 	$tid = $ref->get_tid();
 
@@ -965,7 +965,7 @@ $tid,$key,$pri, $cat,        $due,    $task
                                                   $desc
 .
 
-	$~ = "PRIO";	# set STDOUT format name to PRIO
+	$~ = "PRIO";	// set STDOUT format name to PRIO
 
 	$tid       = $ref->get_tid();
 	$pri       = $ref->get_priority();

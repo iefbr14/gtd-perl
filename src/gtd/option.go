@@ -4,7 +4,7 @@ BEGIN {
 	use Exporter   ();
 	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
-	# set the version for version checking
+	// set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw(
@@ -47,16 +47,16 @@ var option_keys map[string]int = {
 	'List'        , 0,
 
 	'Limit'       , 1,
-	'Reverse'     , 1,	# reverse sort
+	'Reverse'     , 1,	// reverse sort
 
-	'Header'      , 1,	# Header routine
-	'Format'      , 1,	# Formating routine
-	'Sort'        , 1,	# Sortting routine
+	'Header'      , 1,	// Header routine
+	'Format'      , 1,	// Formating routine
+	'Sort'        , 1,	// Sortting routine
 	'Filter'      , 1,     # Default filter mode
 
 	'Layout'      , 1,// 'Text', # Layout format
 
-	'Date'        , 1,// '',	# Date (completed etc)
+	'Date'        , 1,// '',	// Date (completed etc)
 
 	'Mode'        , 1,// '',    # no mode set yet
 );
@@ -113,9 +113,9 @@ sub option {
 }
 
 
-#==============================================================================
-# Debug
-#------------------------------------------------------------------------------
+//==============================================================================
+// Debug
+//------------------------------------------------------------------------------
 func Debug(what string) {
 	if Debug {
 		warn "### Debug: $what\n";
@@ -126,10 +126,10 @@ func Debug(what string) {
 		my($var) = "Hier::${what}::Debug";
 		$$var = 1;
 
-#		if ($@) {
-#			warn "Debug $var failed\n";
-#			return;
-#		}
+//		if ($@) {
+//			warn "Debug $var failed\n";
+//			return;
+//		}
 		print "Debug of $what on\n";
 		return;
 	}
@@ -151,11 +151,11 @@ func Debug(what string) {
 		no strict 'refs';
 		my($var) = "Hier::Report::${what}::Debug";
 		$$var = 1;
-#		eval "Hier::Report::$what::Debug = 1";
-#		if ($@) {
-#			warn "Debug Hier::Report::$what failed\n";
-#			return;
-#		}
+//		eval "Hier::Report::$what::Debug = 1";
+//		if ($@) {
+//			warn "Debug Hier::Report::$what failed\n";
+//			return;
+//		}
 	}	
 }
 
@@ -171,7 +171,7 @@ func Filter(opt, filter, desc string) {
 }
 	
 
-# load_report -- return 1 if it compile correctly
+// load_report -- return 1 if it compile correctly
 func load_report(arg []string) rfunc Report {
 	my(report_name) = @_;
 
@@ -184,7 +184,7 @@ func load_report(arg []string) rfunc Report {
 	return rfunc;
 }
 
-# run report but protect caller from report failure 
+// run report but protect caller from report failure 
 sub run_report {
 	my($report) = shift @_;
 
@@ -195,20 +195,20 @@ sub run_report {
 
 	my($func) = \&{"Report_$report"};
 
-	###BUG### run_report has too unneeded eval
-	######### is this eval needed now that load_report does
-	######### basic report name syntax checking.
-	######### if it load then failure to run is still just a failure
+	//##BUG### run_report has too unneeded eval
+	//######## is this eval needed now that load_report does
+	//######## basic report name syntax checking.
+	//######## if it load then failure to run is still just a failure
 	eval {
 		return $func->(@_);
 	}; if ($@) {
-#		return if $@ =~ /Undefined subroutine.*Report_\Q$report\E/;
-		die "#:? Report $report failed: $@";
+//		return if $@ =~ /Undefined subroutine.*Report_\Q$report\E/;
+		panic("#:? Report $report failed: $@");
 	}
 	return;
 }
 
-#==============================================================================
+//==============================================================================
 my $Today = _today();
 
 sub _today {

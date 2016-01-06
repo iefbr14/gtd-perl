@@ -40,7 +40,7 @@ BEGIN {
 	use Exporter   ();
 	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
-	# set the version for version checking
+	// set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw(&Report_tsort);
@@ -54,7 +54,7 @@ use Hier::Format;
 our $Debug = 0;
 my %Depth;
 
-sub Report_tsort {	#-- write out hier as as set of nodes
+sub Report_tsort {	//-- write out hier as as set of nodes
 	for my $ref (meta_matching_type('a')) {
 		up($ref);
 	}
@@ -69,7 +69,7 @@ sub Report_tsort {	#-- write out hier as as set of nodes
 
 	for my $task (@_) {
 		my $ref = meta_find($task);
-#		down($ref, 1);
+//		down($ref, 1);
 		dpos($ref, 1);
 	}
 
@@ -150,7 +150,7 @@ sub up {
 	for my $cid (@_) {
 		next if $id != $cid;
 
-		die "Stack fault: $id in @_\n";
+		panic("Stack fault: $id in @_\n");
 	}
 		
 

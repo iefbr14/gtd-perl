@@ -40,7 +40,7 @@ BEGIN {
 	use Exporter   ();
 	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
-	# set the version for version checking
+	// set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw( &Report_records );
@@ -48,21 +48,21 @@ BEGIN {
 
 use Hier::Util;
 use Hier::Meta;
-use Hier::Filter;	# task_mask_disp
+use Hier::Filter;	// task_mask_disp
 use Hier::Format;
 use Hier::Sort;
 
-sub Report_records {	#-- detailed list all records for a type
-	# everybody into the pool
+sub Report_records {	//-- detailed list all records for a type
+	// everybody into the pool
 	meta_filter('+active', '^tid', 'simple');
 
 	my($desc) = join(' ', @_);
 
-	my($name) = ucfirst(meta_desc(@_));	# some out
+	my($name) = ucfirst(meta_desc(@_));	// some out
 	if ($name) {
 		my($want) = type_val($name);
 		unless ($want) {
-			die "**** Can't understand Type $name\n";
+			panic("**** Can't understand Type $name\n");
 		}
 		$want = 'p' if $want eq 's';
 		list_records($want, $name.' '.$desc);
@@ -79,7 +79,7 @@ sub list_records {
 	my($tid, $proj, $type, $f, $reason, $kids, $acts);
 	my($Dates) = '';
 
-	# find all records.
+	// find all records.
 	for my $ref (sort_tasks meta_all()) {
 		$tid  = $ref->get_tid();
 		$type = $ref->get_type();

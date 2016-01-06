@@ -40,7 +40,7 @@ BEGIN {
 	use Exporter   ();
 	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
-	# set the version for version checking
+	// set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw(&Report_review);
@@ -52,11 +52,11 @@ use Hier::Option;
 use Hier::Format;
 use Hier::Sort;
 
-my $Mode = 'p';	# project, doit, next-actions, actions, someday
+my $Mode = 'p';	// project, doit, next-actions, actions, someday
 
 my($List) = 0; ###BUG### should be an option
 
-sub Report_review {	#-- Review all projects with actions
+sub Report_review {	//-- Review all projects with actions
 	meta_filter('+active', '^doitdate', 'simple');
 	my $desc = meta_desc(@_);
 
@@ -92,7 +92,7 @@ sub reload {
 	} elsif ($Mode eq 'w') {
 		mode_type('a');
 	} else {
-		die "Unknown mode: $Mode (Projects, Someday, Next, Actions, Doit, Waiting\n";
+		panic("Unknown mode: $Mode (Projects, Someday, Next, Actions, Doit, Waiting\n");
 	}
 }
 
@@ -136,7 +136,7 @@ sub mode_projects {
 	my($proj_cnt) = 0;
 	my($ref, $proj, %wanted, %counted, %actions);
 
-	# find all next and remember there projects
+	// find all next and remember there projects
 	for my $ref (sort_tasks meta_matching_type('p')) {
 		next if $ref->filtered();
 		next if $ref->is_later();
@@ -161,10 +161,10 @@ sub get_status {
 	$_ = prompt('?', '#');
 	return unless defined $_;
 
-	###BUG### '!' command should be part of prompt Term mode
-	###BUG### ':' command should be part of prompt to call rc
-	###BUG### ^C need to be handled in Prompt
-	###BUG### ^D eof need to propigate up nicely
+	//##BUG### '!' command should be part of prompt Term mode
+	//##BUG### ':' command should be part of prompt to call rc
+	//##BUG### ^C need to be handled in Prompt
+	//##BUG### ^D eof need to propigate up nicely
 
     foreach $_ (split(';', $_)) {
 	if (/^h/ or /^\?/) {
@@ -173,9 +173,9 @@ sub get_status {
 	}
 
 	if (/^q/) {
-		###BUG### quit need to propigate up nicely
-		###BUG### :quit need to propigate up nicely from rc
-		die "Quit\n";
+		//##BUG### quit need to propigate up nicely
+		//##BUG### :quit need to propigate up nicely from rc
+		panic("Quit\n");
 	}
 	if (/^m/) {
 		s/^\S+\s+//;
@@ -323,7 +323,7 @@ $tid,  $pri, $cat,       $doit,    $desc
 ~~                               ^<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                                    $desc
 .
-	$~ = "DOIT";	# set STDOUT format name to HIER
+	$~ = "DOIT";	// set STDOUT format name to HIER
 
 	foreach my $ref (@_) {
 		$tid = $ref->get_tid();
@@ -354,7 +354,7 @@ $tid,  $pri, $cat,       $doit,    $desc
 		$gid      = $gref->get_tid();
 		$gname    = $gref->get_title();
 
-#		next if $gref->hier_filtered();
+//		next if $gref->hier_filtered();
 
 		if ($List) {
 			$desc =~ s/\n.*//s;
@@ -395,7 +395,7 @@ f :    -- forward later : days
 p :    -- priorty : 
 
 EOF
-#limit:  -- Set the doit limit to this number of items
+//limit:  -- Set the doit limit to this number of items
 }
 
 1;  # don't forget to return a true value from the file

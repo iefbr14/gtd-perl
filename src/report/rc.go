@@ -49,7 +49,7 @@ BEGIN {
 	use Exporter   ();
 	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
-	# set the version for version checking
+	// set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw(&Report_rc);
@@ -81,10 +81,10 @@ my $Sort   = '-';
 my $Prompt = '>';
 our $Debug = 0;
 
-my($Pid) = '';	# current Parrent task;
-my($Pref);	# current Parrent task reference;
+my($Pid) = '';	// current Parrent task;
+my($Pref);	// current Parrent task reference;
 
-my($Parents) = {};	# parents we know about
+my($Parents) = {};	// parents we know about
 
 my($Cmds) = {
 	help    => \&rc_help,
@@ -102,14 +102,14 @@ my($Cmds) = {
 };
 
 sub Report_rc { #-- rc - Run Commands
-	# init from command line.
-	# there are commands to override later
+	// init from command line.
+	// there are commands to override later
 	$Filter = option('Filter') || '-';
 	$Format = option('Format') || '-';
 	$Sort   = option('Sort')   || '-';
 
-#	my $OUT = $term->OUT || \*STDOUT;
-#       print $OUT $res, "\n" unless $@;
+//	my $OUT = $term->OUT || \*STDOUT;
+//       print $OUT $res, "\n" unless $@;
 
 	for (;;) {
 		prompt($Prompt, '#');
@@ -127,16 +127,16 @@ sub Report_rc { #-- rc - Run Commands
 sub rc {
 	my($line) = @_;
 
-	### remove leading white space from commands.
+	//## remove leading white space from commands.
 	$line =~ s/^\s+//;
 
-	###   :cmd  =>  rc command mode (noop here)
+	//##   :cmd  =>  rc command mode (noop here)
 	if ($line =~ s/^\://) {
-		### continue this is redundent
+		//## continue this is redundent
 	}
 
 	if ($line =~ s/^set\s+//) {
-		## continue as if set wasn't said
+		//# continue as if set wasn't said
 	}
 
 	if ($line =~ s/^debug\s*//) {
@@ -155,25 +155,25 @@ sub rc {
 		return;
 	}
 
-	###   .tid  =>  kanban .tid
+	//##   .tid  =>  kanban .tid
 	if ($line =~ m/^\./) {
 		report('kanban', split(' ', $line));
 		return;
 	}
 
-	###   /key  =>  search  key
+	//##   /key  =>  search  key
 	if ($line =~ s/^\///) {
 		rc_find_tasks($line);
 		return;
 	}
 
-	###   !cmd  =>  shell out for cmd
+	//##   !cmd  =>  shell out for cmd
 	if ($line =~ s/^\!//) {
 		system($line);
 		return;
 	}
 
-	# check for task member updates ie: 'key:value' pairs
+	// check for task member updates ie: 'key:value' pairs
 	if ($line =~ s/^(\w+)\:\s*//) {
 		rc_set_key($1, $line);
 		return;
@@ -271,9 +271,9 @@ sub rc_print {
 	}
 }
 
-#==============================================================================
-# Mode setting
-#------------------------------------------------------------------------------
+//==============================================================================
+// Mode setting
+//------------------------------------------------------------------------------
 sub rc_filter {
 	my($mode) = @_;
 
@@ -338,18 +338,18 @@ sub rc_sort {
 	$Sort = $mode;
 }
 
-#==============================================================================
-# Utility builtins
-#------------------------------------------------------------------------------
+//==============================================================================
+// Utility builtins
+//------------------------------------------------------------------------------
 sub rc_clear {
-	###BUG### this should call ff and have it
-	######### clear the screen in termial mode
+	//##BUG### this should call ff and have it
+	//######## clear the screen in termial mode
 
 	local($|) = 1;
 	print "\e[H\e[2J";
 
 	if (@_) {
-		rc(join(' ', @_));	# shouldn't have to do this
+		rc(join(' ', @_));	// shouldn't have to do this
 	}
 }
 
@@ -363,7 +363,7 @@ sub load_task {
 
 	rc_save();
 
-	# get context
+	// get context
 	my($ref) = meta_find($tid);
 	unless ($ref) {
 		print "Can't find tid: $tid\n";
@@ -390,7 +390,7 @@ sub load_task_ref {
 	print "$why($type): $Pid - $title\n";
 }
 
-#==============================================================================
+//==============================================================================
 
 sub fixme {
 	my($action) = \&add_nothing;
@@ -398,8 +398,8 @@ sub fixme {
 
 	my(@lines);
 
-	#---------------------------------------------------
-	# default values
+	//---------------------------------------------------
+	// default values
 	if (/^pri\D+(\d+)/) {
 		set_option('Priority', $1);
 		next;
@@ -422,7 +422,7 @@ sub fixme {
 		next;
 	}
 
-	#---------------------------------------------------
+	//---------------------------------------------------
 
 
 	if (s/^([a-z]+):\s*//) {
@@ -441,7 +441,7 @@ sub fixme {
 		&$action($Parents, $desc);
 
 		$Pid = find_hier('r', $_);
-		die unless $Pid;
+		panic("No parge $_") unless $Pid;
 		$Parents->{r} = $Pid;
 		next;
 	}
@@ -480,7 +480,7 @@ sub fixme {
 sub rc_find_tasks {
 	my($pattern) = @_;
 
-	$pattern =~ s=/$==;	# remove trailing /
+	$pattern =~ s=/$==;	// remove trailing /
 
 	my(@list);
 
@@ -516,13 +516,13 @@ sub find_hier {
 		warn "Found: something close($type) $tid: $goal\n";
 		return $tid;
 	}
-	die "Can't find a hier item for '$goal' let alone a $type.\n";
+	panic("Can't find a hier item for '$goal' let alone a $type.\n");
 }
 
 sub add_nothing {
 	my($parents, $desc) = @_;
 
-	# do nothing
+	// do nothing
 	print "# nothing pending\n" if $Debug;
 
 	if ($desc) {
@@ -619,13 +619,13 @@ sub report {
 	return unless load_report($report);
 	print "### Report $report args: @_\n" if $Debug;
 
-	# force options back to our defaults (including no defaults)
+	// force options back to our defaults (including no defaults)
 	set_option('Filter', dash_null($Filter));
 	set_option('Format', dash_null($Format));
 	set_option('Header', dash_null($Header));
 	set_option('Sort',   dash_null($Sort));
 
-#	$Cmds->{$report} = \&"Report_$report";
+//	$Cmds->{$report} = \&"Report_$report";
 
 	run_report($report, @_);
 	display_mode(option('Mode', 'task'));

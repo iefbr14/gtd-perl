@@ -40,7 +40,7 @@ BEGIN {
 	use Exporter   ();
 	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
-	# set the version for version checking
+	// set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw( &Report_task );
@@ -51,8 +51,8 @@ use Hier::Meta;
 use Hier::Sort;
 use Hier::Format;
 
-sub Report_task {	#-- quick List by various methods
-	meta_filter('+g:live', '^title', 'task');	# Tasks filtered by goals
+sub Report_task {	//-- quick List by various methods
+	meta_filter('+g:live', '^title', 'task');	// Tasks filtered by goals
 
 	my($title) = join(' ', @_);
 

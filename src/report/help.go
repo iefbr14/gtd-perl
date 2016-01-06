@@ -41,7 +41,7 @@ BEGIN {
 	use Exporter   ();
 	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
-	# set the version for version checking
+	// set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw(&Report_help);
@@ -55,14 +55,14 @@ use Hier::Format;
 our $OurPath;
 
 my(%Helps) = (
-#------------------------------------------------------------------------------
-# Obsolete Sac view of projects vs gts view of projects
+//------------------------------------------------------------------------------
+// Obsolete Sac view of projects vs gts view of projects
 	'Sac' => <<'EOF',
 (gtd) Value => Vision => Role => Goal => Project => Action
 (sac)                  Client => Project => Task => Item
 EOF
 
-#------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 	'Selection' => <<'EOF',
   tid       -- task id
   /title    -- match any with title
@@ -70,7 +70,7 @@ EOF
                (T == A,P,G,R,V)
 EOF
 
-#------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 	'Filters' => <<'EOF',
 ~NAME -- exclude those of the type (check first)
 +NAME -- include those of the type (check last)
@@ -101,7 +101,7 @@ acts - hier has sub-actions
 
 EOF
 
-#------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 	'Sort' => <<'EOF',
 id/tid	      - by task id
 task/title    - by task name (title)
@@ -120,7 +120,7 @@ status        - by completed if done otherwise by modified.
 rgpa/goaltask - by task withing goal
 EOF
 
-#------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 	'Types' => <<'EOF',
 m - value
 v - vision
@@ -138,7 +138,7 @@ C - checklist
 T - item
 EOF
 
-#------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 	'Project-Verbs' => <<'EOF',
 * Finalize
 * Resolve
@@ -157,7 +157,7 @@ EOF
 * Set-up 
 EOF
 
-#------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 	'Action-Verbs' => <<'EOF',
 * Call
 * Review
@@ -176,7 +176,7 @@ EOF
 * Sort
 EOF
 
-#------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 	'Planning' => <<'EOF',
 1. Define purpose & principles (why)
 2. Outcome visioning
@@ -185,7 +185,7 @@ EOF
 5. Identify next actions
 EOF
 
-#------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 	'Agile' => <<'EOF',
 Using 'kanban' and 'board' commands to refine project state.
 Then by iterating over those items to create momentum.
@@ -193,7 +193,7 @@ EOF
 
 );
 
-sub Report_help {	#-- Help on commands
+sub Report_help {	//-- Help on commands
 	my($f, $path);
 	my($dir) = $OurPath;
 
@@ -216,7 +216,7 @@ sub Report_help {	#-- Help on commands
 	$dir =~ s=/help.pm==;
 	my($report) = "$dir/$help.pm";
 	if (-f $report) {
-		###BUG### should look at other args for perldoc args
+		//##BUG### should look at other args for perldoc args
 		system('perldoc', $report);
 		return;
 	}

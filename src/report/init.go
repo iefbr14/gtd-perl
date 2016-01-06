@@ -40,24 +40,24 @@ BEGIN {
 	use Exporter   ();
 	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
-	# set the version for version checking
+	// set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw(&Report_goals);
 }
 
-sub Report_init {	#-- Init ~/.todo structure
+sub Report_init {	//-- Init ~/.todo structure
 	my($home) = $ENV{HOME};
 
 	my($todo) = "$home/.todo";
 	unless (-d $todo) {
-		mkdir $todo, 0700 or die "Can't mkdir $todo ($!)\n";
+		mkdir $todo, 0700 or panic("Can't mkdir $todo ($!)\n");
 		print "mkdir $todo\n";
 	}
 
 	my($ini) = "$todo/Access.yaml";
 	unless (-f $ini) {
-		open(my $fh, '>', $ini) or die "Can't create $ini ($!)\n";
+		open(my $fh, '>', $ini) or panic("Can't create $ini ($!)\n");
 		print {$fh} <<'EOF';
 gtd:
     host:      localhost

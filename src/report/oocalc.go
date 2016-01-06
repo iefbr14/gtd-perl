@@ -40,7 +40,7 @@ BEGIN {
 	use Exporter   ();
 	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
-	# set the version for version checking
+	// set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw(&Report_oocalc);
@@ -50,7 +50,7 @@ use Hier::Util;
 use Hier::Meta;
 use Hier::Resource;
 
-sub Report_oocalc {	#-- Project Summary for a role
+sub Report_oocalc {	//-- Project Summary for a role
 	meta_filter('+live', '^tid', 'none');
 	my @want = meta_argv(@_);
 
@@ -68,9 +68,9 @@ sub load_roles {
 
 	my(%roles);
 
-	# find all next and remember there projects
+	// find all next and remember there projects
 	for my $ref (meta_matching_type('o')) {
-##FILTER	next if $ref->filtered();
+//#FILTER	next if $ref->filtered();
 
 		my $pid = $ref->get_tid();
 		my $role = $ref->get_title();
@@ -130,7 +130,7 @@ sub get_actions {
 	my(@some) = ();
 	my(@done) = ();
 
-	# figure out which order.
+	// figure out which order.
 	foreach my $ref ($pref->get_children()) {
 		next if $ref->filtered();
 
@@ -151,9 +151,9 @@ sub get_actions {
 		push(@doit, $ref);
 	}
 
-	if (@next == 0) {	# no next actions
+	if (@next == 0) {	// no next actions
 		if (@doit == 0 && @some == 0 && @done == 0) {
-			# needs planning			
+			// needs planning			
 			return ([ $gtitle, $pid, $ptitle,
 				'', "", '', 
 				join(':', pnum($gref), pnum($pref), '0')
@@ -167,7 +167,7 @@ sub get_actions {
 				]);
 				
 		} elsif (@doit == 0 && @some == 0) {
-			# is complete
+			// is complete
 
 			return ([ $gtitle, $pid, $ptitle,
 				'', "", '', 
@@ -180,14 +180,14 @@ sub get_actions {
 				join(':', pnum($gref), pnum($pref), '6')
 			]);
 		}
-		# pick best
+		// pick best
 		@next = ( @doit, @some, @done ) [0];
 	}
 
 	my($tid, $title, $hours, $pri);
 
 	if ($pref->get_completed() or $pref->is_someday()) {
-		# slice it down to first item only
+		// slice it down to first item only
 		@next = ( $next[0] );
 	}
 
@@ -228,15 +228,15 @@ sub new_calc {
 	$Sheet = 0;
 
 	$Calc = OpenOffice::OOCBuilder->new();
-	# - Set Meta.xml data
+	// - Set Meta.xml data
 	$Calc->set_title ('GTD');
 	$Calc->set_author ('Drew Sullivan');
 	$Calc->set_subject ('gtd oocalc');
 
-#	$sheet->set_comments ('Fill in your comments here');
-#	$sheet->set_keywords ('openoffice autogeneration', 'OpenOffice::OOBuilder');
-#	$sheet->push_keywords ('OpenOffice::OOCBuilder');
-#	$sheet->set_meta (1, 'name 1', 'value 1');
+//	$sheet->set_comments ('Fill in your comments here');
+//	$sheet->set_keywords ('openoffice autogeneration', 'OpenOffice::OOBuilder');
+//	$sheet->push_keywords ('OpenOffice::OOCBuilder');
+//	$sheet->set_meta (1, 'name 1', 'value 1');
 }
 
 sub new_sheet {
@@ -251,7 +251,7 @@ sub new_sheet {
 sub save_row {
 	my($line, @row) = @_;
 
-	#my($pri) = pop @row;
+	//my($pri) = pop @row;
 	my($pri) = $row[-1];
 	my($g,$p,$t);
 	if ($line > 1) {
@@ -300,15 +300,15 @@ sub set_color {
 	$Calc->set_bgcolor($c{'pink'})	if $pri == 1;
 	$Calc->set_bgcolor($c{'cyan'})	if $pri == 2;
 
-#	$Calc->set_bgcolor($c{'red'})	if $pri == 1;
-#	$Calc->set_bgcolor($c{'pink'})	if $pri == 2;
-#	$Calc->set_bgcolor($c{'cyan'})	if $pri == 3;
+//	$Calc->set_bgcolor($c{'red'})	if $pri == 1;
+//	$Calc->set_bgcolor($c{'pink'})	if $pri == 2;
+//	$Calc->set_bgcolor($c{'cyan'})	if $pri == 3;
 
 
-#	$Calc->set_bgcolor('blue')	if $pri == 3;
+//	$Calc->set_bgcolor('blue')	if $pri == 3;
 
-#	$Calc->set_bgcolor('FFCC99') if $pri == 4; # yellow
-#	$Calc->set_bgcolor('FFDD99') if $pri == 5; # orange
+//	$Calc->set_bgcolor('FFCC99') if $pri == 4; # yellow
+//	$Calc->set_bgcolor('FFDD99') if $pri == 5; # orange
 
 	$Calc->set_bgcolor($c{'blue'}) if $pri == 6; # Plan
 	$Calc->set_bgcolor($c{'ivory'}) if $pri == 7; # Someday
@@ -356,7 +356,7 @@ sub save_row {
 	my($col) = 1;
 	for my $value (@row) {
 		$Calc->updateCell($Sheet, $line, ++$col, $value);
-#	        $Calc->updateCell($Sheet, $line, $col, $value, $string);
+//	        $Calc->updateCell($Sheet, $line, $col, $value, $string);
 	}
 }
 

@@ -40,7 +40,7 @@ BEGIN {
 	use Exporter   ();
 	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
-	# set the version for version checking
+	// set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw( &Report_dump &dump_ordered_ref );
@@ -51,11 +51,11 @@ use Hier::Meta;
 use Hier::Format;
 
 
-sub Report_dump {	#-- dump records in edit format
-	# everybody into the pool by id 
+sub Report_dump {	//-- dump records in edit format
+	// everybody into the pool by id 
 	meta_filter('+any', '^tid', 'dump');	
 
-	my($name) = ucfirst(meta_desc(@_));	# some out
+	my($name) = ucfirst(meta_desc(@_));	// some out
 	if ($name) {
 		if ($name =~ /^\d+/) {
 			dump_list($name);
@@ -66,8 +66,8 @@ sub Report_dump {	#-- dump records in edit format
 			warn "**** Can't understand Type $name\n";
 			return 1;
 		}
-		###BUG### dump needs to handle sub-projects properly
-		$want = 'p' if $want eq 's';	# sub-project are real
+		//##BUG### dump needs to handle sub-projects properly
+		$want = 'p' if $want eq 's';	// sub-project are real
 		list_dump($want, $name);
 		return;
 	}
@@ -97,12 +97,12 @@ sub list_dump {
 	my($pid, $ref, $proj, $type, $f, $kids, $acts);
 	my($Dates) = '';
 
-	# find all records.
+	// find all records.
 	for my $ref (meta_sorted('^tid')) {
 		$type = $ref->get_type();
 		next if $want_type && $type ne $want_type;
 
-##FILTER	next if $ref->filtered();
+//#FILTER	next if $ref->filtered();
 	
 		display_task($ref);
 	}

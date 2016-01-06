@@ -40,7 +40,7 @@ BEGIN {
 	use Exporter   ();
 	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
-	# set the version for version checking
+	// set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw(&Report_purge);
@@ -59,7 +59,7 @@ my %Depth = (
 	'action'  => 6,
 );
 
-sub Report_purge {	#-- interactive purge completed work
+sub Report_purge {	//-- interactive purge completed work
 	meta_filter('+dead', '^tid', 'simple');
 
 	my($criteria) = meta_desc(@_);
@@ -68,11 +68,11 @@ sub Report_purge {	#-- interactive purge completed work
 		done   => \&end_detail,
 	);
 
-	die "Criteria $criteria ignore for purge (re-write purge)\n";
+	panic("Criteria $criteria ignore for purge (re-write purge)\n");
 	$walk->walk('m');
 }
 
-# purge deletes on walk back up.
+// purge deletes on walk back up.
 sub end_detail {
 	my($ref) = @_;
 

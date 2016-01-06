@@ -60,7 +60,7 @@ BEGIN {
 	use Exporter   ();
 	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
-	# set the version for version checking
+	// set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw(&Report_bulkload);
@@ -98,8 +98,8 @@ sub Report_bulkload { #-- Create Projects/Actions items from a file
 			print "Debug on\n";
 			next;
 		}
-		#---------------------------------------------------
-		# default values
+		//---------------------------------------------------
+		// default values
                 if (/^pri\D+(\d+)/) {
 			set_option('Priority', $1);
                         next;
@@ -130,11 +130,11 @@ sub Report_bulkload { #-- Create Projects/Actions items from a file
 			next;
 		}
 
-		#---------------------------------------------------
+		//---------------------------------------------------
 
 		if (/^(\d+):$/) {
 			my($tid) = $1;
-			# get context
+			// get context
 			my($pref) = meta_find($tid);
 			unless ($pref) {
 				print "Can't find pid: $tid\n";
@@ -166,7 +166,7 @@ sub Report_bulkload { #-- Create Projects/Actions items from a file
 			&$action($parents, $desc);
 
 			$pid = find_hier('r', $_);
-			die unless $pid;
+			panic("No parent $_") unless $pid;
 			$parents->{r} = $pid;
 			next;
 		}
@@ -190,11 +190,11 @@ sub Report_bulkload { #-- Create Projects/Actions items from a file
 			$desc = '';
 			next;
 		}
-		# lines that start with bullets or checkboxs:
-		# ie:
-		if (s/^\**\s*\[_*\]\s*//	#    * [_]  title
-		|| s/^\**\s*//			#or  *      title
-		|| s/^\[_*\]\s*//) {		#or  [_]    title
+		// lines that start with bullets or checkboxs:
+		// ie:
+		if (s/^\**\s*\[_*\]\s*//	//    * [_]  title
+		|| s/^\**\s*//			//or  *      title
+		|| s/^\[_*\]\s*//) {		//or  [_]    title
 			&$action($parents, $desc);
 
 			$action = \&add_action;
@@ -231,13 +231,13 @@ sub find_hier {
 		warn "Found: something close($type) $tid: $goal\n";
 		return $tid;
 	}
-	die "Can't find a hier item for '$goal' let alone a $type.\n";
+	panic("Can't find a hier item for '$goal' let alone a $type.\n");
 }
 
 sub add_nothing {
 	my($parents, $desc) = @_;
 
-	# do nothing
+	// do nothing
 	print "# nothing pending\n" if $Debug;
 
 	if ($desc) {

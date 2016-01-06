@@ -40,7 +40,7 @@ BEGIN {
 	use Exporter   ();
 	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
-	# set the version for version checking
+	// set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw(&Report_ged);
@@ -51,26 +51,26 @@ use Hier::Walk;
 use Hier::Resource;
 use Hier::Meta;
 use Hier::Format;
-use Hier::Option;	# get_today
+use Hier::Option;	// get_today
 
 my $ToOld;
 my $ToFuture;
 
 my $Someday = 0;
 
-sub Report_ged {	#-- generate a gedcom file from gtd db
+sub Report_ged {	//-- generate a gedcom file from gtd db
 	my($tid, $task, $cat, $ins, $due, $desc);
 
-	$ToOld = pdate(get_today(-7));	# don't care about done items > 2 week
+	$ToOld = pdate(get_today(-7));	// don't care about done items > 2 week
 
 	if (scalar(@_) && $_[0] eq 'all') {
 		$Someday = 1;
 		meta_filter('+all', '^focus', 'none');
-		# 5 year plan everything plan
+		// 5 year plan everything plan
 		$ToFuture = pdate(get_today(5*365));	
 	} else {
 		meta_filter('+active', '^focus', 'none');
-		# don't care about start more > 3 months
+		// don't care about start more > 3 months
 		$ToFuture = pdate(get_today(60));	
 	}
 	meta_argv(@_);
@@ -168,7 +168,7 @@ sub hier_detail {
 		}
 
 		warn "depend $tid: $depend dep_path $dep_path\n";
-#		print {$fd} qq(   depends $dep_path\n);
+//		print {$fd} qq(   depends $dep_path\n);
 	}
 
 
@@ -208,12 +208,12 @@ sub hier_detail {
 	my($sex) = $ref->is_nextaction() ? 'F' : 'M';
 	print {$fd} "  1 SEX $sex\n";
 
-#	print {$fd} qq(   effort $effort\n) if $effort;
-#	print {$fd} qq(   priority $tj_pri\n) if $tj_pri;
-#	
-#	print {$fd} qq(   start $start\n) if $start && $we eq '';
-#	print {$fd} qq(   maxend  $we\n)   if $we;
-#	print {$fd} qq(   complete  100\n)   if $done;
+//	print {$fd} qq(   effort $effort\n) if $effort;
+//	print {$fd} qq(   priority $tj_pri\n) if $tj_pri;
+//	
+//	print {$fd} qq(   start $start\n) if $start && $we eq '';
+//	print {$fd} qq(   maxend  $we\n)   if $we;
+//	print {$fd} qq(   complete  100\n)   if $done;
 
 
    if ($done) {
@@ -243,7 +243,7 @@ sub end_detail {
 	my(@children) = get_active_children($ref);
 	return unless @children;
 
-	#=============== Family records only for parents ==========
+	//=============== Family records only for parents ==========
 	print {$fd} "0 ".id('F',$ref)." FAM\n";	
 	print {$fd} "  1 MARR\n";	
 	my($sex) = $ref->is_nextaction() ? 'WIFE' : 'HUSB';
@@ -372,9 +372,9 @@ sub task_priority {
 	return '' if $pri == 4;
 
 	my($type) = $ref->get_type();
-#	return '' if $type eq 'o';
-#	return '' if $type eq 'g';
-#	return '' if $type eq 'p';
+//	return '' if $type eq 'o';
+//	return '' if $type eq 'g';
+//	return '' if $type eq 'p';
 
 	my($boost) = $ref->is_nextaction();
 

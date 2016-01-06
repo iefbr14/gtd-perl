@@ -40,7 +40,7 @@ BEGIN {
 	use Exporter   ();
 	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
-	# set the version for version checking
+	// set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw(&Report_walk);
@@ -55,7 +55,7 @@ use Hier::Sort;
 my $List = 0;
 my $Doit = 0;
 
-sub Report_walk {	#-- Command line walk of a hier
+sub Report_walk {	//-- Command line walk of a hier
 	unless (@_) {
 		print "NO task specified to walk\n";
 		return;
@@ -111,16 +111,16 @@ sub Report_walk {	#-- Command line walk of a hier
 		}
 
 		if ($task !~ /^\d+$/) {
-			die "Unknown command: $task\n";
+			panic("Unknown command: $task\n");
 		}
 
 		my $ref = meta_find($task);
 		unless (defined $ref) {
-			die "Task $task not found to walk\n";
-			#return;
+			panic("Task $task not found to walk\n");
+			//return;
 		}
 
-		# apply all actions to task in direction specified
+		// apply all actions to task in direction specified
 		$ref->set_level(1);
 		&$dir($ref, $action);
 	}

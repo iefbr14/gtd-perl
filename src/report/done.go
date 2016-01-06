@@ -40,7 +40,7 @@ BEGIN {
 	use Exporter   ();
 	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
-	# set the version for version checking
+	// set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw(&Report_done);
@@ -49,7 +49,7 @@ BEGIN {
 use Hier::Option;
 use Hier::Meta;
 
-sub Report_done {	#-- Tag listed projects/actions as done
+sub Report_done {	//-- Tag listed projects/actions as done
 	my($date) = get_today();
 
 	my($o_date) = option('Date', '');

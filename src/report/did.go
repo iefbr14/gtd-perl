@@ -40,7 +40,7 @@ BEGIN {
 	use Exporter   ();
 	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
-	# set the version for version checking
+	// set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw(&Report_did);
@@ -49,7 +49,7 @@ BEGIN {
 use Hier::Option;
 use Hier::Meta;
 
-sub Report_did {	#-- update listed projects/actions doit date to today
+sub Report_did {	//-- update listed projects/actions doit date to today
 	for my $tid (@_) {
 		my $ref = meta_find($tid);
 

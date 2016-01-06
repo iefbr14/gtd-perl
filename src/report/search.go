@@ -40,7 +40,7 @@ BEGIN {
 	use Exporter   ();
 	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
-	# set the version for version checking
+	// set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw(&Report_search);
@@ -50,24 +50,24 @@ use Hier::Util;
 use Hier::Format;
 use Hier::Meta;
 
-sub Report_search {	#-- Search for items
+sub Report_search {	//-- Search for items
 	my($found) = 0;
 
 	my($tid, $title, $type);
 
 	meta_filter('+all', '^title', 'simple');
 	meta_desc(@_);
-# type filtering?
-#	if ($name) {
-#		my($want) = type_val($name);
-#		if ($want) {
-#			$want = 's' if $type eq 'p';
-#			list_desc($want, $name);
-#			return;
-#		}
-#		die "**** Can't understand Type $name\n";
-#	}
-#	print "No items requested\n";
+// type filtering?
+//	if ($name) {
+//		my($want) = type_val($name);
+//		if ($want) {
+//			$want = 's' if $type eq 'p';
+//			list_desc($want, $name);
+//			return;
+//		}
+//		die "**** Can't understand Type $name\n";
+//	}
+//	print "No items requested\n";
 
 	for my $name (split(/,/, $_[0])) {
 		for my $ref (meta_sorted()) {

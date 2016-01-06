@@ -40,7 +40,7 @@ BEGIN {
 	use Exporter   ();
 	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
-	# set the version for version checking
+	// set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw(&Report_orphans);
@@ -51,7 +51,7 @@ use Hier::Meta;
 use Hier::Sort;
 use Hier::Format;
 
-sub Report_orphans {	#-- list all items without a parent 
+sub Report_orphans {	//-- list all items without a parent 
 	meta_filter('+any', '^title', 'todo');
 
 	my(@list) = meta_pick(@_);
@@ -59,8 +59,8 @@ sub Report_orphans {	#-- list all items without a parent
 	report_header('Orphans', @_);
 
 	for my $ref (meta_sorted()) {
-		next if $ref->get_type eq 'm';	# Values never have parents
-		next if $ref->get_parent();	# Has a parent
+		next if $ref->get_type eq 'm';	// Values never have parents
+		next if $ref->get_parent();	// Has a parent
 
 		display_task($ref);
 	}

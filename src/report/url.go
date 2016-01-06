@@ -40,7 +40,7 @@ BEGIN {
 	use Exporter   ();
 	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
-	# set the version for version checking
+	// set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw( &Report_url );
@@ -57,8 +57,8 @@ my(%Seen);
 my(@Urls);
 my($Host);
 
-sub Report_url {	#-- open browser window for wiki and gtd
-	meta_filter('+g:live', '^title', 'task');	# Tasks filtered by goals
+sub Report_url {	//-- open browser window for wiki and gtd
+	meta_filter('+g:live', '^title', 'task');	// Tasks filtered by goals
 
 	my($title) = join(' ', @_);
 
@@ -95,7 +95,7 @@ sub Report_url {	#-- open browser window for wiki and gtd
 sub guess_remote {
 	my $wholine = `who am i`;
 	if ($wholine !~ m/\((.*)\)/) {
-		die "Can't guess who for $wholine\n";
+		panic("Can't guess who for $wholine\n");
 	}
 	my($who) = $1;
 
@@ -104,7 +104,7 @@ sub guess_remote {
 	return "drugs.ss.org" if $who =~ /^\d216\.191\.137/;
 	return "rabbit" if $who eq 'fw.iplink.net';
 
-	die "Can't map $who to remote site\n";
+	panic("Can't map $who to remote site\n");
 }
 
 sub find_url {
@@ -123,7 +123,7 @@ sub find_url {
 	}
 		
 
-	###BUG### this should't be hard wired.
+	//##BUG### this should't be hard wired.
 	my($base) = "https://wiki.ss.org";
 	if (@urls) {
 		for my $match (@urls) {

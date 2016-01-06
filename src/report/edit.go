@@ -40,7 +40,7 @@ BEGIN {
 	use Exporter   ();
 	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
-	# set the version for version checking
+	// set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw(&Report_edit);
@@ -52,7 +52,7 @@ use Hier::Meta;
 use Hier::Option;
 use Hier::Format;
 
-sub Report_edit {	#-- Edit listed actions/projects
+sub Report_edit {	//-- Edit listed actions/projects
 	my($key, $val, $changed);
 
 	meta_filter('+all', '^tid', 'none');
@@ -61,11 +61,11 @@ sub Report_edit {	#-- Edit listed actions/projects
 
 	my(@list) = meta_pick(@_);
 	if (@list == 0) {
-		die "No items to edit\n";
+		panic("No items to edit\n");
 	}
     
 	umask(0077);
-	open(my $ofd, '>', "/tmp/todo.$$") or die;
+	open(my $ofd, '>', "/tmp/todo.$$") or panic();
 	for my $ref (@list) {
 		disp_ordered_dump($ofd, $ref);
 	}
@@ -73,7 +73,7 @@ sub Report_edit {	#-- Edit listed actions/projects
    
 	system('vi', "/tmp/todo.$$");
  
-	open(my $ifd, '<', "/tmp/todo.$$") or die;
+	open(my $ifd, '<', "/tmp/todo.$$") or panic;
 	while (<$ifd>) {
 		next if /^$/;
 		next if /^#/;
@@ -94,7 +94,7 @@ sub Report_edit {	#-- Edit listed actions/projects
 		} elsif (s/^\t+//) {
 			$changed->{$key} .= "\n" . $_;
 		} else {
-			die "Can't parse: $_\n";
+			panic("Can't parse: $_\n");
 		}
 
 	}
@@ -118,7 +118,7 @@ sub save {
 	for my $key (sort keys %$changed) {
 		$val = $ref->get_KEY($key);
 
-		# Specal values from disp_ordered_dump
+		// Specal values from disp_ordered_dump
 		$val = $ref->disp_tags() if $key eq 'Tags';
 		$val = $ref->disp_parents() if $key eq 'Parents';
 		$val = $ref->disp_children() if $key eq 'Children';
@@ -133,21 +133,21 @@ sub save {
 			$Changed .= "$key: $val -> $newval\n";
 			next;
 		}
-		if (defined $newval) {	# val must be undefined
+		if (defined $newval) {	// val must be undefined
 			++$u;
 			$ref->set_KEY($key, $newval);
 
 			$Changed .= "$key: set to $newval\n";
 			next;
 		}
-		if (defined $val) {	# newval must be undefined
+		if (defined $val) {	// newval must be undefined
 			++$u;
 			$ref->set_KEY($key, $newval);
 
 			$Changed .= "$key: removed val $val\n";
 			next;
 		}
-		# both undefined, don't care
+		// both undefined, don't care
 	}
 
 	if ($u == 0) {

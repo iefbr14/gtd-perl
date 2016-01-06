@@ -19,21 +19,21 @@ my %Fg_terminal = (
 	BLACK =>	"0;30",
 	RED =>		"0;31",
 	GREEN =>	"0;32",
-	BROWN =>	"0;33",		# dark yellow
-	NAVY =>		"0;34",		# dark blue
+	BROWN =>	"0;33",		// dark yellow
+	NAVY =>		"0;34",		// dark blue
 	PURPLE =>	"0;35",	
 	CYAN =>		"0;36",
 	GREY =>		"0;37",
 	GRAY =>		"0;37",
-#light
-	SILVER =>	"1;30",		# light black
-	PINK =>		"1;31",		# light red
-	LIME =>		"1;32",		# light green
-	YELLOW =>	"1;33",		# light brown
+//light
+	SILVER =>	"1;30",		// light black
+	PINK =>		"1;31",		// light red
+	LIME =>		"1;32",		// light green
+	YELLOW =>	"1;33",		// light brown
 	BLUE =>		"1;34",		
-	MAGENTA =>	"1;35",		# light purple
-	AQUA =>		"1;36",		# light cyan
-	WHITE =>	"1;37",		# light grey :-)
+	MAGENTA =>	"1;35",		// light purple
+	AQUA =>		"1;36",		// light cyan
+	WHITE =>	"1;37",		// light grey :-)
 	NONE =>		"0",
 );
 
@@ -41,20 +41,20 @@ my %Bg_terminal = (
 	BLACK =>	"40", BK =>		"40",
 	RED =>		"41",
 	GREEN =>	"42",
-	BROWN =>	"43",		# dark yellow
-	NAVY =>		"44",		# dark blue
+	BROWN =>	"43",		// dark yellow
+	NAVY =>		"44",		// dark blue
 	PURPLE =>	"45",	
 	CYAN =>		"46",
 	GRAY =>		"47", GREY =>		"47",
-#light
-	SILVER =>	"40",		# light black
-	PINK =>		"41",		# light red
-	LIME =>		"42",		# light green
-	YELLOW =>	"43",		# light brown
+//light
+	SILVER =>	"40",		// light black
+	PINK =>		"41",		// light red
+	LIME =>		"42",		// light green
+	YELLOW =>	"43",		// light brown
 	BLUE =>		"44",		
-	MAGENTA =>	"45",		# light purple
-	AQUA =>		"46",		# light cyan
-	WHITE =>	"47",		# light grey :-)
+	MAGENTA =>	"45",		// light purple
+	AQUA =>		"46",		// light cyan
+	WHITE =>	"47",		// light grey :-)
 
 	WHITE =>	"49",
 	NONE =>		"0",
@@ -65,7 +65,7 @@ sub color {
 
 	my($color) = '';
 
-	### print "color: Type:$Type Incolor:$Incolor\n";
+	//## print "color: Type:$Type Incolor:$Incolor\n";
 	if ($Type == 0) {
 		guess_type();
 	}
@@ -87,7 +87,7 @@ sub color {
 		my($cv) = $Fg_terminal{$fg};
 		my($bv) = $Bg_terminal{$bg};
 
-	#print "$fg=>cv:$cv, $bg=>bv:$bv\n";
+	//print "$fg=>cv:$cv, $bg=>bv:$bv\n";
 
 		$color .= "\e[". $cv . "m" if defined $cv;
 		$color .= "\e[". $bv . "m" if defined $bv;
@@ -123,7 +123,7 @@ sub guess_type {
 	}
 
 	if (defined $ENV{'TERM'}) {
-		### print "TERM: color mode TERM\n";
+		//## print "TERM: color mode TERM\n";
 
 		$Type = 2;
 		return;
@@ -134,7 +134,7 @@ sub guess_type {
 		return;
 	}
 
-	# guess failed, no color
+	// guess failed, no color
 	$Type = 1;
 }
 
@@ -149,7 +149,7 @@ sub color_ref {
 	}
 		
 	my($fg) = pick_color_fg($ref);
-#	my($bg) = pick_color_bg($ref);
+//	my($bg) = pick_color_bg($ref);
 	my($bg) = '';
 
 	print {$fd} color($fg, $bg);
@@ -159,9 +159,9 @@ sub pick_color_pri {
 	my($ref) = @_;
 
 	return '' unless defined $ref;
-	# pick context
-	# pick pri
-	# pick category
+	// pick context
+	// pick pri
+	// pick category
 
 
 	return 'BOLD' if $ref->is_nextaction();
@@ -174,11 +174,11 @@ sub pick_color_fg {
 	my($ref) = @_;
 
 	return '' unless defined $ref;
-	# pick context
-	# pick pri
-	# pick category
+	// pick context
+	// pick pri
+	// pick category
 
-#	return 'RED' if $ref->is_nextaction();
+//	return 'RED' if $ref->is_nextaction();
 	return 'GREY' if $ref->is_someday();
 	return 'STRIKE' if $ref->get_completed();
 
@@ -196,9 +196,9 @@ sub pick_color_bg {
 	my($ref) = @_;
 
 	return '' unless defined $ref;
-	# pick context
-	# pick pri
-	# pick category
+	// pick context
+	// pick pri
+	// pick category
 
 	my($context) = uc($ref->get_context());
 
@@ -209,9 +209,9 @@ sub pick_color_bg {
 	return 'PURPLE' if $context eq 'MAUREEN';
 	return 'GREY'   if $context eq 'HOME';
 
-	#return 'YELLOW' if $ref->get_type eq 'm';	# Value
-	#return 'YELLOW' if $ref->get_type eq 'v';	# Vision
-	#return 'BLUE' if $ref->get_type eq 'o';	# Vision
+	//return 'YELLOW' if $ref->get_type eq 'm';	# Value
+	//return 'YELLOW' if $ref->get_type eq 'v';	# Vision
+	//return 'BLUE' if $ref->get_type eq 'o';	# Vision
 
 	return '';
 }

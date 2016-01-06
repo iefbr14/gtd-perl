@@ -40,7 +40,7 @@ BEGIN {
 	use Exporter   ();
 	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
-	# set the version for version checking
+	// set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw(&Report_taskjuggler);
@@ -51,7 +51,7 @@ use Hier::Walk;
 use Hier::Resource;
 use Hier::Meta;
 use Hier::Format;
-use Hier::Option;	# get_today
+use Hier::Option;	// get_today
 
 my $ToOld;
 my $ToFuture;
@@ -60,13 +60,13 @@ my $Someday = 0;
 
 our $Debug;
 
-sub Report_taskjuggler {	#-- generate taskjuggler file from gtd db
+sub Report_taskjuggler {	//-- generate taskjuggler file from gtd db
 	my($tid, $task, $cat, $ins, $due, $desc);
 
-	$ToOld = pdate(get_today(-7));	# don't care about done items > 2 week
+	$ToOld = pdate(get_today(-7));	// don't care about done items > 2 week
 
 	meta_filter('+all', '^focus', 'none');
-	my($top) = 'o';			# default to top of everything
+	my($top) = 'o';			// default to top of everything
 	for my $criteria (meta_argv(@_)) {
 		if ($criteria eq 'all') {
 			$Someday = 1;
@@ -82,17 +82,17 @@ sub Report_taskjuggler {	#-- generate taskjuggler file from gtd db
 			$type = 'p' if $type eq 's';
 			$top = $type;
 		} else {
-			die "unknown type $criteria\n";
+			panic("unknown type $criteria\n");
 		}
 	}
 
 	if ($Someday) {
 		meta_filter('+all', '^focus', 'none');
-		# 5 year plan everything plan
+		// 5 year plan everything plan
 		$ToFuture = pdate(get_today(5*365));	
 	} else {
 		meta_filter('+active', '^focus', 'none');
-		# don't care about start more > 3 months
+		// don't care about start more > 3 months
 		$ToFuture = pdate(get_today(60));	
 	}
 
@@ -228,9 +228,9 @@ sub hier_detail {
 		print {$fd} $indent, qq(   depends $dep_path\n);
 	}
 
-	###BUG### taskjuggler need to check for un-filtered children for effort
+	//##BUG### taskjuggler need to check for un-filtered children for effort
 	if ($ref->get_children()) {
-		# nope has children, we just accumlate effor in them
+		// nope has children, we just accumlate effor in them
 	} else {
 		if ($effort) {
 			++$ref->{_effort};
@@ -358,7 +358,7 @@ sub task_priority {
 	my($tj_pri) = substr($pf.'zzzzzz', 2, 3);
 	$pf =~ s/^(..)/$1./;
 
-	#         123451234512345
+	//         123451234512345
 	$tj_pri =~ tr{abcdefghijklmnoz}
                      {9987766544321000};
 
@@ -402,7 +402,7 @@ sub supress {
 		supress($walk, $child);
 	}
 }
-#==============================================================================
+//==============================================================================
 my %Dep_list;
 
 sub build_deps {
@@ -422,7 +422,7 @@ sub calc_depends {
 	my($tid) = $ref->get_tid();
 	return if defined $Dep_list{$tid};
 
-#	return if skip($walk, $ref);
+//	return if skip($walk, $ref);
 
 	my($path) = $ref->get_type() . '_' . $tid;
 

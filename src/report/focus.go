@@ -40,7 +40,7 @@ BEGIN {
 	use Exporter   ();
 	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
-	# set the version for version checking
+	// set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw(&Report_focus);
@@ -62,7 +62,7 @@ my($Dep) = '';   # Project depends on string
 
 our $Debug = 0;
 
-sub Report_focus {	#-- List focus -- live, plan or someday
+sub Report_focus {	//-- List focus -- live, plan or someday
 	my($cnt) = 0;
 
 	$Debug = option('Debug', 0);
@@ -88,7 +88,7 @@ sub Report_focus {	#-- List focus -- live, plan or someday
 	}
 
 
-	# find all next and remember there focus
+	// find all next and remember there focus
 	for my $ref (sort_tasks @list) {
 
 		unless (check_task($ref)) {
@@ -98,8 +98,8 @@ sub Report_focus {	#-- List focus -- live, plan or someday
 	print "***** Work Load: $Proj_cnt Projects, $Work_load action items\n";
 }
 
-###BUG -- borks if dep on completed item
-### Re-thing whole logic
+//##BUG -- borks if dep on completed item
+//## Re-thing whole logic
 sub check_task {
 	my($p_ref) = @_;
 	my($deps);
@@ -107,7 +107,7 @@ sub check_task {
 	my($id) = $p_ref->get_tid(); 
 	printf "X %d %s\n", $id, $p_ref->get_title() if $Debug;
 
-	if ($deps = $p_ref->get_depends()) {	# can't be focus
+	if ($deps = $p_ref->get_depends()) {	// can't be focus
 		$deps =~ s/\s+/,/g;
 		for my $dep (split(',', $deps)) {
 			printf "Deps %d on %s\n", $id, $deps if $Debug;
@@ -143,7 +143,7 @@ sub check_task {
 	foreach my $ref (sort_tasks $p_ref->get_children()) {
 		next unless $ref->is_nextaction();
 		next if $ref->get_completed();
-##FILTER#	next if $ref->filtered();
+//#FILTER#	next if $ref->filtered();
 
 		my($work, $counts);
 		if ($ref->get_type() eq 'p') {

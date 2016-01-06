@@ -42,7 +42,7 @@ BEGIN {
 	use Exporter   ();
 	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
-	# set the version for version checking
+	// set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter Hier::Walk);
 	@EXPORT      = qw(&Report_gui);
@@ -76,7 +76,7 @@ my $Visable_Next_Actions = 0;
 my $Visable_Actions = 0;
 my $Visable_Completed = 0;
 
-sub Report_gui {	#-- Tk gui front end
+sub Report_gui {	//-- Tk gui front end
 	init();
 	MainLoop;
 }
@@ -88,7 +88,7 @@ sub init {
         my($w) = new MainWindow;
         $pkg->{-mainWin} = $w;
 
-#	$w->minsize(qw(200 200));
+//	$w->minsize(qw(200 200));
 	$w->title("GTD");
 	$w->configure(-background => 'cyan');
 
@@ -137,7 +137,7 @@ sub init {
 
 	my $tree;
 	$tree = $w->Scrolled('Tree', 
-		-scrollbars => "ose", 	# Onlyneeded South and but always East
+		-scrollbars => "ose", 	// Onlyneeded South and but always East
 		-width => 80,
 		-height => 40,
 	)->pack(
@@ -148,10 +148,10 @@ sub init {
 	$tree->configure(-command => sub { hier_edit($tree, @_) });
 	$pkg->{tree} = $tree;
 
-#	$tree->tag_configure('p', -foreground => 'pink');
-#	$tree->tag_configure('a', -background => 'gray');
-#	$tree->tag_configure('n', -background => 'cyan');
-#	$tree->tag_configure('deleted', 
+//	$tree->tag_configure('p', -foreground => 'pink');
+//	$tree->tag_configure('a', -background => 'gray');
+//	$tree->tag_configure('n', -background => 'cyan');
+//	$tree->tag_configure('deleted', 
 	
 	walk_tree($pkg);
 }
@@ -190,7 +190,7 @@ sub hier_detail {
 	$tid  = $ref->get_tid() || '';
 	$name = $ref->get_title() || '';
 	$cnt  = $ref->count_actions() || '';
-#	$plan = $ref->get_planned() || '';
+//	$plan = $ref->get_planned() || '';
 	$plan = '';
 	$pri  = $ref->get_priority();
 	$desc = summary_line($ref->get_description(), '');
@@ -200,17 +200,17 @@ sub hier_detail {
 	my($pdesc,$path, $ptext);
 
 	if ($Load_Completed && $done) {
-		# Don't do completed items
+		// Don't do completed items
 	} elsif ($Load_Unplanned == 0 && $plan == 0) {
-		# Don't do project 
+		// Don't do project 
 	} elsif ($Load_Project == 0 && $type eq 'p') {
-		# Don't do project 
+		// Don't do project 
 	} elsif ($Load_Next_Actions == 0 && $type eq 'n') {
-		# Don't
+		// Don't
 	} elsif ($Load_Actions == 0 && $type eq 'a') {
-		# Don't 
+		// Don't 
 	} elsif ($Load_Someday == 0 && $ref->is_someday()) {
-		# Don't do someday unless -A
+		// Don't do someday unless -A
 	} else {
 		$pdesc = $name; $pdesc =~ s/[^a-zA-Z]/_/g;
 		$path = dep_path($tid);
@@ -226,7 +226,7 @@ sub hier_detail {
 		} else {
 			$ptext .= "$name: $desc";
 		}
-#		my($text) = new Tk::Text($ptext, -forground => 'pink');
+//		my($text) = new Tk::Text($ptext, -forground => 'pink');
 
 		eval {
 			$tree->add($path, 
@@ -236,7 +236,7 @@ sub hier_detail {
 		}; if ($@) {
 			warn "Tree fail $path: $@\n";
 		}
-#		$tree->tag_bind($path, "<l>", \&hier_edit, $path);
+//		$tree->tag_bind($path, "<l>", \&hier_edit, $path);
 	}
 
 }
@@ -257,7 +257,7 @@ print "Edit: $path => $tid\n";
         my($w) = new MainWindow;
         $pkg->{-mainWin} = $w;
 
-#	$w->minsize(qw(200 200));
+//	$w->minsize(qw(200 200));
 	$path =~ s/_\d+\./:/g;
 
 	$w->title("GTD item $tid => $path");
@@ -327,14 +327,14 @@ print "Run: $report\n";
 	my($pid);
 	$pid = open(REPORT, '-|');
 	if ($pid == 0) {
-		#### In child, do NOT use Tk's override exit ####
-		eval "Report_$report();";	# call report with argv
+		//### In child, do NOT use Tk's override exit ####
+		eval "Report_$report();";	// call report with argv
 		if($@) {
 			warn "Report failed: $@\n";
 			CORE::exit 1;
 		}
 		CORE::exit 0;
-		#### End child use Tk's override exit ####
+		//### End child use Tk's override exit ####
 	}
         my($file) = @_;
         my($pkg) = {}; bless $pkg;

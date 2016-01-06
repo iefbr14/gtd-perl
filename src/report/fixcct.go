@@ -40,7 +40,7 @@ BEGIN {
 	use Exporter   ();
 	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
-	# set the version for version checking
+	// set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw(&Report_fixcct);
@@ -48,7 +48,7 @@ BEGIN {
 
 use Hier::Meta;
 
-sub Report_fixcct {	#-- Fix Categories/Contexts/Time Frames
+sub Report_fixcct {	//-- Fix Categories/Contexts/Time Frames
 	my($new_id, $id);
 
 	report_header("Categories");
@@ -102,7 +102,7 @@ sub sql_fix_cct {
 		$keycol = 'timeframeId';
 		$valcol = 'timeframe';
 	} else {
-		die;
+		panic("sql_fix_cct");
 	}
 	my($itemstatus) = G_table('itemstatus');
 

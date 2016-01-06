@@ -40,7 +40,7 @@ BEGIN {
 	use Exporter   ();
 	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
-	# set the version for version checking
+	// set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw(&Report_planner);
@@ -61,7 +61,7 @@ my $Pred_id = 0;
 my %Alloc_resource = ( 999 => 'Drew');
 my %Alloc_tasks = ();
 
-sub Report_planner {	#-- Create a planner file from gtd db
+sub Report_planner {	//-- Create a planner file from gtd db
 	my($criteria) = @_;
 	my($tid, $pri, $task, $cat, $ins, $due, $desc);
 	my(@row);
@@ -110,19 +110,19 @@ sub hier_detail {
 	$done = pdate($ref->get_completed());
 	$start = pdate($ref->get_created());
 
-#	if ($done && $done lt '2010-') {
-#		$planner->{want}{$tid} = 0;
-#		return;
-#	}
+//	if ($done && $done lt '2010-') {
+//		$planner->{want}{$tid} = 0;
+//		return;
+//	}
 
-	# number of hours/days => min
+	// number of hours/days => min
 	$work  = $resource->hours($ref) * 60;
 	$ws    = $due;
 	$end   = $ws;
 
 	my($fd) = $planner->{fd};
 
-# <task id="1" name="Task 1" note="" work="28800" start="20090319T000000Z" end="20090319T170000Z" work-start="20090319T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+// <task id="1" name="Task 1" note="" work="28800" start="20090319T000000Z" end="20090319T170000Z" work-start="20090319T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
 
 	print {$fd} $indent, qq(<task id="$tid" name="$name" note="$note" work="$work" ) , 
 		qq(start="$start" end="$end" work-start="$ws" ),
@@ -130,7 +130,7 @@ sub hier_detail {
 
 	if ($type eq 'a') {
 		my($pred) = $Pred{$user} || '';
-		#print "# $type $tid $user $pred\n";
+		//print "# $type $tid $user $pred\n";
 		if ($pred) {
 			++$Pred_id;
 			print {$fd}

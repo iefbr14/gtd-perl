@@ -42,7 +42,7 @@ BEGIN {
 	use Exporter   ();
 	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
-	# set the version for version checking
+	// set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw( &Report_print );
@@ -56,8 +56,8 @@ use Hier::Option;
 
 my $Layout = 'Text';
 
-sub Report_print {	#-- dump records in edit format
-	# everybody into the pool by id 
+sub Report_print {	//-- dump records in edit format
+	// everybody into the pool by id 
 	meta_filter('+any', '^tid', 'doit');	
 
 	$Layout = ucfirst(lc(option('Layout', 'Text')));

@@ -40,7 +40,7 @@ BEGIN {
 	use Exporter   ();
 	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
-	# set the version for version checking
+	// set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw(&Report_take);
@@ -54,23 +54,23 @@ use Hier::Format;
 
 my %Ancestors;
 
-sub Report_take {	#-- take listed actions/projects
+sub Report_take {	//-- take listed actions/projects
 	my($key, $val, $changed);
 
 	meta_filter('+all', '^tid', 'none');
 
 	my $parent = option('Current');
 	unless ($parent) {
-		die "No parent for take\n";
+		panic("No parent for take\n");
 	}
 	my $p_ref = find($parent);
 	unless ($p_ref) {
-		die "Parent $parent doesn't exists\n";
+		panic("Parent $parent doesn't exists\n");
 	}
 
 	my(@list) = meta_pick(@_);
 	if (@list == 0) {
-		die "No items to take\n";
+		panic("No items to take\n");
 	}
 
 	get_ancestors($p_ref);
@@ -79,7 +79,7 @@ sub Report_take {	#-- take listed actions/projects
 
 		my($tid) = is_ancestor($c_ref);
 		if ($tid) {
-			die "Child $tid shares ancestor for $parent\n";
+			panic("Child $tid shares ancestor for $parent\n");
 		}
 		print "Take $parent <= $child\n";
 	}
@@ -104,14 +104,14 @@ sub is_ancestor {
 	return $tid if defined $Ancestors{$tid};
 
 	for my $child ($ref->get_children()) {
-		# check my children recursivly as well
+		// check my children recursivly as well
 		$tid = is_ancestor($child);
-		return $tid if $tid;	# yup.
+		return $tid if $tid;	// yup.
 
-		# not this one, continue looking
+		// not this one, continue looking
 	}
 
-	# nope no child is an ancestor
+	// nope no child is an ancestor
 	return 0;
 }
 

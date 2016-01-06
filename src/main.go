@@ -1,11 +1,7 @@
 package main
 
 import "flag"
-
-import "Hier/Util"
-import "Hier/Db"
-import "Hier/Option"
-import "Hier/Filter"
+import "gtd"
 
 func usage() {
 	panic(`

@@ -7,7 +7,7 @@ BEGIN {
 	use Exporter   ();
 	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
-	# set the version for version checking
+	// set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw(
@@ -33,9 +33,9 @@ our $Debug = 0;
 
 use base qw(Hier::Hier Hier::Fields Hier::Filter);
 
-#==============================================================================
-#==== Top level filter/sort/selection
-#==============================================================================
+//==============================================================================
+//==== Top level filter/sort/selection
+//==============================================================================
 my @Selected;
 my $Default_filter = '';
 
@@ -44,7 +44,7 @@ sub hier {
 }
 
 sub meta_reset_filters {
-	@Selected = ();		# nothing is selected/sorted.
+	@Selected = ();		// nothing is selected/sorted.
 }
 
 sub meta_selected {
@@ -95,10 +95,10 @@ sub meta_find {
 	return Hier::Tasks::find(@_);
 }
 
-#==============================================================================
+//==============================================================================
 
 sub delete_hier {
-	die "###ToDo Broked, should be deleting by categories?\n";
+	panic("###ToDo Broked, should be deleting by categories?\n");
 	foreach my $tid (@_) {
 		my $ref = Hier::Tasks::find{$tid};
 		if (defined $ref) {
@@ -113,10 +113,10 @@ sub delete_hier {
 }
 
 
-#==============================================================================
-#==============================================================================
-#==== filter setup and processing
-#==============================================================================
+//==============================================================================
+//==============================================================================
+//==== filter setup and processing
+//==============================================================================
 
 sub meta_filter {
 	my($filter, $sort, $display) = @_;
@@ -142,7 +142,7 @@ sub meta_argv {
 		next unless defined $_;	 # option('Current') may be undef
 
 		if ($_ eq '!.') {
-			die "Stopped.\n";
+			painc("Stopped.\n");
 		}
 
 		if (s/^\@//) {
@@ -151,16 +151,16 @@ sub meta_argv {
 		}
 
 		if (s/^(\d+:)$/$1/ or m/^\d+$/) {
-			push(@ret, $_);		# tid
+			push(@ret, $_);		// tid
 			next;
 		}
 
-		if (s=^\/==) {				# pattern match
+		if (s=^\/==) {				// pattern match
 			push(@ret, find_pattern($_));
 			next;
 		}
 
-		if (s|^=\/||) {				# pattern match
+		if (s|^=\/||) {				// pattern match
 			push(@ret, find_pattern($_));
 			next;
 		}
@@ -175,23 +175,23 @@ sub meta_argv {
 		}
 		if (s/^([A-Z])://) {
 			my($type) = lc($1);
-#			set_option(Type => $type);
-#
-#			print "Type: Title =====:  $type: $_\n";
-#			set_option(Title -> $_);
+//			set_option(Type => $type);
+//
+//			print "Type: Title =====:  $type: $_\n";
+//			set_option(Title -> $_);
 			push(@ret, find_hier($type, $_));
 			next;
 		}
 
-		if (m/^[-~+]/) {		# add include/exclude
+		if (m/^[-~+]/) {		// add include/exclude
 			Hier::Filter::add_filter($_);
 			$has_filters = 1;
 			next;
 		}
-#		if ($Title) {
-#			print "Desc:  ", join(' ', $_, @_), "\n";
-#			return join(' ', $_, @_);
-#		}
+//		if ($Title) {
+//			print "Desc:  ", join(' ', $_, @_), "\n";
+//			return join(' ', $_, @_);
+//		}
 		push(@ret, $_);
 	}
 
@@ -210,23 +210,23 @@ sub meta_pick {
 	my(@list) = ();
 
 	foreach my $arg (meta_argv(@_)) {
-		# comma sperated list of tasks
+		// comma sperated list of tasks
                 while ($arg =~ s/^(\d+),(\d[\d,]*)$/$2/) {
                         my($ref) = meta_find($1);
 
                         unless (defined $ref) {
-                                die "Task $arg doesn't exits\n";
+                                panic("Task $arg doesn't exits\n");
                         }
 			push(@list, $ref);
                         next;
                 }
 
-		# task all by itself
+		// task all by itself
 		if ($arg=~ s/^(\d+):$/$1/ or $arg =~ m/^\d+$/) {
                         my($ref) = meta_find($arg);
 
                         unless (defined $ref) {
-                                die "Task $arg doesn't exits\n";
+                                panic("Task $arg doesn't exits\n");
                         }
 			push(@list, $ref);
                         next;
@@ -257,7 +257,7 @@ sub meta_pick {
 			}
 			next;
 		}
-		die "**** Can't understand argument $arg\n";
+		panic("**** Can't understand argument $arg\n");
 	}
 	return @list;
 }
@@ -265,7 +265,7 @@ sub meta_pick {
 sub find_pattern {
 	my($pat) = @_;
 
-	$pat =~ s=/$==;	# remove trailing /
+	$pat =~ s=/$==;	// remove trailing /
 
 	my(@list);
 
@@ -283,7 +283,7 @@ sub find_pattern {
 sub find_hier {
 	my($type, $pat) = @_;
 
-	$pat =~ s=/$==;	# remove trailing /
+	$pat =~ s=/$==;	// remove trailing /
 
 	my(@list);
 

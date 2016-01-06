@@ -40,7 +40,7 @@ BEGIN {
 	use Exporter   ();
 	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
-	# set the version for version checking
+	// set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw(&Report_doit);
@@ -58,11 +58,11 @@ my $Later = get_today(+7);
 my $Priority = 0;
 my $Limit = 2;
 
-### rethink totally
-### REWRITE --- scan list for \d+ and put in work list
-### if work list is empty  
+//## rethink totally
+//## REWRITE --- scan list for \d+ and put in work list
+//## if work list is empty  
 
-sub Report_doit {	#-- doit tracks which projects/actions have had movement
+sub Report_doit {	//-- doit tracks which projects/actions have had movement
 
 	$Limit = option('Limit', 1);
 
@@ -191,7 +191,7 @@ sub list_all {
 
 	for my $ref (meta_sorted()) {
 		next unless $ref->is_task();
-##FILTER	next if $ref->filtered();
+//#FILTER	next if $ref->filtered();
 
 		my $pref = $ref->get_parent();
 		next unless defined $pref;

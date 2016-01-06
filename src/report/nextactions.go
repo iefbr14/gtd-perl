@@ -40,7 +40,7 @@ BEGIN {
 	use Exporter   ();
 	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
-	# set the version for version checking
+	// set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw(&Report_nextactions);
@@ -65,18 +65,18 @@ format HIER   =
 @>>> @<< @<<<<<<<<<<<<<<< @>>> @<< @<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 $pid, $pic, $parent,      $tid, $tic, $name,
 .
-	$~ = "HIER";	# set STDOUT format name to HIER
+	$~ = "HIER";	// set STDOUT format name to HIER
 
 	for my $ref (meta_pick('actions')) {
 		$tid = $ref->get_tid();
-##FILTER	next unless $ref->is_nextaction();
-##FILTER	next if $ref->filtered();
+//#FILTER	next unless $ref->is_nextaction();
+//#FILTER	next if $ref->filtered();
 
 		$name = $ref->get_title() || '';
 		$tic = action_disp($ref);
 
 		$pref = $ref->get_parent();
-#next unless $pref->is_nextaction();
+//next unless $pref->is_nextaction();
 		if (defined $pref) {
 			$parent = $pref->get_title();
 			$pid = $pref->get_tid();

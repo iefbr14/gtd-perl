@@ -57,9 +57,9 @@ sub rel_vals {
 	return @{$obj->{"_${rel}_vals"}};
 }
 
-#------------------------------------------------------------------------------
-# core routines.  Only these add/remove relationships
-#
+//------------------------------------------------------------------------------
+// core routines.  Only these add/remove relationships
+//
 sub add_child {
         my($parent, $child) = @_;
 
@@ -76,8 +76,8 @@ sub orphin_child {
 	$child->set_dirty('parents');
 }
 
-#------------------------------------------------------------------------------
-# access routines but they don't change anything.
+//------------------------------------------------------------------------------
+// access routines but they don't change anything.
 
 sub get_parents {
 	return rel_vals(parent => $_[0]);
@@ -95,14 +95,14 @@ sub children_ids {
 	return rel_keys(child => $_[0]);
 }
 
-#------------------------------------------------------------------------------
-# helper routines they do useful things, but don't know interals
+//------------------------------------------------------------------------------
+// helper routines they do useful things, but don't know interals
 
 sub count_children {
 	my(@children) = get_children(@_);
 
-	### see Hier::Format::summray_children for counts
-	### based on filters
+	//## see Hier::Format::summray_children for counts
+	//## based on filters
 
 	return scalar @children;
 }
@@ -169,16 +169,16 @@ sub has_parent_id {
 	return 0;
 }
 
-#------------------------------------------------------------------------------
-## set_parent_ids is used by dset in Tasks.pm
-#
+//------------------------------------------------------------------------------
+//# set_parent_ids is used by dset in Tasks.pm
+//
 sub set_parent_ids {
         my($self, $val) = @_;
 
-	my(@pid) = split(',', $val);	# parent ids
-	my(%pid);			# parent ids => parent ref
+	my(@pid) = split(',', $val);	// parent ids
+	my(%pid);			// parent ids => parent ref
 
-	# find my new parents
+	// find my new parents
 	for my $pid (@pid) {
 		my $p_ref = Hier::Tasks::find($pid);
 		unless ($p_ref) { # opps not a real parent
@@ -189,17 +189,17 @@ sub set_parent_ids {
 		$pid{$pid} = $p_ref;
 	}
 
-	# keep parent if already have that one, it otherwise disown it.
+	// keep parent if already have that one, it otherwise disown it.
 	for my $ref (rel_vals(parent => $self)) {
 		my $pid = $ref->get_tid();
 		if (defined $pid{$pid}) {
-			delete $pid{$pid};	# keeping this one.
+			delete $pid{$pid};	// keeping this one.
 		} else {
-			# disown parent
+			// disown parent
 			$ref->orphin_child($self);
 		}
 	}
-	# for my new parents add self as thier child
+	// for my new parents add self as thier child
 	for my $pref (values %pid) {
 		add_child($pref, $self);
 	}
@@ -208,10 +208,10 @@ sub set_parent_ids {
 sub set_children_ids {
         my($self, $val) = @_;
 
-	my(@cid) = split(',', $val);	# parent ids
-	my(%cid);			# parent ids => parent ref
+	my(@cid) = split(',', $val);	// parent ids
+	my(%cid);			// parent ids => parent ref
 
-	# find my new parents
+	// find my new parents
 	for my $cid (@cid) {
 		my $c_ref = Hier::Tasks::find($cid);
 		unless ($c_ref) { # opps not a real child
@@ -222,17 +222,17 @@ sub set_children_ids {
 		$cid{$cid} = $c_ref;
 	}
 
-	# keep child if already have that one, it otherwise disown it.
+	// keep child if already have that one, it otherwise disown it.
 	for my $ref (rel_vals(child => $self)) {
 		my $cid = $ref->get_tid();
 		if (defined $cid{$cid}) {
-			delete $cid{$cid};	# keeping this one.
+			delete $cid{$cid};	// keeping this one.
 		} else {
-			# disown parent
+			// disown parent
 			$self->orphin_child($ref);
 		}
 	}
-	# for my new children add self as their parent
+	// for my new children add self as their parent
 	for my $cref (values %cid) {
 		add_child($self, $cref);
 	}

@@ -7,7 +7,7 @@ BEGIN {
 	use Exporter   ();
 	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
-	# set the version for version checking
+	// set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw(sort_mode sort_tasks by_task by_goal by_goal_task );
@@ -34,10 +34,10 @@ my(%Criteria) = (
 	panic    => \&by_panic,
 	focus    => \&by_focus,
 
-	age      => \&by_age,		# created date
-	date     => \&by_age,		# ''
+	age      => \&by_age,		// created date
+	date     => \&by_age,		// ''
 
-	change   => \&by_change,	# modified date
+	change   => \&by_change,	// modified date
 
 	doit     => \&by_doitdate,
 	doitdate => \&by_doitdate,
@@ -60,8 +60,8 @@ sub sort_mode {
 		return;
 	}
 
-	$mode =~ s/^\^//;	# default is asending 
-	if ($mode =~ s/^\~//) {	# desending
+	$mode =~ s/^\^//;	// default is asending 
+	if ($mode =~ s/^\~//) {	// desending
 		option('Reverse', 1);
 	}
 	$mode = lc($mode);
@@ -73,7 +73,7 @@ sub sort_mode {
 
 	$Sorter = $Criteria{$mode};
 
-	%Meta_key = ();		# clear any cached keys
+	%Meta_key = ();		// clear any cached keys
 }
 
 sub sort_tasks {
@@ -84,7 +84,7 @@ sub sort_tasks {
 	}
 	
 	return sort { &$Sorter($a,$b) } @_;
-	## comment out prev line to Debug.
+	//# comment out prev line to Debug.
 	my(@list) =  sort { &$Sorter($a,$b) } @_;
 
 	for my $ref (@list) {
@@ -99,35 +99,16 @@ sub sort_tasks {
 
 my %Sort_cache;
 
-#sub sorter($$) {
-#	my($by, $itemlist) = @_;
-#
-#	###BUG### fetch command line option sort override
-#	if ($by =~ s/^\^// and !defined $Criteria{$by}) {
-#		die "Huh? sort '$by' unknown\n";
-#	}
-#
-#	my $doby = $Criteria{$by};
-#	if (option('Reverse')) {
-#		return reverse sort { &$doby($a, $b) } @$itemlist;
-#	} else {
-#		return sort { &$doby($a, $b) } @$itemlist;
-#	}
-#}
-
 sub sort_by {
 	my($criteria) = @_;
 
 	for my $criteria (@_) {
 		push @Criteria, $criteria;
 	}
-	###BUG### make by_Sort an eval?
+	//##BUG### make by_Sort an eval?
 }
 
 sub by_Sort {
-#	for my $criteria (@critera) {
-#		if ($criteria eq 
-#	}
 	return by_tid();
 }
 
@@ -153,7 +134,7 @@ sub by_hier($$) {
 		return -1;
 	}
 
-	# no parents or parents equal
+	// no parents or parents equal
 	return  lc_title($a) cmp lc_title($b)
 	||      $a->get_tid() <=> $b->get_tid();
 }
@@ -168,8 +149,8 @@ sub by_status($$) {
 		return $ac cmp $bc;
 	}
 
-	return -1 if $ac;	# a completed but not b, sort early
-	return  1 if $bc;	# b completed but not a, sort late
+	return -1 if $ac;	// a completed but not b, sort early
+	return  1 if $bc;	// b completed but not a, sort late
 
 	return by_change($a, $b);
 }
@@ -201,7 +182,7 @@ sub by_task($$) {
 sub by_pri($$) {
 	my($a, $b) = @_;
 
-	# order by priority $order, created $order, due $order 
+	// order by priority $order, created $order, due $order 
 
 	my($rc)	= $a->get_priority() <=> $b->get_priority()
 	||	  $a->get_created()  cmp $b->get_created()
@@ -285,9 +266,9 @@ sub Meta_key {
 	return $val;
 }
 
-# next   norm  some  done 
-# 012345 12345 12345
-#  abcde fghij klmno z
+// next   norm  some  done 
+// 012345 12345 12345
+//  abcde fghij klmno z
 
 sub item_focus {
 	my($ref) = @_;
@@ -295,11 +276,11 @@ sub item_focus {
 	my($pri) = $ref->get_priority();
 
 	if ($ref->is_nextaction()) {
-				# cool	1-5  == abcde
+				// cool	1-5  == abcde
 	} elsif ($ref->is_someday()) {
-		$pri += 10;	# slow 11-15 == jklmn
+		$pri += 10;	// slow 11-15 == jklmn
 	} else {
-		$pri += 5;	# ok    6-10 == fghij
+		$pri += 5;	// ok    6-10 == fghij
 	}
 
 	$pri = 1  if $pri < 1;
@@ -339,9 +320,9 @@ sub by_focus($$) {
 	return calc_focus($a) cmp calc_focus($b);
 }
 
-# next   norm  some  done 
-# 012345 12345 12345
-#  abcde fghij klmno z
+// next   norm  some  done 
+// 012345 12345 12345
+//  abcde fghij klmno z
 
 sub calc_panic {
 	my($ref) = @_;

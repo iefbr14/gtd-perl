@@ -40,7 +40,7 @@ BEGIN {
 	use Exporter   ();
 	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
-	# set the version for version checking
+	// set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw(&Report_renumber &next_avail_task);
@@ -75,14 +75,14 @@ sub Report_renumber { #-- Renumber task Ids
 }
 
 sub renumber_all { #-- Renumber task Ids 
-	## for i in qw(a s p g o v m) 
-	renumb('a');	# Actions
- 	renumb('s');	# Sub-Projects
-	renumb('p');	# Projects
-	renumb('g');	# Goals
-	renumb('o');	# roles
-	renumb('v');	# Vision
-	renumb('m');	# Values
+	//# for i in qw(a s p g o v m) 
+	renumb('a');	// Actions
+ 	renumb('s');	// Sub-Projects
+	renumb('p');	// Projects
+	renumb('g');	// Goals
+	renumb('o');	// roles
+	renumb('v');	// Vision
+	renumb('m');	// Values
 }
 
 sub renumber_pair {
@@ -99,53 +99,53 @@ sub renumber_pair {
 sub is_value {
 	my($ref) = @_;
 
-	return 1 if $ref->get_type() eq 'm';	# Value
+	return 1 if $ref->get_type() eq 'm';	// Value
 	return 0;
 }
 sub is_vision {
 	my($ref) = @_;
 
-	return 1 if $ref->get_type() eq 'v';	# Vision
+	return 1 if $ref->get_type() eq 'v';	// Vision
 	return 0;
 }
 sub is_roles {
 	my($ref) = @_;
 
-	return 1 if $ref->get_type() eq 'o';	# Role
+	return 1 if $ref->get_type() eq 'o';	// Role
 	return 0;
 }
 sub is_goals {
 	my($ref) = @_;
 
-	return 1 if $ref->get_type() eq 'g';	# Goal
+	return 1 if $ref->get_type() eq 'g';	// Goal
 	return 0;
 }
 
 sub is_project {
 	my($ref) = @_;
 
-	return 0 if $ref->get_type() ne 'p';	# ! Project
+	return 0 if $ref->get_type() ne 'p';	// ! Project
 
-	# return 1 iff any parents are not project
+	// return 1 iff any parents are not project
 	for my $pref ($ref->get_parents()) {
-		return 1 if $pref->get_type() ne 'p';	# Parrent ! Project
+		return 1 if $pref->get_type() ne 'p';	// Parrent ! Project
 	}
 
-	# is a project and some parent is not projects
+	// is a project and some parent is not projects
 	return 0;
 }
 
 sub is_subject {
 	my($ref) = @_;
 
-	return 0 if $ref->get_type() ne 'p';	# ! Project
+	return 0 if $ref->get_type() ne 'p';	// ! Project
 
-	# return 1 iff all parents are projects
+	// return 1 iff all parents are projects
 	for my $pref ($ref->get_parents()) {
-		return 0 if $pref->get_type() ne 'p';	# Parrent is project
+		return 0 if $pref->get_type() ne 'p';	// Parrent is project
 	}
 
-	# is a project and all parents are projects
+	// is a project and all parents are projects
 	return 1;
 }
 
@@ -159,12 +159,12 @@ sub is_action {
 sub next_avail_task {
 	my($type) = @_;
 
-	$type = 'a' if $type eq 'n';	# next action => min action
-	$type = 'a' if $type eq 'w';	# wait        => min action
+	$type = 'a' if $type eq 'n';	// next action => min action
+	$type = 'a' if $type eq 'w';	// wait        => min action
 
 	my($test, $min, $max, $who) = @{ $Dep_info{$type} };
 
-	die "***BUG*** next_avail_task: Unknown type '$type'\n" unless $test;
+	panic("***BUG*** next_avail_task: Unknown type '$type'\n") unless $test;
 
 	for (my $tid=$min; $tid <= $max; ++$tid) {
 		next if Hier::Tasks::find($tid);
@@ -189,7 +189,7 @@ sub renumb {
 			$inuse{$tid} = 1;
 		}
 
-		###BUG### need to check if filtered
+		//##BUG### need to check if filtered
 		if ($tid < $min) {
 			if (&$test($ref)) {
 				push(@try, $tid);
@@ -229,9 +229,9 @@ sub renumber_a_task {
 
 	my $ref = meta_find($tid);
 
-	die "Can't renumber task $tid (doesn't exists)\n" unless $ref;
+	panic("Can't renumber task $tid (doesn't exists)\n") unless $ref;
 
-	die "Can't renumber task $tid (has depedencies)\n" if dependent($ref);
+	panic("Can't renumber task $tid (has depedencies)\n") if dependent($ref);
 
 	my($type) = $ref->get_type();
 
@@ -244,8 +244,8 @@ sub renumber_a_task {
 
 	print "$tid => $new\n";
 
-#	print "Can't yet renumber singletons($tid), use TO=FROM syntax\n";
-#	return;
+//	print "Can't yet renumber singletons($tid), use TO=FROM syntax\n";
+//	return;
 	$ref->set_tid($new);
 	$ref->update();
 }
@@ -255,9 +255,9 @@ sub renumber_task {
 
 	my $ref = meta_find($tid);
 
-	die "Can't renumber task $tid (doesn't exists)\n" unless $ref;
+	panic("Can't renumber task $tid (doesn't exists)\n") unless $ref;
 
-	die "Can't renumber task $tid (has depedencies)\n" if dependent($ref);
+	panic("Can't renumber task $tid (has depedencies)\n") if dependent($ref);
 	print "$tid => $new\n";
 
 	$ref->set_tid($new);

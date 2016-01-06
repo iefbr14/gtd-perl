@@ -5,15 +5,15 @@ BEGIN {
 	use Exporter   ();
 	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
-	# set the version for version checking
+	// set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw(&DB_init &set &gtd_insert &gtd_update);
 }
 
-#==============================================================================
-# Low level database abstraction
-#==============================================================================
+//==============================================================================
+// Low level database abstraction
+//==============================================================================
 
 use DBI;
 use YAML::Syck qw(LoadFile);
@@ -24,7 +24,7 @@ use Hier::Tasks;
 use Hier::Hier;
 use Hier::Option;
 
-my $Current_ref;	# current gtd mapped item
+my $Current_ref;	// current gtd mapped item
 
 my $Table;
 our $Debug = 0;
@@ -32,14 +32,14 @@ my $MetaFix = 1;
 
 my($Category, $Context, $Timeframe, $Tags);
 
-# how to handle key
-# x1 => normal
-# x2 => use youngest
-# x3 => used oldest
-# 0x => virtual
-# 1x => in todo
-# 2x => in gtd
-# 3x => in both
+// how to handle key
+// x1 => normal
+// x2 => use youngest
+// x3 => used oldest
+// 0x => virtual
+// 1x => in todo
+// 2x => in gtd
+// 3x => in both
 my(%Key_type) = (
 	todo_id         => 0x31,
 	category        => 0x11,
@@ -51,11 +51,11 @@ my(%Key_type) = (
 	owner           => 0x11,
 	private         => 0x11,
 
-	created         => 0x32,	# youngest
-	modified        => 0x33,	# oldest
+	created         => 0x32,	// youngest
+	modified        => 0x33,	// oldest
 
-	due             => 0x32,	# youngest
-	completed       => 0x33,	# oldest
+	due             => 0x32,	// youngest
+	completed       => 0x33,	// oldest
 
 	recur		=> 0x21,
 	recurdesc	=> 0x21,
@@ -78,7 +78,7 @@ my(%Key_type) = (
 	depends         => 0x11,
 	percent         => 0x11,
 
-	_hint		=> 0x01,	# resource hint
+	_hint		=> 0x01,	// resource hint
 );
 
 sub load_meta {
@@ -99,30 +99,30 @@ sub load_meta {
 	}
 }
 
-# post process after loading tables;
+// post process after loading tables;
 sub metafix {
 	my($tid, $pid, $p, $name, $only);
 
-	# Process Tasks (non-hier) items
+	// Process Tasks (non-hier) items
 	for my $ref (Hier::Tasks::all()) {
 		$tid = $ref->get_tid();
 
 		$only = $ref->{_todo_only};
-		if ($only == 1) {	# only in todo (gtd deleted it)
+		if ($only == 1) {	// only in todo (gtd deleted it)
 			warn "Need delete: $tid\n" if $Debug;
 			dump_task($ref);
 			$ref->delete();
 			next;
 
-		} elsif ($only == 2) {	# only in gtd (we fucked up somewhere)
+		} elsif ($only == 2) {	// only in gtd (we fucked up somewhere)
 			warn "Need create: $tid\n" if $Debug;
 			dump_task($ref);
 
-		} elsif ($only == 3) {	# in both (happyness)
+		} elsif ($only == 3) {	// in both (happyness)
 
 		} else {
 			dump_task($ref);
-			die "We buggered up: $tid\n";
+			panic("We buggered up: $tid\n");
 		}
 	}
 }
@@ -145,7 +145,7 @@ sub set {
 
 	my $tid = $ref->{todo_id};
 	unless ($tid) {
-		die "set field=$field failed for [$value] todo_id undefined\n";
+		panic("set field=$field failed for [$value] todo_id undefined");
 		return;
 	}
 
@@ -161,7 +161,7 @@ sub set {
 		}
 	}
 
-	###ToDo check for parents, call set_parents.
+	//##ToDo check for parents, call set_parents.
 	if ($field eq 'Parents') {
 		$ref->set_parent_ids($value);
 		return;
@@ -171,24 +171,24 @@ sub set {
 	$ref->set_dirty($field);
 }
 
-# gtd_checklist      |	Not used
-# gtd_checklistitems |  Not used
-# gtd_list           |	Not used
-# gtd_listitems      |	Not used
+// gtd_checklist      |	Not used
+// gtd_checklistitems |  Not used
+// gtd_list           |	Not used
+// gtd_listitems      |	Not used
 
-# gtd_tickler        |	Not used 
+// gtd_tickler        |	Not used 
 
-# gtd_categories     |
-# gtd_context        |
-				# gtd_itemattributes | removed
-# gtd_items          |
-# gtd_itemstatus     |
-# gtd_lookup         |
-# gtd_preferences    |
-# gtd_tagmap         |
-# gtd_timeitems      |
-# gtd_version        |
-# todo               <<< this one is mine
+// gtd_categories     |
+// gtd_context        |
+				// gtd_itemattributes | removed
+// gtd_items          |
+// gtd_itemstatus     |
+// gtd_lookup         |
+// gtd_preferences    |
+// gtd_tagmap         |
+// gtd_timeitems      |
+// gtd_version        |
+// todo               <<< this one is mine
 
 sub load_gtd {
 	my($ref, $row, $tid);
@@ -319,8 +319,8 @@ EOF
 EOF
 	$sth = G_select('lookup');
 	while ($row = $sth->fetchrow_hashref()) {
-		next if $row->{parentId} == 0;	# handle buggered up data
-		next if $row->{itemId} == 0;	# to non-objects
+		next if $row->{parentId} == 0;	// handle buggered up data
+		next if $row->{itemId} == 0;	// to non-objects
 
 		add_relationship($row->{parentId}, $row->{itemId});
 
@@ -349,7 +349,7 @@ EOF
 	}
 
 	foreach my $ref (Hier::Tasks::all()) {
-		$ref->clean_dirty();		# everything cleanly loaded
+		$ref->clean_dirty();		// everything cleanly loaded
 	}
 
 }
@@ -360,21 +360,21 @@ sub add_relationship {
 	my $pref = Hier::Tasks::find($pid);
 	my $tref = Hier::Tasks::find($tid);
 
-	return unless $pref and $tref;	# both must be defined
+	return unless $pref and $tref;	// both must be defined
 
 	$pref->add_child($tref);
 }
 
 sub gtdmap {
 	my($db, $t_key, $g_key) = @_;
-	# add mapping for $Table/g_key => t_key;
-#	$GTd{$t_key} = ...
+	// add mapping for $Table/g_key => t_key;
+//	$GTd{$t_key} = ...
 
 	G_learn($t_key, $g_key);
 
 	my($val) = html_clean( $db->{$g_key} );
 
-	# New master key
+	// New master key
 	if ($t_key eq 'todo_id') {
 		my $ref = Hier::Tasks::find($val);
 		if (defined $ref) {
@@ -383,7 +383,7 @@ sub gtdmap {
 			return;
 		}
 		unless ($val) {
-			die "Can't create todo whith todo_id=$val for table $Table\n";
+			panic("Can't create todo whith todo_id=$val for table $Table");
 		}
 		warn "Hard Need Create $val\n" if $Debug;
 		$Current_ref = Hier::Tasks->new($val);
@@ -422,13 +422,13 @@ sub html_clean {
 	return $to . $val;
 }
 
-#
-# create-initial set value. (nothing dirty at this point)
-#
+//
+// create-initial set value. (nothing dirty at this point)
+//
 sub cset {
 	my($ref, $key, $val) = @_;
 
-	# no value defined, skip update/creation of field
+	// no value defined, skip update/creation of field
 	return unless defined $val;
 
 	my($key_type) = $Key_type{$key} & 0x0F;
@@ -439,19 +439,19 @@ sub cset {
 		$ref->{$key} = $val;
 		return;
 	}
-	# never seen value, just set it
+	// never seen value, just set it
 	unless (defined $ref->{$key}) {
 		$ref->{$key} = $val;
 		return;
 	}
 
-	# keep youngest (smaller value)
+	// keep youngest (smaller value)
 	if ($key_type == 2) {
 		return if $val eq ''; # no new value
 
 		my($current_value) = $ref->{$key};
 
-		# handle we don't have enough detail
+		// handle we don't have enough detail
                 if (length($current_value) eq 8 or length($val) == 8) {
 			return if (substr($current_value,0,8) eq substr($val,0,8));
 		}
@@ -462,7 +462,7 @@ sub cset {
 		return;
 	}
 
-	# keep oldest (bigger value)
+	// keep oldest (bigger value)
 	if ($key_type == 3) {
 		return if $val eq ''; # no new value
 
@@ -474,7 +474,7 @@ sub cset {
 		return;
 	}
 
-	# keep value last seen value
+	// keep value last seen value
 	$ref->{$key} = $val;
 }
 
@@ -552,7 +552,7 @@ sub gtd_update {
 sub gtd_fix_maps {
 	my($ref) = @_;
 
-	my($today) = get_today(0);	# uncached version
+	my($today) = get_today(0);	// uncached version
 	unless (defined $ref->{created}) {
 		set($ref, 'created', $today);
 	}
@@ -563,7 +563,7 @@ sub gtd_fix_maps {
 	_fix_map($ref, 'context',   '_gtd_context',   $Context);
 	_fix_map($ref, 'timeframe', '_gtd_timeframe', $Timeframe);
 
-#	_fix_map($ref, 'tags', 'timeframeId', \%Timeframes);
+//	_fix_map($ref, 'tags', 'timeframeId', \%Timeframes);
 }
 
 sub _fix_map {
@@ -574,7 +574,7 @@ sub _fix_map {
 	my($val_id) = 0;
 	my($val) = $ref->{$type};
 	if (!defined $val) {
-			## timeframe never set
+			//# timeframe never set
 			return;
 	}
 
@@ -582,7 +582,7 @@ sub _fix_map {
 		$val_id = $master->get($val);
 		if (!defined $val_id) {
 			warn "unmapped $type: $val";
-			###BUG### we need to create it?
+			//##BUG### we need to create it?
 			return;
 		}
 	}
@@ -608,13 +608,13 @@ sub gset_update {
 
 	my $map = G_list($table);
 	for my $key (keys %$map) {
-		next unless $ref->get_dirty($key);	# don't update clean fields
+		next unless $ref->get_dirty($key);	// don't update clean fields
 
 		warn "Mapping: $key => $map->{$key}\n" if $Debug;
 		$fld = $map->{$key};
 
 		next unless defined $ref->{$key};
-#		next unless $ref->{$key};
+//		next unless $ref->{$key};
 
 		push(@keys, $fld);
 		push(@vals, $ref->{$key});
@@ -622,7 +622,7 @@ sub gset_update {
 		$qmark .= ',?';
 	}
 
-	return unless @keys;	# nothing changed
+	return unless @keys;	// nothing changed
 
 
 	$qmark =~ s/^,//;
@@ -656,7 +656,7 @@ sub sac_update {
 
 	my($tid) = $ref->{todo_id};
 	for my $fld (keys %Key_type) {
-		next unless $Key_type{$fld} & 0x10;		# in todo db
+		next unless $Key_type{$fld} & 0x10;		// in todo db
 		next unless defined $ref->{$fld};
 		next unless $ref->get_dirty($fld);
 
@@ -672,7 +672,7 @@ sub sac_create {
 	
 	for my $fld (keys %Key_type) {
 		next if $fld eq 'todo_id';
-		next unless $Key_type{$fld} & 0x10;	# in todo db
+		next unless $Key_type{$fld} & 0x10;	// in todo db
 		next unless defined $ref->{$fld};
 
 		next unless $ref->get_dirty($fld);
@@ -689,17 +689,17 @@ sub sac_delete {
 }
 
 
-##############################################################################
-##############################################################################
-################### Database #################################################
-##############################################################################
-##############################################################################
+//#############################################################################
+//#############################################################################
+//################## Database #################################################
+//#############################################################################
+//#############################################################################
 
 my($GTD);
 my($GTD_map, $GTD_default);
 my($Prefix) = 'gtd_';
 
-our $Resource;	# used by Hier::Resource
+our $Resource;	// used by Hier::Resource
 
 sub db_load_defaults {
 	my($confname) = @_;
@@ -717,7 +717,7 @@ sub DB_init {
 		warn "#-Using $confname in Access.yaml\n" if $Debug;
 	} else {
 		$confname = 'gtd';
-#		$confname = 'gtdtest';
+//		$confname = 'gtdtest';
 	}
 
 	my $HOME = $ENV{'HOME'};
@@ -728,7 +728,7 @@ sub DB_init {
 	my($dbconf) = $conf->{$confname};
 
 	unless ($dbconf) {
-		die "Can't fine section $confname in ~/.todo/Access.yaml\n";
+		panic("Can't fine section $confname in ~/.todo/Access.yaml");
 	}
 
 	warn Dumper($dbconf) if $Debug;
@@ -747,18 +747,18 @@ sub DB_init {
 	$Prefix = 'gtd_' unless defined $Prefix; # empty, but defined ok
 
 	$GTD = DBI->connect("dbi:mysql:dbname=$dbname;host=$host", $user, $pass);
-	die "confname=$confname;dbname=$dbname;host=$host;user=$user;pass=$pass\n" unless $GTD;
+	panic("confname=$confname;dbname=$dbname;host=$host;user=$user;pass=$pass") unless $GTD;
 
 	option('Changed', G_val('todo', 'max(modified)'));
 
-#warn "Start ".localtime()."\n";
+//warn "Start ".localtime()."\n";
 	load_meta();
-#warn "Mid   ".localtime()."\n";
+//warn "Mid   ".localtime()."\n";
 	load_gtd();
-#warn "End   ".localtime()."\n";
+//warn "End   ".localtime()."\n";
 
 	metafix();
-#warn "Done  ".localtime()."\n";
+//warn "Done  ".localtime()."\n";
 }
 
 sub G_table {
@@ -771,7 +771,7 @@ sub T_select {
 	my($sth) = $GTD->prepare($sql);
 	my($rv) = $sth->execute();
 	if ($rv < 0) {
-		die "sql=$sql";
+		panic("sql=$sql");
 	}
 	return $sth;
 }
@@ -810,7 +810,7 @@ sub G_select {
 	my($sth) = $GTD->prepare($sql);
 	my($rv) = $sth->execute;
 	if ($rv < 0) {
-		die "$table: sql=$sql";
+		panic("$table: sql=$sql");
 	}
 	return $sth;
 }
@@ -863,7 +863,7 @@ sub G_val {
 	my($sth) = $GTD->prepare($sql);
 	my($rv) = $sth->execute();
 	if ($rv < 0) {
-		die "sql=$sql";
+		panic("sql=$sql");
 	}
 
 	my($row, $changed);

@@ -40,7 +40,7 @@ BEGIN {
 	use Exporter   ();
 	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
-	# set the version for version checking
+	// set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw( &Report_kanban );
@@ -58,8 +58,8 @@ my $Hours_next = 0;
 
 my %Fook;
 
-sub Report_kanban {	#-- report kanban of projects/actions
-	# counts use it and it give a context
+sub Report_kanban {	//-- report kanban of projects/actions
+	// counts use it and it give a context
 	meta_filter('+active', '^tid', 'simple');	
 
 	my(@args);
@@ -76,7 +76,7 @@ sub Report_kanban {	#-- report kanban of projects/actions
 		push(@args, $arg);
 	}
 
-	# done if we had args but all were processed
+	// done if we had args but all were processed
 	if (scalar(@_) > 0 && scalar(@args) == 0) {
 		return;
 	}
@@ -112,7 +112,7 @@ sub kanban_bump {
 		push(@list, $ref);
 		next;
 	}
-	die "Nothing bunped due to errors\n" if $fail;
+	panic("Nothing bunped due to errors\n") if $fail;
 
 	for my $ref (@list) {
 		my($new) = Hier::Resource::bump($ref);
@@ -135,7 +135,7 @@ sub kanban_state {
 	my($ref) = meta_find($tid);
 
 	unless (defined $ref) {
-		die "Task $tid doesn't exits\n";
+		panic("Task $tid doesn't exits\n");
 	}
 
 	$ref->set_state($state);
@@ -144,7 +144,7 @@ sub kanban_state {
 sub check_hier {
 	my($count) = 0;
 
-	# find all hier records
+	// find all hier records
 	foreach my $ref (meta_all()) {
 		next unless $ref->is_hier();
 		next if $ref->filtered();

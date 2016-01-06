@@ -7,8 +7,8 @@ our $VERSION     = 1.00;
 
 use base qw(Hier::Hier Hier::Fields Hier::Filter);
 
-my $Max_todo = 0; 	# Last todo id (unique for all tables)
-my %Task;		# all Todo items (including Hier)
+my $Max_todo = 0; 	// Last todo id (unique for all tables)
+my %Task;		// all Todo items (including Hier)
 
 our $Resource;
 
@@ -19,7 +19,7 @@ sub new {
 
 	bless $self;
 
-	###TODO load resource list from yaml
+	//##TODO load resource list from yaml
 	return $self;
 }
 
@@ -43,7 +43,7 @@ sub calc_resource {
 	my($ref) = @_;
 
 	my($resource) = $ref->get_resource();
-	return ($resource, 'resource') if $resource;	# handle recursion
+	return ($resource, 'resource') if $resource;	// handle recursion
 
 	my($type) = $ref->get_type();
 
@@ -53,7 +53,7 @@ sub calc_resource {
 	my($desc) = $ref->get_description();
 
 	if ($desc =~ /^allocate:(\S+)$/) {
-		###TODO verify $1 in resource list
+		//##TODO verify $1 in resource list
 		return ($1, 'allocate');
 	}
 
@@ -75,12 +75,12 @@ sub calc_resource {
 	}
 
 	my(@tags) = $ref->get_tags();
-	###TODO look up data in resource list
+	//##TODO look up data in resource list
 
-	# ok maybe the parent resource.
+	// ok maybe the parent resource.
 	my($pref) = $ref->get_parent();
 
-	# nope, we are orfaned or top level;
+	// nope, we are orfaned or top level;
 	return ('personal', 'top') unless $pref;
 
 	return calc_resource($pref);
@@ -117,7 +117,7 @@ sub effort {
 	my($desc) = $ref->get_description();
 
 	if ($desc =~ /^pages:(\d+)$/m) {
-#		$effort =  int($1 / 30) . "h # $1 pages";
+//		$effort =  int($1 / 30) . "h # $1 pages";
 		$effort =  "1h # $1 pages";
 	}
 	if ($desc =~ /^effort:(\d+[hd])$/m) {
@@ -125,7 +125,7 @@ sub effort {
 	}
 
 	if ($effort eq '') {
-		###TODO have these in the resource list
+		//##TODO have these in the resource list
 		my(%efforts) = (
 			Quick => '1h',
 			Hour  => '2h',
@@ -176,29 +176,29 @@ sub hours {
 sub complete {
 }
 
-# for each action, grouped by resource, sorted by priority/hier.task-id
-# tag it as depending on the previous resource
+// for each action, grouped by resource, sorted by priority/hier.task-id
+// tag it as depending on the previous resource
 sub predecessor {
 
 }
 
-#==============================================================================
-# Kanban states
-#------------------------------------------------------------------------------
+//==============================================================================
+// Kanban states
+//------------------------------------------------------------------------------
 
 my %States = (
-	'-' => ['a', '-new-', ],		# never processed state.
+	'-' => ['a', '-new-', ],		// never processed state.
 	'a' => ['b', 'Analysis Needed',	],
 	'b' => ['c', 'Being Analysed',	],
 	'c' => ['d', 'Completed Analysis', ],
 	'd' => ['f', 'Doing',		],
 	'f' => ['t', 'Finished Doing',	],
-	'i' => ['c', 'Ick',		],	# task stuck.
-	'r' => ['c', 'Reprocess',	],	# Reprint
+	'i' => ['c', 'Ick',		],	// task stuck.
+	'r' => ['c', 'Reprocess',	],	// Reprint
 	't' => ['u', 'Test',		],
-	'u' => ['z', 'Update wiki',	],	# done, file paperwork
-	'w' => ['r', 'Waiting',		],	# Waiting on
-	'z' => ['z', 'Z all done',	], 	# should have a completed date
+	'u' => ['z', 'Update wiki',	],	// done, file paperwork
+	'w' => ['r', 'Waiting',		],	// Waiting on
+	'z' => ['z', 'Z all done',	], 	// should have a completed date
 );
 
 sub bump {
@@ -212,9 +212,9 @@ sub bump {
 
 	$ref->set_state($new);
 
-	##  doing          and action then
+	//#  doing          and action then
 	if ($new eq 'd' && $ref->get_type() eq 'a') {
-		# make sure its a next action
+		// make sure its a next action
 		$ref->set_nextaction('y');
 	}
 	return $new;

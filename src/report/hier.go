@@ -40,7 +40,7 @@ BEGIN {
 	use Exporter   ();
 	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
-	# set the version for version checking
+	// set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw(&Report_hier);
@@ -55,7 +55,7 @@ use Hier::Format;
 
 my $Mask = 0;
 
-sub Report_hier {	#-- Hiericial List of Values/Visions/Roles...
+sub Report_hier {	//-- Hiericial List of Values/Visions/Roles...
 	meta_filter('+active', '^title', 'hier');
 
 	$Mask  = option('Mask');
@@ -70,7 +70,7 @@ sub Report_hier {	#-- Hiericial List of Values/Visions/Roles...
 			if ($type) {
 				$depth = $type;
 			} else {
-				die "unknown type $criteria\n";
+				panic("unknown type $criteria\n");
 			}
 		}
 	}
@@ -102,14 +102,14 @@ sub map_depth {
 
 	my($type) = 'm';
 
-	# not a reference to a task
+	// not a reference to a task
 	if (!ref $ref) {
-		# is it a tid?
+		// is it a tid?
 		if ($ref =~ /^\d+$/) {
 			$ref = Hier::Tasks::find($ref);
 			$type = $ref->get_type();
 		} else {
-			# use the type that was pass
+			// use the type that was pass
 			$type = $ref;
 		}
 	}
@@ -121,7 +121,7 @@ sub map_depth {
 }
 
 sub hier_detail {
-#	hier_detail_old(@_); # return;
+//	hier_detail_old(@_); # return;
 
 	my($self, $ref) = @_;
 

@@ -40,7 +40,7 @@ BEGIN {
 	use Exporter   ();
 	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
-	# set the version for version checking
+	// set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw( &Report_board );
@@ -65,8 +65,8 @@ my $Lines;
 my $Cols;
 my %Seen;
 
-sub Report_board {	#-- report board of projects/actions
-	# counts use it and it give a context
+sub Report_board {	//-- report board of projects/actions
+	// counts use it and it give a context
 	meta_filter('+active', '^age', 'simple');
 
 	my(@list) = meta_pick(@_);
@@ -79,7 +79,7 @@ sub Report_board {	#-- report board of projects/actions
 	$Cols = int(columns()/4)-(1+5+1);
 	%Seen = ();
 
-	### printf "Columns: %s split %s\n", columns(), $Cols;
+	//## printf "Columns: %s split %s\n", columns(), $Cols;
 
 	check_roles(@list);
 
@@ -140,23 +140,23 @@ sub check_a_role {
 		check_group($ref, $state, '-', 5, \@want);
 
 		check_group($ref, $state, 'b', 1, \@d_anal);
-		#------------------------------------------
+		//------------------------------------------
 		check_group($ref, $state, 'a', 1, \@b_anal);
 
 
-		check_group($ref, $state, 'd', 2, \@d_devel);	# Do
-		check_group($ref, $state, 'i', 2, \@d_devel);	# Ick 
-		#------------------------------------------
+		check_group($ref, $state, 'd', 2, \@d_devel);	// Do
+		check_group($ref, $state, 'i', 2, \@d_devel);	// Ick 
+		//------------------------------------------
 		check_group($ref, $state, 'c', 2, \@b_devel);
 
 		check_group($ref, $state, 'r', 3, \@d_test);
 		check_group($ref, $state, 't', 3, \@d_test);
-		#------------------------------------------
+		//------------------------------------------
 		check_group($ref, $state, 'f', 3, \@b_test);
-		check_group($ref, $state, 'w', 2, \@b_test);	# wait
+		check_group($ref, $state, 'w', 2, \@b_test);	// wait
 
-		check_group($ref, $state, 'u', 4, \@d_done);	# update
-		#------------------------------------------
+		check_group($ref, $state, 'u', 4, \@d_done);	// update
+		//------------------------------------------
 		check_group($ref, $state, 'z', 4, \@b_done);
 	}
 
@@ -230,11 +230,11 @@ sub col {
 	my($val) = shift(@{$aref});
 	$val = ' 'x ($Cols+6)  unless $val;
 
-#	if ($sep eq ' ') {
-#		printf("%-${Cols}.${Cols}s%s", $val, $sep);
-#	} else {
-#		print $val, "\n";
-#	}
+//	if ($sep eq ' ') {
+//		printf("%-${Cols}.${Cols}s%s", $val, $sep);
+//	} else {
+//		print $val, "\n";
+//	}
 
 	print $val, $sep;
 }
@@ -387,7 +387,7 @@ sub check_children {
 sub check_proj {
 	my($count) = 0;
 
-	# find all projects
+	// find all projects
 	foreach my $ref (meta_matching_type('p')) {
 
 		++$count;
@@ -398,9 +398,9 @@ sub check_proj {
 sub check_liveproj {
 	my($count) = 0;
 
-	# find all projects
+	// find all projects
 	foreach my $ref (meta_matching_type('p')) {
-###FILTER	next if $ref->filtered();
+//##FILTER	next if $ref->filtered();
 
 		next unless project_live($ref);
 
@@ -413,7 +413,7 @@ sub check_task {
 	my($count) = 0;
 	my($time) = 0;
 
-	# find all records.
+	// find all records.
 	foreach my $ref (meta_selected()) {
 		next unless $ref->is_task();
 
@@ -433,7 +433,7 @@ sub check_next {
 	my($count) = 0;
 	my($time) = 0;
 
-	# find all records.
+	// find all records.
 	foreach my $ref (meta_selected()) {
 		next unless $ref->is_task();
 
@@ -455,7 +455,7 @@ sub check_tasklive {
 	my($count) = 0;
 	my($time) = 0;
 
-	# find all records.
+	// find all records.
 	foreach my $ref (meta_selected()) {
 
 		next unless $ref->is_task();

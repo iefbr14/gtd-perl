@@ -7,7 +7,7 @@ use Hier::Option;
 
 use base qw(Hier::Hier Hier::Fields Hier::Filter Hier::Format);
 
-my %Task;		# all Todo items (including Hier)
+my %Task;		// all Todo items (including Hier)
 
 sub find {
 	my($tid) = @_;
@@ -20,7 +20,7 @@ sub all {
 	return values %Task;
 }
 
-my $Max_todo = 0; 	# Last todo id (unique for all tables)
+my $Max_todo = 0; 	// Last todo id (unique for all tables)
 our $Debug = 0; 
 
 sub new {
@@ -31,7 +31,7 @@ sub new {
 	$Max_todo = Hier::Db::G_val('todo', 'max(todo_id)') unless $Max_todo;
 
 	if (defined $tid) {
-		die "Task $tid exists won't create it." if defined $Task{$tid};
+		panic("Task $tid exists won't create it.") if defined $Task{$tid};
 
 		$Max_todo = $tid if $Max_todo < $tid;
 	} else {
@@ -44,7 +44,7 @@ sub new {
 
 	bless $self, $class;
 
-	$Task{$tid} = $self;	# need to hide this
+	$Task{$tid} = $self;	// need to hide this
 
 	return $self;
 }
@@ -61,9 +61,9 @@ sub max {
 }
 
 
-#------------------------------------------------------------------------------
-## Package Dirty
-#
+//------------------------------------------------------------------------------
+//# Package Dirty
+//
 sub is_dirty {
 	my($self) = @_;
 	return defined $self->{_dirty};
@@ -96,29 +96,29 @@ sub delete {
 	my $tid = $self->{todo_id};
 	delete $Task{$tid};
 
-	# remove my children from self
+	// remove my children from self
 	for my $child ($self->get_parents) {
 		$self->orphin_child($child);
 	}
 	$self->update();
 
-	# remove self from my parents
+	// remove self from my parents
 	for my $parent ($self->get_parents) {
 		$parent->orphin_child($self);
 		$parent->update();
 	}
 
 
-	# commit suicide
+	// commit suicide
 	Hier::Db::sac_delete($tid);
-	Hier::Db::gtd_delete($tid);	# remove from database
+	Hier::Db::gtd_delete($tid);	// remove from database
 
-	###BUG### need to reflect back database changed.
-	###G_sql("update");
+	//##BUG### need to reflect back database changed.
+	//##G_sql("update");
 	return;
 }
 
-#------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 sub default {
 	my($val, $default) = @_;
@@ -153,7 +153,6 @@ sub get_nextaction   { my($self) = @_; return default($self->{nextaction}, 'n');
 sub get_note         { my($self) = @_; return default($self->{note}, ''); }
 sub get_priority     { my($self) = @_; return default($self->{priority}, 4); }
 sub get_title        { my($self) = @_; return default($self->{task}, ''); }
-sub get_task         { die "call get title"; }
 sub get_tickledate   { my($self) = @_; return default($self->{tickledate}, ''); }
 sub get_timeframe    { my($self) = @_; return default($self->{timeframe}, ''); }
 sub get_todo_only    { my($self) = @_; return default($self->{_todo_only}, 0); }
@@ -200,11 +199,11 @@ sub set_tid          {
 	my $tid = $ref->get_tid();
 
 	if (defined $Task{$new}) {
-		die "Can't renumber tid $tid => $new (already exists)\n";
+		panic("Can't renumber tid $tid => $new (already exists)");
 	}
 
 	if ($ref->is_dirty()) {
-		# make sure the rest of the object is clean
+		// make sure the rest of the object is clean
 		$ref->update();		
 	}
 
@@ -218,7 +217,7 @@ sub clean_set {
 	my($field, $ref, $val) = @_;
 
 	unless (defined $val) {
-		die "Won't set $field to undef\n";
+		panic("Won't set $field to undef");
 	}
 
 
@@ -249,9 +248,9 @@ sub set_tags {
 	return $self;
 }
 
-#
-# dirty set 
-#
+//
+// dirty set 
+//
 sub set_KEY { my($self, $key, $val) = @_;  return dset($key, $self, $val); }
 sub dset {
 	my($field, $ref, $val) = @_;
@@ -265,16 +264,16 @@ sub dset {
 		return;
 	}
 	if ($field eq 'Tags') {
-		###BUG### tag setting not done yet
-		die "Can't set tags yet";
+		//##BUG### tag setting not done yet
+		panic("Can't set tags yet");
 	}
 
 
-#	unless (defined $val) {
-#		die "Won't set $field to undef\n";
-#	}
+//	unless (defined $val) {
+//		panic("Won't set $field to undef\n");
+//	}
 
-	# skip setting if already set that way!
+	// skip setting if already set that way!
 	return $ref if defined($ref->{$field}) && defined($val)
 		    && $ref->{$field} eq $val;
 
@@ -298,7 +297,7 @@ sub update {
 }
 
 sub clean_up_database {
-	$Debug = 1;	# show what should have been updated.
+	$Debug = 1;	// show what should have been updated.
 	foreach my $ref (Hier::Tasks::all()) {
 
 		next unless $ref->is_dirty();
@@ -316,7 +315,7 @@ sub reload_if_needed_database {
 
 	if ($cur ne $changed) {
 		print "Database changed from $changed => $cur\n";
-		###BUG### reload database
+		//##BUG### reload database
 		set_option('Changed', $cur);
 	}
 }
@@ -332,7 +331,7 @@ sub is_later {
 	my($tickle) = $ref->get_tickledate();
 
 	return 0 unless $tickle;
-	return 0 if $tickle lt get_today();	# tickle is after today
+	return 0 if $tickle lt get_today();	// tickle is after today
 
 	return 1;
 }
@@ -373,13 +372,13 @@ sub is_nextaction {
 	return 0;
 }
 
-# used by Hier::Walk to track depth of the current walk
+// used by Hier::Walk to track depth of the current walk
 sub set_level {
 	my($self, $level) = @_;
 
-	die "set_level missing level value" unless defined $level;
+	panic("set_level missing level value") unless defined $level;
 
-	# now remember our level;
+	// now remember our level;
 	$self->{_level} = $level;
 }
 
@@ -388,9 +387,9 @@ sub level {
 
 	my($level) = $self->{_level};
 
-	# we have alread defined it, return it.
+	// we have alread defined it, return it.
 	return $level if defined $level;
-	die "level not set correctly?";
+	panic("level not set correctly?");
 }
 
 sub get_state {

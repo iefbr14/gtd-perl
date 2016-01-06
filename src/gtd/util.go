@@ -9,7 +9,7 @@ BEGIN {
 	use Exporter   ();
 	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
-	# set the version for version checking
+	// set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw(
@@ -29,10 +29,10 @@ my %Types = (
 	'Goal'		=> 'g',
 
 	'Project'	=> 'p',
-	'Sub-Project'	=> 's',		# we can as for this
+	'Sub-Project'	=> 's',		// we can as for this
 
 	'Action'	=> 'a',
-	'Next'		=> 'n',		# next action
+	'Next'		=> 'n',		// next action
 	'Inbox'		=> 'i',
 	'Wait'		=> 'w',
 	'Waiting'	=> 'w',
@@ -73,17 +73,17 @@ sub type_depth {
 	my($type) = @_;
 
 	my %depth = (
-		'm' => 1,		# hier
+		'm' => 1,		// hier
 		'v' => 2,
 		'o' => 3,
 		'g' => 4,
 		'p' => 5,
-		's' => 6,		# sub-projects
+		's' => 6,		// sub-projects
 
-		'n' => 7,		# next actions
-		'a' => 7,		# actions (tasks)
-		'i' => 8,		# inbox
-		'w' => 8,		# wait for
+		'n' => 7,		// next actions
+		'a' => 7,		// actions (tasks)
+		'i' => 8,		// inbox
+		'w' => 8,		// wait for
 	);
 
 	confess "Bad type '$type'" unless defined $depth{$type};
@@ -120,10 +120,10 @@ sub action_disp {
 	return $key;
 }
 
-#==============================================================================
+//==============================================================================
 
 sub delete_hier {
-	die "###ToDo Borked, should be deleting by categories?\n";
+	panic("###ToDo Borked, should be deleting by categories?\n");
 	foreach my $tid (@_) {
 		my $ref = Hier::Tasks::find{$tid};
 		if (defined $ref) {
@@ -147,18 +147,18 @@ sub min_key {
 }
 
 sub lines {
-#	if (! -t *STDIN) {
-#		return 60;
-#	}
+//	if (! -t *STDIN) {
+//		return 60;
+//	}
 	my($lines) = $ENV{LINES} || 24;
 
 	return $lines;
 }
 
 sub columns {
-#	if (! -t *STDIN) {
-#		return 80;
-#	}
+//	if (! -t *STDIN) {
+//		return 80;
+//	}
 	my($rows) = $ENV{COLUMNS} || 80;
 
 	return $rows;

@@ -40,7 +40,7 @@ BEGIN {
 	use Exporter   ();
 	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
-	# set the version for version checking
+	// set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw(&Report_cct);
@@ -51,7 +51,7 @@ use Hier::Format;
 use Hier::Meta;
 use Hier::Color;
 
-use Hier::CCT;		# DIRECT access to interals (Bleck)
+use Hier::CCT;		// DIRECT access to interals (Bleck)
 
 my %Count;
 my %Sub_Count;
@@ -59,7 +59,7 @@ my %Types;
 my %Total;
 my %Dups;
 
-sub Report_cct {	#-- List Categories/Contexts/Time Frames
+sub Report_cct {	//-- List Categories/Contexts/Time Frames
 	meta_filter('+all', '^tid', 'simple');
 	meta_argv(@_);
 
@@ -68,7 +68,7 @@ sub Report_cct {	#-- List Categories/Contexts/Time Frames
 	cct_crosstab();
 }
 
-sub cct_crosstab {	#-- List Categories/Contexts/Time Frames
+sub cct_crosstab {	//-- List Categories/Contexts/Time Frames
 	report_counts("Categories",  'category');
 	report_counts("Contexts",    'context');
 	report_counts("Time Frames", 'timeframe');

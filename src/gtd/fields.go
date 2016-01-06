@@ -6,17 +6,17 @@ use warnings;
 our $VERSION     = 1.00;
 
 use constant {
-	VALUE		=> 'm',		# hier
+	VALUE		=> 'm',		// hier
 	VISION		=> 'v',
 	ROLE		=> 'o',
 	GOAL		=> 'g',
 	PROJECT		=> 'p',
 
-	ACTION		=> 'a',		# task(s)
+	ACTION		=> 'a',		// task(s)
 	INBOX		=> 'i',
 	WAIT		=> 'w',
 
-	REFERENCE	=> 'r',		# list(s)/references
+	REFERENCE	=> 'r',		// list(s)/references
 	LIST		=> 'L',
 	CHECKLIST	=> 'C',
 	ITEM		=> 'T',
@@ -30,9 +30,9 @@ sub is_task {
 
 	my $type = $ref->{type};
 
-	return 1 if $type eq ACTION;	# action item
-	return 1 if $type eq WAIT;	# waiting item
-	return 1 if $type eq INBOX;	# inbox item
+	return 1 if $type eq ACTION;	// action item
+	return 1 if $type eq WAIT;	// waiting item
+	return 1 if $type eq INBOX;	// inbox item
 
 	return 0;
 }
@@ -62,10 +62,10 @@ sub is_list {
 
 	my $type = $ref->{type};
 
-	return 1 if $type eq REFERENCE;	# reference
-	return 1 if $type eq LIST;	# list
-	return 1 if $type eq CHECKLIST;	# checklist
-	return 1 if $type eq ITEM;	# list or checklist item
+	return 1 if $type eq REFERENCE;	// reference
+	return 1 if $type eq LIST;	// list
+	return 1 if $type eq CHECKLIST;	// checklist
+	return 1 if $type eq ITEM;	// list or checklist item
 
 	return 0;
 }

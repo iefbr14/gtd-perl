@@ -40,7 +40,7 @@ BEGIN {
 	use Exporter   ();
 	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
-	# set the version for version checking
+	// set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw(&Report_items);
@@ -52,8 +52,8 @@ use Hier::Format;
 use Hier::Option;
 use Hier::Sort;
 
-sub Report_items {	#-- list titles for any filtered class (actions/projects etc)
-	# everybody into the pool by name
+sub Report_items {	//-- list titles for any filtered class (actions/projects etc)
+	// everybody into the pool by name
 	meta_filter('+any', '^title', 'item');	
 
 	my($name) = meta_desc(@_);
@@ -70,14 +70,14 @@ sub Report_items {	#-- list titles for any filtered class (actions/projects etc)
 	print "No items requested\n";
 }
 
-sub list_items {	#-- List projects with waiting-fors
+sub list_items {	//-- List projects with waiting-fors
 	my($type, $typename) = @_;
 
 	report_header($typename);
 
         my($tid, $title, $desc, @list);
         for my $ref (meta_matching_type($type)) {
-##FILTER	next if $ref->filtered();
+//#FILTER	next if $ref->filtered();
 
                 push(@list, $ref);
         }

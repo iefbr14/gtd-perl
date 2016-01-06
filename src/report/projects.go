@@ -40,7 +40,7 @@ BEGIN {
 	use Exporter   ();
 	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
-	# set the version for version checking
+	// set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw(&Report_projects);
@@ -54,8 +54,8 @@ use Hier::Format;
 
 my %Meta_key;
 
-sub Report_projects {	#-- List projects -- live, plan or someday
-	#meta_filter('+next', '^focus', 'rgpa');
+sub Report_projects {	//-- List projects -- live, plan or someday
+	//meta_filter('+next', '^focus', 'rgpa');
 	meta_filter('+p:next', '^focus', 'simple');
 
 	report_projects(1, 'Projects', meta_desc(@_));
@@ -70,9 +70,9 @@ sub report_projects {
 	my($proj_cnt) = 0;
 	my($ref, $proj, %wanted, %counted, %actions);
 
-	# find all next and remember there projects
+	// find all next and remember there projects
 	for my $ref (meta_matching_type('p')) {
-##FILTER	next if $ref->filtered();
+//#FILTER	next if $ref->filtered();
 
 		my $pid = $ref->get_tid();
 		$wanted{$pid} = $ref;
@@ -87,11 +87,11 @@ sub report_projects {
 		}
 	}
 
-### format:
-### ==========================
-### Value Vision Role
-### -------------------------
-### 99	Goal 999 Project
+//## format:
+//## ==========================
+//## Value Vision Role
+//## -------------------------
+//## 99	Goal 999 Project
 	my($cols) = columns() - 2;
 
 	my($g_id) = 0;
@@ -107,7 +107,7 @@ sub report_projects {
 		my($work, $counts) = summary_children($ref);
 		$work_load += $work;
 		display_rgpa($ref, $counts);
-#		display_task($ref, $counts);
+//		display_task($ref, $counts);
 
 		++$proj_cnt;
 

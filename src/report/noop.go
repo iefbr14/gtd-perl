@@ -40,7 +40,7 @@ BEGIN {
 	use Exporter   ();
 	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
-	# set the version for version checking
+	// set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw(&Report_noop);
@@ -55,7 +55,7 @@ my $Mask = 0;
 
 our $Debug = 0;
 
-sub Noop {	#-- No Operation
+sub Noop {	//-- No Operation
 	print "### Debug noop = $Debug\n" if $Debug;
 
 	meta_filter('+live', '^tid', 'tid');

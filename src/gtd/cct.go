@@ -1,20 +1,21 @@
 package gtd
 
-my %Categories;		# mapping  Category Id   => Category Name
-my %Contexts;		# mapping  Context Id    => Context Name
-my %Timeframes;		# mapping  Timreframe Id => Timreframe Name
-my %Tags;		# mapping  Tag Id        => Tag Name
+var (
 
-my %Maps = (
-	'Category'  => \%Categories,
-	'Context'   => \%Contexts,
-	'TimeFrame' => \%Timeframes,
-	'Tag'       => \%Tags,
+Categories,		// mapping  Category Id   => Category Name
+Contexts,		// mapping  Context Id    => Context Name
+Timeframes,		// mapping  Timreframe Id => Timreframe Name
+Tags		// mapping  Tag Id        => Tag Name
+
+	map[string]string
+)
+
+var Maps map[string]map[string]string = {
+	"Category"  , &Categories,
+	"Context"   , &Contexts,
+	"TimeFrame" , &Timeframes,
+	"Tag"       , &Tags,
 );
-
-sub new {
-	my($self) = @_;
-}
 
 sub use {
 	my($self, $type) = @_;
@@ -72,7 +73,7 @@ sub keys {
 sub name {
 	my($ref, $val) = @_;
 
-	###BUG### $CCT->name is horibly expensive
+	//##BUG### $CCT->name is horibly expensive
 	my(%rev) = reverse(%$ref);
 
 	return $rev{$val};
@@ -81,7 +82,7 @@ sub name {
 sub rename {
 	my($ref, $key, $newname) = @_;
 
-	die "###BUG### Can't rename $key => $newname\n";
+	panic("###BUG### Can't rename $key => $newname");
 }
 
 sub _table {
@@ -89,12 +90,12 @@ sub _table {
 
 	$type = lc($type);
 
-	return \%Categories if $type eq 'category';
-	return \%Contexts   if $type eq 'context';
-	return \%Timeframes if $type eq 'timeframe';
-	return \%Tags       if $type eq 'tag';
+	return Categories if $type eq 'category';
+	return Contexts   if $type eq 'context';
+	return Timeframes if $type eq 'timeframe';
+	return Tags       if $type eq 'tag';
 
-	die "Unknown CCT table type: $type\n";
+	panic("Unknown CCT table type: $type");
 }
 
 1;

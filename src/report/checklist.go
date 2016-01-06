@@ -40,7 +40,7 @@ BEGIN {
 	use Exporter   ();
 	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
-	# set the version for version checking
+	// set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw( &Report_checklist );
@@ -52,9 +52,9 @@ use Hier::Format;
 
 our $Debug = 0;
 
-sub Report_checklist {	#-- display a check list
+sub Report_checklist {	//-- display a check list
 	meta_filter('+any', '^title', 'item');	
-#	meta_argv();
+//	meta_argv();
 	my ($p) = shift @_;
 	
 	my ($id);
@@ -79,7 +79,7 @@ sub find_list {
 	my($pid, $tid, $proj, $type, $f);
 	my($Dates) = '';
 
-	# find all records.
+	// find all records.
 	for my $ref (meta_all()) {
 		$tid = $ref->get_tid();
 		$type = $ref->get_type();
@@ -106,7 +106,7 @@ sub list_records {
 
 	my($pid, $tid, $proj, $type, $f);
 
-	# find all records.
+	// find all records.
 	disp_list('T', $list_id);
 }
 
@@ -129,8 +129,8 @@ sub disp_list {
 	}
 }
 
-### format:
-### 99	P:Title	[_] A:Title
+//## format:
+//## 99	P:Title	[_] A:Title
 sub disp {
 	my($ref) = @_;
 

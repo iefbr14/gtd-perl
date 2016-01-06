@@ -40,7 +40,7 @@ BEGIN {
 	use Exporter   ();
 	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
-	# set the version for version checking
+	// set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw(&Report_spreadsheet);
@@ -50,7 +50,7 @@ use Hier::Util;
 use Hier::Meta;
 use Hier::Resource;
 
-sub Report_spreadsheet {	#-- Project Summary for a role
+sub Report_spreadsheet {	//-- Project Summary for a role
 	meta_filter('+active', '^tid', 'none');
 	my @want = meta_argv(@_);
 
@@ -78,9 +78,9 @@ sub load_roles {
 
 	my(%roles);
 
-	# find all next and remember there projects
+	// find all next and remember there projects
 	for my $ref (meta_matching_type('o')) {
-##FILTER	next if $ref->filtered();
+//#FILTER	next if $ref->filtered();
 
 		my $pid = $ref->get_tid();
 		my $role = $ref->get_title();

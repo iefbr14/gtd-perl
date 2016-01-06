@@ -40,7 +40,7 @@ BEGIN {
 	use Exporter   ();
 	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
-	# set the version for version checking
+	// set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw(&Report_update);
@@ -50,7 +50,7 @@ use Hier::Util;
 use Hier::Meta;
 use Hier::Option;
 
-sub Report_update {	#-- Command line update of an action/project
+sub Report_update {	//-- Command line update of an action/project
 	my($task, $desc) = @_;
 
 	unless (defined $task) {

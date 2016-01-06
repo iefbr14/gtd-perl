@@ -40,7 +40,7 @@ BEGIN {
 	use Exporter   ();
 	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
-	# set the version for version checking
+	// set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw(&Report_clean);
@@ -49,7 +49,7 @@ BEGIN {
 use Hier::Meta;
 use Hier::Option;
 
-sub Report_clean {	#-- clean unused categories
+sub Report_clean {	//-- clean unused categories
 	my $Yesterday = get_today(-1);
 
 	meta_filter('+all', '^tid', 'task');
@@ -72,7 +72,7 @@ sub Report_clean {	#-- clean unused categories
 
 		$type = $ref->get_type();
 
-		# all values and visions are active
+		// all values and visions are active
 		if ($type =~ /[mv]/) {	
 			set_active($ref);
 		}

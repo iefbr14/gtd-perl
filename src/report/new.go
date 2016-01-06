@@ -40,7 +40,7 @@ BEGIN {
 	use Exporter   ();
 	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
-	# set the version for version checking
+	// set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw(&Report_new);
@@ -53,33 +53,33 @@ use Hier::Util;
 use Hier::Option;
 use Hier::Prompt;
 
-use Hier::Report::renumber;	# qw(next_avail_task);
+use Hier::Report::renumber;	// qw(next_avail_task);
 
 my $First = '';
 my $Parent;
 my $P_ref;
 
-###BUG### ^c in new kills report rc
+//##BUG### ^c in new kills report rc
 
-# Usage:
-#    new                               # type: inbox
-#    new task                          # type: task
-#    new proj                          # type: proj
-#    new        I have to do this      # type: inbox (done)
-#    new task   I have to do this      # type: task (done)
-# and we mix in with a parent: 
-#    new				# type: map parent
-#    new task				# type: is task
-#    new proj                           # type: is sub-project
-#    new        I have to do this       # type: map parent (done)
-#    new task   I have to do this       # type: is task (done)
-#    new proj   I have to do this       # type: is proj (done)
-#
-# there are two paths here.  The first is the command line
-# where everything is on the command line and is a one shot
-# the other is the prompter version with defaults
-#
-sub Report_new {	#-- create a new action or project
+// Usage:
+//    new                               # type: inbox
+//    new task                          # type: task
+//    new proj                          # type: proj
+//    new        I have to do this      # type: inbox (done)
+//    new task   I have to do this      # type: task (done)
+// and we mix in with a parent: 
+//    new				// type: map parent
+//    new task				// type: is task
+//    new proj                           # type: is sub-project
+//    new        I have to do this       # type: map parent (done)
+//    new task   I have to do this       # type: is task (done)
+//    new proj   I have to do this       # type: is proj (done)
+//
+// there are two paths here.  The first is the command line
+// where everything is on the command line and is a one shot
+// the other is the prompter version with defaults
+//
+sub Report_new {	//-- create a new action or project
 	meta_filter('+all', '^tid', 'none');
 
 	my($want) = '';
@@ -96,26 +96,26 @@ sub Report_new {	#-- create a new action or project
 	if ($parent) {
 		$P_ref = Hier::Tasks::find($parent);
 		unless ($P_ref) {
-			die "Can't use $parent no such task\n";
+			panic("Can't use $parent no such task\n");
 		}
 		$Parent = $parent;
 		unless ($want) {
 			$want = $P_ref->get_type();
 			$want =~ tr{mvogpawi}
 				   {vogpaXXX};
-		###BUG### in mapping sub-type prompmote actions to projects?
-		die "Won't create sub-actions of actions" if $want eq 'X';
+		//##BUG### in mapping sub-type prompmote actions to projects?
+		panic("Won't create sub-actions of actions") if $want eq 'X';
 		}
 	}
 
-	$want ||= 'i';	# still unknown at this point!
+	$want ||= 'i';	// still unknown at this point!
 
 	my($title) = meta_desc(@_);
 	$title =~ s/^--\s*//;
 
 	print "new: want=$want title=$title\n";
 
-	# command line path
+	// command line path
 	if ($title) {
 		new_item($want, $title);
 		return;
@@ -135,7 +135,7 @@ sub is_type_hier {
 	return 0;
 }
 
-# command line version, no prompting
+// command line version, no prompting
 sub new_item {
 	my($type, $title) = @_;
 
@@ -179,7 +179,7 @@ sub new_item {
 	print "Created: ", $ref->get_tid(), "\n";
 }
 
-# detailed task
+// detailed task
 sub new_action {
 	my($type) = @_;
 

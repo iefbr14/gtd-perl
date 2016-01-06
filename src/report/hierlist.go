@@ -40,7 +40,7 @@ BEGIN {
 	use Exporter   ();
 	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
-	# set the version for version checking
+	// set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw(&Report_hierlist);
@@ -49,7 +49,7 @@ BEGIN {
 use Hier::Util;
 use Hier::Meta;
 
-sub Report_hierlist {	#-- List all top level item (Project and above)
+sub Report_hierlist {	//-- List all top level item (Project and above)
 	my($tid, $pid, $pref, $cnt, $parent, $cat, $name, $desc);
 	my(@row);
 
@@ -65,12 +65,12 @@ format HIER   =
 @>>> @>>> @>> @<<<<<<<< @<<<<<<<<<<< @<<<<<<<<<< ^<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 $tid, $pid,$cnt,$cat,     $parent,     $name,      $desc
 .
-	$~ = "HIER";	# set STDOUT format name to HIER
+	$~ = "HIER";	// set STDOUT format name to HIER
 
 	for my $ref (meta_sorted('^title')) {
 		$tid = $ref->get_tid();
 
-##FILTER	next if $ref->filtered();
+//#FILTER	next if $ref->filtered();
 
 		$cnt = $ref->count_children() || '';
 		

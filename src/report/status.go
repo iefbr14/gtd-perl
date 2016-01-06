@@ -40,7 +40,7 @@ BEGIN {
 	use Exporter   ();
 	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
-	# set the version for version checking
+	// set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw( &Report_status );
@@ -48,7 +48,7 @@ BEGIN {
 
 my @Class = qw(Done Someday Action Next Future Total);
 
-use Hier::Util;		# %Types and typemap
+use Hier::Util;		// %Types and typemap
 use Hier::Meta;
 use Hier::Option;
 use Hier::Resource;
@@ -58,8 +58,8 @@ my $Hours_proj = 0;
 my $Hours_task = 0;
 my $Hours_next = 0;
 
-sub Report_status {	#-- report status of projects/actions
-	# counts use it and it give a context
+sub Report_status {	//-- report status of projects/actions
+	// counts use it and it give a context
 	meta_filter('+active', '^tid', 'none');	
 
 	my $desc = meta_desc(@_);
@@ -76,16 +76,16 @@ sub Report_status {	#-- report status of projects/actions
 	my $task = count_task();
 	my $next = count_next();
 
-#	print "Options:\n";
-#	for my $option (qw(pri debug db title report)) {
-#		printf "%10s %s\n", $option, get_info($option);
-#	}
-#	print "\n";
+//	print "Options:\n";
+//	for my $option (qw(pri debug db title report)) {
+//		printf "%10s %s\n", $option, get_info($option);
+//	}
+//	print "\n";
 
 	if ($desc) {
 		print "For: $desc \n";
-#		my ($ref) = meta_task($desc);
-#		print $ref->get_title(), "\n";
+//		my ($ref) = meta_task($desc);
+//		print $ref->get_title(), "\n";
 	}
 	my($total) = $task + $next;
 
@@ -122,7 +122,7 @@ sub f_h {
 sub count_hier {
 	my($count) = 0;
 
-	# find all hier records
+	// find all hier records
 	foreach my $ref (meta_all()) {
 		next unless $ref->is_hier();
 		next if $ref->filtered();
@@ -135,9 +135,9 @@ sub count_hier {
 sub count_proj {
 	my($count) = 0;
 
-	# find all projects
+	// find all projects
 	foreach my $ref (meta_matching_type('p')) {
-###FILTER	next if $ref->filtered();
+//##FILTER	next if $ref->filtered();
 
 		++$count;
 
@@ -146,10 +146,10 @@ sub count_proj {
 		if ($hours == 0) {
 			if ($ref->get_children()) {
 				$hours = 1;
-				# to manage done.
+				// to manage done.
 			} else {
 				$hours = 4;
-				# to start planning.
+				// to start planning.
 			}
 		}
 		$Hours_proj += $hours;
@@ -160,9 +160,9 @@ sub count_proj {
 sub count_liveproj {
 	my($count) = 0;
 
-	# find all projects
+	// find all projects
 	foreach my $ref (meta_matching_type('p')) {
-###FILTER	next if $ref->filtered();
+//##FILTER	next if $ref->filtered();
 
 		next unless project_live($ref);
 
@@ -175,7 +175,7 @@ sub count_task {
 	my($count) = 0;
 	my($time) = 0;
 
-	# find all records.
+	// find all records.
 	foreach my $ref (meta_selected()) {
 		next unless $ref->is_task();
 
@@ -195,7 +195,7 @@ sub count_next {
 	my($count) = 0;
 	my($time) = 0;
 
-	# find all records.
+	// find all records.
 	foreach my $ref (meta_selected()) {
 		next unless $ref->is_task();
 
@@ -217,7 +217,7 @@ sub count_tasklive {
 	my($count) = 0;
 	my($time) = 0;
 
-	# find all records.
+	// find all records.
 	foreach my $ref (meta_selected()) {
 
 		next unless $ref->is_task();
@@ -290,7 +290,7 @@ sub report_detail {
 
 		++$data{$type}{$class};
 
-		# totals;
+		// totals;
 		++$data{'t'}{$class};
 		++$data{$type}{'t'};
 		++$data{'t'}{'t'};

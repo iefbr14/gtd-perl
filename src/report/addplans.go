@@ -40,7 +40,7 @@ BEGIN {
 	use Exporter   ();
 	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
-	# set the version for version checking
+	// set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw(&Report_addplans);
@@ -63,7 +63,7 @@ my($Proj_cnt) = 0;
 my $Limit;
 my %Seen;
 
-sub Report_addplans {	#-- add plan action items to unplaned projects
+sub Report_addplans {	//-- add plan action items to unplaned projects
 	meta_filter('+live', '^focus', 'plan');
 
 	@List = meta_pick(@_);
@@ -75,7 +75,7 @@ sub Report_addplans {	#-- add plan action items to unplaned projects
 	}
 	report_header('Projects needing planning');
 
-	# find all next and remember there focus
+	// find all next and remember there focus
 	while (@List) {
 		my($ref) = shift @List;
 
@@ -121,9 +121,9 @@ sub check_task {
 		return "Needs actions" unless $work;
 	}
 
-#	if (iscomplex(@children)) {
-#		return "Needs progress";
-#	}
+//	if (iscomplex(@children)) {
+//		return "Needs progress";
+//	}
 
 	push(@List, @children);
 
@@ -131,10 +131,10 @@ sub check_task {
 }
 
 sub iscomplex {
-	return 1 if scalar(@_) >= 8;	# has 8 or more children
+	return 1 if scalar(@_) >= 8;	// has 8 or more children
 
 	for my $ref (@_) {
-		# has a non action ie: complex child
+		// has a non action ie: complex child
 		return 1 if $ref->get_type() ne 'a';	
 	}
 	return 0;

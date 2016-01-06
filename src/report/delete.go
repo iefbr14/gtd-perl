@@ -40,7 +40,7 @@ BEGIN {
 	use Exporter   ();
 	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
-	# set the version for version checking
+	// set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw(&Report_delete);
@@ -49,7 +49,7 @@ BEGIN {
 
 use Hier::Meta;
 
-sub Report_delete {	#-- Delete listed actions/projects (will orphine items)
+sub Report_delete {	//-- Delete listed actions/projects (will orphine items)
 	my($ref, $tid);
 
 	foreach my $task (@_) {
@@ -61,7 +61,7 @@ sub Report_delete {	#-- Delete listed actions/projects (will orphine items)
 		}
 
 		for my $child ($ref->get_children) {
-			die "Delete ", $child->get_tid(), " first\n";
+			panic("Delete "+$child->get_tid()+" first");
 		}
 
 		$ref->delete();

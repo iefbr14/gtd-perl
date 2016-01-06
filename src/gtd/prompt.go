@@ -4,7 +4,7 @@ BEGIN {
 	use Exporter   ();
 	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
-	# set the version for version checking
+	// set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw(
@@ -19,9 +19,9 @@ our $Debug = 0;
 
 my $Term;
 
-my $Mode = 0;	# 0 - unknown
-		# 1 - file input
-		# 2 - term input
+my $Mode = 0;	// 0 - unknown
+		// 1 - file input
+		// 2 - term input
 
 sub prompt {
 	my($prompt, $ignore_comments) = @_;
@@ -54,7 +54,7 @@ sub prompt {
 		if ($Mode == 1) {
 			print "$prompt\t$_\n";
 		} else {
-	#		$term->addhistory($_);
+	//		$term->addhistory($_);
 		}
 		return $_;
 	}

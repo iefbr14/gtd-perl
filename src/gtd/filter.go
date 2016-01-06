@@ -7,7 +7,7 @@ BEGIN {
 	use Exporter   ();
 	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
-	# set the version for version checking
+	// set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw( &add_filter );
@@ -24,7 +24,7 @@ my %Filter_Tags;
 my $Today = get_today();
 my $Soon  = get_today(+7);
 
-my @Filters;	# types of actions to include
+my @Filters;	// types of actions to include
 our $Debug = 0;
 
 my $Default_level = 'm';
@@ -62,22 +62,22 @@ sub reset_filters {
 }
 
 sub apply_filters {
-	#$Debug = option('Debug');
+	//$Debug = option('Debug');
 
-	# learn about actions
+	// learn about actions
 	for my $ref (tasks_matching_type('a')) {
 		task_mask($ref);
 	}
 
-	# learn about projects
+	// learn about projects
 	for my $ref (tasks_matching_type('p')) {
 		proj_mask($ref);
 	}
 
-	# walk down
-	#      kill children
-	# then on the way back up
-	#      back fill hier with wanted items
+	// walk down
+	//      kill children
+	// then on the way back up
+	//      back fill hier with wanted items
 	print "Default level $Default_level\n" if $Debug;
 	for my $ref (tasks_matching_type($Default_level)) {
 		apply_walk_down($ref);
@@ -108,16 +108,16 @@ sub apply_walk_down {
 	}
 }
 
-#
-# walk down the current valid hier
-#    if we are wanted then
-#       if one of our child is wanted we are still wanted.
-#          else commit suicide taking our children with us.
-#
+//
+// walk down the current valid hier
+//    if we are wanted then
+//       if one of our child is wanted we are still wanted.
+//          else commit suicide taking our children with us.
+//
 sub apply_cct_filters {
 	my($ref) = @_;
 
-	# not wanted
+	// not wanted
 	return 0 unless defined $ref->{_filtered};
 	if ($ref->{_filtered} =~ /^-/) {
 		return 0;
@@ -128,11 +128,11 @@ sub apply_cct_filters {
 			warn "#=CCT($reason) ", $ref->get_tid(),
 				": ", $ref->get_title(), "\n";
 		}
-		# we are the reason to live!
+		// we are the reason to live!
 		return $reason;
 	}
 
-	my ($wanted) = 0;	# we are only wanted if our children are wanted
+	my ($wanted) = 0;	// we are only wanted if our children are wanted
 	for my $child ($ref->get_children()) {
 		$reason = apply_cct_filters($child);
 		if ($reason) {
@@ -163,88 +163,88 @@ sub kill_children {
 }
 
 
-###======================================================================
-###
-###======================================================================
-# todo_id:        1889				id/type
-# type:           a			[ ]
-# nextaction:     n			[_]
-# isSomeday:      y			{_}
+//##======================================================================
+//##
+//##======================================================================
+// todo_id:        1889				id/type
+// type:           a			[ ]
+// nextaction:     n			[_]
+// isSomeday:      y			{_}
 
-# category:       Admin				context
-# context:        Office
-# timeframe:      Hour
+// category:       Admin				context
+// context:        Office
+// timeframe:      Hour
 
-# created:        2009-05-23			create/modified
-# modified:       2009-05-23 16:02:04
+// created:        2009-05-23			create/modified
+// modified:       2009-05-23 16:02:04
 
 
-# priority:       1				order/priority
-# doit:           0000-00-00 00:00:00
-# nexttask:	  1
+// priority:       1				order/priority
+// doit:           0000-00-00 00:00:00
+// nexttask:	  1
 
-# due:					[_]	due/done/delay
-# completed:				[*]
-# tickledate:				[~]
+// due:					[_]	due/done/delay
+// completed:				[*]
+// tickledate:				[~]
 
-# task:           Billing			descriptions
-# description:    Update billing
-# note:
+// task:           Billing			descriptions
+// description:    Update billing
+// note:
 
-# recur:					repeats
-# recurdesc:
+// recur:					repeats
+// recurdesc:
 
-# parent_id:      0				hier parents
-# Parents:        425
+// parent_id:      0				hier parents
+// Parents:        425
 
-# owner:					palm info
-# palm_id:
-# private:
-###======================================================================
-###======================================================================
-#
-# task filters:
-#
+// owner:					palm info
+// palm_id:
+// private:
+//##======================================================================
+//##======================================================================
+//
+// task filters:
+//
 use constant {
-	A_MASK		=> 0x0000_00FF,	# action bits
-	Z_MASK		=> 0x0000_0F00,	# timeframe hints
-	T_MASK		=> 0x0000_F000,	# task type mask
-	P_MASK		=> 0x00FF_0000,	# Parent mask
+	A_MASK		=> 0x0000_00FF,	// action bits
+	Z_MASK		=> 0x0000_0F00,	// timeframe hints
+	T_MASK		=> 0x0000_F000,	// task type mask
+	P_MASK		=> 0x00FF_0000,	// Parent mask
 
 
-# done/next/current/later
+// done/next/current/later
 	A_DONE		=> 0x01,
 	A_NEXT		=> 0x02,
 	A_ACTION	=> 0x04,
-	#		=> 0x08,
+	//		=> 0x08,
 	A_WAITING	=> 0x10,
 	A_SOMEDAY	=> 0x20,
 	A_TICKLE	=> 0x40,
-	#_HIER		=> 0x80,
+	//_HIER		=> 0x80,
 
-# timeframe hints
-	Z_LATE		=> 0x0100,	# priority == 1
-					# or Due < today
+// timeframe hints
+	Z_LATE		=> 0x0100,	// priority == 1
+					// or Due < today
 
-	Z_DUE           => 0x0200,	# priority == 2
-					# or Due < week
+	Z_DUE           => 0x0200,	// priority == 2
+					// or Due < week
 
-	Z_SLOW		=> 0x0300,	# priority == 4
-	Z_IDEA		=> 0x0400,	# priority == 5
+	Z_SLOW		=> 0x0300,	// priority == 4
+	Z_IDEA		=> 0x0400,	// priority == 5
 
-# composite (from A_)
+// composite (from A_)
 	T_NEXT		=> 0x1000,
 	T_ACTIVE	=> 0x2000,
 	T_FUTURE	=> 0x3000,
 	T_DONE		=> 0x4000,
 
-# project known
-	P_FUTURE	=> 0x040_0000,	# is only in future
-	P_DONE		=> 0x080_0000,	# is complete tagged as done
+// project known
+	P_FUTURE	=> 0x040_0000,	// is only in future
+	P_DONE		=> 0x080_0000,	// is complete tagged as done
 
-	G_LIVE  	=> 0x2000_0000,	# has live items
-	G_FUTURE	=> 0x4000_0000,	# has future items
-	G_DONE		=> 0x8000_0000,	# has done items
+	G_LIVE  	=> 0x2000_0000,	// has live items
+	G_FUTURE	=> 0x4000_0000,	// has future items
+	G_DONE		=> 0x8000_0000,	// has done items
 
 };
 
@@ -259,12 +259,12 @@ sub add_filter {
 		return;
 	}
 
-	if ($rule =~ s/^~//) {	# tilde
+	if ($rule =~ s/^~//) {	// tilde
 		task_filter($rule, '!', '');
 		return;
 	}
 
-	if ($rule =~ s/^\-//) {	# dash
+	if ($rule =~ s/^\-//) {	// dash
 		task_filter($rule, '-', '');
 		return;
 	}
@@ -302,9 +302,9 @@ sub dispflags {
 	my($z) = '.';
 	my($t) = '.';
 
-	#         654321
+	//         654321
 	my($a) = '------';
-	#              Dn swt odsi
+	//              Dn swt odsi
 
 	substr($a, -1, 1) = 'x' if $flags & A_DONE;
 	substr($a, -2, 1) = 'w' if $flags & A_WAITING;
@@ -445,17 +445,17 @@ sub proj_mask {
 
 	my($mask) = task_mask($ref);
 
-	return if $mask & T_DONE;	# project tagged as done
-	return if $mask & T_FUTURE;	# project yet to start
+	return if $mask & T_DONE;	// project tagged as done
+	return if $mask & T_FUTURE;	// project yet to start
 		
-	###BUG### propigate done upward
-	# check if all children are done
-#	for my $cref ($ref->get_children()) {
-#		next if task_mask($cref) & T_DONE;
-#
-#		return;
-#	}
-#	return 1;
+	//##BUG### propigate done upward
+	// check if all children are done
+//	for my $cref ($ref->get_children()) {
+//		next if task_mask($cref) & T_DONE;
+//
+//		return;
+//	}
+//	return 1;
 }
 
 sub meta_find_context {
@@ -464,7 +464,7 @@ sub meta_find_context {
 	my($Context) = Hier::CCT->use('Context');
 	my($Timeframe) = Hier::CCT->use('Timeframe');
 
-	# match case sensative first
+	// match case sensative first
 	if ($Context->get($cct)) {
 		warn "#-Set space context:  $cct\n" if $Debug;
 		$Filter_Context = $cct;
@@ -488,7 +488,7 @@ sub meta_find_context {
 		return;
 	}
 
-	# match case insensative next
+	// match case insensative next
 	for my $key ($Context->keys()) {
 		next unless lc($key) eq lc($cct);
 
@@ -556,11 +556,11 @@ sub add_filter_tags {
 	}
 }
 
-#******************************************************************************
-#******************************************************************************
-#******************************************************************************
-#******************************************************************************
-#******************************************************************************
+//******************************************************************************
+//******************************************************************************
+//******************************************************************************
+//******************************************************************************
+//******************************************************************************
 sub map_filter_name {
 	my($word, $dir) = @_;
 
@@ -580,8 +580,8 @@ sub map_filter_name {
 	return (\&filter_some, '>','')	if $word =~ /^maybe/i;
 
 	return (\&filter_task, '<','')	if $word =~ /^action/i;
-#	return (\&filter_next, '<','')	if $word =~ /^pure_next/i;
-# we need to re-thing this live-next vs next
+//	return (\&filter_next, '<','')	if $word =~ /^pure_next/i;
+// we need to re-thing this live-next vs next
 
 	return (\&filter_next, '><','')	if $word =~ /^next/i;
 	return (\&filter_active, '><','')	if $word =~ /^active/i;
@@ -653,7 +653,7 @@ sub filter_walk_up {
 
 	my($mask) = $ref->{_filtered};
 
-	return if $mask;	# already decided.
+	return if $mask;	// already decided.
 
 	$ref->{_filtered} = $reason;
 	for my $pref ($ref->get_parents()) {
@@ -666,7 +666,7 @@ sub filter_walk_up_down {
 
 	my($mask) = $ref->{_filtered};
 
-	return if $mask;	# already decided.
+	return if $mask;	// already decided.
 
 	if ($reason =~ /^\+/) {
 		for my $pref ($ref->get_parents()) {
@@ -684,7 +684,7 @@ sub filter_walk_down {
 
 	my($mask) = $ref->{_filtered};
 
-	return if $mask;	# already decided.
+	return if $mask;	// already decided.
 
 	$ref->{_filtered} = $reason;
 	for my $pref ($ref->get_children()) {
@@ -696,7 +696,7 @@ sub filter_walk_down_up {
 
 	my($mask) = $ref->{_filtered};
 
-	return if $mask;	# already decided.
+	return if $mask;	// already decided.
 
 	for my $pref ($ref->get_children()) {
 		filter_walk_down($pref, $reason.'>');
@@ -710,9 +710,9 @@ sub filter_walk_down_up {
 	}
 }
 
-# return + if wanted
-# return - if unwanted
-# return ? if unknown
+// return + if wanted
+// return - if unwanted
+// return ? if unknown
 
 sub filter_any {
 	my($ref, $arg) = @_;
@@ -842,7 +842,7 @@ sub filter_active {
 	my($ref, $arg) = @_;
 
 	
-#	return '?' unless $ref->is_task();
+//	return '?' unless $ref->is_task();
 
 	my($mask) = task_mask($ref);
 
@@ -863,7 +863,7 @@ sub filter_live {
 	my($ref, $arg) = @_;
 
 	
-#	return '?' unless $ref->is_task();
+//	return '?' unless $ref->is_task();
 
 	my($mask) = task_mask($ref);
 

@@ -16,7 +16,7 @@ BEGIN {
 	use Exporter   ();
 	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
-	# set the version for version checking
+	// set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw(&walk &detail);
@@ -30,7 +30,7 @@ sub new {
 	my($walk) = {};
 
 	$walk->{fd} = \*STDOUT;
-	$walk->{depth} = type_depth('p');	# projects
+	$walk->{depth} = type_depth('p');	// projects
 
 	$walk->{detail} = $opt{'detail'} || \&show_detail;
 	$walk->{done}   = $opt{'done'}   || \&end_detail;
@@ -123,7 +123,7 @@ sub filter {
 	}
 }
 
-# used by filter to walk up the tree add "want"edness to each parent.
+// used by filter to walk up the tree add "want"edness to each parent.
 sub _want {
 	my($walk) = shift @_;
 
@@ -153,13 +153,13 @@ sub detail {
 	return if $ref->is_list();
 
 	if ($walk->{want}{$tid} == 0) {
-		# we are global filtered
+		// we are global filtered
 		warn "< detail($tid) filtered\n" if $Debug;
 		return;
 	}
 
 	unless ($type) {
-		#***BUG*** fixed: type was not set by new
+		//***BUG*** fixed: type was not set by new
 		confess "$tid: bad type '$type'\n"; 
 		return;
 	}

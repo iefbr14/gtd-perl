@@ -40,7 +40,7 @@ BEGIN {
 	use Exporter   ();
 	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
 
-	# set the version for version checking
+	// set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw(&Report_actions report_actions);
@@ -57,7 +57,7 @@ my %Active;
 
 my %Want;
 
-sub Report_actions {	#-- Detailed list of projects with (next) actions
+sub Report_actions {	//-- Detailed list of projects with (next) actions
 	my($list) = option('List', 0);
 
 	meta_filter('+a:next', '^focus', 'detail');
@@ -82,19 +82,19 @@ sub report_select {
 		$top = find_in_hier($top_name);
 	}
 
-	# find all projects (next actions?)
+	// find all projects (next actions?)
 	for my $ref (meta_selected()) {
 		next unless $ref->is_task();
 		next if $top && !has_parent($ref, $top);
 
-##FILTER	next unless $ref->is_nextaction();
-##FILTER	next if $ref->filtered();
+//#FILTER	next unless $ref->is_nextaction();
+//#FILTER	next if $ref->filtered();
 
 		$pref = $ref->get_parent();
 		next unless defined $pref;
 next unless $pref->is_active();
 
-##FILTER	next if $pref->filtered();
+//#FILTER	next if $pref->filtered();
 
 		$pid = $pref->get_tid();
 		$Active{$pid} = $pref;
@@ -111,8 +111,8 @@ sub report_list {
 
 	my($limit) = option('Limit', 20);
 
-### format:
-### goal  proj_id  project action_id action hours
+//## format:
+//## goal  proj_id  project action_id action hours
 	my($cols) = columns() - 2;
 	my($gid, $gref);
 	my($rid, $rref);
@@ -120,7 +120,7 @@ sub report_list {
 	my($last_goal) = 0;
 	my($last_proj) = 0;
 	for my $pref (sort_tasks values %Active) {
-##FILTER	next if $pref->filtered();
+//#FILTER	next if $pref->filtered();
 
 		$pid = $pref->get_tid();
 
@@ -131,7 +131,7 @@ sub report_list {
 
 		my($task_cnt) = 0;
 		for my $ref (sort_tasks values %$tasks) {
-##FILTER		next if $ref->filtered();
+//#FILTER		next if $ref->filtered();
 
 			$tid = $ref->get_tid();
 			print join("\t", 
@@ -159,13 +159,13 @@ sub report_actions {
 
 	my($tid, $pid, $pref, $title);
 
-### format:
-### 99	P:Title
-### +	Description
-### =	Outcome
-### 222	[_] Action
-### +	Description
-### =	Outcome
+//## format:
+//## 99	P:Title
+//## +	Description
+//## =	Outcome
+//## 222	[_] Action
+//## +	Description
+//## =	Outcome
 	my($cols) = columns() - 2;
 	my($gid, $gref);
 	my($rid, $rref);
@@ -173,7 +173,7 @@ sub report_actions {
 	my($last_goal) = 0;
 	my($last_proj) = 0;
 	for my $pref (sort_tasks values %Active) {
-##FILTER	next if $pref->filtered();
+//#FILTER	next if $pref->filtered();
 
 		$pid = $pref->get_tid();
 
@@ -205,7 +205,7 @@ sub report_actions {
 	}
 }
 
-# handle imbeded project and return first top level value as goal
+// handle imbeded project and return first top level value as goal
 sub get_goal {
 	my($pref) = @_;
 
@@ -217,7 +217,7 @@ sub get_goal {
 	}
 
 	while ($gref->get_type() eq 'p') {
-#warn join(' ', "up:", $gref->get_tid(), $gref->get_title), "\n";
+//warn join(' ', "up:", $gref->get_tid(), $gref->get_title), "\n";
 		$gref = $gref->get_parent();
 	}
 	return $gref;
@@ -231,18 +231,18 @@ sub find_in_hier {
 		next if $ref->get_title() ne $title;
 
 		add_children($ref);
-		###BUG### should walk down from here vi get_children
-		###BUG### rather walk up in has_parent
+		//##BUG### should walk down from here vi get_children
+		//##BUG### rather walk up in has_parent
 		return $ref->get_tid();
 	}
-	die "Can't find hier $title\n";
+	panic("Can't find hier $title\n");
 	return 0;
 }
 
 sub add_children {
 	my($ref) = @_;
 
-	## warn "w tid: ", $ref->get_tid, " ", $ref->get_title, "\n";
+	//# warn "w tid: ", $ref->get_tid, " ", $ref->get_title, "\n";
 	$Want{$ref->get_tid()} = 1;
 	foreach my $cref ($ref->get_children()) {
 		add_children($cref);
@@ -253,7 +253,7 @@ sub has_parent {
 	my($ref, $top) = @_;
 
 	my($tid) = $ref->get_tid();
-	## warn "o tid: ", $tid, " ", $ref->get_title, "\n" if $Want{$tid};
+	//# warn "o tid: ", $tid, " ", $ref->get_title, "\n" if $Want{$tid};
 	return $Want{$tid};
 }
 
