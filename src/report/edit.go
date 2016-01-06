@@ -55,11 +55,11 @@ use Hier::Format;
 sub Report_edit {	//-- Edit listed actions/projects
 	my($key, $val, $changed);
 
-	meta_filter('+all', '^tid', 'none');
+	gtd.Meta_filter('+all', '^tid', 'none');
 
 	@_ = ( option('Current') )  if scalar(@_) == 0;
 
-	my(@list) = meta_pick(@_);
+	my(@list) = gtd.Meta_pick(@_);
 	if (@list == 0) {
 		panic("No items to edit\n");
 	}
@@ -107,7 +107,7 @@ sub Report_edit {	//-- Edit listed actions/projects
 sub save {
 	my($changed) = @_;
 	my($tid) = $changed->{todo_id};
-	my $ref = meta_find($tid);
+	my $ref = gtd.Meta_find($tid);
 
 	my($Changed) = "Saving $tid - $changed->{task} ...\n";
 

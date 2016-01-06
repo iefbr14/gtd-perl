@@ -135,7 +135,7 @@ sub Report_bulkload { #-- Create Projects/Actions items from a file
 		if (/^(\d+):$/) {
 			my($tid) = $1;
 			// get context
-			my($pref) = meta_find($tid);
+			my($pref) = gtd.Meta_find($tid);
 			unless ($pref) {
 				print "Can't find pid: $tid\n";
 				next;
@@ -210,20 +210,20 @@ sub Report_bulkload { #-- Create Projects/Actions items from a file
 sub find_hier {
 	my($type, $goal) = @_;
 
-	for my $ref (meta_hier()) {
+	for my $ref (gtd.Meta_hier()) {
 		next unless $ref->get_type() eq $type;
 		next unless $ref->get_title() eq $goal;
 
 		return $ref->get_tid();
 	}
-	for my $ref (meta_hier()) {
+	for my $ref (gtd.Meta_hier()) {
 		next unless $ref->get_type() eq $type;
 		next unless lc($ref->get_title()) eq lc($goal);
 
 		return $ref->get_tid();
 	}
 
-	for my $ref (meta_hier()) {
+	for my $ref (gtd.Meta_hier()) {
 		next unless $ref->get_title() eq $goal;
 	
 		my($type) = $ref->get_type();

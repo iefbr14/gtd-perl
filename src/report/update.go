@@ -57,7 +57,7 @@ sub Report_update {	//-- Command line update of an action/project
 		print "NO task specified to update\n";
 		return;
 	}
-	my $ref = meta_find($task);
+	my $ref = gtd.Meta_find($task);
 	unless (defined $ref) {
 		print "Task $task not found to update\n";
 		return;

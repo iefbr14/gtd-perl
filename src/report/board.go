@@ -67,12 +67,12 @@ my %Seen;
 
 sub Report_board {	//-- report board of projects/actions
 	// counts use it and it give a context
-	meta_filter('+active', '^age', 'simple');
+	gtd.Meta_filter('+active', '^age', 'simple');
 
-	my(@list) = meta_pick(@_);
+	my(@list) = gtd.Meta_pick(@_);
 
 	if (@list == 0) {
-		@list = meta_pick('roles');
+		@list = gtd.Meta_pick('roles');
 	}
 
 	$Lines = lines();
@@ -388,7 +388,7 @@ sub check_proj {
 	my($count) = 0;
 
 	// find all projects
-	foreach my $ref (meta_matching_type('p')) {
+	foreach my $ref (gtd.Meta_matching_type('p')) {
 
 		++$count;
 	}
@@ -399,7 +399,7 @@ sub check_liveproj {
 	my($count) = 0;
 
 	// find all projects
-	foreach my $ref (meta_matching_type('p')) {
+	foreach my $ref (gtd.Meta_matching_type('p')) {
 //##FILTER	next if $ref->filtered();
 
 		next unless project_live($ref);
@@ -414,7 +414,7 @@ sub check_task {
 	my($time) = 0;
 
 	// find all records.
-	foreach my $ref (meta_selected()) {
+	foreach my $ref (gtd.Meta_selected()) {
 		next unless $ref->is_task();
 
 		next if $ref->filtered();
@@ -434,7 +434,7 @@ sub check_next {
 	my($time) = 0;
 
 	// find all records.
-	foreach my $ref (meta_selected()) {
+	foreach my $ref (gtd.Meta_selected()) {
 		next unless $ref->is_task();
 
 		next if $ref->filtered();
@@ -456,7 +456,7 @@ sub check_tasklive {
 	my($time) = 0;
 
 	// find all records.
-	foreach my $ref (meta_selected()) {
+	foreach my $ref (gtd.Meta_selected()) {
 
 		next unless $ref->is_task();
 

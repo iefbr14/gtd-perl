@@ -261,7 +261,7 @@ sub rc_print {
 	}
 
 	for my $tid (@_) {
-		my($ref) = meta_find($tid);
+		my($ref) = gtd.Meta_find($tid);
 
 		unless ($ref) {
 			print "? not found: $ref\n";
@@ -285,7 +285,7 @@ sub rc_filter {
 	print "Filter $Filter => $mode\n";
 
 	set_option('Filter', dash_null($mode));
-	meta_reset_filters($mode eq '-' ? '+live' : $mode);
+	gtd.Meta_reset_filters($mode eq '-' ? '+live' : $mode);
 
 	$Filter = $mode;
 }
@@ -364,7 +364,7 @@ sub load_task {
 	rc_save();
 
 	// get context
-	my($ref) = meta_find($tid);
+	my($ref) = gtd.Meta_find($tid);
 	unless ($ref) {
 		print "Can't find tid: $tid\n";
 		return;
@@ -495,20 +495,20 @@ sub rc_find_tasks {
 sub find_hier {
 	my($type, $goal) = @_;
 
-	for my $ref (meta_hier()) {
+	for my $ref (gtd.Meta_hier()) {
 		next unless $ref->get_type() eq $type;
 		next unless $ref->get_title() eq $goal;
 
 		return $ref->get_tid();
 	}
-	for my $ref (meta_hier()) {
+	for my $ref (gtd.Meta_hier()) {
 		next unless $ref->get_type() eq $type;
 		next unless lc($ref->get_title()) eq lc($goal);
 
 		return $ref->get_tid();
 	}
 
-	for my $ref (meta_hier()) {
+	for my $ref (gtd.Meta_hier()) {
 		next unless $ref->get_title() eq $goal;
 	
 		my($type) = $ref->get_type();

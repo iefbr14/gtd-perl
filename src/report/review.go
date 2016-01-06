@@ -57,8 +57,8 @@ my $Mode = 'p';	// project, doit, next-actions, actions, someday
 my($List) = 0; ###BUG### should be an option
 
 sub Report_review {	//-- Review all projects with actions
-	meta_filter('+active', '^doitdate', 'simple');
-	my $desc = meta_desc(@_);
+	gtd.Meta_filter('+active', '^doitdate', 'simple');
+	my $desc = gtd.Meta_desc(@_);
 
 	$Mode = 'p';
 	if (lc($desc) eq 'doit') {
@@ -71,8 +71,8 @@ sub Report_review {	//-- Review all projects with actions
 		$Mode = 'p';
 	} elsif (lc($desc) eq 'waiting') {
 		$Mode = 'w';
-		warn "Fooked, meta_filter reset report/sort";
-		meta_filter('+wait', '^doitdate', 'simple');
+		warn "Fooked, gtd.Meta_filter reset report/sort";
+		gtd.Meta_filter('+wait', '^doitdate', 'simple');
 	} else {
 		$desc = "= $desc =";
 	}
@@ -82,7 +82,7 @@ sub Report_review {	//-- Review all projects with actions
 
 sub reload {
 	if ($Mode eq 'p') {
-		mode_projects(1, 'Projects', meta_desc(@_));
+		mode_projects(1, 'Projects', gtd.Meta_desc(@_));
 	} elsif ($Mode eq 'd') {
 		mode_doit();
 	} elsif ($Mode eq 's') {
@@ -99,7 +99,7 @@ sub reload {
 sub mode_doit {
 	my(@list);
 
-	for my $ref (meta_sorted('^doitdate')) {
+	for my $ref (gtd.Meta_sorted('^doitdate')) {
 		lookat($ref);
 	}
 }
@@ -122,7 +122,7 @@ sub lookat {
 sub mode_type {
 	my($type) = @_;
 
-	for my $ref (sort_tasks meta_matching_type($type)) {
+	for my $ref (sort_tasks gtd.Meta_matching_type($type)) {
 		lookat($ref);
 	}
 }
@@ -137,7 +137,7 @@ sub mode_projects {
 	my($ref, $proj, %wanted, %counted, %actions);
 
 	// find all next and remember there projects
-	for my $ref (sort_tasks meta_matching_type('p')) {
+	for my $ref (sort_tasks gtd.Meta_matching_type('p')) {
 		next if $ref->filtered();
 		next if $ref->is_later();
 
@@ -228,13 +228,13 @@ sub get_status {
 sub _report_doit {	
 
 	$= = lines();
-	meta_filter('+a:live', '^doitdate', 'doit');
+	gtd.Meta_filter('+a:live', '^doitdate', 'doit');
 	my($target) = 0;
 	my($action) = \&doit_list;
 
-	foreach my $arg (Hier::util::meta_argv(@_)) {
+	foreach my $arg (Hier::util::gtd.Meta_argv(@_)) {
 		if ($arg =~ /^\d+$/) {
-			my($ref) = meta_find($arg);
+			my($ref) = gtd.Meta_find($arg);
 
 			unless (defined $ref) {
 				warn "$arg doesn't exits\n";

@@ -57,7 +57,7 @@ my %Ancestors;
 sub Report_take {	//-- take listed actions/projects
 	my($key, $val, $changed);
 
-	meta_filter('+all', '^tid', 'none');
+	gtd.Meta_filter('+all', '^tid', 'none');
 
 	my $parent = option('Current');
 	unless ($parent) {
@@ -68,7 +68,7 @@ sub Report_take {	//-- take listed actions/projects
 		panic("Parent $parent doesn't exists\n");
 	}
 
-	my(@list) = meta_pick(@_);
+	my(@list) = gtd.Meta_pick(@_);
 	if (@list == 0) {
 		panic("No items to take\n");
 	}

@@ -67,13 +67,13 @@ sub Report_doit {	//-- doit tracks which projects/actions have had movement
 	$Limit = option('Limit', 1);
 
 	$= = lines();
-	meta_filter('+a:live', '^doitdate', 'rpga');
+	gtd.Meta_filter('+a:live', '^doitdate', 'rpga');
 	my($target) = 0;
 	my($action) = \&doit_list;
 
-	foreach my $arg (meta_argv(@_)) {
+	foreach my $arg (gtd.Meta_argv(@_)) {
 		if ($arg =~ /^\d+$/) {
-			my($ref) = meta_find($arg);
+			my($ref) = gtd.Meta_find($arg);
 
 			unless (defined $ref) {
 				warn "$arg doesn't exits\n";
@@ -189,7 +189,7 @@ sub list_all {
 	my($action) = @_;
 	my(@list);
 
-	for my $ref (meta_sorted()) {
+	for my $ref (gtd.Meta_sorted()) {
 		next unless $ref->is_task();
 //#FILTER	next if $ref->filtered();
 

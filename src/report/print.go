@@ -58,11 +58,11 @@ my $Layout = 'Text';
 
 sub Report_print {	//-- dump records in edit format
 	// everybody into the pool by id 
-	meta_filter('+any', '^tid', 'doit');	
+	gtd.Meta_filter('+any', '^tid', 'doit');	
 
 	$Layout = ucfirst(lc(option('Layout', 'Text')));
 
-	for my $ref (meta_pick(@_)) {
+	for my $ref (gtd.Meta_pick(@_)) {
 		print_ref($ref);
 	}
 }

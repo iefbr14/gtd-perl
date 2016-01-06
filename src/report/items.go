@@ -54,9 +54,9 @@ use Hier::Sort;
 
 sub Report_items {	//-- list titles for any filtered class (actions/projects etc)
 	// everybody into the pool by name
-	meta_filter('+any', '^title', 'item');	
+	gtd.Meta_filter('+any', '^title', 'item');	
 
-	my($name) = meta_desc(@_);
+	my($name) = gtd.Meta_desc(@_);
 	if ($name) {
 		my($want) = type_val($name);
 		if ($want) {
@@ -76,7 +76,7 @@ sub list_items {	//-- List projects with waiting-fors
 	report_header($typename);
 
         my($tid, $title, $desc, @list);
-        for my $ref (meta_matching_type($type)) {
+        for my $ref (gtd.Meta_matching_type($type)) {
 //#FILTER	next if $ref->filtered();
 
                 push(@list, $ref);

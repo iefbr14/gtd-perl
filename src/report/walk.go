@@ -64,7 +64,7 @@ sub Report_walk {	//-- Command line walk of a hier
 	my($action) = \&noop;
 	my($val) = '';
 
-	meta_filter('+all', '^tid', 'simple');
+	gtd.Meta_filter('+all', '^tid', 'simple');
 
 	while (@_) {
 		my($task) = shift @_;
@@ -114,7 +114,7 @@ sub Report_walk {	//-- Command line walk of a hier
 			panic("Unknown command: $task\n");
 		}
 
-		my $ref = meta_find($task);
+		my $ref = gtd.Meta_find($task);
 		unless (defined $ref) {
 			panic("Task $task not found to walk\n");
 			//return;

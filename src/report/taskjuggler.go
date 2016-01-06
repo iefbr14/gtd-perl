@@ -65,9 +65,9 @@ sub Report_taskjuggler {	//-- generate taskjuggler file from gtd db
 
 	$ToOld = pdate(get_today(-7));	// don't care about done items > 2 week
 
-	meta_filter('+all', '^focus', 'none');
+	gtd.Meta_filter('+all', '^focus', 'none');
 	my($top) = 'o';			// default to top of everything
-	for my $criteria (meta_argv(@_)) {
+	for my $criteria (gtd.Meta_argv(@_)) {
 		if ($criteria eq 'all') {
 			$Someday = 1;
 			next;
@@ -87,11 +87,11 @@ sub Report_taskjuggler {	//-- generate taskjuggler file from gtd db
 	}
 
 	if ($Someday) {
-		meta_filter('+all', '^focus', 'none');
+		gtd.Meta_filter('+all', '^focus', 'none');
 		// 5 year plan everything plan
 		$ToFuture = pdate(get_today(5*365));	
 	} else {
-		meta_filter('+active', '^focus', 'none');
+		gtd.Meta_filter('+active', '^focus', 'none');
 		// don't care about start more > 3 months
 		$ToFuture = pdate(get_today(60));	
 	}
@@ -113,7 +113,7 @@ sub calc_est {
 	my($hours) = 0;
 	my($task) = 0;
 
-	for my $ref (meta_selected()) {
+	for my $ref (gtd.Meta_selected()) {
 		++$task;
 
 		my($resource) = new Hier::Resource($ref);
@@ -446,7 +446,7 @@ sub calc_depends {
 sub dep_path {
 	my($tid) = @_;
 
-	my($ref) = meta_find($tid);
+	my($ref) = gtd.Meta_find($tid);
 	return unless $ref;
 
 	my($path) = $Dep_list{$tid};

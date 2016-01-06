@@ -33,25 +33,7 @@ NAME:
 
 */
 
-use strict;
-use warnings;
-
-BEGIN {
-	use Exporter   ();
-	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
-
-	// set the version for version checking
-	$VERSION     = 1.00;
-	@ISA         = qw(Exporter);
-	@EXPORT      = qw(&Report_cct);
-}
-
-use Hier::Util;
-use Hier::Format;
-use Hier::Meta;
-use Hier::Color;
-
-use Hier::CCT;		// DIRECT access to interals (Bleck)
+import "gtd"
 
 my %Count;
 my %Sub_Count;
@@ -59,9 +41,10 @@ my %Types;
 my %Total;
 my %Dups;
 
-sub Report_cct {	//-- List Categories/Contexts/Time Frames
-	meta_filter('+all', '^tid', 'simple');
-	meta_argv(@_);
+//-- List Categories/Contexts/Time Frames
+sub Report_cct {	
+	gtd.Meta_filter('+all', '^tid', 'simple');
+	gtd.Meta_argv(@_);
 
 	count_items();
 
@@ -76,7 +59,7 @@ sub cct_crosstab {	//-- List Categories/Contexts/Time Frames
 }
 
 sub count_items {
-	foreach my $ref (meta_selected()) {
+	foreach my $ref (gtd.Meta_selected()) {
 		my $type = $ref->get_type();
 
 		count_item('category',  $type, $ref->get_category());

@@ -162,7 +162,7 @@ sub walk_tree {
 	my($tree) = $pkg->{tree};
 	$tree->delete('all');
 
-	meta_filter('+all', '^tid', 'simple');
+	gtd.Meta_filter('+all', '^tid', 'simple');
 	my($walk) = new Hier::Walk(
 		detail => \&hier_detail,
 		done   => \&end_detail,
@@ -381,7 +381,7 @@ print "Run: $report\n";
 sub dep_path {
         my($tid) = @_;
 
-        my($ref) = meta_find($tid);
+        my($ref) = gtd.Meta_find($tid);
         return unless $ref;
 
         my($path) = $ref->get_type() . '_' . $tid;

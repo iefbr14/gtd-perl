@@ -60,9 +60,9 @@ my %Depth = (
 );
 
 sub Report_purge {	//-- interactive purge completed work
-	meta_filter('+dead', '^tid', 'simple');
+	gtd.Meta_filter('+dead', '^tid', 'simple');
 
-	my($criteria) = meta_desc(@_);
+	my($criteria) = gtd.Meta_desc(@_);
 
 	my($walk) = new Hier::Walk(
 		done   => \&end_detail,

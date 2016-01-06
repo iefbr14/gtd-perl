@@ -60,9 +60,9 @@ my %Want;
 sub Report_actions {	//-- Detailed list of projects with (next) actions
 	my($list) = option('List', 0);
 
-	meta_filter('+a:next', '^focus', 'detail');
+	gtd.Meta_filter('+a:next', '^focus', 'detail');
 
-	my($desc) = meta_desc(@_);
+	my($desc) = gtd.Meta_desc(@_);
 	report_select($desc);
 	if ($list) {
 		report_list();
@@ -83,7 +83,7 @@ sub report_select {
 	}
 
 	// find all projects (next actions?)
-	for my $ref (meta_selected()) {
+	for my $ref (gtd.Meta_selected()) {
 		next unless $ref->is_task();
 		next if $top && !has_parent($ref, $top);
 
@@ -226,7 +226,7 @@ sub get_goal {
 sub find_in_hier {
 	my($title) = @_;
 
-	for my $ref (meta_selected()) {
+	for my $ref (gtd.Meta_selected()) {
 		next unless $ref->is_hier();
 		next if $ref->get_title() ne $title;
 

@@ -64,11 +64,11 @@ my $Limit;
 my %Seen;
 
 sub Report_addplans {	//-- add plan action items to unplaned projects
-	meta_filter('+live', '^focus', 'plan');
+	gtd.Meta_filter('+live', '^focus', 'plan');
 
-	@List = meta_pick(@_);
+	@List = gtd.Meta_pick(@_);
 	if (@List == 0) {
-		@List = meta_pick('Project');
+		@List = gtd.Meta_pick('Project');
 		$Limit = option('Limit', 10);
 	} else {
 		$Limit = option('Limit', scalar(@List));

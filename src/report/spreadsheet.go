@@ -51,8 +51,8 @@ use Hier::Meta;
 use Hier::Resource;
 
 sub Report_spreadsheet {	//-- Project Summary for a role
-	meta_filter('+active', '^tid', 'none');
-	my @want = meta_argv(@_);
+	gtd.Meta_filter('+active', '^tid', 'none');
+	my @want = gtd.Meta_argv(@_);
 
 	if (@want == 0) {
 		my($roles) = load_roles();
@@ -79,7 +79,7 @@ sub load_roles {
 	my(%roles);
 
 	// find all next and remember there projects
-	for my $ref (meta_matching_type('o')) {
+	for my $ref (gtd.Meta_matching_type('o')) {
 //#FILTER	next if $ref->filtered();
 
 		my $pid = $ref->get_tid();

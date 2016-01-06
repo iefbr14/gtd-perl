@@ -58,13 +58,13 @@ my(@Urls);
 my($Host);
 
 sub Report_url {	//-- open browser window for wiki and gtd
-	meta_filter('+g:live', '^title', 'task');	// Tasks filtered by goals
+	gtd.Meta_filter('+g:live', '^title', 'task');	// Tasks filtered by goals
 
 	my($title) = join(' ', @_);
 
 	my(%seen);
 
-	my(@list) = meta_pick(@_);
+	my(@list) = gtd.Meta_pick(@_);
 	if (@list == 0) {
 		@Urls = ('Main_Page');
 	}

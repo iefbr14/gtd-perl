@@ -67,10 +67,10 @@ sub Report_focus {	//-- List focus -- live, plan or someday
 
 	$Debug = option('Debug', 0);
 
-	meta_filter('+next', '^focus', 'simple');
-	my(@list) = meta_pick(@_);
+	gtd.Meta_filter('+next', '^focus', 'simple');
+	my(@list) = gtd.Meta_pick(@_);
 	if (@list == 0) {
-		@list = meta_pick('Role');
+		@list = gtd.Meta_pick('Role');
 	}
 
 	if (scalar(@_) > 0) {

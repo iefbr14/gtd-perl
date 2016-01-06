@@ -66,8 +66,8 @@ sub Report_planner {	//-- Create a planner file from gtd db
 	my($tid, $pri, $task, $cat, $ins, $due, $desc);
 	my(@row);
 
-	meta_filter('+active', '^tid', 'none');
-	meta_argv(@_);
+	gtd.Meta_filter('+active', '^tid', 'none');
+	gtd.Meta_argv(@_);
 	my($planner) = new Hier::Walk(
 		detail => \&hier_detail,
 		done   => \&end_detail,

@@ -62,8 +62,8 @@ my %Dep_info = (
 my %Dep_map;
 
 sub Report_renumber { #-- Renumber task Ids 
-	meta_filter('+any', '^tid', 'none');
-	my(@list) = meta_argv(@_);
+	gtd.Meta_filter('+any', '^tid', 'none');
+	my(@list) = gtd.Meta_argv(@_);
 
 	if (@list) {
 		foreach my $pair (@list) {
@@ -227,7 +227,7 @@ sub renumb {
 sub renumber_a_task {
 	my($tid) = @_;
 
-	my $ref = meta_find($tid);
+	my $ref = gtd.Meta_find($tid);
 
 	panic("Can't renumber task $tid (doesn't exists)\n") unless $ref;
 
@@ -253,7 +253,7 @@ sub renumber_a_task {
 sub renumber_task {
 	my($tid, $new) = @_;
 
-	my $ref = meta_find($tid);
+	my $ref = gtd.Meta_find($tid);
 
 	panic("Can't renumber task $tid (doesn't exists)\n") unless $ref;
 
@@ -275,7 +275,7 @@ sub dependent {
 	warn "Building Dep_map\n";
 		
 	my($pref, $pid, $depends);
-	foreach my $pref ( meta_all()) {
+	foreach my $pref ( gtd.Meta_all()) {
 		$depends = $pref->get_depends();
 		$pid = $pref->get_tid();
 

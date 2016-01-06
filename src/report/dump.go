@@ -53,9 +53,9 @@ use Hier::Format;
 
 sub Report_dump {	//-- dump records in edit format
 	// everybody into the pool by id 
-	meta_filter('+any', '^tid', 'dump');	
+	gtd.Meta_filter('+any', '^tid', 'dump');	
 
-	my($name) = ucfirst(meta_desc(@_));	// some out
+	my($name) = ucfirst(gtd.Meta_desc(@_));	// some out
 	if ($name) {
 		if ($name =~ /^\d+/) {
 			dump_list($name);
@@ -80,7 +80,7 @@ sub dump_list {
 	my @list = split(/[^\d]+/, $list);
 
 	for my $tid (@list) {
-		my $ref = meta_find($tid);
+		my $ref = gtd.Meta_find($tid);
 		unless (defined $ref) {
 			warn "#*** No task: $tid\n";
 			next;
@@ -98,7 +98,7 @@ sub list_dump {
 	my($Dates) = '';
 
 	// find all records.
-	for my $ref (meta_sorted('^tid')) {
+	for my $ref (gtd.Meta_sorted('^tid')) {
 		$type = $ref->get_type();
 		next if $want_type && $type ne $want_type;
 

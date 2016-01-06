@@ -53,7 +53,7 @@ sub Report_delete {	//-- Delete listed actions/projects (will orphine items)
 	my($ref, $tid);
 
 	foreach my $task (@_) {
-		$ref = meta_find($task);
+		$ref = gtd.Meta_find($task);
 
 		unless (defined $ref) {
 			print "Task $task doesn't exists\n";

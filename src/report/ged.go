@@ -65,15 +65,15 @@ sub Report_ged {	//-- generate a gedcom file from gtd db
 
 	if (scalar(@_) && $_[0] eq 'all') {
 		$Someday = 1;
-		meta_filter('+all', '^focus', 'none');
+		gtd.Meta_filter('+all', '^focus', 'none');
 		// 5 year plan everything plan
 		$ToFuture = pdate(get_today(5*365));	
 	} else {
-		meta_filter('+active', '^focus', 'none');
+		gtd.Meta_filter('+active', '^focus', 'none');
 		// don't care about start more > 3 months
 		$ToFuture = pdate(get_today(60));	
 	}
-	meta_argv(@_);
+	gtd.Meta_argv(@_);
 	my($planner) = new Hier::Walk(
 		detail => \&hier_detail,
 		done   => \&end_detail,
@@ -289,7 +289,7 @@ sub pdate {
 sub dep_path {
 	my($tid) = @_;
 
-	my($ref) = meta_find($tid);
+	my($ref) = gtd.Meta_find($tid);
 	return unless $ref;
 
 	my($task) = $ref->get_title($ref);

@@ -56,13 +56,13 @@ use Hier::Format;
 my $Mask = 0;
 
 sub Report_hier {	//-- Hiericial List of Values/Visions/Roles...
-	meta_filter('+active', '^title', 'hier');
+	gtd.Meta_filter('+active', '^title', 'hier');
 
 	$Mask  = option('Mask');
 
 	my(@top);
 	my($depth) = '';
-	for my $criteria (meta_argv(@_)) {
+	for my $criteria (gtd.Meta_argv(@_)) {
 		if ($criteria =~ /^\d+$/) {
 			push(@top, $criteria);
 		} else {

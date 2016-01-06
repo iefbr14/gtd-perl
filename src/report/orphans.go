@@ -52,13 +52,13 @@ use Hier::Sort;
 use Hier::Format;
 
 sub Report_orphans {	//-- list all items without a parent 
-	meta_filter('+any', '^title', 'todo');
+	gtd.Meta_filter('+any', '^title', 'todo');
 
-	my(@list) = meta_pick(@_);
+	my(@list) = gtd.Meta_pick(@_);
 	
 	report_header('Orphans', @_);
 
-	for my $ref (meta_sorted()) {
+	for my $ref (gtd.Meta_sorted()) {
 		next if $ref->get_type eq 'm';	// Values never have parents
 		next if $ref->get_parent();	// Has a parent
 

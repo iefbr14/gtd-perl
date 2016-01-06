@@ -51,7 +51,7 @@ use Hier::Meta;
 
 sub Report_did {	//-- update listed projects/actions doit date to today
 	for my $tid (@_) {
-		my $ref = meta_find($tid);
+		my $ref = gtd.Meta_find($tid);
 
 		unless (defined $ref) {
 			print "Task $tid not found to tag done\n";

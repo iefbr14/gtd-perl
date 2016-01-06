@@ -54,11 +54,11 @@ use Hier::Sort;
 
 sub Report_records {	//-- detailed list all records for a type
 	// everybody into the pool
-	meta_filter('+active', '^tid', 'simple');
+	gtd.Meta_filter('+active', '^tid', 'simple');
 
 	my($desc) = join(' ', @_);
 
-	my($name) = ucfirst(meta_desc(@_));	// some out
+	my($name) = ucfirst(gtd.Meta_desc(@_));	// some out
 	if ($name) {
 		my($want) = type_val($name);
 		unless ($want) {
@@ -80,7 +80,7 @@ sub list_records {
 	my($Dates) = '';
 
 	// find all records.
-	for my $ref (sort_tasks meta_all()) {
+	for my $ref (sort_tasks gtd.Meta_all()) {
 		$tid  = $ref->get_tid();
 		$type = $ref->get_type();
 

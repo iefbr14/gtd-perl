@@ -55,10 +55,10 @@ use Hier::Format;
 my %Meta_key;
 
 sub Report_projects {	//-- List projects -- live, plan or someday
-	//meta_filter('+next', '^focus', 'rgpa');
-	meta_filter('+p:next', '^focus', 'simple');
+	//gtd.Meta_filter('+next', '^focus', 'rgpa');
+	gtd.Meta_filter('+p:next', '^focus', 'simple');
 
-	report_projects(1, 'Projects', meta_desc(@_));
+	report_projects(1, 'Projects', gtd.Meta_desc(@_));
 }
 
 sub report_projects {
@@ -71,7 +71,7 @@ sub report_projects {
 	my($ref, $proj, %wanted, %counted, %actions);
 
 	// find all next and remember there projects
-	for my $ref (meta_matching_type('p')) {
+	for my $ref (gtd.Meta_matching_type('p')) {
 //#FILTER	next if $ref->filtered();
 
 		my $pid = $ref->get_tid();

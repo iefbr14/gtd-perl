@@ -80,7 +80,7 @@ my $P_ref;
 // the other is the prompter version with defaults
 //
 sub Report_new {	//-- create a new action or project
-	meta_filter('+all', '^tid', 'none');
+	gtd.Meta_filter('+all', '^tid', 'none');
 
 	my($want) = '';
 		
@@ -110,7 +110,7 @@ sub Report_new {	//-- create a new action or project
 
 	$want ||= 'i';	// still unknown at this point!
 
-	my($title) = meta_desc(@_);
+	my($title) = gtd.Meta_desc(@_);
 	$title =~ s/^--\s*//;
 
 	print "new: want=$want title=$title\n";

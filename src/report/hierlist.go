@@ -53,8 +53,8 @@ sub Report_hierlist {	//-- List all top level item (Project and above)
 	my($tid, $pid, $pref, $cnt, $parent, $cat, $name, $desc);
 	my(@row);
 
-	meta_filter('+p:live', '^title', 'simple');
-	meta_desc(@_);
+	gtd.Meta_filter('+p:live', '^title', 'simple');
+	gtd.Meta_desc(@_);
 
 print <<"EOF";
 -Gtd -Par Cnt Category  Parent       Name         Description
@@ -67,7 +67,7 @@ $tid, $pid,$cnt,$cat,     $parent,     $name,      $desc
 .
 	$~ = "HIER";	// set STDOUT format name to HIER
 
-	for my $ref (meta_sorted('^title')) {
+	for my $ref (gtd.Meta_sorted('^title')) {
 		$tid = $ref->get_tid();
 
 //#FILTER	next if $ref->filtered();

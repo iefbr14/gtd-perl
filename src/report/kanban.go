@@ -60,10 +60,10 @@ my %Fook;
 
 sub Report_kanban {	//-- report kanban of projects/actions
 	// counts use it and it give a context
-	meta_filter('+active', '^tid', 'simple');	
+	gtd.Meta_filter('+active', '^tid', 'simple');	
 
 	my(@args);
-	foreach my $arg (meta_argv(@_)) {
+	foreach my $arg (gtd.Meta_argv(@_)) {
 		if ($arg =~ s/^\.//) {
 			kanban_bump($arg);
 			next;
@@ -81,10 +81,10 @@ sub Report_kanban {	//-- report kanban of projects/actions
 		return;
 	}
 
-	my(@list) = meta_pick(@args);
+	my(@list) = gtd.Meta_pick(@args);
 
 	if (@list == 0) {
-		@list = meta_pick('roles');
+		@list = gtd.Meta_pick('roles');
 	}
 	check_roles(@list);
 
@@ -102,7 +102,7 @@ sub kanban_bump {
 			next;
 		}
 
-		my($ref) = meta_find($arg);
+		my($ref) = gtd.Meta_find($arg);
 
 		unless (defined $ref) {
 			warn "Task $arg doesn't exits\n";
@@ -132,7 +132,7 @@ sub kanban_bump {
 sub kanban_state {
 	my($tid, $state) = @_;
 
-	my($ref) = meta_find($tid);
+	my($ref) = gtd.Meta_find($tid);
 
 	unless (defined $ref) {
 		panic("Task $tid doesn't exits\n");
@@ -145,7 +145,7 @@ sub check_hier {
 	my($count) = 0;
 
 	// find all hier records
-	foreach my $ref (meta_all()) {
+	foreach my $ref (gtd.Meta_all()) {
 		next unless $ref->is_hier();
 		next if $ref->filtered();
 

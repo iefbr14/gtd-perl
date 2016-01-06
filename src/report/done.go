@@ -33,42 +33,27 @@ NAME:
 
 */
 
-use strict;
-use warnings;
+import "gtd"
 
-BEGIN {
-	use Exporter   ();
-	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
+//-- Tag listed projects/actions as done
+func Report_done(args ...string) {
+	date := get_today()
 
-	// set the version for version checking
-	$VERSION     = 1.00;
-	@ISA         = qw(Exporter);
-	@EXPORT      = qw(&Report_done);
-}
-
-use Hier::Option;
-use Hier::Meta;
-
-sub Report_done {	//-- Tag listed projects/actions as done
-	my($date) = get_today();
-
-	my($o_date) = option('Date', '');
-	if ($o_date) {
-		$date = $o_date;
+	o_date := gtd.Option("Date", "")
+	if o_date != "" {
+		date = o_date
 	}
 
-	for my $tid (@_) {
-		my $ref = meta_find($tid);
+	for tid := range args {
+		ref := gtd.Meta_find(tid)
 
-		unless (defined $ref) {
-			print "Task $tid not found to tag done\n";
-			next;
+		if ref != nil {
+			fmt.Printf("Task %s not found to tag done")
+			next
 		}
-		print "Task $tid completed $date\n";
+		fmt.Printf("Task %s completed %s", tid, date)
 
-		$ref->set_completed($date);
-		$ref->update();
+		ref.Completed(date)
+		ref.Update(date)
 	}
 }
-
-1;  # don't forget to return a true value from the file

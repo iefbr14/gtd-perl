@@ -52,10 +52,10 @@ use Hier::Option;
 sub Report_clean {	//-- clean unused categories
 	my $Yesterday = get_today(-1);
 
-	meta_filter('+all', '^tid', 'task');
+	gtd.Meta_filter('+all', '^tid', 'task');
 	my($done, $tickle, $type);
 	
-	for my $ref (meta_selected()) {
+	for my $ref (gtd.Meta_selected()) {
 		$done = $ref->is_completed();
 		if ($done) {
 			set_active($ref);

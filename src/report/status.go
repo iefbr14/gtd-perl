@@ -60,9 +60,9 @@ my $Hours_next = 0;
 
 sub Report_status {	//-- report status of projects/actions
 	// counts use it and it give a context
-	meta_filter('+active', '^tid', 'none');	
+	gtd.Meta_filter('+active', '^tid', 'none');	
 
-	my $desc = meta_desc(@_);
+	my $desc = gtd.Meta_desc(@_);
 
 	if (lc($desc) eq 'all') {
 		report_detail();
@@ -84,7 +84,7 @@ sub Report_status {	//-- report status of projects/actions
 
 	if ($desc) {
 		print "For: $desc \n";
-//		my ($ref) = meta_task($desc);
+//		my ($ref) = gtd.Meta_task($desc);
 //		print $ref->get_title(), "\n";
 	}
 	my($total) = $task + $next;
@@ -123,7 +123,7 @@ sub count_hier {
 	my($count) = 0;
 
 	// find all hier records
-	foreach my $ref (meta_all()) {
+	foreach my $ref (gtd.Meta_all()) {
 		next unless $ref->is_hier();
 		next if $ref->filtered();
 
@@ -136,7 +136,7 @@ sub count_proj {
 	my($count) = 0;
 
 	// find all projects
-	foreach my $ref (meta_matching_type('p')) {
+	foreach my $ref (gtd.Meta_matching_type('p')) {
 //##FILTER	next if $ref->filtered();
 
 		++$count;
@@ -161,7 +161,7 @@ sub count_liveproj {
 	my($count) = 0;
 
 	// find all projects
-	foreach my $ref (meta_matching_type('p')) {
+	foreach my $ref (gtd.Meta_matching_type('p')) {
 //##FILTER	next if $ref->filtered();
 
 		next unless project_live($ref);
@@ -176,7 +176,7 @@ sub count_task {
 	my($time) = 0;
 
 	// find all records.
-	foreach my $ref (meta_selected()) {
+	foreach my $ref (gtd.Meta_selected()) {
 		next unless $ref->is_task();
 
 		next if $ref->filtered();
@@ -196,7 +196,7 @@ sub count_next {
 	my($time) = 0;
 
 	// find all records.
-	foreach my $ref (meta_selected()) {
+	foreach my $ref (gtd.Meta_selected()) {
 		next unless $ref->is_task();
 
 		next if $ref->filtered();
@@ -218,7 +218,7 @@ sub count_tasklive {
 	my($time) = 0;
 
 	// find all records.
-	foreach my $ref (meta_selected()) {
+	foreach my $ref (gtd.Meta_selected()) {
 
 		next unless $ref->is_task();
 
@@ -277,14 +277,14 @@ sub calc_class {
 }
 
 sub report_detail {
-	meta_filter('+all', '^title', 'simple');
+	gtd.Meta_filter('+all', '^title', 'simple');
 
 	my @Types = qw(Hier Action List Total);
 	my @Class = qw(Done Someday Action Next Future Total);
 
 	my(%data);
 	my($type, $class);
-	for my $ref (meta_all()) {
+	for my $ref (gtd.Meta_all()) {
 		$type = calc_type($ref);
 		$class = calc_class($ref);
 

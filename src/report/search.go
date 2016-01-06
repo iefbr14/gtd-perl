@@ -33,60 +33,40 @@ NAME:
 
 */
 
-use strict;
-use warnings;
+import "gtd"
+import "regexp"
 
-BEGIN {
-	use Exporter   ();
-	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
+//-- Search for items
+func Report_search(args ...string) {
+	found := 0
 
-	// set the version for version checking
-	$VERSION     = 1.00;
-	@ISA         = qw(Exporter);
-	@EXPORT      = qw(&Report_search);
-}
+	gtd.Meta_filter("+all", "^title", "simple")
+	gtd.Meta_desc(args)
 
-use Hier::Util;
-use Hier::Format;
-use Hier::Meta;
+	for name := range args {
+		r, err := regexp.Compile(name)
+		if err != nil {
+			fmt.Printf("Compiler error %s: %s", name, err)
+			next
+		}
 
-sub Report_search {	//-- Search for items
-	my($found) = 0;
-
-	my($tid, $title, $type);
-
-	meta_filter('+all', '^title', 'simple');
-	meta_desc(@_);
-// type filtering?
-//	if ($name) {
-//		my($want) = type_val($name);
-//		if ($want) {
-//			$want = 's' if $type eq 'p';
-//			list_desc($want, $name);
-//			return;
-//		}
-//		die "**** Can't understand Type $name\n";
-//	}
-//	print "No items requested\n";
-
-	for my $name (split(/,/, $_[0])) {
-		for my $ref (meta_sorted()) {
-			next unless match_desc($ref, $name);
-			
-			display_task($ref);
-			$found = 1;
+		for ref := range gtd.Meta_sorted() {
+			if match_desc(ref, r) {
+				display_task(ref)
+				found = 1
+			}
 		}
 	}
-	return ($found ? 0 : 1);
+
+	return !found
 }
 
-sub match_desc {
-	my($ref, $desc) = @_;
+func match_desc(ref gtd.Task, r regexp) bool {
 
-	return 1 if $ref->get_title() =~ m/$desc/i;
-	return 1 if $ref->get_description() =~ m/$desc/i;
-	return 1 if $ref->get_note() =~ m/$desc/i;
-	return 0;
+	if r.Match(ref.title) ||
+		r.Match(ref.description) ||
+		r.Match(ref.note) {
+		return true
+	}
+	return false
 }
-
-1;  # don't forget to return a true value from the file

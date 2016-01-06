@@ -53,18 +53,18 @@ use Hier::Format;
 our $Debug = 0;
 
 sub Report_checklist {	//-- display a check list
-	meta_filter('+any', '^title', 'item');	
-//	meta_argv();
+	gtd.Meta_filter('+any', '^title', 'item');	
+//	gtd.Meta_argv();
 	my ($p) = shift @_;
 	
 	my ($id);
 	if ($p) {
 		if ($p =~ /^\d+$/) {
-			list_records($id, "List: $p", meta_desc($p, @_));
+			list_records($id, "List: $p", gtd.Meta_desc($p, @_));
 			return;
 		} 
 		if ($id = find_list($p)) {
-			list_records($id, "List: $p", meta_desc($p, @_));
+			list_records($id, "List: $p", gtd.Meta_desc($p, @_));
 		} else {
 			print "Can't find a list by name of $p\n";
 		}
@@ -80,7 +80,7 @@ sub find_list {
 	my($Dates) = '';
 
 	// find all records.
-	for my $ref (meta_all()) {
+	for my $ref (gtd.Meta_all()) {
 		$tid = $ref->get_tid();
 		$type = $ref->get_type();
 
@@ -113,7 +113,7 @@ sub list_records {
 sub disp_list {
 	my ($record_type, $owner) = @_;
 
-	for my $ref (meta_matching_type($record_type)) {
+	for my $ref (gtd.Meta_matching_type($record_type)) {
 		my $tid = $ref->get_tid();
 		my $pid = $ref->get_parent()->get_tid();
 		my $title = $ref->get_title();

@@ -55,12 +55,12 @@ our $Debug = 0;
 my %Depth;
 
 sub Report_tsort {	//-- write out hier as as set of nodes
-	for my $ref (meta_matching_type('a')) {
+	for my $ref (gtd.Meta_matching_type('a')) {
 		up($ref);
 	}
 
 	if (@_ == 0) {
-		for my $ref (meta_matching_type('m')) {
+		for my $ref (gtd.Meta_matching_type('m')) {
 			dpos($ref, 1);
 		}
 		return;
@@ -68,7 +68,7 @@ sub Report_tsort {	//-- write out hier as as set of nodes
 
 
 	for my $task (@_) {
-		my $ref = meta_find($task);
+		my $ref = gtd.Meta_find($task);
 //		down($ref, 1);
 		dpos($ref, 1);
 	}

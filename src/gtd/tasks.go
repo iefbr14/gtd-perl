@@ -1,72 +1,108 @@
 package gtd
 
-use strict;
-use warnings;
+// Done is used to signal shutdown.  Chanel will close at exit
+var Done := make(<-chan);
 
-use Hier::Option;
+type Task struct {
+	Tid          int;
+	Tasktype     char;
 
-use base qw(Hier::Hier Hier::Fields Hier::Filter Hier::Format);
+	Category     string;
+	Completed    date;
+	Context      string;
+	Created      date;
+	Depends      []int;
+	Description  string;
+	Doit         date;
+	Due          date;
+	Effort       duration;
+	IsSomeday    bool;
+	Later        date;
 
-my %Task;		// all Todo items (including Hier)
+	live         bool;
+	mask         uint;
+	Modified     date;
+	Nextaction   bool;
 
-sub find {
-	my($tid) = @_;
+	Note         string;
+	Priority     int;
+	Title        string;
+	Tickledate   date;
+	Timeframe    []date;
+	todo_only    bool;
 
-	return unless defined $Task{$tid};
-	return $Task{$tid};
+	Resource     []string;
+	Hint         []string;
+
+	dirty		map[string]bool;
 }
 
-sub all {
-	return values %Task;
+// all Todo items (including Hier)
+var Tasks map[int]*Task;		
+
+func Find(tid string)*Task  {
+	return Find(stringconv.ParseInt(tid))
 }
 
-my $Max_todo = 0; 	// Last todo id (unique for all tables)
-our $Debug = 0; 
+func Find(int) *Task {
+	return Task[tid]
+}
 
-sub new {
-	my($class, $tid) = @_;
+func All() []Task {
+	v := make([]*Task, len(Tasks));
+  idx := 0
+    for  _, value := range m {
+       v[idx] = value
+       idx++
+    }
+	return v
+}
 
-	my($self) = {};
 
-	$Max_todo = Hier::Db::G_val('todo', 'max(todo_id)') unless $Max_todo;
+Max_todo := 0; 	// Last todo id (unique for all tables)
 
-	if (defined $tid) {
-		panic("Task $tid exists won't create it.") if defined $Task{$tid};
+func New(tid int) {
+	if tid > 0 && Tasks[tid] != nil {
+		panic("Task $tid exists won't create it.")
+	}
+	self := make(Task);
 
-		$Max_todo = $tid if $Max_todo < $tid;
+	if tid == 0 {
+		if (Max_todo == 0 {
+			Max_todo = Hier::Db::G_val('todo', 'max(todo_id)')
+		}
+		tid = ++Max_todo;
 	} else {
-		$tid = ++$Max_todo;
+		if Max_todo < $tid {
+			Max_todo = tid 
+		}
 	}
 
-	$self->{todo_id} = $tid;
 
-	$self->{_tags} = {};
+	self.todo_id = tid
 
-	bless $self, $class;
+	Tasks[tid] = self	// keep track of new task
 
-	$Task{$tid} = $self;	// need to hide this
-
-	return $self;
+	return &self;
 }
 
-sub insert {
+func Insert(self *Task) {
 	my($self) = @_;
 
-	Hier::Db::gtd_insert($self);
-	delete $self->{_dirty};
+	Hier::Db::gtd_insert(self);
+	self.dirty = nil
 }
 
-sub max {
-	return $Max_todo;
+func Max() int {
+	return Max_todo;
 }
 
 
 //------------------------------------------------------------------------------
-//# Package Dirty
+// Package Dirty
 //
-sub is_dirty {
-	my($self) = @_;
-	return defined $self->{_dirty};
+func (self *Task) is_dirty() bool {
+	return self.dirty != nil;
 }
 
 sub get_dirty {
@@ -76,22 +112,19 @@ sub get_dirty {
 	return defined $self->{_dirty}{$field};
 }
 
-sub set_dirty {
-	my($self, $field) = @_; 
+func (self *Task) set_dirty(field string) *Task {
 
-	$self->{_dirty}{$field} = 1;
-	return $self;
+	self.dirty[field] = true;
+	return self;
 }
 
-sub clean_dirty {
-	my($self) = @_;
+func (self *Task) clean_dirty() *Task {
 
-	delete $self->{_dirty};
-	return $self;
+	self.dirty = nil
+	return self;
 }
 
-sub delete {
-	my($self) = @_;
+func (self *Task) delete  {
 
 	my $tid = $self->{todo_id};
 	delete $Task{$tid};
@@ -284,20 +317,24 @@ sub dset {
 	$ref->{_dirty}{$field}++;
 
 	my($warn_val) = $val || '';
-	warn "Dirty $field => $warn_val\n" if $Debug;
+	if option.Debug("tasks") {
+		warn "Dirty $field => $warn_val\n" 
+	}
 
 	return $ref;
 }
 
-sub update {
+func update() {
 	my($self) = @_;
 
 	Hier::Db::gtd_update($self);
 	delete $self->{_dirty};
 }
 
-sub clean_up_database {
-	$Debug = 1;	// show what should have been updated.
+func clean_up_database() {
+	// show what should have been updated.
+	option.Set_debug("tasks");
+
 	foreach my $ref (Hier::Tasks::all()) {
 
 		next unless $ref->is_dirty();
@@ -309,7 +346,7 @@ sub clean_up_database {
 	}
 }
 
-sub reload_if_needed_database {
+func reload_if_needed_database() {
 	my($changed) = option('Changed');
 	my($cur) = Hier::Db::G_val('todo', 'max(modified)');
 
@@ -320,8 +357,11 @@ sub reload_if_needed_database {
 	}
 }
 
-END {
-	clean_up_database();
+func init {
+	go func() {
+		<-Done 
+		clean_up_database();
+	}()
 }
 
 
