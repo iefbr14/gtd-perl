@@ -49,13 +49,13 @@ BEGIN {
 use Hier::Meta;
 
 sub Report_delete {	#-- Delete listed actions/projects (will orphine items)
-	my($ref, $tid);
+	my($ref);
 
-	foreach my $task (@_) {
-		$ref = meta_find($task);
+	foreach my $tid (@_) {
+		$ref = meta_find($tid);
 
 		unless (defined $ref) {
-			print "Task $task doesn't exists\n";
+			print "Task $tid doesn't exists\n";
 			next;
 		}
 
@@ -64,7 +64,7 @@ sub Report_delete {	#-- Delete listed actions/projects (will orphine items)
 		}
 
 		$ref->delete();
-		print "Task $task deleted\n";
+		print "Task $tid deleted\n";
 	}
 }
 
