@@ -37,7 +37,7 @@ import "gtd"
 
 //-- Tag listed projects/actions as done
 func Report_done(args ...string) {
-	date := get_today()
+	date := gtd.Today()
 
 	o_date := gtd.Option("Date", "")
 	if o_date != "" {

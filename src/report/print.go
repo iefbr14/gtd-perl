@@ -33,41 +33,41 @@ NAME:
 
 */
 
-use strict;
-use warnings;
+import (
+	"gtd"
+	"fmt"
+	"text/template"
+)
 
-use Switch;
+cont (
+	Text = iota,
+	Wiki,
+	Html,
+	Man,
+)
 
-BEGIN {
-	use Exporter   ();
-	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
+var Layout = Text;
 
-	// set the version for version checking
-	$VERSION     = 1.00;
-	@ISA         = qw(Exporter);
-	@EXPORT      = qw( &Report_print );
-}
+//-- display records in dump format based on format type
+func Report_print(args ...string) {
+	var layouts map[string]int = {
+		"text", Text,
+		"wiki", Wiki
+		"html", Html
+		"man",  Man
+	}
 
-use Hier::Util;
-use Hier::Tasks;
-use Hier::Meta;
-use Hier::Format;
-use Hier::Option;
-
-my $Layout = "Text";
-
-sub Report_print {	//-- dump records in edit format
 	// everybody into the pool by id 
 	gtd.Meta_filter("+any", '^tid', "doit");	
 
-	$Layout = ucfirst(lc(option("Layout", "Text")));
+	Layout := layouts[string.ToLower(gtd.Option("Layout", "text")))];
 
-	for my $ref (gtd.Meta_pick(@_)) {
-		print_ref($ref);
+	for ref := range gtd.Meta_pick(args)) {
+		print_ref(ref);
 	}
 }
 
-sub print_ref {
+func print_ref(ref *Task) {
 	my($ref) = @_;
 
 	my($tid)         = $ref->get_tid();
@@ -118,9 +118,10 @@ sub print_ref {
 
 	hr();
 
+	p 
 	pre(<<"EOF");
 t,pri,s,n: $typename $tid -- pri:$priority$nextaction$someday 
-cct:       $category $context $timeframe
+pf("cct",       "%s %s %s", ref.category,  ref.context, ref.timeframe)
 tags:      $tags
 
 created:   $created
@@ -128,11 +129,11 @@ doit:      $doit
 modified:  $modified
 tickle:    $tickledate
 due:       $due
-completed: $completed
+p("completed", ref.completed)
 
-effort:    $effort
-resource:  $resource
-depends:   $depends
+p("effort",    ref.effort)
+p("resource",  ref.resource)
+p("depends",   ref.depends)
 
 EOF
 
@@ -140,12 +141,10 @@ EOF
 
 }
 
-sub pre {
-	my($text) = @_;
+func pre(text string) {
+	string.TrimSpace(text);
 
-	chomp $text;
-
-	switch ($Layout) {
+	switch (Layout) {
 	case "Text" { print "$text\n"; }
 	case "Wiki" { print "<pre>$text</pre>\n\n"; }
 	case "Html" { print "<pre> $text <preh1>\n"; }
@@ -153,47 +152,42 @@ sub pre {
 	} 
 }
 
-sub br {
-	switch ($Layout) {
-	case "Text" { }
-	case "Wiki" { print "<br>\n";}
-	case "Html" { print "<br>\n"; }
-	case "Man"  { print ".br\n"; }
-	} 
-}
-sub hr {
-	switch ($Layout) {
-	case "Text" { print '-'x78, "\n"; }
-	case "Wiki" { print "------------------------------\n"; }
-	case "Html" { print "<hr>\n"; }
-	case "Man"  { print "\\l'6i\n"; }
+func br() {
+	switch (Layout) {
+	case Text: { }
+	case Wiki: { print "<br>\n";}
+	case Html: { print "<br>\n"; }
+	case Man:  { print ".br\n"; }
 	} 
 }
 
-sub para {
-	my($text) = @_;
-
-	chomp $text;
-
-	switch ($Layout) {
-	case "Text" { print $text,"\n"; }
-	case "Wiki" { print "== $text ==\n\n"; }
-	case "Html" { print "<h1> $text </h1>\n"; }
-	case "Man"  { print ".SH \"$text\"\n"; }
+func hr(text string) {
+	switch (Layout) {
+	case Text: fmt.printl('-'x78)
+	case Wiki: fmt.printl("------------------------------")
+	case Html: fmt.printl("<hr>")
+	case Man:  fmt.printl("\\l'6i")
 	} 
 }
 
-sub title {
-	my($text) = @_;
+func para(text string) {
+	string.TrimSpace(text);
 
-	chomp $text;
-
-	switch ($Layout) {
-	case "Text" { print "== $text ==\n\n"; }
-	case "Wiki" { print "== $text ==\n\n"; }
-	case "Html" { print "<h1> $text </h1>\n"; }
-	case "Man"  { print ".SH \"$text\"\n"; }
+	switch (Layout) {
+	case Text: fmt.Printf("%s\n", text)
+	case Wiki: fmt.Printf("== %s ==\n\n", text)
+	case Html: fmt.Printf("<h1> %s </h1>\n", text)
+	case Man:  fmt.Printf(".SH \"%s\"\n", text)
 	} 
 }
 
-1;  # don't forget to return a true value from the file
+func title(text string) {
+	string.TrimSpace(text);
+
+	switch (Layout) {
+	case Text: fmt.Printf("== %s ==\n\n", text)
+	case Wiki: fmt.Printf("== %s ==\n\n", text)
+	case Html: fmt.Printf("<h1> %s </h1>\n", text)
+	case Man:  fmt.Printf(".SH \"%s\"\n", text)
+	} 
+}

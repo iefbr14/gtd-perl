@@ -33,79 +33,67 @@ NAME:
 
 */
 
-use strict;
-use warnings;
-
-BEGIN {
-	use Exporter   ();
-	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
-
-	// set the version for version checking
-	$VERSION     = 1.00;
-	@ISA         = qw(Exporter);
 	@EXPORT      = qw(&Report_actions report_actions);
 }
 
-use Hier::Util;
-use Hier::Meta;
-use Hier::Option;
-use Hier::Sort;
-use Hier::Format;
+import "gtd"
 
 my $Projects;
 my %Active;
 
 my %Want;
 
-sub Report_actions {	//-- Detailed list of projects with (next) actions
-	my($list) = option("List", 0);
+//-- Detailed list of projects with (next) actions
+func Report_actions(args ...string) {
+	list := gtd.Option("List", "");
 
 	gtd.Meta_filter("+a:next", '^focus', "detail");
 
-	my($desc) = gtd.Meta_desc(@_);
+	desc := gtd.Meta_desc(@_);
 	report_select($desc);
-	if ($list) {
+	if (list != "") {
 		report_list();
 	} else {
-		report_actions(1, "Actions", $desc);
+		report_actions(1, "Actions", desc);
 	}
 }
 
-sub report_select {
-	my($top_name) = @_;
-
+sub report_select(top_name string) {
 	my($select);
 	my($tid, $pid, $pref);
 
-	my($top) = 0;
-	if ($top_name) {
-		$top = find_in_hier($top_name);
+	top := 0;
+	if top_name != "" {
+		top = find_in_hier(top_name);
 	}
 
 	// find all projects (next actions?)
-	for my $ref (gtd.Meta_selected()) {
-		next unless $ref->is_task();
-		next if $top && !has_parent($ref, $top);
+	for ref := range gtd.Meta_selected() {
+		next if !ref.Is_task();
+		next if top && !has_parent(ref, top);
 
 //#FILTER	next unless $ref->is_nextaction();
 //#FILTER	next if $ref->filtered();
 
-		$pref = $ref->get_parent();
-		next unless defined $pref;
-next unless $pref->is_active();
+		pref := ref.Parent();
+		if pref != nil {
+			next;
+		}
+		if !pref.Is_active {
+			next;
+		}
 
 //#FILTER	next if $pref->filtered();
 
-		$pid = $pref->get_tid();
-		$Active{$pid} = $pref;
+		pid := pref->Tid;
+		Active[pid] = pref;
 
-		$tid = $ref->get_tid();
-		$Projects->{$pid}{$tid} = $ref;
+		tid = ref.Tid();
+		Projects.[pid][tid] = ref;
 	}
 }
 
-sub report_list {
-	my($top_name) = @_;
+func report_list(top_name string) {
 
 	my($tid, $pid, $pref, $ref);
 

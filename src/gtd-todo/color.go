@@ -1,3 +1,4 @@
+// +build ignore
 package gtd
 
 @EXPORT      = qw(&color &print_color &color_ref &nl);

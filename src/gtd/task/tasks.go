@@ -1,110 +1,147 @@
-package gtd
+package task
 
-// Done is used to signal shutdown.  Chanel will close at exit
-var Done := make(<-chan);
+import (
+	"time"
+	"fmt"
+	"strconv"
+)
+
+// Done is used to signal shutdown.  Channel will close at exit
+var Done chan *Task // task that need saving are written here
+var Max_todo int    // Last todo id (unique for all tables)
 
 type Task struct {
-	Tid          int;
-	Tasktype     char;
+	Tid      int
+	Tasktype rune
 
-	Category     string;
-	Completed    date;
-	Context      string;
-	Created      date;
-	Depends      []int;
-	Description  string;
-	Doit         date;
-	Due          date;
-	Effort       duration;
-	IsSomeday    bool;
-	Later        date;
+	Category    string
+	Completed   time.Time
+	Context     string
 
-	live         bool;
-	mask         uint;
-	Modified     date;
-	Nextaction   bool;
+	Depends     []int
+	Description string
+	Doit        time.Time
+	Due         time.Time
+	Effort      time.Duration
+	IsSomeday   bool
+	Later       time.Time
+	Nextaction bool
 
-	Note         string;
-	Priority     int;
-	Title        string;
-	Tickledate   date;
-	Timeframe    []date;
-	todo_only    bool;
+	Created     time.Time
+	Modified   time.Time
 
-	Resource     []string;
-	Hint         []string;
+	live       bool
+	mask       uint
 
-	dirty		map[string]bool;
+	Note       string
+	Priority   int
+	Title      string
+	Tickledate time.Time
+	Timeframe  []time.Time
+	todo_only  bool
+
+	Resource []string
+	Hint     []string
+
+	dirty map[string]bool
+}
+
+func init() {
+	Done = make(chan *Task)
+
+	go func() {
+	loop:
+		for {
+			select {
+			case task := <-Done:
+				fmt.Printf("Done %d\n", task.Tid)
+				if task.Dirty() {
+					fmt.Printf("Dirty %d\n", task.Tid)
+					// task.Save()
+				}
+			default:
+				break loop
+			}
+		}
+
+		clean_up_database()
+	}()
+
+}
+
+func (ref *Task) Dirty() bool {
+	return ref.dirty != nil
 }
 
 // all Todo items (including Hier)
-var Tasks map[int]*Task;		
+var Tasks map[int]*Task
 
-func Find(tid string)*Task  {
-	return Find(stringconv.ParseInt(tid))
+func Find(task_id string) *Task {
+	tid, err := strconv.ParseInt(task_id, 10, 32)
+	if err != nil {
+		fmt.Println(err)
+		return nil
+	}
+	return FindTid(int(tid))
 }
 
-func Find(int) *Task {
-	return Task[tid]
+func FindTid(tid int) *Task {
+	return Tasks[tid]
 }
 
-func All() []Task {
-	v := make([]*Task, len(Tasks));
-  idx := 0
-    for  _, value := range m {
-       v[idx] = value
-       idx++
-    }
+func All() []*Task {
+	v := make([]*Task, len(Tasks))
+	idx := 0
+	for _, value := range Tasks {
+		v[idx] = value
+		idx++
+	}
 	return v
 }
 
-
-Max_todo := 0; 	// Last todo id (unique for all tables)
-
-func New(tid int) {
+func New(tid int) *Task {
 	if tid > 0 && Tasks[tid] != nil {
 		panic("Task $tid exists won't create it.")
 	}
-	self := make(Task);
+	var self Task
 
 	if tid == 0 {
-		if (Max_todo == 0 {
-			Max_todo = Hier::Db::G_val("todo", 'max(todo_id)')
+		if Max_todo == 0 {
+			Max_todo = G_val("todo", "max(todo_id)")
 		}
-		tid = ++Max_todo;
+		Max_todo++
+		tid = Max_todo
 	} else {
-		if Max_todo < $tid {
-			Max_todo = tid 
+		if Max_todo < tid {
+			Max_todo = tid
 		}
 	}
 
+	self.Tid = tid
 
-	self.todo_id = tid
+	Tasks[tid] = &self // keep track of new task
 
-	Tasks[tid] = self	// keep track of new task
-
-	return &self;
+	return &self
 }
 
-func Insert(self *Task) {
-	my($self) = @_;
-
-	Hier::Db::gtd_insert(self);
+func (self *Task) Insert() {
+	gtd_insert(self)
 	self.dirty = nil
 }
 
 func Max() int {
-	return Max_todo;
+	return Max_todo
 }
 
 
 //------------------------------------------------------------------------------
 // Package Dirty
 //
-func (self *Task) is_dirty() bool {
+func (self *Task) Is_dirty() bool {
 	return self.dirty != nil;
 }
 
+/*
 sub get_dirty {
 	my($self,$field) = @_;
 
@@ -237,7 +274,7 @@ sub set_tid          {
 
 	if ($ref->is_dirty()) {
 		// make sure the rest of the object is clean
-		$ref->update();		
+		$ref->update();
 	}
 
 	Hier::Db::G_renumber($ref, $tid, $new);
@@ -270,7 +307,7 @@ sub disp_tags {
 
         return join(',', $ref->get_tags());
 }
-sub set_tags { 
+sub set_tags {
 	my($self) = shift @_;
 
 	$self->{_tags} = {};
@@ -282,7 +319,7 @@ sub set_tags {
 }
 
 //
-// dirty set 
+// dirty set
 //
 sub set_KEY { my($self, $key, $val) = @_;  return dset($key, $self, $val); }
 sub dset {
@@ -318,34 +355,35 @@ sub dset {
 
 	my($warn_val) = $val || '';
 	if option.Debug("tasks") {
-		warn "Dirty $field => $warn_val\n" 
+		warn "Dirty $field => $warn_val\n"
 	}
 
 	return $ref;
 }
 
-func update() {
-	my($self) = @_;
+*/
 
-	Hier::Db::gtd_update($self);
-	delete $self->{_dirty};
+func (self *Task) Update() {
+
+	gtd_update(self);
+	self.dirty = nil
 }
 
 func clean_up_database() {
 	// show what should have been updated.
-	option.Set_debug("tasks");
+//***BUG***	option.Set_debug("tasks");
 
-	foreach my $ref (Hier::Tasks::all()) {
+	for tid, ref := range All() {
+		if !ref.Is_dirty() {
+			continue
+		}
 
-		next unless $ref->is_dirty();
-
-		my $tid = $ref->get_tid();
-
-		warn "Dirty: $tid\n";
-		$ref->update();
+		fmt.Printf("Dirty: %s\n", tid);
+		ref.Update();
 	}
 }
 
+/*
 func reload_if_needed_database() {
 	my($changed) = option("Changed");
 	my($cur) = Hier::Db::G_val("todo", 'max(modified)');
@@ -359,7 +397,7 @@ func reload_if_needed_database() {
 
 func init {
 	go func() {
-		<-Done 
+		<-Done
 		clean_up_database();
 	}()
 }
@@ -433,7 +471,7 @@ sub level {
 }
 
 sub get_state {
-	my($self) = @_; 
+	my($self) = @_;
 
 	my($state) = default($self->{state}, '-');
 
@@ -447,4 +485,4 @@ sub get_state {
 	return $state;
 }
 
-1;  # don't forget to return a true value from the file
+*/

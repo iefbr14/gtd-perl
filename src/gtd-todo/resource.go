@@ -1,3 +1,4 @@
+// +build ignore
 package gtd
 
 use strict;
@@ -6,9 +7,6 @@ use warnings;
 our $VERSION     = 1.00;
 
 use base qw(Hier::Hier Hier::Fields Hier::Filter);
-
-my $Max_todo = 0; 	// Last todo id (unique for all tables)
-my %Task;		// all Todo items (including Hier)
 
 our $Resource;
 

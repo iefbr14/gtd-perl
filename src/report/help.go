@@ -33,45 +33,29 @@ NAME:
 
 */
 
+import "gtd"
 
-use strict;
-use warnings;
+//-- Help on commands
+func Report_help(args ...string) {
+	helps := map[string]string{
 
-BEGIN {
-	use Exporter   ();
-	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
-
-	// set the version for version checking
-	$VERSION     = 1.00;
-	@ISA         = qw(Exporter);
-	@EXPORT      = qw(&Report_help);
-
-	our $OurPath = __FILE__;
-}
-
-use Hier::Meta;
-use Hier::Format;
-
-our $OurPath;
-
-my(%Helps) = (
-//------------------------------------------------------------------------------
-// Obsolete Sac view of projects vs gts view of projects
-	"Sac" => <<"EOF",
+		//------------------------------------------------------------------------------
+		// Obsolete Sac view of projects vs gts view of projects
+		{"Sac", `
 (gtd) Value => Vision => Role => Goal => Project => Action
 (sac)                  Client => Project => Task => Item
-EOF
+`},
 
-//------------------------------------------------------------------------------
-	"Selection" => <<"EOF",
+		//------------------------------------------------------------------------------
+		{"Selection", `
   tid       -- task id
   /title    -- match any with title
   T:/title  -- match only type T,  with title
                (T == A,P,G,R,V)
-EOF
+`},
 
-//------------------------------------------------------------------------------
-	"Filters" => <<"EOF",
+		//------------------------------------------------------------------------------
+		{"Filters", `
 ~NAME -- exclude those of the type (check first)
 +NAME -- include those of the type (check last)
 
@@ -99,10 +83,10 @@ dink => nokids noacts
 kids - hier has sub-hier items
 acts - hier has sub-actions
 
-EOF
+`},
 
-//------------------------------------------------------------------------------
-	"Sort" => <<"EOF",
+		//------------------------------------------------------------------------------
+		{"Sort", `
 id/tid	      - by task id
 task/title    - by task name (title)
 
@@ -118,10 +102,10 @@ doit/doitdate - by doit date
 status        - by completed if done otherwise by modified.
 
 rgpa/goaltask - by task withing goal
-EOF
+`},
 
-//------------------------------------------------------------------------------
-	"Types" => <<"EOF",
+		//------------------------------------------------------------------------------
+		{"Types", `
 m - value
 v - vision
 o - role
@@ -136,10 +120,10 @@ R - reference
 L - list
 C - checklist
 T - item
-EOF
+`},
 
-//------------------------------------------------------------------------------
-	"Project-Verbs" => <<"EOF",
+		//------------------------------------------------------------------------------
+		{"Project-Verbs", `
 * Finalize
 * Resolve
 * Handle
@@ -155,10 +139,10 @@ EOF
 * Install
 * Implement
 * Set-up 
-EOF
+`},
 
-//------------------------------------------------------------------------------
-	"Action-Verbs" => <<"EOF",
+		//------------------------------------------------------------------------------
+		{"Action-Verbs", `
 * Call
 * Review
 * Buy
@@ -174,55 +158,71 @@ EOF
 * Draft
 * Email 
 * Sort
-EOF
+`},
 
-//------------------------------------------------------------------------------
-	"Planning" => <<"EOF",
+		//------------------------------------------------------------------------------
+		{"Planning", `
 1. Define purpose & principles (why)
 2. Outcome visioning
 3. Brainstorming
 4. Organizing material
 5. Identify next actions
-EOF
+`},
 
-//------------------------------------------------------------------------------
-	"Agile" => <<"EOF",
+		//------------------------------------------------------------------------------
+		{"Agile", `
 Using "kanban" and "board" commands to refine project state.
 Then by iterating over those items to create momentum.
-EOF
+`},
+	}
 
-);
-
-sub Report_help {	//-- Help on commands
-	my($f, $path);
-	my($dir) = $OurPath;
-
-	my($help) = @_;
-
-	if (scalar(@_) == 0 or $help eq "help") {
-		print "Help is available for:\n";
-		for my $key (sort keys %Helps) {
-			print "\t$key\n";
+	done := false
+	for help := range args {
+		if help == "help" {
+			done := true
+			fmt.Println("Help is available for:")
+			for key := range sort_keys(helps) {
+				fmt.Printf("\t%s\n", key.name)
+			}
+			fmt.Println("\nAlso try: help reports")
+			next
 		}
-		print "\nAlso try: help reports\n";
-		return;
-	}
 
-	if (defined $Helps{$help}) {
-		print $Helps{$help};
-		return;
+		if val, err := helps[help]; err == nil {
+			fmt.Printf("Unknown help for %s\n", val)
+		} else {
+			done := true
+			fmt.Println(val)
+			next
+		}
 	}
-
-	$dir =~ s=/help.pm==;
-	my($report) = "$dir/$help.pm";
-	if (-f $report) {
-		//##BUG### should look at other args for perldoc args
-		system("perldoc", $report);
-		return;
+	if done {
+		return
 	}
+	fmt.Println("No help specified: Try gtd help")
 
-	print "? Don't understand help $help, try: help help\n";
-	
+	/*
+		my($f, $path);
+		my($dir) = $OurPath;
+
+		my($help) = @_;
+
+		$dir =~ s=/help.pm==;
+		my($report) = "$dir/$help.pm";
+		if (-f $report) {
+			//##BUG### should look at other args for perldoc args
+			system("perldoc", $report);
+			return;
+		}
+	*/
+	fmt.Println("? Don't understand help $help, try: help help")
+
 }
 
-1;  # don't forget to return a true value from the file
+func sort_keys(m map[string]string) []string {
+	keys := make([]string, 0, len(m))
+	for key := range m {
+		keys = append(keys, key)
+	}
+	return sort.Strings(keys)
+}

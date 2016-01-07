@@ -2,6 +2,10 @@ package main
 
 import "flag"
 import "gtd"
+import "os"
+import "gtd/option"
+import "gtd/task"
+
 
 func usage() {
 	panic(`
@@ -61,73 +65,73 @@ Option
 
 var (
 	Zname   string
-	Debug   int
+	main_debug   bool
 	MetaFix int
 	Title   string
 	Task    string
 )
 
 func main() {
-	flag.IntVar(&Debug, "x", 0, "Turn debugging on")
+	flag.BoolVar(&main_debug, "x", false, "Turn debugging on")
 
-	err := getopts("X:uS:F:H:f:LaAZ:o:T:c:C:D:p:N:s:t:l:r")
-	if err {
-		usage()
-	}
+//?	err := getopts("X:uS:F:H:f:LaAZ:o:T:c:C:D:p:N:s:t:l:r")
+//?	if err {
+//?		usage()
+//?	}
 
-	flag.StringVar(&Zname, 'Z', "gtd", "gtd database group (default: test)")
+	flag.StringVar(&Zname, "Z", "gtd", "gtd database group (default: test)")
 
 	// db_load_defaults($Zname);
 
-	if Debug {
-		debug("main")
+	if main_debug {
+		option.Debug("main")
 	}
 
-	var new string
-	option.StringVar(&new, "n", "", "New item")
+	var new bool
+	flag.BoolVar(&new, "n", false, "New item")
 
-	option.Flag("MetaFix", 'u')
+	option.Flag("MetaFix", "u")
 
-	option.Flag("Title", 's')
-	option.Flag("Task", 'd')
-	option.Flag("Note", 'N')
+	option.Flag("Title", "s")
+	option.Flag("Task", "d")
+	option.Flag("Note", "N")
 
-	option.Flag("Context", 'C')
-	option.Flag("Category", 'c')
-	option.Flag("Timeframe", 'T')
+	option.Flag("Context", "C")
+	option.Flag("Category", "c")
+	option.Flag("Timeframe", "T")
 
-	option.Flag("Limit", 'l') // reports set own defaults
+	option.Flag("Limit", "l") // reports set own defaults
 
-	option.Flag("Priority", 'p')
-	option.Flag("Tag", 'T')
+	option.Flag("Priority", "p")
+	option.Flag("Tag", "T")
 
-	option.Flag("Header", 'H')
-	option.Flag("Format", 'F')
-	option.Flag("Sort", 'S')
-	option.Flag("Reverse", 'r')
+	option.Flag("Header", "H")
+	option.Flag("Format", "F")
+	option.Flag("Sort", "S")
+	option.Flag("Reverse", "r")
 
-	option.Flag("Layout", 'f')
+	option.Flag("Layout", "f")
 
-	option.Flag("Date", 'D')
+	option.Flag("Date", "D")
 
-	var myopts []string
-	flag.Var(&myopts, 'o', "List of options")
+//?	var myopts []string
+//?	flag.Var(&myopts, "o", "List of options")
 
 	option.Filter("a", "+future", "all")
 	option.Filter("A", "+done", "Any")
 
 	flag.Parse()
 
-	DB_init(Zname)
+	task.DB_init(Zname)
 
 	args := flag.Args()
 	cmd := os.Args[0]
 
 	if new {
 		if cmd == "hier" {
-			report("new", append("project", args...))
+//?			report("new", append("project", args...))
 		} else {
-			report("new", append("action", args...))
+//?			report("new", append("action", args...))
 		}
 	}
 
@@ -141,23 +145,20 @@ func main() {
 		return
 	}
 
-	if len(args) > 0 && IsLetter(args[0][0]) {
-		report(args)
+	if len(args) > 0 && task.IsWord(args[0]) {
+		report(args[0], args[1:])
 		return
 	}
 
 	if len(args) > 0 {
-		report("gtd", Args)
+		report("gtd", args)
 		return
 	}
 
-	report("rc")
+	report("rc", nil)
 	return
 }
 
-func report(report string, args ...string) {
-	rfunc = load_report(report)
-	if rfunc != nil {
-		rfunc(args)
-	}
+func report(report string, args []string) {
+	gtd.Run_report(report, args)
 }

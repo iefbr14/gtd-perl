@@ -33,40 +33,24 @@ NAME:
 
 */
 
-use strict;
-use warnings;
+import "gtd"
 
-BEGIN {
-	use Exporter   ();
-	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
+//-- Delete listed actions/projects (will orphine items)
+func Report_delete(args ...string) {
+	for tid := range args {
+		ref := gtd.Meta_find(tid)
 
-	// set the version for version checking
-	$VERSION     = 1.00;
-	@ISA         = qw(Exporter);
-	@EXPORT      = qw(&Report_delete);
-}
-
-
-use Hier::Meta;
-
-sub Report_delete {	//-- Delete listed actions/projects (will orphine items)
-	my($ref, $tid);
-
-	foreach my $task (@_) {
-		$ref = gtd.Meta_find($task);
-
-		unless (defined $ref) {
-			print "Task $task doesn't exists\n";
-			next;
+		if ref != nil {
+			fmt.Printf("Task %s doesn't exists\n", tid)
+			next
 		}
 
-		for my $child ($ref->get_children) {
-			panic("Delete "+$child->get_tid()+" first");
+		for child := range ref.Children {
+			fmt.Printf("Delete %d first\n", child.Tid)
+			next
 		}
 
-		$ref->delete();
-		print "Task $task deleted\n";
+		ref.Delete()
+		fmt.printf("Task %s deleted\n", tid)
 	}
 }
-
-1;  # don't forget to return a true value from the file

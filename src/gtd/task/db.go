@@ -1,20 +1,23 @@
-package gtd
+package task
 
 
-BEGIN {
-	use Exporter   ();
-	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
+//	@EXPORT      = qw(&DB_init &set &gtd_insert &gtd_update);
 
-	// set the version for version checking
-	$VERSION     = 1.00;
-	@ISA         = qw(Exporter);
-	@EXPORT      = qw(&DB_init &set &gtd_insert &gtd_update);
-}
 
 //==============================================================================
 // Low level database abstraction
 //==============================================================================
 
+import (
+	"fmt"
+	"time"
+	"gtd/option"
+)
+
+var db_debug bool = false
+var MetaFix  bool = false
+
+/*
 use DBI;
 use YAML::Syck qw(LoadFile);
 use Data::Dumper;
@@ -27,8 +30,6 @@ use Hier::Option;
 my $Current_ref;	// current gtd mapped item
 
 my $Table;
-our $Debug = 0;
-my $MetaFix = 1;
 
 my($Category, $Context, $Timeframe, $Tags);
 
@@ -130,12 +131,14 @@ sub metafix {
 sub dump_task {
 	my ($ref) = @_;
 
-	return unless $Debug;
+	if db_debug {
+		return
+	}
 
 	my($val);
 	for my $key (sort keys %$ref) {
 		$val = $ref->{$key} || '';
-		$val =~ s/\n.*/.../m;
+		$val =~ s/\n.+/.../m;
 		warn "$key:\t$val\n";
 	}
 }
@@ -385,7 +388,9 @@ sub gtdmap {
 		unless ($val) {
 			panic("Can't create todo whith todo_id=$val for table $Table");
 		}
-		warn "Hard Need Create $val\n" if $Debug;
+		if db_debug {
+			warn "Hard Need Create $val\n";
+		}
 		$Current_ref = Hier::Tasks->new($val);
 		$Current_ref->{_todo_only} = 0x03;
 		sac_create($val, {});
@@ -477,18 +482,21 @@ sub cset {
 	// keep value last seen value
 	$ref->{$key} = $val;
 }
+*/
 
-sub gtd_insert {
-	my($ref, $mode) = @_;
+func gtd_insert(ref *Task)  {
 
-	my($tid) = $ref->get_tid();
-	sac_create($tid, $ref);
+/*
+	tid := ref.Tid;
+	sac_create(tid, ref);
 
-	gtd_fix_maps($ref);
-	gset_insert($ref, "itemstatus");
-	gset_insert($ref, "items");
-	gset_insert_parents($ref, 0);
+	gtd_fix_maps(ref);
+	gset_insert(ref, "itemstatus");
+	gset_insert(ref, "items");
+	gset_insert_parents(ref, 0);
+*/
 }
+/*
 
 sub gset_insert_parents {
 	my($ref, $del) = @_;
@@ -505,9 +513,8 @@ sub gset_insert_parents {
 	}
 }
 
-sub gset_insert {
-	my $ref = shift @_;
-	my $table = G_table(shift @_);
+sub gset_insert(ref *Task, table string) {
+	table = G_table(table);
 
 	my $qmark = '';
 	my $sql;
@@ -535,37 +542,36 @@ sub gset_insert {
 	G_sql($sql, @vals);
 }
 
-sub gtd_update {
-	my($ref) = @_;
+*/
+func gtd_update(ref *Task) {
+	gtd_fix_maps(ref);
 
-	gtd_fix_maps($ref);
+	panic("... Code gtd_update");
+//?	sac_update(ref);
 
-	sac_update($ref);
+//?	gset_update(ref, "itemstatus");
+//?	gset_update(ref, "items");
 
-	gset_update($ref, "itemstatus");
-	gset_update($ref, "items");
-
-	gset_insert_parents($ref, 1);
-	$ref->clean_dirty();
+//?	gset_insert_parents(ref, 1);
+//?	ref.dirty = nil
 }
 
-sub gtd_fix_maps {
-	my($ref) = @_;
+func gtd_fix_maps(ref *Task) {
 
-	my($today) = get_today(0);	// uncached version
-	unless (defined $ref->{created}) {
-		set($ref, "created", $today);
+	today := time.Now();
+	if ref.Created.IsZero() {
+		ref.Created = today
 	}
-	set($ref, "modified", $today);
-	set($ref, "_gtd_modified", $today);
+	ref.Modified = today
 
-	_fix_map($ref, "category",  '_gtd_category',  $Category);
-	_fix_map($ref, "context",   '_gtd_context',   $Context);
-	_fix_map($ref, "timeframe", '_gtd_timeframe', $Timeframe);
+//***BUG***	ref.fix_map("category",  '_gtd_category',  $Category);
+//***BUG***	ref.fix_map("context",   '_gtd_context',   $Context);
+//***BUG***	ref.fix_map("timeframe", '_gtd_timeframe', $Timeframe);
 
 //	_fix_map($ref, "tags", 'timeframeId', \%Timeframes);
 }
 
+/*
 sub _fix_map {
 	my($ref, $type, $index, $master) = @_;
 
@@ -595,9 +601,7 @@ sub _fix_map {
 	$ref->set_dirty($index);
 }
 
-sub gset_update {
-	my $ref = shift @_;
-	my $table = G_table(shift @_);
+func gset_update(ref *Task, table string) {
 
 	my $qmark = '';
 	my $sql;
@@ -610,7 +614,9 @@ sub gset_update {
 	for my $key (keys %$map) {
 		next unless $ref->get_dirty($key);	// don't update clean fields
 
-		warn "Mapping: $key => $map->{$key}\n" if $Debug;
+		if db_debug {
+			warn "Mapping: $key => $map->{$key}\n"
+		}
 		$fld = $map->{$key};
 
 		next unless defined $ref->{$key};
@@ -633,22 +639,19 @@ sub gset_update {
 	G_sql($sql, @vals);
 }
 
-sub gtd_delete {
-	my($tid) = @_;
+sub gtd_delete(tid int) {
+	gset_delete(tid, "itemstatus");
+	gset_delete(tid, "items");
+	gset_delete(tid, "lookup");
 
-	gset_delete($tid, "itemstatus");
-	gset_delete($tid, "items");
-	gset_delete($tid, "lookup");
-
-	sac_delete($tid);
+	sac_delete(tid);
 }
 
-sub gset_delete {
-	my($tid, $table) = @_;
+sub gset_delete(tid int, table string) {
+	table = G_table(table);
 
-	$table = G_table($table);
-	my($sql) = "delete from $table where itemId = ?";
-	G_sql($sql, $tid);
+	sql := fmt.Sprintf("delete from %s where itemId = ?", table);
+	G_sql(sql, tid);
 }
 
 sub sac_update {
@@ -701,66 +704,65 @@ my($Prefix) = "gtd_";
 
 our $Resource;	// used by Hier::Resource
 
-sub db_load_defaults {
-	my($confname) = @_;
+*/
+func DB_init(confname string) {
+	db_debug = option.Bool("Debug", false)
 
-}
+	MetaFix = option.Bool("MetaFix", false);
 
-sub DB_init {
-	my($confname) = @_;
+	fmt.Printf("... code DB_init\n")
 
-	$Debug = option("Debug");
-	$MetaFix = option("MetaFix");
-
-
-	if ($confname) {
-		warn "#-Using $confname in Access.yaml\n" if $Debug;
+	if confname != "" {
+		if db_debug {
+//?			warn "#-Using $confname in Access.yaml\n"
+		}
 	} else {
-		$confname = "gtd";
-//		$confname = "gtdtest";
+//		confname = "gtd"
+		confname = "gtdtest"
 	}
 
-	my $HOME = $ENV{"HOME"};
-	my $conf = LoadFile("$HOME/.todo/Access.yaml");
-
-	$Hier::Resource::Resource = $conf->{resource};
-
-	my($dbconf) = $conf->{$confname};
-
-	unless ($dbconf) {
-		panic("Can't fine section $confname in ~/.todo/Access.yaml");
-	}
-
-	warn Dumper($dbconf) if $Debug;
-
-	my($dbname) = $dbconf->{"dbname"};
-	my($host)   = $dbconf->{"host"};
-	my($user)   = $dbconf->{"user"};
-	my($pass)   = $dbconf->{"pass"};
-	my($port)   = $dbconf->{"port"} || 3306;
-
-	if ($confname ne "gtd") {
-		warn "confname=$confname;dbname=$dbname;host=$host;port=$port\n";
-	}
-
-	$Prefix = $dbconf->{"prefix"};
-	$Prefix = "gtd_" unless defined $Prefix; # empty, but defined ok
-
-	$GTD = DBI->connect("dbi:mysql:dbname=$dbname;host=$host", $user, $pass);
-	panic("confname=$confname;dbname=$dbname;host=$host;user=$user;pass=$pass") unless $GTD;
-
-	option("Changed", G_val('todo', 'max(modified)'));
-
-//warn "Start ".localtime()."\n";
-	load_meta();
-//warn "Mid   ".localtime()."\n";
-	load_gtd();
-//warn "End   ".localtime()."\n";
-
-	metafix();
+//?	my $HOME = $ENV{"HOME"};
+//?	my $conf = LoadFile("$HOME/.todo/Access.yaml");
+//?
+//?	$Hier::Resource::Resource = $conf->{resource};
+//?
+//?	my($dbconf) = $conf->{$confname};
+//?
+//?	unless ($dbconf) {
+//?		panic("Can't fine section $confname in ~/.todo/Access.yaml");
+//?	}
+//?
+//?	warn Dumper($dbconf) if $Debug;
+//?
+//?	my($dbname) = $dbconf->{"dbname"};
+//?	my($host)   = $dbconf->{"host"};
+//?	my($user)   = $dbconf->{"user"};
+//?	my($pass)   = $dbconf->{"pass"};
+//?	my($port)   = $dbconf->{"port"} || 3306;
+//?
+//?	if ($confname ne "gtd") {
+//?		warn "confname=$confname;dbname=$dbname;host=$host;port=$port\n";
+//?	}
+//?
+//?	$Prefix = $dbconf->{"prefix"};
+//?	$Prefix = "gtd_" unless defined $Prefix; # empty, but defined ok
+//?
+//?	$GTD = DBI->connect("dbi:mysql:dbname=$dbname;host=$host", $user, $pass);
+//?	panic("confname=$confname;dbname=$dbname;host=$host;user=$user;pass=$pass") unless $GTD;
+//?
+//?	option("Changed", G_val('todo', 'max(modified)'));
+//?
+//?warn "Start ".localtime()."\n";
+//?	load_meta();
+//?warn "Mid   ".localtime()."\n";
+//?	load_gtd();
+//?warn "End   ".localtime()."\n";
+//?
+//?	metafix();
 //warn "Done  ".localtime()."\n";
 }
 
+/*
 sub G_table {
 	return $Prefix . $_[0];
 }
@@ -855,11 +857,14 @@ sub G_renumber {
                 G_sql("update gtd_$table set itemId=$new where itemId=$tid");
         }
 }
+*/
 
-sub G_val {
-	my($table, $query) = @_;
+func G_val(table, query string) int {
 
-	my($sql) = "select $query from $table";
+	sql := fmt.Sprintf("select %s from %s", query, table);
+	return len(sql)
+/*
+
 	my($sth) = $GTD->prepare($sql);
 	my($rv) = $sth->execute();
 	if ($rv < 0) {
@@ -871,6 +876,7 @@ sub G_val {
 		$changed = $row;
 	}
 	return $changed;
+*/
+return 0
 }
 
-1;  # don't forget to return a true value from the file

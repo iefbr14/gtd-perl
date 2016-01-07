@@ -1,38 +1,23 @@
-package gtd
+package meta
 
-use strict;
-use warnings;
+import	"fmt"
+import "gtd/task"
 
-BEGIN {
-	use Exporter   ();
-	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
+//	@EXPORT      = qw(
+//		&tasks_by_type
+//		&meta_matching_type
+//		&meta_selected &meta_sorted
+//		&meta_find &meta_all
+//		&meta_filter &meta_desc &meta_argv
+//		&meta_reset_filters
+//		&meta_pick
 
-	// set the version for version checking
-	$VERSION     = 1.00;
-	@ISA         = qw(Exporter);
-	@EXPORT      = qw(
-		&tasks_by_type
-		&meta_matching_type
-		&meta_selected &meta_sorted
-		&meta_find &meta_all
-		&meta_filter &meta_desc &meta_argv
-		&meta_reset_filters
-		&meta_pick
-	);
-}
 
-use Hier::Tasks;
-use Hier::Filter;
-use Hier::CCT;
-use Hier::Option;
-use Hier::Format;
-use Hier::Sort;
-use Hier::Util;
+var meta_debug = false
 
-our $Debug = 0;
+// use base qw(Hier::Hier Hier::Fields Hier::Filter);
 
-use base qw(Hier::Hier Hier::Fields Hier::Filter);
-
+/*
 //==============================================================================
 //==== Top level filter/sort/selection
 //==============================================================================
@@ -118,16 +103,18 @@ sub delete_hier {
 //==== filter setup and processing
 //==============================================================================
 
-sub meta_filter {
-	my($filter, $sort, $display) = @_;
+*/
+func Filter(filter, sort, display string) {
 
-	sort_mode(option("Sort", $sort)) if $sort;
-	display_mode(option("Format", $display)) if $display;
+	fmt.Printf("... Code meta.Filter %s, %s, %s\n", filter, sort, display);
+//?	sort_mode(option("Sort", $sort)) if $sort;
+//?	display_mode(option("Format", $display)) if $display;
 
-	option("Filter", $filter);
-	$Default_filter = $filter;
+//?	option("Filter", $filter);
+//?	$Default_filter = $filter;
 }
 
+/*
 sub meta_argv {
 	local($_);
 
@@ -166,7 +153,7 @@ sub meta_argv {
 		}
 
 
-		if (s/^\*//) {
+		if (s=^\*==) {
 			my($type) = lc(substr($_, 0, 1));
 			$type = type_name($_);
 			print "Type ========($type)=:  $_\n";
@@ -206,6 +193,12 @@ sub meta_desc {
 	return join(' ', meta_argv(@_));
 }
 
+*/
+func Pick(args []string) []*task.Task {
+	panic("... code meta.Pick");
+}
+
+/*
 sub meta_pick {
 	my(@list) = ();
 
@@ -314,4 +307,4 @@ sub match_type {
 	return 0;
 }
 
-1; # <=============================================================
+*/

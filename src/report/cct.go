@@ -42,16 +42,12 @@ my %Total;
 my %Dups;
 
 //-- List Categories/Contexts/Time Frames
-sub Report_cct {	
+func Report_cct(args ...string) {
 	gtd.Meta_filter("+all", '^tid', "simple");
 	gtd.Meta_argv(@_);
 
 	count_items();
 
-	cct_crosstab();
-}
-
-sub cct_crosstab {	//-- List Categories/Contexts/Time Frames
 	report_counts("Categories",  "category");
 	report_counts("Contexts",    "context");
 	report_counts("Time Frames", "timeframe");
@@ -59,7 +55,7 @@ sub cct_crosstab {	//-- List Categories/Contexts/Time Frames
 }
 
 sub count_items {
-	foreach my $ref (gtd.Meta_selected()) {
+	for ref := gtd.Meta_selected() {
 		my $type = $ref->get_type();
 
 		count_item("category",  $type, $ref->get_category());
@@ -123,4 +119,3 @@ sub report_counts {
 	}
 }
 
-1;  # don't forget to return a true value from the file
