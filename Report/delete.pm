@@ -68,4 +68,19 @@ sub Report_delete {	#-- Delete listed actions/projects (will orphine items)
 	}
 }
 
+sub delete_hier {
+        foreach my $tid (@_) {
+                my $ref = Hier::Tasks::find{$tid};
+                if (defined $ref) {
+                        warn "Category $tid deleted\n";
+
+                        $ref->delete();
+
+                } else {
+                        warn "Category $tid not found\n";
+                }
+        }
+}
+
+
 1;  # don't forget to return a true value from the file

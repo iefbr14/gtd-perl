@@ -727,7 +727,7 @@ sub filter_any {
 	}
 	return "+any=$type" if $arg eq 't' && $ref->is_task();
 	return "+any=$type" if $arg eq 'h' && $ref->is_hier();
-	return "+any=$type" if $arg eq 'h' && $ref->is_list();
+	return "+any=$type" if $arg eq 'l' && $ref->is_list();
 
 	return '?';
 }

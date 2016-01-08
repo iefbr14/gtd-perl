@@ -3,12 +3,54 @@ package Hier::Tasks;
 use strict;
 use warnings;
 
-use Class::Struct;
+#use Class::Struct;
 use Hier::Option;
 
 use base qw(Hier::Hier Hier::Fields Hier::Filter Hier::Format);
 
 my %Tasks;		# all Todo items (including Hier)
+
+#struct(
+#	Tid     	=> '$',		# int
+#	Type		=> '$',		# byte
+#
+#        Title      	=> '$',		# string
+#        Description 	=> '$',		# string
+#        Note       	=> '$',		# string
+#
+#        Category    	=> '$',		# string
+#        Context     	=> '$',		# string
+#
+#        Doit        	=> '$',		# time.Time
+#        Due         	=> '$',		# time.Time
+#        Completed   	=> '$',		# time.Time
+#        Effort      	=> '$',		# time.Duration
+#
+#        Priority   	=> '$',		# int
+#        IsSomeday   	=> '$',		# bool
+#        Later       	=> '$',		# time.Time
+#        IsNextaction 	=> '$',		# bool
+#
+#        Created     	=> '$',		# time.Time
+#        Modified   	=> '$',		# time.Time
+#
+#        live       	=> '$',		# bool
+#        mask       	=> '$',		# uint
+#        todo_only  	=> '$',		# bool
+#
+#        Tickledate 	=> '$',		# time.Time
+#        Timeframe  	=> '@',		# []time.Time
+#
+#        Resource 	=> '@',		# []string
+#        Hint     	=> '@',		# []string
+#        Tags    	=> '@',		# []string
+#
+#        Depends     	=> '@',		# []* Task
+#        Parents     	=> '@',		# []* Task
+#        Children    	=> '@',		# []* Task
+#
+#	dirty		=> '%',		# map[string]bool
+#);
 
 
 sub find {
@@ -25,7 +67,7 @@ sub all {
 my $Max_todo = 0; 	# Last todo id (unique for all tables)
 our $Debug = 0; 
 
-sub new {
+sub New {
 	my($class, $tid) = @_;
 
 	my($self) = {};

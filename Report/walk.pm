@@ -51,16 +51,13 @@ use Hier::Option;
 use Hier::Format;
 use Hier::Sort;
 
-my $List = 0;
-my $Doit = 0;
-
 sub Report_walk {	#-- Command line walk of a hier
 	unless (@_) {
 		print "NO task specified to walk\n";
 		return;
 	}
-	my($dir) = \&down;
-	my($action) = \&noop;
+	my($dir) = \&walk_down;
+	my($action) = \&walk_noop;
 	my($val) = '';
 
 	meta_filter('+all', '^tid', 'simple');
@@ -74,11 +71,11 @@ sub Report_walk {	#-- Command line walk of a hier
 		}
 
 		if ($task eq 'active') {
-			$action = \&active;
+			$action = \&walk_active;
 			next;
 		}
 		if ($task eq 'someday') {
-			$action = \&someday;
+			$action = \&walk_someday;
 			next;
 		}
 
@@ -101,11 +98,11 @@ sub Report_walk {	#-- Command line walk of a hier
 		}
 
 		if ($task eq 'up') {
-			$dir = \&up;
+			$dir = \&walk_up;
 			next;
 		}
 		if ($task eq 'down') {
-			$dir = \&down;
+			$dir = \&walk_down;
 			next;
 		}
 
@@ -161,42 +158,43 @@ sub set {
 	$ref->update();
 }
 
-sub down {
+sub walk_down {
 	my($ref, $action) = @_;
 
 	display_task($ref);
 
 	foreach my $cref (sort_tasks $ref->get_children()) {
-		down($cref, $action);
+		walk_down($cref, $action);
 	}
 
 	&$action($ref);
 }
 
-sub up {
+sub walk_up {
 	my($ref, $action) = @_;
 
 	foreach my $cref (sort_tasks $ref->get_parents()) {
-		up($cref, $action);
+		walk_up($cref, $action);
 	}
 	display_task($ref);
 
 	&$action($ref);
 }
 
-sub noop {
+sub walk_noop {
 	my($ref) = @_;
 
 	return;
 }
 
-sub someday {
+sub walk_someday {
 	my($ref) = @_;
 
 	$ref->set_isSomeday('y');
 	return;
 }
-sub active {
+
+sub walk_active {
 	my($ref) = @_;
 
 	$ref->set_isSomeday('n');

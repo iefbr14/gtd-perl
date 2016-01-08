@@ -49,15 +49,6 @@ use Hier::Util;
 use Hier::Walk;
 use Hier::Meta;
 
-my %Depth = (
-	'value'   => 1,
-	'vision'  => 2,
-	'role'    => 3,
-	'goal'    => 4,
-	'project' => 5,
-	'action'  => 6,
-);
-
 sub Report_purge {	#-- interactive purge completed work
 	meta_filter('+dead', '^tid', 'simple');
 

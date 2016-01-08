@@ -90,7 +90,7 @@ sub load_meta {
 	while ($row = $sth->fetchrow_hashref) {
 		$tid = $row->{todo_id};
 
-		$ref = Hier::Tasks->new($tid);
+		$ref = Hier::Tasks->New($tid);
 		$ref->{_todo_only} = 0x01;
 
 		delete $row->{todo_id};
@@ -388,7 +388,7 @@ sub gtdmap {
 			die "Can't create todo whith todo_id=$val for table $Table\n";
 		}
 		warn "Hard Need Create $val\n" if $Debug;
-		$Current_ref = Hier::Tasks->new($val);
+		$Current_ref = Hier::Tasks->New($val);
 		$Current_ref->{_todo_only} = 0x03;
 		sac_create($val, {});
 		return;

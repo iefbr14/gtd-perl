@@ -148,7 +148,7 @@ sub new_item {
 	$note     = option('Note') || ''; 
 
 	my($tid) = next_avail_task($type);
-	my $ref = Hier::Tasks->new($tid);
+	my $ref = Hier::Tasks->New($tid);
 
 	if ($pri > 5) {
 		$pri -= 5;
@@ -196,7 +196,7 @@ sub new_action {
 	$note     = prompt_desc("Note", option('Note')); 
 
 	my($tid) = next_avail_task('a');
-	my $ref = Hier::Tasks->new($tid);
+	my $ref = Hier::Tasks->New($tid);
 
 	if ($type eq 'n') {
 		$type = 'a';
@@ -242,7 +242,7 @@ sub new_project {
 	$note     = prompt_desc("Outcome", option('Note'));
 
 	my($tid) = next_avail_task($type);
-	my $ref = Hier::Tasks->new($tid);
+	my $ref = Hier::Tasks->New($tid);
 
 	$ref->set_type($type); 
 	$ref->set_nextaction('n');

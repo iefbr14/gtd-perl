@@ -577,7 +577,7 @@ sub add_task {
 	$category = option('Category') || '';
 	$note     = option('Note'); 
 
-	my $ref = Hier::Tasks->new(undef);
+	my $ref = Hier::Tasks->New(undef);
 
 	$ref->set_category($category);
 	$ref->set_title($title);

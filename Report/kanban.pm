@@ -52,11 +52,6 @@ use Hier::Format;
 use Hier::Option;
 use Hier::Resource;
 
-my $Hours_task = 0;
-my $Hours_next = 0;
-
-my %Fook;
-
 sub Report_kanban {	#-- report kanban of projects/actions
 	# counts use it and it give a context
 	meta_filter('+active', '^tid', 'simple');	
@@ -203,13 +198,6 @@ sub check_a_role {
 
 	print_color('RED');
 	display_task($role_ref, "\t|<<<Needs".$needs) if $needs;
-
-	for my $tid (keys %Fook) {
-		my($ref) = Hier::Tasks::find($tid);
-		print_color('GREEN');
-		display_task($ref,   $Fook{$tid});
-	}
-	%Fook = ();
 
 	for my $anal (@anal) {
 		print "A: "; display_task($anal, '(analyze)');

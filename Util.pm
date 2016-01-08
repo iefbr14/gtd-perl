@@ -122,43 +122,13 @@ sub action_disp {
 
 #==============================================================================
 
-sub delete_hier {
-	die "###ToDo Borked, should be deleting by categories?\n";
-	foreach my $tid (@_) {
-		my $ref = Hier::Tasks::find{$tid};
-		if (defined $ref) {
-			warn "Category $tid deleted\n";
-
-			$ref->delete();
-
-		} else {
-			warn "Category $tid not found\n";
-		}
-	}
-}
-
-sub min_key {
-	my($hash) = @_;
-
-	my(@list) = sort { $a <=> $b } keys %$hash;
-	return undef unless @list;
-
-	return $list[0];
-}
-
 sub lines {
-#	if (! -t *STDIN) {
-#		return 60;
-#	}
 	my($lines) = $ENV{LINES} || 24;
 
 	return $lines;
 }
 
 sub columns {
-#	if (! -t *STDIN) {
-#		return 80;
-#	}
 	my($rows) = $ENV{COLUMNS} || 80;
 
 	return $rows;
