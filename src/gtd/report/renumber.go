@@ -36,15 +36,7 @@ NAME:
 use strict;
 use warnings;
 
-BEGIN {
-	use Exporter   ();
-	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
-
-	// set the version for version checking
-	$VERSION     = 1.00;
-	@ISA         = qw(Exporter);
-	@EXPORT      = qw(&Report_renumber &next_avail_task);
-}
+//?	@EXPORT      = qw(&Report_renumber &next_avail_task);
 
 use Hier::Meta;
 use Hier::Tasks;
@@ -61,7 +53,8 @@ my %Dep_info = (
 
 my %Dep_map;
 
-sub Report_renumber { #-- Renumber task Ids 
+//-- Renumber task Ids 
+func Report_renumber(args []string) {
 	gtd.Meta_filter("+any", '^tid', "none");
 	my(@list) = gtd.Meta_argv(@_);
 
@@ -287,6 +280,3 @@ sub dependent {
 	
 	return $Dep_map{$id};
 }
-
-
-1;  # don't forget to return a true value from the file

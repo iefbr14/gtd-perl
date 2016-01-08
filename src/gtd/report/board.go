@@ -33,18 +33,6 @@ NAME:
 
 */
 
-use strict;
-use warnings;
-
-BEGIN {
-	use Exporter   ();
-	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
-
-	// set the version for version checking
-	$VERSION     = 1.00;
-	@ISA         = qw(Exporter);
-	@EXPORT      = qw( &Report_board );
-}
 
 use Hier::Util;
 use Hier::Meta;
@@ -65,7 +53,7 @@ my $Lines;
 my $Cols;
 my %Seen;
 
-sub Report_board {	//-- report board of projects/actions
+func Report_board(args []string) {
 	// counts use it and it give a context
 	gtd.Meta_filter("+active", '^age', "simple");
 
@@ -513,6 +501,3 @@ sub calc_class {
 	return 'n' if $ref->is_nextaction();
 	return 'a';
 }
-
-
-1;

@@ -33,22 +33,10 @@ NAME:
 
 */
 
-use strict;
-use warnings;
-
-BEGIN {
-	use Exporter   ();
-	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
-
-	// set the version for version checking
-	$VERSION     = 1.00;
-	@ISA         = qw(Exporter);
-	@EXPORT      = qw(&Report_merge);
-}
-
 use Hier::Meta;
 
-sub Report_merge { #-- Merge Projects (first list is receiver)
+//-- Merge Projects (first list is receiver)
+func Report_merge(args []string) {
 	for my $slave_id (@_) {
 		panic("Unknown project $slave_id\n") unless 
 			defined gtd.Meta_find($slave_id);
@@ -279,6 +267,3 @@ sub re_parent {
 		$master->add_child($child);
 	}
 }
-
-
-1;  # don't forget to return a true value from the file

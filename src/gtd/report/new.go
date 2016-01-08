@@ -33,18 +33,6 @@ NAME:
 
 */
 
-use strict;
-use warnings;
-
-BEGIN {
-	use Exporter   ();
-	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
-
-	// set the version for version checking
-	$VERSION     = 1.00;
-	@ISA         = qw(Exporter);
-	@EXPORT      = qw(&Report_new);
-}
 
 use Hier::Hier;
 use Hier::Meta;
@@ -79,7 +67,9 @@ my $P_ref;
 // where everything is on the command line and is a one shot
 // the other is the prompter version with defaults
 //
-sub Report_new {	//-- create a new action or project
+
+//-- create a new action or project
+func Report_new(args []string) {
 	gtd.Meta_filter("+all", '^tid', "none");
 
 	my($want) = '';
@@ -303,5 +293,3 @@ sub input {
 
 	return prompt($prompt, '#');
 }
-
-1;  # don't forget to return a true value from the file

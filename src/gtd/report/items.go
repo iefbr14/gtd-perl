@@ -33,19 +33,6 @@ NAME:
 
 */
 
-use strict;
-use warnings;
-
-BEGIN {
-	use Exporter   ();
-	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
-
-	// set the version for version checking
-	$VERSION     = 1.00;
-	@ISA         = qw(Exporter);
-	@EXPORT      = qw(&Report_items);
-}
-
 use Hier::Util;
 use Hier::Meta;
 use Hier::Format;
@@ -53,7 +40,7 @@ use Hier::Option;
 use Hier::Sort;
 
 //-- list titles for any filtered class (actions/projects etc)
-func Report_items(args ...string) {
+func Report_items(args []string) {
 	// everybody into the pool by name
 	gtd.Meta_filter("+any", "^title", "item");	
 
@@ -86,5 +73,3 @@ sub list_items {	//-- List projects with waiting-fors
 		display_task($ref);
         }
 }
-
-1;  # don't forget to return a true value from the file

@@ -33,23 +33,11 @@ NAME:
 
 */
 
-use strict;
-use warnings;
-
-BEGIN {
-	use Exporter   ();
-	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
-
-	// set the version for version checking
-	$VERSION     = 1.00;
-	@ISA         = qw(Exporter);
-	@EXPORT      = qw(&Report_clean);
-}
-
 use Hier::Meta;
 use Hier::Option;
 
-sub Report_clean {	//-- clean unused categories
+//-- clean unused categories
+func Report_clean(args []string) {
 	my $Yesterday = get_today(-1);
 
 	gtd.Meta_filter("+all", '^tid', "task");
@@ -117,5 +105,3 @@ sub clear_tickle {
 	display_task($ref, "clear tickle date");
 	$ref->set_tickledate(undef);
 }
-
-1;  # don't forget to return a true value from the file

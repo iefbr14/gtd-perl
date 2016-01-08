@@ -33,24 +33,9 @@ NAME:
 
 */
 
-use strict;
-use warnings;
 
-BEGIN {
-	use Exporter   ();
-	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
-
-	// set the version for version checking
-	$VERSION     = 1.00;
-	@ISA         = qw(Exporter);
-	@EXPORT      = qw(&Report_update);
-}
-
-use Hier::Util;
-use Hier::Meta;
-use Hier::Option;
-
-sub Report_update {	//-- Command line update of an action/project
+//-- Command line update of an action/project
+func Report_update(args []string) {
 	my($task, $desc) = @_;
 
 	unless (defined $task) {
@@ -95,5 +80,3 @@ sub Report_update {	//-- Command line update of an action/project
 
 	$ref->update();
 }
-
-1;  # don't forget to return a true value from the file

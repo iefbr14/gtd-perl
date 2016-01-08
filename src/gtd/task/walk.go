@@ -186,5 +186,3 @@ sub end_detail {
 	my $tid = $ref->get_tid();
 	warn "### Hier::Walk::end_detail($tid)\n" if $Debug;
 }
-
-1; #<============================================================

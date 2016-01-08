@@ -33,33 +33,12 @@ NAME:
 
 */
 
-use strict;
-use warnings;
-
-BEGIN {
-	use Exporter   ();
-	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
-
-	// set the version for version checking
-	$VERSION     = 1.00;
-	@ISA         = qw(Exporter);
-	@EXPORT      = qw(&Report_purge);
-}
-
 use Hier::Util;
 use Hier::Walk;
 use Hier::Meta;
 
-my %Depth = (
-	"value"   => 1,
-	"vision"  => 2,
-	"role"    => 3,
-	"goal"    => 4,
-	"project" => 5,
-	"action"  => 6,
-);
-
-sub Report_purge {	//-- interactive purge completed work
+//-- interactive purge completed work
+func Report_purge(args []string) {
 	gtd.Meta_filter("+dead", '^tid', "simple");
 
 	my($criteria) = gtd.Meta_desc(@_);
@@ -85,5 +64,3 @@ sub end_detail {
 
 	print "delete $tid\t# $done -- $title\n";
 }
-
-1;  # don't forget to return a true value from the file

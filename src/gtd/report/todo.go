@@ -33,25 +33,13 @@ NAME:
 
 */
 
-use strict;
-use warnings;
-
-BEGIN {
-	use Exporter   ();
-	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
-
-	// set the version for version checking
-	$VERSION     = 1.00;
-	@ISA         = qw(Exporter);
-	@EXPORT      = qw(&Report_todo);
-}
-
 use Hier::Util;
 use Hier::Meta;
 use Hier::Option;
 use Hier::Format;
 
-sub Report_todo {	//-- List high priority next actions
+//-- List high priority next actions
+func Report_todo(args []string) {
 	my($limit) = option("Limit", 10);
 
 	gtd.Meta_filter("+active", '^priority', "priority");
@@ -69,5 +57,3 @@ sub Report_todo {	//-- List high priority next actions
 		last if ++$count >= $limit;
 	}
 }
-
-1;  # don't forget to return a true value from the file

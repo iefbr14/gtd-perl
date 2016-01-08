@@ -33,18 +33,6 @@ NAME:
 
 */
 
-use strict;
-use warnings;
-
-BEGIN {
-	use Exporter   ();
-	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
-
-	// set the version for version checking
-	$VERSION     = 1.00;
-	@ISA         = qw(Exporter);
-	@EXPORT      = qw(&Report_ged);
-}
 
 use Hier::Util;
 use Hier::Walk;
@@ -58,7 +46,8 @@ my $ToFuture;
 
 my $Someday = 0;
 
-sub Report_ged {	//-- generate a gedcom file from gtd db
+//-- generate a gedcom file from gtd db
+func Report_ged(args []string) {
 	my($tid, $task, $cat, $ins, $due, $desc);
 
 	$ToOld = pdate(get_today(-7));	// don't care about done items > 2 week
@@ -413,5 +402,3 @@ sub note {
 	return $res;
 
 }
-
-1;  # don't forget to return a true value from the file

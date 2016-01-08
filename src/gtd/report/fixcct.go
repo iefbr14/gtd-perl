@@ -33,22 +33,11 @@ NAME:
 
 */
 
-use strict;
-use warnings;
-
-BEGIN {
-	use Exporter   ();
-	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
-
-	// set the version for version checking
-	$VERSION     = 1.00;
-	@ISA         = qw(Exporter);
-	@EXPORT      = qw(&Report_fixcct);
-}
 
 use Hier::Meta;
 
-sub Report_fixcct {	//-- Fix Categories/Contexts/Time Frames
+//-- Fix Categories/Contexts/Time Frames
+func Report_fixcct(args []string) {
 	my($new_id, $id);
 
 	report_header("Categories");
@@ -110,6 +99,3 @@ sub sql_fix_cct {
 	G_sql("update $itemstatus set $keycol=$new_id where $keycol = $old_id");
 
 }
-
-
-1;  # don't forget to return a true value from the file

@@ -33,24 +33,13 @@ NAME:
 
 */
 
-use strict;
-use warnings;
-
-BEGIN {
-	use Exporter   ();
-	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
-
-	// set the version for version checking
-	$VERSION     = 1.00;
-	@ISA         = qw(Exporter);
-	@EXPORT      = qw(&Report_spreadsheet);
-}
 
 use Hier::Util;
 use Hier::Meta;
 use Hier::Resource;
 
-sub Report_spreadsheet {	//-- Project Summary for a role
+//-- Project Summary for a role
+func Report_spreadsheet(args []string) {
 	gtd.Meta_filter("+active", '^tid', "none");
 	my @want = gtd.Meta_argv(@_);
 
@@ -158,5 +147,3 @@ sub get_actions {
 	}
 	return [ $gtitle, $pid, $ptitle, $tid, $title, $hours, $total];
 }
-
-1;  # don't forget to return a true value from the file

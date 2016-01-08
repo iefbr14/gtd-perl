@@ -33,25 +33,15 @@ NAME:
 
 */
 
-use strict;
-use warnings;
-
-BEGIN {
-	use Exporter   ();
-	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
-
-	// set the version for version checking
-	$VERSION     = 1.00;
-	@ISA         = qw(Exporter);
-	@EXPORT      = qw( &Report_dump &dump_ordered_ref );
-}
+//?	@EXPORT      = qw( &Report_dump &dump_ordered_ref );
 
 use Hier::Util;
 use Hier::Meta;
 use Hier::Format;
 
 
-sub Report_dump {	//-- dump records in edit format
+//-- dump records in edit format
+func Report_dump(args []string) {
 	// everybody into the pool by id 
 	gtd.Meta_filter("+any", '^tid', "dump");	
 
@@ -107,5 +97,3 @@ sub list_dump {
 		display_task($ref);
 	}
 }
-
-1;  # don't forget to return a true value from the file

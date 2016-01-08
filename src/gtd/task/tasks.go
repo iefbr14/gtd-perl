@@ -12,7 +12,7 @@ var Max_todo int    // Last todo id (unique for all tables)
 
 type Task struct {
 	Tid      int
-	Tasktype byte
+	Type 	byte
 
 	Title      string
 	Description string
@@ -210,7 +210,7 @@ sub default {
 func (self *Task)get_KEY(key string) string {
 	switch key {
 	case "tid": return fmt.Sprintf("%d", self.Tid);
-	case "type": return fmt.Sprintf("%c", self.Tasktype);
+	case "type": return fmt.Sprintf("%c", self.Type);
 	
 	case "title"
 

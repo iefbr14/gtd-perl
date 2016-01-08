@@ -33,38 +33,30 @@ NAME:
 
 */
 
-use strict;
-use warnings;
+import "strings"
 
-BEGIN {
-	use Exporter   ();
-	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
+import "gtd/meta"
 
-	// set the version for version checking
-	$VERSION     = 1.00;
-	@ISA         = qw(Exporter);
-	@EXPORT      = qw(&Report_orphans);
-}
+//-- list all items without a parent
+func Report_orphans(args []string) {
+	meta.Filter("+any", "^title", "todo")
 
-use Hier::Util;
-use Hier::Meta;
-use Hier::Sort;
-use Hier::Format;
+	list := meta.Pick(args)
 
-sub Report_orphans {	//-- list all items without a parent 
-	gtd.Meta_filter("+any", '^title', "todo");
+	report_header("Orphans", strings.Join(args, " "))
 
-	my(@list) = gtd.Meta_pick(@_);
-	
-	report_header("Orphans", @_);
+	for ref := range meta.Sorted() {
 
-	for my $ref (gtd.Meta_sorted()) {
-		next if $ref->get_type eq 'm';	// Values never have parents
-		next if $ref->get_parent();	// Has a parent
+		// Values never have parents
+		if ref.Type == 'm' {
+			continue
+		}
 
-		display_task($ref);
+		// Has a parent
+		if len(ref.Parents) > 0 {
+			continue
+		}
+
+		ref.Display("")
 	}
 }
-
-
-1;  # don't forget to return a true value from the file

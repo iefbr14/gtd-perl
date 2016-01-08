@@ -33,18 +33,6 @@ NAME:
 
 */
 
-use strict;
-use warnings;
-
-BEGIN {
-	use Exporter   ();
-	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
-
-	// set the version for version checking
-	$VERSION     = 1.00;
-	@ISA         = qw(Exporter);
-	@EXPORT      = qw(&Report_take);
-}
 
 use Hier::Util;
 use Hier::Meta;
@@ -54,7 +42,8 @@ use Hier::Format;
 
 my %Ancestors;
 
-sub Report_take {	//-- take listed actions/projects
+//-- take listed actions/projects
+func Report_take(args []string) {
 	my($key, $val, $changed);
 
 	gtd.Meta_filter("+all", '^tid', "none");
@@ -120,5 +109,3 @@ sub find {
 
 	return Hier::Tasks::find($tid);
 }
-
-1;  # don't forget to return a true value from the file

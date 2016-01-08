@@ -33,19 +33,6 @@ NAME:
 
 */
 
-use strict;
-use warnings;
-
-BEGIN {
-	use Exporter   ();
-	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
-
-	// set the version for version checking
-	$VERSION     = 1.00;
-	@ISA         = qw(Exporter);
-	@EXPORT      = qw(&Report_planner);
-}
-
 use Hier::Util;
 use Hier::Walk;
 use Hier::Resource;
@@ -61,7 +48,8 @@ my $Pred_id = 0;
 my %Alloc_resource = ( 999 => "Drew");
 my %Alloc_tasks = ();
 
-sub Report_planner {	//-- Create a planner file from gtd db
+//-- Create a planner file from gtd db
+func Report_planner(args []string) {
 	my($criteria) = @_;
 	my($tid, $pri, $task, $cat, $ins, $due, $desc);
 	my(@row);
@@ -259,5 +247,3 @@ sub planner_allocations() {
 	}
 	print "  </allocations>\n";
 }
-
-1;  # don't forget to return a true value from the file

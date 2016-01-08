@@ -49,7 +49,7 @@ var Orrder []string{
 ".",
 }
 
-func display_mode(mode string) {
+func Display_mode(mode string) {
 	alias := map[string]string{
 		"todo": "doit",
 		"pri": "priority",

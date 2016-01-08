@@ -33,19 +33,6 @@ NAME:
 
 */
 
-use strict;
-use warnings;
-
-BEGIN {
-	use Exporter   ();
-	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
-
-	// set the version for version checking
-	$VERSION     = 1.00;
-	@ISA         = qw(Exporter);
-	@EXPORT      = qw(&Report_doit);
-}
-
 
 use Hier::Util;
 use Hier::Meta;
@@ -62,7 +49,8 @@ my $Limit = 2;
 //## REWRITE --- scan list for \d+ and put in work list
 //## if work list is empty  
 
-sub Report_doit {	//-- doit tracks which projects/actions have had movement
+//-- doit tracks which projects/actions have had movement
+func Report_doit(args []string) {
 
 	$Limit = option("Limit", 1);
 
@@ -233,5 +221,3 @@ limit :  -- Set the doit limit to this number of items
 
 EOF
 }
-
-1;  # don't forget to return a true value from the file

@@ -45,19 +45,6 @@ Started life as a copy of the bulkload but tuned for more interactive processing
 
 */
 
-BEGIN {
-	use Exporter   ();
-	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
-
-	// set the version for version checking
-	$VERSION     = 1.00;
-	@ISA         = qw(Exporter);
-	@EXPORT      = qw(&Report_rc);
-}
-
-use strict;
-use warnings;
-
 use Term::ReadLine;
 
 use Hier::Meta;
@@ -101,7 +88,8 @@ my($Cmds) = {
 	gtd     => \&rc_clear,
 };
 
-sub Report_rc { #-- rc - Run Commands
+//-- rc - Run Commands
+func Report_rc(args []string) {
 	// init from command line.
 	// there are commands to override later
 	$Filter = option("Filter") || '-';

@@ -33,18 +33,6 @@ NAME:
 
 */
 
-use strict;
-use warnings;
-
-BEGIN {
-	use Exporter   ();
-	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
-
-	// set the version for version checking
-	$VERSION     = 1.00;
-	@ISA         = qw(Exporter);
-	@EXPORT      = qw(&Report_focus);
-}
 
 use Hier::Meta;
 use Hier::Sort;
@@ -60,14 +48,11 @@ my($Proj_cnt) = 0;
 
 my($Dep) = '';   # Project depends on string
 
-our $Debug = 0;
-
-sub Report_focus {	//-- List focus -- live, plan or someday
+//-- List focus -- live, plan or someday
+func Report_focus(args []string) {
 	my($cnt) = 0;
 
-	$Debug = option("Debug", 0);
-
-	gtd.Meta_filter("+next", '^focus', "simple");
+	meta.Filter("+next", '^focus', "simple");
 	my(@list) = gtd.Meta_pick(@_);
 	if (@list == 0) {
 		@list = gtd.Meta_pick("Role");
@@ -156,5 +141,3 @@ sub check_task {
 	}
 	return 0;
 }
-
-1;  # don't forget to return a true value from the file

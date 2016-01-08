@@ -81,7 +81,8 @@ my $Info = {};
 
 our $Debug = 0;
 
-sub Report_bulkload { #-- Create Projects/Actions items from a file
+//-- Create Projects/Actions items from a file
+func Report_bulkload(args []string) {
 	my($pid);
 
 	my($action) = \&add_nothing;
@@ -325,5 +326,3 @@ sub add_task {
 	$ref->insert();
 	return $ref->get_tid();
 }
-
-1;  # don't forget to return a true value from the file

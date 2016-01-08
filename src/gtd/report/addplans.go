@@ -33,25 +33,6 @@ NAME:
 
 */
 
-use strict;
-use warnings;
-
-BEGIN {
-	use Exporter   ();
-	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
-
-	// set the version for version checking
-	$VERSION     = 1.00;
-	@ISA         = qw(Exporter);
-	@EXPORT      = qw(&Report_addplans);
-}
-
-use Hier::Util;
-use Hier::Meta;
-use Hier::Sort;
-use Hier::Format;
-use Hier::Option;
-use Hier::Color;
 
 our $Debug = 0;
 
@@ -63,7 +44,8 @@ my($Proj_cnt) = 0;
 my $Limit;
 my %Seen;
 
-sub Report_addplans {	//-- add plan action items to unplaned projects
+//-- add plan action items to unplaned projects
+func Report_addplansp(args []string) {
 	gtd.Meta_filter("+live", '^focus', "plan");
 
 	@List = gtd.Meta_pick(@_);
@@ -139,5 +121,3 @@ sub iscomplex {
 	}
 	return 0;
 }
-
-1;  # don't forget to return a true value from the file

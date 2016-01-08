@@ -33,24 +33,12 @@ NAME:
 
 */
 
-use strict;
-use warnings;
-
-BEGIN {
-	use Exporter   ();
-	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
-
-	// set the version for version checking
-	$VERSION     = 1.00;
-	@ISA         = qw(Exporter);
-	@EXPORT      = qw(&Report_oocalc);
-}
-
 use Hier::Util;
 use Hier::Meta;
 use Hier::Resource;
 
-sub Report_oocalc {	//-- Project Summary for a role
+//-- Project Summary for a role
+func Report_oocalc(args []string) {
 	gtd.Meta_filter("+live", '^tid', "none");
 	my @want = gtd.Meta_argv(@_);
 
@@ -359,5 +347,3 @@ sub save_row {
 //	        $Calc->updateCell($Sheet, $line, $col, $value, $string);
 	}
 }
-
-1;  # don't forget to return a true value from the file

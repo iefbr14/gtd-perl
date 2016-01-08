@@ -33,19 +33,6 @@ NAME:
 
 */
 
-use strict;
-use warnings;
-
-BEGIN {
-	use Exporter   ();
-	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
-
-	// set the version for version checking
-	$VERSION     = 1.00;
-	@ISA         = qw(Exporter);
-	@EXPORT      = qw(&Report_review);
-}
-
 use Hier::Util;
 use Hier::Meta;
 use Hier::Option;
@@ -56,7 +43,8 @@ my $Mode = 'p';	// project, doit, next-actions, actions, someday
 
 my($List) = 0; ###BUG### should be an option
 
-sub Report_review {	//-- Review all projects with actions
+//-- Review all projects with actions
+func Report_review(args []string) {
 	gtd.Meta_filter("+active", '^doitdate', "simple");
 	my $desc = gtd.Meta_desc(@_);
 
@@ -77,10 +65,12 @@ sub Report_review {	//-- Review all projects with actions
 		$desc = "= $desc =";
 	}
 		
-	reload();
+	reload($Mode);
 }
 
 sub reload {
+	my($Mode) = @_;
+
 	if ($Mode eq 'p') {
 		mode_projects(1, "Projects", gtd.Meta_desc(@_));
 	} elsif ($Mode eq 'd') {
@@ -397,5 +387,3 @@ p :    -- priorty :
 EOF
 //limit:  -- Set the doit limit to this number of items
 }
-
-1;  # don't forget to return a true value from the file

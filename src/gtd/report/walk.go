@@ -33,18 +33,6 @@ NAME:
 
 */
 
-use strict;
-use warnings;
-
-BEGIN {
-	use Exporter   ();
-	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
-
-	// set the version for version checking
-	$VERSION     = 1.00;
-	@ISA         = qw(Exporter);
-	@EXPORT      = qw(&Report_walk);
-}
 
 use Hier::Util;
 use Hier::Meta;
@@ -52,62 +40,60 @@ use Hier::Option;
 use Hier::Format;
 use Hier::Sort;
 
-my $List = 0;
-my $Doit = 0;
+use "gtd/task"
 
-sub Report_walk {	//-- Command line walk of a hier
-	unless (@_) {
-		print "NO task specified to walk\n";
+//-- Command line walk of a hier
+func Report_noop(args []string) {
+	if len(args) == 0 {
+		fmt.Println("NO task specified to walk");
 		return;
 	}
-	my($dir) = \&down;
-	my($action) = \&noop;
-	my($val) = '';
+
+	dir := walk_down
+	action := walk_noop
 
 	gtd.Meta_filter("+all", '^tid', "simple");
 
-	while (@_) {
-		my($task) = shift @_;
-
+	for task := range args {
 		if ($task eq "set") {
-			$action = \&set;
-			next;
+			action = walk_set;
+			continue
 		}
 
 		if ($task eq "active") {
-			$action = \&active;
-			next;
+			action = walk_active;
+			continue
 		}
 		if ($task eq "someday") {
-			$action = \&someday;
-			next;
+			action = walk_someday;
+			continue
 		}
 
 		if ($task eq "doit"  or $task eq "task") {
 			display_mode("doit");
-			next;
+			continue
 		}
 		if ($task eq "wiki") {
 			display_mode("wiki");
-			next;
+			continue
 		}
 		if ($task eq "list") {
 			display_mode("list");
-			next;
+			continue
 		}
 
 		if ($task eq "tid") {
 			display_mode("tid");
-			next;
+			continue
 		}
 
 		if ($task eq "up") {
 			$dir = \&up;
-			next;
+			continue
 		}
 		if ($task eq "down") {
 			$dir = \&down;
-			next;
+			continue
 		}
 
 		if ($task !~ /^\d+$/) {
@@ -121,8 +107,8 @@ sub Report_walk {	//-- Command line walk of a hier
 		}
 
 		// apply all actions to task in direction specified
-		$ref->set_level(1);
-		&$dir($ref, $action);
+		ref.Set_level(1);
+		dir(ref, action);
 	}
 }
 
@@ -162,46 +148,37 @@ sub set {
 	$ref->update();
 }
 
-sub down {
-	my($ref, $action) = @_;
-
-	display_task($ref);
+sub walk_down(ref *Task, action func(* task.Task)) {
+	ref.Display();
 
 	foreach my $cref (sort_tasks $ref->get_children()) {
 		down($cref, $action);
 	}
 
-	&$action($ref);
+	action(ref);
 }
 
-sub up {
+sub walk_up(ref *Task, action func(* task.Task)) {
 	my($ref, $action) = @_;
 
 	foreach my $cref (sort_tasks $ref->get_parents()) {
 		up($cref, $action);
 	}
-	display_task($ref);
+	ref.Display();
 
-	&$action($ref);
+	action(ref);
 }
 
-sub noop {
+sub walk_noop(ref *Task) {
 	my($ref) = @_;
-
-	return;
 }
 
-sub someday {
+sub walk_someday(ref *Task) {
 	my($ref) = @_;
 
 	$ref->set_isSomeday('y');
-	return;
-}
-sub active {
-	my($ref) = @_;
-
-	$ref->set_isSomeday('n');
-	return;
 }
 
-1;  # don't forget to return a true value from the file
+func walk_active(ref *Task) {
+	ref.IsSomeday = false
+}

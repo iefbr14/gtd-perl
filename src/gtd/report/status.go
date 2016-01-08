@@ -33,19 +33,6 @@ NAME:
 
 */
 
-use strict;
-use warnings;
-
-BEGIN {
-	use Exporter   ();
-	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
-
-	// set the version for version checking
-	$VERSION     = 1.00;
-	@ISA         = qw(Exporter);
-	@EXPORT      = qw( &Report_status );
-}
-
 my @Class = qw(Done Someday Action Next Future Total);
 
 use Hier::Util;		// %Types and typemap
@@ -58,7 +45,8 @@ my $Hours_proj = 0;
 my $Hours_task = 0;
 my $Hours_next = 0;
 
-sub Report_status {	//-- report status of projects/actions
+//-- report status of projects/actions
+func Report_status(args []string) {
 	// counts use it and it give a context
 	gtd.Meta_filter("+active", '^tid', "none");	
 
@@ -317,6 +305,3 @@ sub report_detail {
 		print "\n";
 	}
 }
-
-
-1;

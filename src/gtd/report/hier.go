@@ -33,19 +33,6 @@ NAME:
 
 */
 
-use strict;
-use warnings;
-
-BEGIN {
-	use Exporter   ();
-	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
-
-	// set the version for version checking
-	$VERSION     = 1.00;
-	@ISA         = qw(Exporter);
-	@EXPORT      = qw(&Report_hier);
-}
-
 use Hier::Util;
 use Hier::Color;
 use Hier::Walk;
@@ -55,7 +42,8 @@ use Hier::Format;
 
 my $Mask = 0;
 
-sub Report_hier {	//-- Hiericial List of Values/Visions/Roles...
+//-- Hiericial List of Values/Visions/Roles...
+func Report_hier(args []string) {
 	gtd.Meta_filter("+active", '^title', "hier");
 
 	$Mask  = option("Mask");
@@ -171,5 +159,3 @@ sub hier_detail_old {
 
 sub end_detail {
 }
-
-1;  # don't forget to return a true value from the file

@@ -33,8 +33,7 @@ NAME:
 
 */
 
-	@EXPORT      = qw(&Report_actions report_actions);
-}
+//?	@EXPORT      = qw(&Report_actions report_actions);
 
 import "gtd"
 
@@ -44,7 +43,7 @@ my %Active;
 my %Want;
 
 //-- Detailed list of projects with (next) actions
-func Report_actions(args ...string) {
+func Report_actions(args []string) {
 	list := gtd.Option("List", "");
 
 	gtd.Meta_filter("+a:next", '^focus', "detail");
@@ -244,5 +243,3 @@ sub has_parent {
 	//# warn "o tid: ", $tid, " ", $ref->get_title, "\n" if $Want{$tid};
 	return $Want{$tid};
 }
-
-1;  # don't forget to return a true value from the file

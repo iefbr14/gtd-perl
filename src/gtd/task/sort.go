@@ -368,4 +368,3 @@ sub lc_title {
 	return lc($title);
 }
 
-1;

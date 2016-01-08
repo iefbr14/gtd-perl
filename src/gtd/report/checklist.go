@@ -33,26 +33,12 @@ NAME:
 
 */
 
-use strict;
-use warnings;
-
-BEGIN {
-	use Exporter   ();
-	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
-
-	// set the version for version checking
-	$VERSION     = 1.00;
-	@ISA         = qw(Exporter);
-	@EXPORT      = qw( &Report_checklist );
-}
-
 use Hier::Util;
 use Hier::Meta;
 use Hier::Format;
 
-our $Debug = 0;
-
-sub Report_checklist {	//-- display a check list
+//-- display a check list
+func Report_checklist(args []string) {
 	gtd.Meta_filter("+any", '^title', "item");	
 //	gtd.Meta_argv();
 	my ($p) = shift @_;
@@ -160,5 +146,3 @@ sub bulk_display {
 		print "$tag\t$line\n";
 	}
 }
-
-1;  # don't forget to return a true value from the file

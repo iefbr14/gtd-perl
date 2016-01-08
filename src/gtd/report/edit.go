@@ -149,5 +149,3 @@ sub save {
 
 	print  "Saved\n";
 }
-
-1;  # don't forget to return a true value from the file

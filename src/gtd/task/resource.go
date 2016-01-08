@@ -226,6 +226,3 @@ sub state {
 	return $States{$state}[1];
 }
 
-1;  # don't forget to return a true value from the file
-
-

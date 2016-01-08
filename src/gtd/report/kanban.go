@@ -33,18 +33,6 @@ NAME:
 
 */
 
-use strict;
-use warnings;
-
-BEGIN {
-	use Exporter   ();
-	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
-
-	// set the version for version checking
-	$VERSION     = 1.00;
-	@ISA         = qw(Exporter);
-	@EXPORT      = qw( &Report_kanban );
-}
 
 use Hier::Util;
 use Hier::Color;
@@ -53,12 +41,8 @@ use Hier::Format;
 use Hier::Option;
 use Hier::Resource;
 
-my $Hours_task = 0;
-my $Hours_next = 0;
-
-my %Fook;
-
-sub Report_kanban {	//-- report kanban of projects/actions
+//-- report kanban of projects/actions
+func Report_kanban(args []string) {
 	// counts use it and it give a context
 	gtd.Meta_filter("+active", '^tid', "simple");	
 
@@ -205,13 +189,6 @@ sub check_a_role {
 	print_color("RED");
 	display_task($role_ref, "\t|<<<Needs".$needs) if $needs;
 
-	for my $tid (keys %Fook) {
-		my($ref) = Hier::Tasks::find($tid);
-		print_color("GREEN");
-		display_task($ref,   $Fook{$tid});
-	}
-	%Fook = ();
-
 	for my $anal (@anal) {
 		print "A: "; display_task($anal, "(analyze)");
 	}
@@ -260,5 +237,3 @@ sub check_title {
 
 	display_task($pref, "\t| !!! no wiki title");
 }
-
-1;

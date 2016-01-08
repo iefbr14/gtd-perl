@@ -33,23 +33,12 @@ NAME:
 
 */
 
-use strict;
-use warnings;
-
-BEGIN {
-	use Exporter   ();
-	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
-
-	// set the version for version checking
-	$VERSION     = 1.00;
-	@ISA         = qw(Exporter);
-	@EXPORT      = qw(&Report_did);
-}
 
 use Hier::Option;
 use Hier::Meta;
 
-sub Report_did {	//-- update listed projects/actions doit date to today
+//-- update listed projects/actions doit date to today
+func Report_did(args []string) {
 	for my $tid (@_) {
 		my $ref = gtd.Meta_find($tid);
 
@@ -61,5 +50,3 @@ sub Report_did {	//-- update listed projects/actions doit date to today
 		$ref->update();
 	}
 }
-
-1;  # don't forget to return a true value from the file

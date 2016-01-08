@@ -33,7 +33,7 @@ NAME:
 
 */
 
-import "gtd"
+import "gtd/option"
 
 //-- Tag listed projects/actions as done
 func Report_done(args ...string) {

@@ -57,7 +57,8 @@ my(%Seen);
 my(@Urls);
 my($Host);
 
-sub Report_url {	//-- open browser window for wiki and gtd
+//-- open browser window for wiki and gtd
+func Report_url(args []string) {
 	gtd.Meta_filter("+g:live", '^title', "task");	// Tasks filtered by goals
 
 	my($title) = join(' ', @_);
@@ -146,5 +147,3 @@ sub find_url {
 		print "gtd @gtds => wiki @urls\n";
 	}
 }
-
-1;  # don't forget to return a true value from the file

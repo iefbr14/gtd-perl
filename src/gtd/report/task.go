@@ -33,25 +33,14 @@ NAME:
 
 */
 
-use strict;
-use warnings;
-
-BEGIN {
-	use Exporter   ();
-	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
-
-	// set the version for version checking
-	$VERSION     = 1.00;
-	@ISA         = qw(Exporter);
-	@EXPORT      = qw( &Report_task );
-}
 
 use Hier::Util;
 use Hier::Meta;
 use Hier::Sort;
 use Hier::Format;
 
-sub Report_task {	//-- quick List by various methods
+//-- quick List by various methods
+func Report_task(args []string) {
 	gtd.Meta_filter("+g:live", '^title', "task");	// Tasks filtered by goals
 
 	my($title) = join(' ', @_);

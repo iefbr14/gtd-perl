@@ -118,4 +118,3 @@ sub report_counts {
 		printf "= %4d  %2d%s %s\n", $cnt, $id, $dup, $key;
 	}
 }
-

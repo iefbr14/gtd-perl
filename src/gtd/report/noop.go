@@ -38,10 +38,11 @@ import "fmt"
 import "gtd/meta"
 import "gtd/option"
 
+var report_debug = false
+
 //-- No Operation
 func Report_noop(args []string) {
-	debug := option.Bool("Debug", false)
-	if debug {
+	if report_debug {
 		fmt.Printf("### Debug noop = %v", debug)
 	}
 

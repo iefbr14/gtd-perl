@@ -39,11 +39,11 @@ import (
 	"text/template"
 )
 
-cont (
-	Text = iota,
-	Wiki,
-	Html,
-	Man,
+const (
+	TEXT = iota,
+	WIKI,
+	HTML,
+	MAN,
 )
 
 var Layout = Text;
@@ -51,10 +51,10 @@ var Layout = Text;
 //-- display records in dump format based on format type
 func Report_print(args ...string) {
 	var layouts map[string]int = {
-		"text", Text,
-		"wiki", Wiki
-		"html", Html
-		"man",  Man
+		"text", TEXT,
+		"wiki", WIKI
+		"html", HTML
+		"man",  MAN
 	}
 
 	// everybody into the pool by id 
@@ -145,28 +145,28 @@ func pre(text string) {
 	string.TrimSpace(text);
 
 	switch (Layout) {
-	case "Text" { print "$text\n"; }
-	case "Wiki" { print "<pre>$text</pre>\n\n"; }
-	case "Html" { print "<pre> $text <preh1>\n"; }
-	case "Man"  { print ".EX\n$text\n.EE\n"; }
+	case TEXT: print "$text\n"; }
+	case WIKI: print "<pre>$text</pre>\n\n"; }
+	case HTML: print "<pre> $text <preh1>\n"; }
+	case MAN:  print ".EX\n$text\n.EE\n"; }
 	} 
 }
 
 func br() {
 	switch (Layout) {
-	case Text: { }
-	case Wiki: { print "<br>\n";}
-	case Html: { print "<br>\n"; }
-	case Man:  { print ".br\n"; }
+	case TEXT: { }
+	case WIKI: { print "<br>\n";}
+	case HTML: { print "<br>\n"; }
+	case MAN:  { print ".br\n"; }
 	} 
 }
 
 func hr(text string) {
 	switch (Layout) {
-	case Text: fmt.printl('-'x78)
-	case Wiki: fmt.printl("------------------------------")
-	case Html: fmt.printl("<hr>")
-	case Man:  fmt.printl("\\l'6i")
+	case TEXT: fmt.printl('-'x78)
+	case WIKI: fmt.printl("------------------------------")
+	case HTML: fmt.printl("<hr>")
+	case MAN:  fmt.printl("\\l'6i")
 	} 
 }
 
@@ -174,10 +174,10 @@ func para(text string) {
 	string.TrimSpace(text);
 
 	switch (Layout) {
-	case Text: fmt.Printf("%s\n", text)
-	case Wiki: fmt.Printf("== %s ==\n\n", text)
-	case Html: fmt.Printf("<h1> %s </h1>\n", text)
-	case Man:  fmt.Printf(".SH \"%s\"\n", text)
+	case TEXT: fmt.Printf("%s\n", text)
+	case WIKI: fmt.Printf("== %s ==\n\n", text)
+	case HTML: fmt.Printf("<h1> %s </h1>\n", text)
+	case MAN:  fmt.Printf(".SH \"%s\"\n", text)
 	} 
 }
 
@@ -185,9 +185,9 @@ func title(text string) {
 	string.TrimSpace(text);
 
 	switch (Layout) {
-	case Text: fmt.Printf("== %s ==\n\n", text)
-	case Wiki: fmt.Printf("== %s ==\n\n", text)
-	case Html: fmt.Printf("<h1> %s </h1>\n", text)
-	case Man:  fmt.Printf(".SH \"%s\"\n", text)
+	case TEXT: fmt.Printf("== %s ==\n\n", text)
+	case WIKI: fmt.Printf("== %s ==\n\n", text)
+	case HTML: fmt.Printf("<h1> %s </h1>\n", text)
+	case MAN:  fmt.Printf(".SH \"%s\"\n", text)
 	} 
 }

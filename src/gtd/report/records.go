@@ -36,23 +36,14 @@ NAME:
 use strict;
 use warnings;
 
-BEGIN {
-	use Exporter   ();
-	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
-
-	// set the version for version checking
-	$VERSION     = 1.00;
-	@ISA         = qw(Exporter);
-	@EXPORT      = qw( &Report_records );
-}
-
 use Hier::Util;
 use Hier::Meta;
 use Hier::Filter;	// task_mask_disp
 use Hier::Format;
 use Hier::Sort;
 
-sub Report_records {	//-- detailed list all records for a type
+//-- detailed list all records for a type
+func Report_records(args []string) {
 	// everybody into the pool
 	gtd.Meta_filter("+active", '^tid', "simple");
 
@@ -113,5 +104,3 @@ sub disp {
 
 	return "$type:$tid $key <$pri> $ref->get_title()";
 }
-
-1;  # don't forget to return a true value from the file

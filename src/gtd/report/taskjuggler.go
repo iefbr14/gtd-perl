@@ -33,19 +33,6 @@ NAME:
 
 */
 
-use strict;
-use warnings;
-
-BEGIN {
-	use Exporter   ();
-	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
-
-	// set the version for version checking
-	$VERSION     = 1.00;
-	@ISA         = qw(Exporter);
-	@EXPORT      = qw(&Report_taskjuggler);
-}
-
 use Hier::Util;
 use Hier::Walk;
 use Hier::Resource;
@@ -60,7 +47,8 @@ my $Someday = 0;
 
 our $Debug;
 
-sub Report_taskjuggler {	//-- generate taskjuggler file from gtd db
+//-- generate taskjuggler file from gtd db
+func Report_taskjuggler(args []string) {
 	my($tid, $task, $cat, $ins, $due, $desc);
 
 	$ToOld = pdate(get_today(-7));	// don't care about done items > 2 week

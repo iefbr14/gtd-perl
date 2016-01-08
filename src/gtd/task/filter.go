@@ -724,11 +724,11 @@ sub filter_any {
 		return "+any=".$type;
 	}
 	if ($arg eq '=') {
-		return "+any=".$type unless $ref->is_list();
+		return "+any=".$type unless ref.Is_list();
 	}
-	return "+any=$type" if $arg eq 't' && $ref->is_task();
-	return "+any=$type" if $arg eq 'h' && $ref->is_hier();
-	return "+any=$type" if $arg eq 'h' && $ref->is_list();
+	return "+any=$type" if $arg eq 't' && ref.Is_task();
+	return "+any=$type" if $arg eq 'h' && ref.Is_hier();
+	return "+any=$type" if $arg eq 'l' && ref.Is_list();
 
 	return '?';
 }
@@ -923,4 +923,3 @@ sub filter_tags {
 	return '?';
 }
 
-1;

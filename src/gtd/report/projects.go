@@ -33,19 +33,6 @@ NAME:
 
 */
 
-use strict;
-use warnings;
-
-BEGIN {
-	use Exporter   ();
-	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
-
-	// set the version for version checking
-	$VERSION     = 1.00;
-	@ISA         = qw(Exporter);
-	@EXPORT      = qw(&Report_projects);
-}
-
 use Hier::Util;
 use Hier::Meta;
 use Hier::Sort;
@@ -54,7 +41,8 @@ use Hier::Format;
 
 my %Meta_key;
 
-sub Report_projects {	//-- List projects -- live, plan or someday
+//-- List projects -- live, plan or someday
+func Report_projects(args []string) {
 	//gtd.Meta_filter("+next", '^focus', "rgpa");
 	gtd.Meta_filter("+p:next", '^focus', "simple");
 
@@ -114,5 +102,3 @@ sub report_projects {
 	}
 	print "***** Work Load: $proj_cnt Projects, $work_load action items\n";
 }
-
-1;  # don't forget to return a true value from the file

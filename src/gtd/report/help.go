@@ -39,14 +39,14 @@ import "fmt"
 func Report_help(args []string) {
 	helps := map[string]string{
 
-		//------------------------------------------------------------------------------
+		//------------------------------------------------------------
 		// Obsolete Sac view of projects vs gts view of projects
 		"Sac": `
 (gtd) Value => Vision => Role => Goal => Project => Action
 (sac)                  Client => Project => Task => Item
 `,
 
-		//------------------------------------------------------------------------------
+		//------------------------------------------------------------
 		"Selection": `
   tid       -- task id
   /title    -- match any with title
@@ -54,7 +54,7 @@ func Report_help(args []string) {
                (T == A,P,G,R,V)
 `,
 
-		//------------------------------------------------------------------------------
+		//------------------------------------------------------------
 		"Filters": `
 ~NAME -- exclude those of the type (check first)
 +NAME -- include those of the type (check last)
@@ -85,7 +85,7 @@ acts - hier has sub-actions
 
 `,
 
-		//------------------------------------------------------------------------------
+		//------------------------------------------------------------
 		"Sort": `
 id/tid	      - by task id
 task/title    - by task name (title)
@@ -104,7 +104,7 @@ status        - by completed if done otherwise by modified.
 rgpa/goaltask - by task withing goal
 `,
 
-		//------------------------------------------------------------------------------
+		//------------------------------------------------------------
 		"Types": `
 m - value
 v - vision
@@ -122,7 +122,7 @@ C - checklist
 T - item
 `,
 
-		//------------------------------------------------------------------------------
+		//------------------------------------------------------------
 		"Project-Verbs": `
 * Finalize
 * Resolve
@@ -141,7 +141,7 @@ T - item
 * Set-up 
 `,
 
-		//------------------------------------------------------------------------------
+		//------------------------------------------------------------
 		"Action-Verbs": `
 * Call
 * Review
@@ -160,7 +160,7 @@ T - item
 * Sort
 `,
 
-		//------------------------------------------------------------------------------
+		//------------------------------------------------------------
 		"Planning": `
 1. Define purpose & principles (why)
 2. Outcome visioning
@@ -169,7 +169,7 @@ T - item
 5. Identify next actions
 `,
 
-		//------------------------------------------------------------------------------
+		//------------------------------------------------------------
 		"Agile": `
 Using "kanban" and "board" commands to refine project state.
 Then by iterating over those items to create momentum.
