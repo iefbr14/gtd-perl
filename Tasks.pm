@@ -3,21 +3,23 @@ package Hier::Tasks;
 use strict;
 use warnings;
 
+use Class::Struct;
 use Hier::Option;
 
 use base qw(Hier::Hier Hier::Fields Hier::Filter Hier::Format);
 
-my %Task;		# all Todo items (including Hier)
+my %Tasks;		# all Todo items (including Hier)
+
 
 sub find {
 	my($tid) = @_;
 
-	return unless defined $Task{$tid};
-	return $Task{$tid};
+	return unless defined $Tasks{$tid};
+	return $Tasks{$tid};
 }
 
 sub all {
-	return values %Task;
+	return values %Tasks;
 }
 
 my $Max_todo = 0; 	# Last todo id (unique for all tables)
@@ -31,7 +33,7 @@ sub new {
 	$Max_todo = Hier::Db::G_val('todo', 'max(todo_id)') unless $Max_todo;
 
 	if (defined $tid) {
-		die "Task $tid exists won't create it." if defined $Task{$tid};
+		die "Task $tid exists won't create it." if defined $Tasks{$tid};
 
 		$Max_todo = $tid if $Max_todo < $tid;
 	} else {
@@ -44,7 +46,7 @@ sub new {
 
 	bless $self, $class;
 
-	$Task{$tid} = $self;	# need to hide this
+	$Tasks{$tid} = $self;	# need to hide this
 
 	return $self;
 }
@@ -94,7 +96,7 @@ sub delete {
 	my($self) = @_;
 
 	my $tid = $self->{todo_id};
-	delete $Task{$tid};
+	delete $Tasks{$tid};
 
 	# remove my children from self
 	for my $child ($self->get_parents) {
@@ -199,7 +201,7 @@ sub set_tid          {
 
 	my $tid = $ref->get_tid();
 
-	if (defined $Task{$new}) {
+	if (defined $Tasks{$new}) {
 		die "Can't renumber tid $tid => $new (already exists)\n";
 	}
 
@@ -210,8 +212,8 @@ sub set_tid          {
 
 	Hier::Db::G_renumber($ref, $tid, $new);
 
-        $Task{$new} = $Task{$tid};
-        delete $Task{$tid};
+        $Tasks{$new} = $Tasks{$tid};
+        delete $Tasks{$tid};
 }
 
 sub clean_set {
