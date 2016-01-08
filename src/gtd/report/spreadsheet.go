@@ -34,9 +34,9 @@ NAME:
 */
 
 
-use Hier::Util;
-use Hier::Meta;
-use Hier::Resource;
+import "gtd/task";
+import "gtd/meta";
+import "gtd/task";
 
 //-- Project Summary for a role
 func Report_spreadsheet(args []string) {

@@ -33,15 +33,15 @@ NAME:
 
 */
 
-use Hier::Util;
-use Hier::Walk;
-use Hier::Meta;
+import "gtd/task";
+import "gtd/task";
+import "gtd/meta";
 
 //-- interactive purge completed work
 func Report_purge(args []string) {
 	gtd.Meta_filter("+dead", '^tid', "simple");
 
-	my($criteria) = gtd.Meta_desc(@_);
+	my($criteria) = meta.Desc(args)(@_);
 
 	my($walk) = new Hier::Walk(
 		done   => \&end_detail,

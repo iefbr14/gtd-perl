@@ -33,7 +33,7 @@ NAME:
 
 */
 
-import "gtd"
+import "gtd/meta"
 
 my %Count;
 my %Sub_Count;

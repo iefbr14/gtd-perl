@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"time"
 	"gtd/option"
+//	"gtd/cct"
 )
 
 var db_debug bool = false
@@ -21,11 +22,6 @@ var MetaFix  bool = false
 use DBI;
 use YAML::Syck qw(LoadFile);
 use Data::Dumper;
-
-use Hier::CCT;
-use Hier::Tasks;
-use Hier::Hier;
-use Hier::Option;
 
 my $Current_ref;	// current gtd mapped item
 

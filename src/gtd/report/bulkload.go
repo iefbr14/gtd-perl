@@ -56,30 +56,16 @@ NAME:
 
 */
 
-BEGIN {
-	use Exporter   ();
-	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
-
-	// set the version for version checking
-	$VERSION     = 1.00;
-	@ISA         = qw(Exporter);
-	@EXPORT      = qw(&Report_bulkload);
-}
-
-use strict;
-use warnings;
-
-use Hier::Meta;
-use Hier::Option;
-use Hier::Report::edit;
-use Hier::Prompt;
+import "gtd/meta";
+import "gtd/option";
+import "gtd/prompt";
 
 my $Parent;
 my $Child;
 my $Type;
 my $Info = {};
 
-our $Debug = 0;
+our report_debug = 0;
 
 //-- Create Projects/Actions items from a file
 func Report_bulkload(args []string) {
@@ -95,7 +81,7 @@ func Report_bulkload(args []string) {
 		last unless defined $_;
 
 		if (/^debug/) {
-			$Debug = 1;
+			report_debug = 1;
 			print "Debug on\n";
 			next;
 		}
@@ -136,7 +122,7 @@ func Report_bulkload(args []string) {
 		if (/^(\d+):$/) {
 			my($tid) = $1;
 			// get context
-			my($pref) = gtd.Meta_find($tid);
+			my($pref) = meta.Find($tid);
 			unless ($pref) {
 				print "Can't find pid: $tid\n";
 				next;
@@ -239,7 +225,7 @@ sub add_nothing {
 	my($parents, $desc) = @_;
 
 	// do nothing
-	print "# nothing pending\n" if $Debug;
+	print "# nothing pending\n" if report_debug;
 
 	if ($desc) {
 		print "Lost description\n" if $desc;

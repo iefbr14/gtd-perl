@@ -1,10 +1,11 @@
 // +build ignore
 package gtd
 
-@EXPORT      = qw(&color &print_color &color_ref &nl);
+//? @EXPORT      = qw(&color &print_color &color_ref &nl);
 
-import "Hier/Option"
+//import "gtd/option"
 
+/*
 my $Type = 0;
 my $Incolor = 0;
 
@@ -228,3 +229,4 @@ sub nl {
 
 	print {$fd} $color, "\n";
 }
+*/

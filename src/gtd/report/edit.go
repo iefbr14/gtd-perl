@@ -96,7 +96,7 @@ func Report_edit(args []string) {
 sub save {
 	my($changed) = @_;
 	my($tid) = $changed->{todo_id};
-	my $ref = gtd.Meta_find($tid);
+	my $ref = meta.Find($tid);
 
 	my($Changed) = "Saving $tid - $changed->{task} ...\n";
 

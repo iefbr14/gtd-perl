@@ -34,12 +34,9 @@ NAME:
 */
 
 
-use Hier::Util;
-use Hier::Walk;
-use Hier::Resource;
-use Hier::Meta;
-use Hier::Format;
-use Hier::Option;	// get_today
+import "gtd/meta";
+import "gtd/option";	// get_today
+import "gtd/task";
 
 my $ToOld;
 my $ToFuture;
@@ -278,7 +275,7 @@ sub pdate {
 sub dep_path {
 	my($tid) = @_;
 
-	my($ref) = gtd.Meta_find($tid);
+	my($ref) = meta.Find($tid);
 	return unless $ref;
 
 	my($task) = $ref->get_title($ref);

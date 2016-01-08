@@ -35,9 +35,9 @@ NAME:
 
 //?	@EXPORT      = qw( &Report_dump &dump_ordered_ref );
 
-use Hier::Util;
-use Hier::Meta;
-use Hier::Format;
+import "gtd/task";
+import "gtd/meta";
+import "gtd/task";
 
 
 //-- dump records in edit format
@@ -45,7 +45,7 @@ func Report_dump(args []string) {
 	// everybody into the pool by id 
 	gtd.Meta_filter("+any", '^tid', "dump");	
 
-	my($name) = ucfirst(gtd.Meta_desc(@_));	// some out
+	my($name) = ucfirst(meta.Desc(args)(@_));	// some out
 	if ($name) {
 		if ($name =~ /^\d+/) {
 			dump_list($name);
@@ -70,7 +70,7 @@ sub dump_list {
 	my @list = split(/[^\d]+/, $list);
 
 	for my $tid (@list) {
-		my $ref = gtd.Meta_find($tid);
+		my $ref = meta.Find($tid);
 		unless (defined $ref) {
 			warn "#*** No task: $tid\n";
 			next;

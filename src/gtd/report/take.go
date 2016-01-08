@@ -34,11 +34,11 @@ NAME:
 */
 
 
-use Hier::Util;
-use Hier::Meta;
+import "gtd/task";
+import "gtd/meta";
 
-use Hier::Option;
-use Hier::Format;
+import "gtd/option";
+import "gtd/task";
 
 my %Ancestors;
 

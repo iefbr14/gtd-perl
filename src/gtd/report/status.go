@@ -35,11 +35,10 @@ NAME:
 
 my @Class = qw(Done Someday Action Next Future Total);
 
-use Hier::Util;		// %Types and typemap
-use Hier::Meta;
-use Hier::Option;
-use Hier::Resource;
-use Hier::Report::renumber;
+import "gtd/meta";
+import "gtd/option";
+import "gtd/task";
+import "gtd/task";		// %Types and typemap
 
 my $Hours_proj = 0;
 my $Hours_task = 0;
@@ -50,7 +49,7 @@ func Report_status(args []string) {
 	// counts use it and it give a context
 	gtd.Meta_filter("+active", '^tid', "none");	
 
-	my $desc = gtd.Meta_desc(@_);
+	my $desc = meta.Desc(args)(@_);
 
 	if (lc($desc) eq "all") {
 		report_detail();

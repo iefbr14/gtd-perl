@@ -34,17 +34,14 @@ NAME:
 */
 
 
-use Hier::Util;
-use Hier::Meta;
-use Hier::Sort;
-use Hier::Format;
-use Hier::Option;
-use Hier::Resource;
-use Hier::Color;
+import "gtd/color";
+import "gtd/meta";
+import "gtd/option";
+import "gtd/task";
 
 my @Class = qw(Done Someday Action Next Future Total);
 
-our $Debug = 0;
+our report_debug = 0;
 
 my $Hours_task = 0;
 my $Hours_next = 0;
@@ -198,7 +195,7 @@ sub check_a_role {
 sub last_lines {
 	my($lines) = @_;
 
-	printf "%-3d ", $Lines if $Debug;
+	printf "%-3d ", $Lines if report_debug;
 
 	return 1 if $Lines <= 0;
 

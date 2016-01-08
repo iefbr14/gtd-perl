@@ -34,14 +34,10 @@ NAME:
 */
 
 
-use Hier::Hier;
-use Hier::Meta;
-use Hier::Tasks;
-use Hier::Util;
-use Hier::Option;
-use Hier::Prompt;
-
-use Hier::Report::renumber;	// qw(next_avail_task);
+import "gtd/meta";
+import "gtd/option";
+import "gtd/task";
+import "gtd/prompt";
 
 my $First = '';
 my $Parent;
@@ -100,7 +96,7 @@ func Report_new(args []string) {
 
 	$want ||= 'i';	// still unknown at this point!
 
-	my($title) = gtd.Meta_desc(@_);
+	my($title) = meta.Desc(args)(@_);
 	$title =~ s/^--\s*//;
 
 	print "new: want=$want title=$title\n";

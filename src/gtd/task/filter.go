@@ -1,22 +1,9 @@
 // +build ignore
-package gtd
+package task
 
-use strict;
-use warnings;
+//?	@EXPORT      = qw( &add_filter );
 
-BEGIN {
-	use Exporter   ();
-	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
-
-	// set the version for version checking
-	$VERSION     = 1.00;
-	@ISA         = qw(Exporter);
-	@EXPORT      = qw( &add_filter );
-}
-
-use Hier::Tasks;
-use Hier::Option;
-
+/*
 my $Filter_Category;
 my $Filter_Context;
 my $Filter_Timeframe;
@@ -26,7 +13,7 @@ my $Today = get_today();
 my $Soon  = get_today(+7);
 
 my @Filters;	// types of actions to include
-our $Debug = 0;
+our $filter_debug = 0;
 
 my $Default_level = 'm';
 
@@ -63,7 +50,7 @@ sub reset_filters {
 }
 
 sub apply_filters {
-	//$Debug = option("Debug");
+	//$filter_debug = option("Debug");
 
 	// learn about actions
 	for my $ref (tasks_matching_type('a')) {
@@ -79,7 +66,7 @@ sub apply_filters {
 	//      kill children
 	// then on the way back up
 	//      back fill hier with wanted items
-	print "Default level $Default_level\n" if $Debug;
+	print "Default level $Default_level\n" if $filter_debug;
 	for my $ref (tasks_matching_type($Default_level)) {
 		apply_walk_down($ref);
 	}
@@ -125,7 +112,7 @@ sub apply_cct_filters {
 	}
 	my($reason) = cct_wanted($ref);
 	if ($reason) {
-		if ($Debug) {
+		if ($filter_debug) {
 			warn "#=CCT($reason) ", $ref->get_tid(),
 				": ", $ref->get_title(), "\n";
 		}
@@ -138,7 +125,7 @@ sub apply_cct_filters {
 		$reason = apply_cct_filters($child);
 		if ($reason) {
 			$wanted ||= $reason;
-			if ($Debug) {
+			if ($filter_debug) {
 				warn "#+CCT($reason) ", $ref->get_tid(),
 					": ", $ref->get_title(), "\n";
 			}
@@ -152,7 +139,7 @@ sub kill_children {
 	my($ref) = @_;
 
 	$ref->{_filtered} = "-cct";
-	if ($Debug) {
+	if ($filter_debug) {
 		warn "#-CCT ", $ref->get_tid(),
 			": ", $ref->get_title(), "\n";
 	}
@@ -252,10 +239,10 @@ use constant {
 sub add_filter {
 	my($rule) = @_;
 
-	warn "#-Parse filter: $rule\n" if $Debug;
+	warn "#-Parse filter: $rule\n" if $filter_debug;
 
 	if ($rule eq "~~") {
-		warn "#-Filters reset\n" if $Debug;
+		warn "#-Filters reset\n" if $filter_debug;
 		@Filters = ();
 		return;
 	}
@@ -347,7 +334,7 @@ sub task_filter {
 		return;
 	}
 
-	warn "#-Filter $name: [$will,$walk,$dir] $arg\n" if $Debug;
+	warn "#-Filter $name: [$will,$walk,$dir] $arg\n" if $filter_debug;
 	$walk = $will if $will;
 	$walk = $dir unless $walk;
 	$walk = '+' unless $walk;
@@ -467,24 +454,24 @@ sub meta_find_context {
 
 	// match case sensative first
 	if ($Context->get($cct)) {
-		warn "#-Set space context:  $cct\n" if $Debug;
+		warn "#-Set space context:  $cct\n" if $filter_debug;
 		$Filter_Context = $cct;
 		return;
 	}
 	if (defined $Timeframe->get($cct)) {
-		warn "#-Set time context:   $cct\n" if $Debug;
+		warn "#-Set time context:   $cct\n" if $filter_debug;
 		$Filter_Timeframe = $cct;
 		return;
 	}
 	if (defined $Category->get($cct)) {
-		warn "#-Set category:       $cct\n" if $Debug;
+		warn "#-Set category:       $cct\n" if $filter_debug;
 		$Filter_Category = $cct;
 		return;
 	}
 	for my $key (Hier::CCT::keys("Tag")) {
 		next unless $key eq $cct;
 
-		warn "#-Set tag:            $key\n" if $Debug;
+		warn "#-Set tag:            $key\n" if $filter_debug;
 		$Filter_Tags{$key}++;
 		return;
 	}
@@ -493,28 +480,28 @@ sub meta_find_context {
 	for my $key ($Context->keys()) {
 		next unless lc($key) eq lc($cct);
 
-		warn "#-Set space context:  $key\n" if $Debug;
+		warn "#-Set space context:  $key\n" if $filter_debug;
 		$Filter_Context = $key;
 		return;
 	}
 	for my $key ($Timeframe->keys()) {
 		next unless lc($key) eq lc($cct);
 
-		warn "#-Set time context:   $key\n" if $Debug;
+		warn "#-Set time context:   $key\n" if $filter_debug;
 		$Filter_Timeframe = $key;
 		return;
 	}
 	for my $key ($Category->keys()) {
 		next unless lc($key) eq lc($cct);
 
-		warn "#-Set category:       $key\n" if $Debug;
+		warn "#-Set category:       $key\n" if $filter_debug;
 		$Filter_Category = $key;
 		return;
 	}
 	for my $key (Hier::CCT::keys("Tag")) {
 		next unless lc($key) eq lc($cct);
 
-		warn "#-Set tag:            $key\n" if $Debug;
+		warn "#-Set tag:            $key\n" if $filter_debug;
 		$Filter_Tags{$key}++;
 		return;
 	}
@@ -616,7 +603,7 @@ sub apply_ref_filters {
 
 		$reason = &$func($ref, $arg);
 
-		if ($Debug) {
+		if ($filter_debug) {
 			my($tid) = $ref->get_tid();
 			my($title) = $ref->get_title();
 			my($name) = $filter->{name};
@@ -922,4 +909,4 @@ sub filter_tags {
 	}
 	return '?';
 }
-
+*/

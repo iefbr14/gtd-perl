@@ -33,32 +33,36 @@ NAME:
 
 */
 
+import "gtd/meta"
+import "gtd/option"
 
-our $Debug = 0;
-
-my @List = ();
+/*
+our report_debug = 0;
 
 my($Work_load) = 0;
 my($Proj_cnt) = 0;
 
-my $Limit;
-my %Seen;
+*/
 
 //-- add plan action items to unplaned projects
 func Report_addplansp(args []string) {
-	gtd.Meta_filter("+live", '^focus', "plan");
+	meta.Filter("+live", "^focus", "plan");
+	list = meta.Pick(args);
 
-	@List = gtd.Meta_pick(@_);
-	if (@List == 0) {
-		@List = gtd.Meta_pick("Project");
-		$Limit = option("Limit", 10);
+	limit := 0;
+	if len(list) == 0) {
+		list = meta.Pick("Project");
+		limit = option.Int("Limit", 10);
 	} else {
-		$Limit = option("Limit", scalar(@List));
+		limit = option.Int("Limit", len(list));
 	}
+} /*
 	report_header("Projects needing planning");
 
+	var seen map[int]bool;
+
 	// find all next and remember there focus
-	while (@List) {
+	for len(list) > 0 {
 		my($ref) = shift @List;
 
 		my($tid) = $ref->get_tid();
@@ -66,6 +70,8 @@ func Report_addplansp(args []string) {
 
 		my($reason) = check_task($ref);
 		next unless $reason;
+
+		list = append(list, ref.Children);
 
 		$reason = color("RED") . $reason . color();
 		display_rgpa($ref, "($reason)");
@@ -107,8 +113,6 @@ sub check_task {
 //		return "Needs progress";
 //	}
 
-	push(@List, @children);
-
 	return;
 }
 
@@ -121,3 +125,4 @@ sub iscomplex {
 	}
 	return 0;
 }
+*/

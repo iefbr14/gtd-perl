@@ -33,18 +33,18 @@ NAME:
 
 */
 
-use Hier::Util;
-use Hier::Meta;
-use Hier::Format;
-use Hier::Option;
-use Hier::Sort;
+import "gtd/task";
+import "gtd/meta";
+import "gtd/task";
+import "gtd/option";
+import "gtd/task";
 
 //-- list titles for any filtered class (actions/projects etc)
 func Report_items(args []string) {
 	// everybody into the pool by name
 	gtd.Meta_filter("+any", "^title", "item");	
 
-	my($name) = gtd.Meta_desc(@_);
+	my($name) = meta.Desc(args)(@_);
 	if ($name) {
 		my($want) = type_val($name);
 		if ($want) {

@@ -34,12 +34,10 @@ NAME:
 */
 
 
-use Hier::Util;
-use Hier::Color;
-use Hier::Meta;
-use Hier::Format;
-use Hier::Option;
-use Hier::Resource;
+import "gtd/color";
+import "gtd/meta";
+import "gtd/option";
+import "gtd/task";
 
 //-- report kanban of projects/actions
 func Report_kanban(args []string) {
@@ -86,7 +84,7 @@ sub kanban_bump {
 			next;
 		}
 
-		my($ref) = gtd.Meta_find($arg);
+		my($ref) = meta.Find($arg);
 
 		unless (defined $ref) {
 			warn "Task $arg doesn't exits\n";
@@ -116,7 +114,7 @@ sub kanban_bump {
 sub kanban_state {
 	my($tid, $state) = @_;
 
-	my($ref) = gtd.Meta_find($tid);
+	my($ref) = meta.Find($tid);
 
 	unless (defined $ref) {
 		panic("Task $tid doesn't exits\n");

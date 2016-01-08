@@ -33,21 +33,8 @@ NAME:
 
 */
 
-use strict;
-use warnings;
-
+/*?
 use ss::tk::menu;
-
-BEGIN {
-	use Exporter   ();
-	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
-
-	// set the version for version checking
-	$VERSION     = 1.00;
-	@ISA         = qw(Exporter Hier::Walk);
-	@EXPORT      = qw(&Report_gui);
-}
-
 
 use Tk;
 use Tk::Tree;
@@ -162,7 +149,7 @@ sub walk_tree {
 	my($tree) = $pkg->{tree};
 	$tree->delete("all");
 
-	gtd.Meta_filter("+all", '^tid', "simple");
+	meta.Filter("+all", '^tid', "simple");
 	my($walk) = new Hier::Walk(
 		detail => \&hier_detail,
 		done   => \&end_detail,
@@ -381,7 +368,7 @@ print "Run: $report\n";
 sub dep_path {
         my($tid) = @_;
 
-        my($ref) = gtd.Meta_find($tid);
+        my($ref) = meta.Find($tid);
         return unless $ref;
 
         my($path) = $ref->get_type() . '_' . $tid;
@@ -395,5 +382,4 @@ sub dep_path {
         }
         return $path;
 }
-
-1;  # don't forget to return a true value from the file
+?*/

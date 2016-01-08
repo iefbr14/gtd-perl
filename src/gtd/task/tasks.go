@@ -3,7 +3,6 @@ package task
 import (
 	"time"
 	"fmt"
-	"strconv"
 )
 
 // Done is used to signal shutdown.  Channel will close at exit
@@ -82,17 +81,12 @@ func (ref *Task) Dirty() bool {
 // all Todo items (including Hier)
 var Tasks map[int]*Task
 
-func Find(task_id string) *Task {
-	tid, err := strconv.ParseInt(task_id, 10, 32)
-	if err != nil {
-		fmt.Println(err)
-		return nil
+func Find(tid int) *Task {
+	if task, ok := Tasks[tid]; ok {
+		return task
 	}
-	return FindTid(int(tid))
-}
-
-func FindTid(tid int) *Task {
-	return Tasks[tid]
+	fmt.Printf("Can't find task id %d\n", tid);
+	return nil
 }
 
 func All() []*Task {

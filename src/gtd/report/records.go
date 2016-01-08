@@ -36,11 +36,8 @@ NAME:
 use strict;
 use warnings;
 
-use Hier::Util;
-use Hier::Meta;
-use Hier::Filter;	// task_mask_disp
-use Hier::Format;
-use Hier::Sort;
+import "gtd/meta";
+import "gtd/task";
 
 //-- detailed list all records for a type
 func Report_records(args []string) {
@@ -49,7 +46,7 @@ func Report_records(args []string) {
 
 	my($desc) = join(' ', @_);
 
-	my($name) = ucfirst(gtd.Meta_desc(@_));	// some out
+	my($name) = ucfirst(meta.Desc(args)(@_));	// some out
 	if ($name) {
 		my($want) = type_val($name);
 		unless ($want) {

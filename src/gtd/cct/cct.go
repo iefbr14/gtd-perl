@@ -1,21 +1,27 @@
-package gtd
+package cct
 
 var (
 
-Categories,		// mapping  Category Id   => Category Name
-Contexts,		// mapping  Context Id    => Context Name
-Timeframes,		// mapping  Timreframe Id => Timreframe Name
-Tags		// mapping  Tag Id        => Tag Name
+	// mapping  Category Id   => Category Name
+	Categories	map[int]string
 
-	map[string]string
+	// mapping  Context Id    => Context Name
+	Contexts	map[int]string
+
+	// mapping  Timreframe Id => Timreframe Name
+	Timeframes	map[int]string
+
+	// mapping  Tag Id        => Tag Name
+	Tags	map[int]string
 )
 
-var Maps map[string]map[string]string = {
-	"Category"  , &Categories,
-	"Context"   , &Contexts,
-	"TimeFrame" , &Timeframes,
-	"Tag"       , &Tags,
-);
+/*
+var Maps map[string]map[int]string {
+	"Category"  : Categories,
+	"Context"   : Contexts,
+	"TimeFrame" : Timeframes,
+	"Tag"       : Tags,
+}
 
 sub use {
 	my($self, $type) = @_;
@@ -97,5 +103,4 @@ sub _table {
 
 	panic("Unknown CCT table type: $type");
 }
-
-1;
+*/

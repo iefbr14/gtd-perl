@@ -33,17 +33,17 @@ NAME:
 
 */
 
-use Hier::Util;
-use Hier::Meta;
-use Hier::Option;
-use Hier::Format;
+import "gtd/task";
+import "gtd/meta";
+import "gtd/option";
+import "gtd/task";
 
 //-- List high priority next actions
 func Report_todo(args []string) {
 	my($limit) = option("Limit", 10);
 
 	gtd.Meta_filter("+active", '^priority', "priority");
-	my($title) = gtd.Meta_desc(@_) || "ToDo Tasks";
+	my($title) = meta.Desc(args)(@_) || "ToDo Tasks";
 
 	report_header($title);
 

@@ -1,4 +1,6 @@
-package walk
+package task
+
+import	"io"
 
 //?  @EXPORT      = qw(&walk &detail);
 
@@ -7,8 +9,15 @@ var	walk_debug bool
 type Walk struct {
 	done	func()
 	detail	func()
+	pre	func()
+
+	seen	map[*Task]bool
+
+	depth	int
+	fd	*io.Writer
 }
 
+/*
 func New() *Walk {
 	my($class, %opt) = @_;
 
@@ -30,6 +39,12 @@ func New() *Walk {
 func (self *Walk) SetDetail(detail func()) {
 }
 
+func (self *Walk) SetDone(detail func()) {
+}
+
+func (self *Walk) SetPre(detail func()) {
+}
+
 sub walk {
 	my($walk) = shift @_;
 
@@ -38,7 +53,7 @@ sub walk {
 	$toptype ||= 'm';
 
 	if ($toptype =~ /^\d+/) {
-		my($ref) = meta_find($toptype);
+		my($ref) = Find($toptype);
 		if ($ref) {
 			if ($ref->get_type() eq 'm') {
 				$ref->set_level(1);
@@ -186,3 +201,4 @@ sub end_detail {
 	my $tid = $ref->get_tid();
 	warn "### Hier::Walk::end_detail($tid)\n" if $Debug;
 }
+*/

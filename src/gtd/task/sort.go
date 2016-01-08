@@ -1,27 +1,13 @@
-// +build ignore
-package gtd
+package task
 
-use strict;
-use warnings;
+//?	@EXPORT      = qw(sort_mode sort_tasks by_task by_goal by_goal_task );
 
-BEGIN {
-	use Exporter   ();
-	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
-
-	// set the version for version checking
-	$VERSION     = 1.00;
-	@ISA         = qw(Exporter);
-	@EXPORT      = qw(sort_mode sort_tasks by_task by_goal by_goal_task );
-}
-
-use Carp;
+/*
 use Hier::Option;
 
-our $Version = 1.0;
 
 sub by_hier($$);
 
-my(@Criteria);
 my(%Criteria) = (
 	id	 => \&by_tid,
 	tid	 => \&by_tid,
@@ -100,28 +86,11 @@ sub sort_tasks {
 
 my %Sort_cache;
 
-sub sort_by {
-	my($criteria) = @_;
-
-	for my $criteria (@_) {
-		push @Criteria, $criteria;
-	}
-	//##BUG### make by_Sort an eval?
-}
-
-sub by_Sort {
-	return by_tid();
-}
-
-sub by_tid($$) {
-	my($a, $b) = @_;
-
+func by_tid(a, b *Task) {
 	return $a->get_tid() <=> $b->get_tid();
 }
 
-sub by_hier($$) {
-	my($a, $b) = @_;
-
+func by_hier(a, b *Task) {
 	my($pa) = $a->get_parent();
 	my($pb) = $b->get_parent();
 
@@ -140,9 +109,7 @@ sub by_hier($$) {
 	||      $a->get_tid() <=> $b->get_tid();
 }
 
-sub by_status($$) {
-	my($a, $b) = @_;
-
+func by_status(a, b *Task) {
 	my $ac = $a->get_completed();
 	my $bc = $b->get_completed();
 
@@ -156,33 +123,23 @@ sub by_status($$) {
 	return by_change($a, $b);
 }
 
-sub by_change($$) {
-	my($a, $b) = @_;
-
+func by_change(a, b *Task) {
 	return $a->get_modified() cmp $b->get_modified();
 }
 
-sub by_age($$) {
-	my($a, $b) = @_;
-
+func by_age(a, b *Task) {
 	return $a->get_created() cmp $b->get_created();
 }
 
-sub by_Task($$) {
-	my($a, $b) = @_;
-
+func by_Task(a, b *Task) {
 	return by_task($a,$b) || by_tid($a,$b);
 }
 
-sub by_task($$) {
-	my($a, $b) = @_;
-
+func by_task(a, b *Task) {
 	return lc_title($a) cmp lc_title($b);
 }
 
-sub by_pri($$) {
-	my($a, $b) = @_;
-
+func by_pri(a, b *Task) {
 	// order by priority $order, created $order, due $order 
 
 	my($rc)	= $a->get_priority() <=> $b->get_priority()
@@ -192,9 +149,7 @@ sub by_pri($$) {
 	return $rc;
 }
 
-sub by_doitdate($$) {
-	my($a, $b) = @_;
-
+func by_doitdate(a, b *Task) {
         return sort_doit($a) cmp sort_doit($b);
 }
 
@@ -211,7 +166,7 @@ sub sort_doit {
 }
 
 
-sub by_goal($$) {
+func by_goal(a, b *Task) {
 	my($a, $b) = @_;
 	return sort_goal($a) cmp sort_goal($b);
 }
@@ -368,3 +323,4 @@ sub lc_title {
 	return lc($title);
 }
 
+*/

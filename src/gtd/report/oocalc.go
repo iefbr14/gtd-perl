@@ -33,9 +33,8 @@ NAME:
 
 */
 
-use Hier::Util;
-use Hier::Meta;
-use Hier::Resource;
+import "gtd/meta";
+import "gtd/task";
 
 //-- Project Summary for a role
 func Report_oocalc(args []string) {

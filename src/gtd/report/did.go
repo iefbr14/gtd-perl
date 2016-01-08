@@ -34,13 +34,13 @@ NAME:
 */
 
 
-use Hier::Option;
-use Hier::Meta;
+import "gtd/option";
+import "gtd/meta";
 
 //-- update listed projects/actions doit date to today
 func Report_did(args []string) {
 	for my $tid (@_) {
-		my $ref = gtd.Meta_find($tid);
+		my $ref = meta.Find($tid);
 
 		unless (defined $ref) {
 			print "Task $tid not found to tag done\n";

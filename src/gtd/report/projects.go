@@ -33,11 +33,11 @@ NAME:
 
 */
 
-use Hier::Util;
-use Hier::Meta;
-use Hier::Sort;
-use Hier::Option;
-use Hier::Format;
+import "gtd/task";
+import "gtd/meta";
+import "gtd/task";
+import "gtd/option";
+import "gtd/task";
 
 my %Meta_key;
 
@@ -46,7 +46,7 @@ func Report_projects(args []string) {
 	//gtd.Meta_filter("+next", '^focus', "rgpa");
 	gtd.Meta_filter("+p:next", '^focus', "simple");
 
-	report_projects(1, "Projects", gtd.Meta_desc(@_));
+	report_projects(1, "Projects", meta.Desc(args)(@_));
 }
 
 sub report_projects {

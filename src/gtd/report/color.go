@@ -33,8 +33,8 @@ NAME:
 
 */
 
-use Hier::Util;
-use Hier::Color;
+import "gtd/task";
+import "gtd/color";
 
 
 //-- Detailed list of projects with (next) actions
@@ -50,7 +50,7 @@ func Report_color(args []string) {
 	my($wid) = int($col/9)-1;
 	my($sw) = $wid - 3;
 
-	if ($Debug) {
+	if (report_debug) {
 		my($use) = $wid*10;
 		print "col: $col, wid: $wid, sw: $sw, use: $use\n";
 		my($dash) = substr("----+----|"x20, 0, $wid*10-1);

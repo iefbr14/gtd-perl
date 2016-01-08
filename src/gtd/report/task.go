@@ -34,10 +34,10 @@ NAME:
 */
 
 
-use Hier::Util;
-use Hier::Meta;
-use Hier::Sort;
-use Hier::Format;
+import "gtd/task";
+import "gtd/meta";
+import "gtd/task";
+import "gtd/task";
 
 //-- quick List by various methods
 func Report_task(args []string) {

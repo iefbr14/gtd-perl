@@ -33,8 +33,6 @@ NAME:
 
 */
 
-import "gtd"
-
 type Reports struct {
 	name string
 	f    func(...string) int

@@ -33,8 +33,8 @@ NAME:
 
 */
 
-use Hier::Meta;
-use Hier::Option;
+import "gtd/meta";
+import "gtd/option";
 
 //-- clean unused categories
 func Report_clean(args []string) {

@@ -34,10 +34,10 @@ NAME:
 */
 
 
-use Hier::Meta;
-use Hier::Sort;
-use Hier::Format;
-use Hier::Option;
+import "gtd/meta";
+import "gtd/task";
+import "gtd/task";
+import "gtd/option";
 
 my %Meta_key;
 
@@ -90,12 +90,12 @@ sub check_task {
 	my($deps);
 
 	my($id) = $p_ref->get_tid(); 
-	printf "X %d %s\n", $id, $p_ref->get_title() if $Debug;
+	printf "X %d %s\n", $id, $p_ref->get_title() if report_debug;
 
 	if ($deps = $p_ref->get_depends()) {	// can't be focus
 		$deps =~ s/\s+/,/g;
 		for my $dep (split(',', $deps)) {
-			printf "Deps %d on %s\n", $id, $deps if $Debug;
+			printf "Deps %d on %s\n", $id, $deps if report_debug;
 
 			my($d_ref) = Hier::Tasks::find($dep);
 			unless ($d_ref) {
@@ -110,7 +110,7 @@ sub check_task {
 			}
 			$Dep = undef;
 		}
-		printf "No actions for %d on %s\n", $id, $deps if $Debug;
+		printf "No actions for %d on %s\n", $id, $deps if report_debug;
 		return;
 	}
 

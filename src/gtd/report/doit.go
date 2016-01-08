@@ -34,11 +34,11 @@ NAME:
 */
 
 
-use Hier::Util;
-use Hier::Meta;
-use Hier::Sort;
-use Hier::Option;
-use Hier::Format;
+import "gtd/task";
+import "gtd/meta";
+import "gtd/task";
+import "gtd/option";
+import "gtd/task";
 
 my $Today = get_today(0);
 my $Later = get_today(+7);
@@ -61,7 +61,7 @@ func Report_doit(args []string) {
 
 	foreach my $arg (gtd.Meta_argv(@_)) {
 		if ($arg =~ /^\d+$/) {
-			my($ref) = gtd.Meta_find($arg);
+			my($ref) = meta.Find($arg);
 
 			unless (defined $ref) {
 				warn "$arg doesn't exits\n";

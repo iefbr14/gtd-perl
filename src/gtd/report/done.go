@@ -45,7 +45,7 @@ func Report_done(args ...string) {
 	}
 
 	for tid := range args {
-		ref := gtd.Meta_find(tid)
+		ref := meta.Find(tid)
 
 		if ref != nil {
 			fmt.Printf("Task %s not found to tag done")

@@ -86,7 +86,7 @@ func Set(key string, val string) {
 	options[key] = val
 }
 
-func Option(key string, deflt string) string {
+func Get(key string, deflt string) string {
 	key = option_key(key)		// map alias
 	val, ok := options[key]
 	if ok {
@@ -103,7 +103,7 @@ func Option(key string, deflt string) string {
 }
 
 func Bool(key string, deflt bool) bool {
-	val := Option(key, "")
+	val := Get(key, "")
 
 	if val == "" {
 		return deflt

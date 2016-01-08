@@ -18,6 +18,7 @@ const (
 	ITEM      = 'T'
 )
 
+
 func (ref *Task) Is_task() bool {
 	return	ref.Type == ACTION || 
 		ref.Type == WAIT || 
@@ -32,7 +33,7 @@ func (ref *Task) Is_hier() bool {
 		ref.Type == PROJECT
 }
 
-func (ref *Task) Is_hier() bool {
+func (ref *Task) Is_list() bool {
 	return	ref.Type == REFERENCE ||
 		ref.Type == LIST || 
 		ref.Type == CHECKLIST || 

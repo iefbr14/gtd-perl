@@ -34,7 +34,7 @@ NAME:
 */
 
 
-use Hier::Meta;
+import "gtd/meta";
 
 //-- Fix Categories/Contexts/Time Frames
 func Report_fixcct(args []string) {

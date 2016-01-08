@@ -2,9 +2,9 @@ package task
 
 //? @EXPORT 	&type_name &type_val &type_depth
 //?		&type_disp &action_disp
-//?		&lines &columns
 
-import "gtd/option"
+import "os"
+import "strconv"
 
 var Types = map[string]byte{
 	"Value":  'm',
@@ -116,20 +116,26 @@ sub action_disp {
 
 //==============================================================================
 
-func Lines() {
+func Lines() int {
 	lines := os.Getenv("LINES")
 	if lines == "" {
 		return 24
 	}
 
-	return strconv.Int(lines, 10, 32)
+	if val, err := strconv.Atoi(lines); err == nil {
+		return val
+	}
+	return 24
 }
 
-func Columns() {
-	lines := os.Getenv("LINES")
-	if lines == "" {
-		return 24
+func Columns() int {
+	rows := os.Getenv("ROWS")
+	if rows == "" {
+		return 80
 	}
 
-	return strconv.Int(columns, 10, 32)
+	if val, err := strconv.Atoi(rows); err == nil {
+		return val
+	}
+	return 80
 }

@@ -1,6 +1,8 @@
 package meta
 
 import	"fmt"
+import	"strconv"
+import	"strings"
 import "gtd/task"
 
 //	@EXPORT      = qw(
@@ -76,12 +78,20 @@ sub meta_all_matching_type {
 	return grep { $_->get_type() eq $type } Hier::Tasks::all();
 }
 
-sub meta_find {
-	return Hier::Tasks::find(@_);
+?*/
+
+func Find(task_id string) * task.Task {
+	if tid, err := strconv.Atoi(task_id); err == nil {
+		return task.Find(tid);
+	}
+
+	fmt.Printf("Invalid task id %s\n", task_id);
+	return nil
 }
 
 //==============================================================================
 
+/*?
 sub delete_hier {
 	panic("###ToDo Broked, should be deleting by categories?\n");
 	foreach my $tid (@_) {
@@ -114,13 +124,15 @@ func Filter(filter, sort, display string) {
 //?	$Default_filter = $filter;
 }
 
-/*
-sub meta_argv {
+func Argv(args []string) []string {
+	return args;
+
+	ret := make([]string, 0, len(args));
+
+/*?
+	has_filters := false;
+
 	local($_);
-
-	my(@ret);
-
-	my($has_filters) = 0;
 
 	Hier::Filter::add_filter_tags();
 	while (scalar(@_)) {
@@ -186,20 +198,18 @@ sub meta_argv {
 		Hier::Filter::add_filter($Default_filter);
 	}
 	Hier::Filter::apply_filters($Default_filter);
-	return @ret;
+?*/
+
+	return ret
 }
 
-sub meta_desc {
-	return join(' ', meta_argv(@_));
+func Desc(args []string) string {
+	return strings.Join(Argv(args), " ");
 }
 
-*/
 func Pick(args []string) []*task.Task {
 	panic("... code meta.Pick");
-}
-
-/*
-sub meta_pick {
+}/*?
 	my(@list) = ();
 
 	foreach my $arg (meta_argv(@_)) {
@@ -307,4 +317,4 @@ sub match_type {
 	return 0;
 }
 
-*/
+?*/

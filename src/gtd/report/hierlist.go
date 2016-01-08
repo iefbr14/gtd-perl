@@ -34,8 +34,8 @@ NAME:
 */
 
 
-use Hier::Util;
-use Hier::Meta;
+import "gtd/task";
+import "gtd/meta";
 
 //-- List all top level item (Project and above)
 func Report_hierlist(args []string) {
@@ -43,7 +43,7 @@ func Report_hierlist(args []string) {
 	my(@row);
 
 	gtd.Meta_filter("+p:live", '^title', "simple");
-	gtd.Meta_desc(@_);
+	meta.Desc(args)(@_);
 
 print <<"EOF";
 -Gtd -Par Cnt Category  Parent       Name         Description

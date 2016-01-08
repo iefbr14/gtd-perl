@@ -42,7 +42,7 @@ func Report_update(args []string) {
 		print "NO task specified to update\n";
 		return;
 	}
-	my $ref = gtd.Meta_find($task);
+	my $ref = meta.Find($task);
 	unless (defined $ref) {
 		print "Task $task not found to update\n";
 		return;

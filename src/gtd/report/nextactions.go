@@ -34,8 +34,8 @@ NAME:
 */
 
 
-use Hier::Util;
-use Hier::Meta;
+import "gtd/task";
+import "gtd/meta";
 
 //-- List next actions
 func Report_nextactions(args []string) {
@@ -43,7 +43,7 @@ func Report_nextactions(args []string) {
 	my(@row);
 
 	gtd.Meta_filter("+next", '^title', "none");
-	gtd.Meta_desc(@_);
+	meta.Desc(args)(@_);
 
 print <<"EOF";
 -Par [-] Parent           -Tid [-] Next Action

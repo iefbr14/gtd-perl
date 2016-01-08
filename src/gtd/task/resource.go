@@ -1,13 +1,6 @@
-// +build ignore
-package gtd
+package task
 
-use strict;
-use warnings;
-
-our $VERSION     = 1.00;
-
-use base qw(Hier::Hier Hier::Fields Hier::Filter);
-
+/*
 our $Resource;
 
 sub new {
@@ -226,3 +219,4 @@ sub state {
 	return $States{$state}[1];
 }
 
+*/

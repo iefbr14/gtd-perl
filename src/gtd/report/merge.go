@@ -33,20 +33,20 @@ NAME:
 
 */
 
-use Hier::Meta;
+import "gtd/meta";
 
 //-- Merge Projects (first list is receiver)
 func Report_merge(args []string) {
 	for my $slave_id (@_) {
 		panic("Unknown project $slave_id\n") unless 
-			defined gtd.Meta_find($slave_id);
+			defined meta.Find($slave_id);
 	}
 	my $master_id = shift @_;
 	panic("No projects to merge\n") unless @_;
-	my $master = gtd.Meta_find($master_id);
+	my $master = meta.Find($master_id);
 
 	for my $slave_id (@_) {
-		my $slave = gtd.Meta_find($slave_id);
+		my $slave = meta.Find($slave_id);
 		merge_project($master, $slave);
 		$master->update();
 		$slave->delete();

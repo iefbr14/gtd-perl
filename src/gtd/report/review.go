@@ -33,11 +33,11 @@ NAME:
 
 */
 
-use Hier::Util;
-use Hier::Meta;
-use Hier::Option;
-use Hier::Format;
-use Hier::Sort;
+import "gtd/task";
+import "gtd/meta";
+import "gtd/option";
+import "gtd/task";
+import "gtd/task";
 
 my $Mode = 'p';	// project, doit, next-actions, actions, someday
 
@@ -46,7 +46,7 @@ my($List) = 0; ###BUG### should be an option
 //-- Review all projects with actions
 func Report_review(args []string) {
 	gtd.Meta_filter("+active", '^doitdate', "simple");
-	my $desc = gtd.Meta_desc(@_);
+	my $desc = meta.Desc(args)(@_);
 
 	$Mode = 'p';
 	if (lc($desc) eq "doit") {
@@ -72,7 +72,7 @@ sub reload {
 	my($Mode) = @_;
 
 	if ($Mode eq 'p') {
-		mode_projects(1, "Projects", gtd.Meta_desc(@_));
+		mode_projects(1, "Projects", meta.Desc(args)(@_));
 	} elsif ($Mode eq 'd') {
 		mode_doit();
 	} elsif ($Mode eq 's') {
@@ -224,7 +224,7 @@ sub _report_doit {
 
 	foreach my $arg (Hier::util::gtd.Meta_argv(@_)) {
 		if ($arg =~ /^\d+$/) {
-			my($ref) = gtd.Meta_find($arg);
+			my($ref) = meta.Find($arg);
 
 			unless (defined $ref) {
 				warn "$arg doesn't exits\n";

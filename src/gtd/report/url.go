@@ -33,25 +33,10 @@ NAME:
 
 */
 
-use strict;
-use warnings;
+import "gtd/meta";
+import "gtd/task";
 
-BEGIN {
-	use Exporter   ();
-	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
-
-	// set the version for version checking
-	$VERSION     = 1.00;
-	@ISA         = qw(Exporter);
-	@EXPORT      = qw( &Report_url );
-}
-
-use Hier::Util;
-use Hier::Meta;
-use Hier::Sort;
-use Hier::Format;
-
-our($Debug) = 0;
+our(report_debug) = 0;
 
 my(%Seen);
 my(@Urls);
@@ -78,7 +63,7 @@ func Report_url(args []string) {
 	}
 
 	if (@Urls) {
-		print "+ firefox ", join(' ', @Urls), "\n" if $Debug;
+		print "+ firefox ", join(' ', @Urls), "\n" if report_debug;
 		unless ($ENV{"DISPLAY"}) {
 			$Host = guess_remote();
 		}
@@ -142,7 +127,7 @@ sub find_url {
 		}
 	}
 
-	if ($Debug) {
+	if (report_debug) {
 		print "line: $line\n";
 		print "gtd @gtds => wiki @urls\n";
 	}

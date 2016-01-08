@@ -35,29 +35,35 @@ NAME:
 
 //?	@EXPORT      = qw(&Report_actions report_actions);
 
-import "gtd"
+import "gtd/meta"
+import "gtd/option"
 
+/*?
 my $Projects;
 my %Active;
 
 my %Want;
+?*/
 
 //-- Detailed list of projects with (next) actions
 func Report_actions(args []string) {
-	list := gtd.Option("List", "");
+	list := option.Get("List", "")
 
-	gtd.Meta_filter("+a:next", '^focus', "detail");
+	meta.Filter("+a:next", "^focus", "detail")
 
-	desc := gtd.Meta_desc(@_);
-	report_select($desc);
-	if (list != "") {
-		report_list();
+	desc := meta.Desc(args)
+	report_select(desc)
+
+	if list != "" {
+		report_list()
 	} else {
-		report_actions(1, "Actions", desc);
+//?		report_actions(1, "Actions", desc)
 	}
 }
 
-sub report_select(top_name string) {
+func report_select(top_name string) {
+}/*?
+
 	my($select);
 	my($tid, $pid, $pref);
 
@@ -91,8 +97,10 @@ sub report_select(top_name string) {
 		Projects.[pid][tid] = ref;
 	}
 }
+?*/
 
-func report_list(top_name string) {
+func report_list() {
+}/*?
 
 	my($tid, $pid, $pref, $ref);
 
@@ -121,8 +129,8 @@ func report_list(top_name string) {
 //#FILTER		next if $ref->filtered();
 
 			$tid = $ref->get_tid();
-			print join("\t", 
-				$gref->get_title(), 
+			print join("\t",
+				$gref->get_title(),
 				$pid, $pref->get_title(),
 				$tid, $ref->get_title(),
 				$ref->get_effort()
@@ -130,8 +138,8 @@ func report_list(top_name string) {
 			$task_cnt++;
 		}
 		unless ($task_cnt) {
-			print join("\t", 
-				$gref->get_title(), 
+			print join("\t",
+				$gref->get_title(),
 				$pid, $pref->get_title(),
 				), "\n";
 		}
@@ -179,7 +187,7 @@ sub report_actions {
 		} elsif ($last_proj != $pid) {
 			print '#', "-" x $cols, "\n";
 			$last_proj = $pid;
-		} 
+		}
 
 		display_task($pref);
 		my $tasks = $Projects->{$pid};
@@ -243,3 +251,4 @@ sub has_parent {
 	//# warn "o tid: ", $tid, " ", $ref->get_title, "\n" if $Want{$tid};
 	return $Want{$tid};
 }
+*/

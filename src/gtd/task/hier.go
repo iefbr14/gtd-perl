@@ -1,12 +1,6 @@
-// +build ignore
-package gtd
+package task
 
-use strict;
-use warnings;
-
-use Carp;
-use Data::Dumper;
-
+/*
 sub rel_add {
 	my($obj, $rel, $target) = @_;
 
@@ -239,3 +233,4 @@ sub set_children_ids {
 	}
 }
 
+*/

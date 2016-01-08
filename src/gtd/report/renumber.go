@@ -38,8 +38,8 @@ use warnings;
 
 //?	@EXPORT      = qw(&Report_renumber &next_avail_task);
 
-use Hier::Meta;
-use Hier::Tasks;
+import "gtd/meta";
+import "gtd/task";
 
 my %Dep_info = (
   'a' => [ \&is_action,   2000, 9999, "Actions" ],
@@ -220,7 +220,7 @@ sub renumb {
 sub renumber_a_task {
 	my($tid) = @_;
 
-	my $ref = gtd.Meta_find($tid);
+	my $ref = meta.Find($tid);
 
 	panic("Can"t renumber task $tid (doesn"t exists)\n") unless $ref;
 
@@ -246,7 +246,7 @@ sub renumber_a_task {
 sub renumber_task {
 	my($tid, $new) = @_;
 
-	my $ref = gtd.Meta_find($tid);
+	my $ref = meta.Find($tid);
 
 	panic("Can"t renumber task $tid (doesn"t exists)\n") unless $ref;
 

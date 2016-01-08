@@ -34,13 +34,9 @@ NAME:
 */
 
 
-use Hier::Util;
-use Hier::Meta;
-use Hier::Option;
-use Hier::Format;
-use Hier::Sort;
-
-use "gtd/task"
+import "gtd/meta";
+import "gtd/option";
+import "gtd/task";
 
 //-- Command line walk of a hier
 func Report_noop(args []string) {
@@ -100,7 +96,7 @@ func Report_noop(args []string) {
 			panic("Unknown command: $task\n");
 		}
 
-		my $ref = gtd.Meta_find($task);
+		my $ref = meta.Find($task);
 		unless (defined $ref) {
 			panic("Task $task not found to walk\n");
 			//return;

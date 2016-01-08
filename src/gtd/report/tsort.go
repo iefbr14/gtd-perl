@@ -34,12 +34,12 @@ NAME:
 */
 
 
-use Hier::Util;
-use Hier::Meta;
-use Hier::Option;
-use Hier::Format;
+import "gtd/task";
+import "gtd/meta";
+import "gtd/option";
+import "gtd/task";
 
-our $Debug = 0;
+our report_debug = 0;
 my %Depth;
 
 //-- write out hier as as set of nodes
@@ -57,7 +57,7 @@ func Report_tsort(args []string) {
 
 
 	for my $task (@_) {
-		my $ref = gtd.Meta_find($task);
+		my $ref = meta.Find($task);
 //		down($ref, 1);
 		dpos($ref, 1);
 	}
@@ -134,7 +134,7 @@ sub up {
 
 	my $id = $ref->get_tid();
 
-	print "up: $id @_\n" if $Debug;
+	print "up: $id @_\n" if report_debug;
 
 	for my $cid (@_) {
 		next if $id != $cid;

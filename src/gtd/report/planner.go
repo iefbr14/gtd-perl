@@ -33,12 +33,9 @@ NAME:
 
 */
 
-use Hier::Util;
-use Hier::Walk;
-use Hier::Resource;
-use Hier::Meta;
-use Hier::Format;
-use Hier::CCT;
+import "gtd/meta";
+import "gtd/task";
+import "gtd/cct";
 
 my $Today = `date +%04Y%02m%02dT080000Z`; chomp $Today;
 

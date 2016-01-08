@@ -1,4 +1,3 @@
-// +build ignore
 package task
 
 //??	@EXPORT= qw( 
@@ -8,13 +7,14 @@ package task
 //?		&disp_ordered_dump
 
 
-var Display = disp_simple;
-var Header  = undef;
+/*
+var Display (*Task)func() = disp_simple;
+var Header  func()
 
-var Wiki := false;		//### display is in wiki format ####
+var Wiki bool = false		//### display is in wiki format ####
 
 // task field order used by dump
-var Orrder []string{
+var Order []string = {
 	"todo_id",
 	"type",
 	"nextaction",
@@ -357,8 +357,8 @@ sub format_summary {
 	return "" unless $val;
 	return "" if $val =~ /^\s*[.\-\*]/;
 
-	$val =~ s/\n.*//s;
-	$val =~ s/\r.*//s;
+	$val =~ s=\n.*==s;
+	$val =~ s=\r.*==s;
 
 	return "" if $val eq "";
 	return "" if $val eq "=";
@@ -834,7 +834,7 @@ func disp_doit_csv(fd io.Writer, ref *task.Task, note string) {
 	$task      = $ref->get_title() || $ref->get_context() || "";
 	$desc      = $ref->get_description();
 
-	$desc =~ s/\n.*//s;
+	$desc =~ s=\n.*==s;
 	print {$fd} join("\t", $tid, $pri, $cat, $doit, $pname, $task, $desc), "\n";
 	//print join("\t", $tid, $pri, $cat, $task, $due, $desc), "\n";
 }
@@ -958,3 +958,4 @@ $tid,$key,$pri, $cat,        $due,    $task
 	write;
 
 }
+*/

@@ -33,9 +33,9 @@ NAME:
 
 */
 
-use Hier::Util;
-use Hier::Meta;
-use Hier::Format;
+import "gtd/task";
+import "gtd/meta";
+import "gtd/task";
 
 //-- display a check list
 func Report_checklist(args []string) {
@@ -46,11 +46,11 @@ func Report_checklist(args []string) {
 	my ($id);
 	if ($p) {
 		if ($p =~ /^\d+$/) {
-			list_records($id, "List: $p", gtd.Meta_desc($p, @_));
+			list_records($id, "List: $p", meta.Desc(args)($p, @_));
 			return;
 		} 
 		if ($id = find_list($p)) {
-			list_records($id, "List: $p", gtd.Meta_desc($p, @_));
+			list_records($id, "List: $p", meta.Desc(args)($p, @_));
 		} else {
 			print "Can't find a list by name of $p\n";
 		}
@@ -104,7 +104,7 @@ sub disp_list {
 		my $pid = $ref->get_parent()->get_tid();
 		my $title = $ref->get_title();
 
-		print "pid: $pid tid: $tid => $title\n" if $Debug;
+		print "pid: $pid tid: $tid => $title\n" if report_debug;
 
 		if ($owner) {
 			next if $pid != $owner;	

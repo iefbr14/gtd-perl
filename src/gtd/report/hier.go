@@ -33,12 +33,10 @@ NAME:
 
 */
 
-use Hier::Util;
-use Hier::Color;
-use Hier::Walk;
-use Hier::Meta;
-use Hier::Option;
-use Hier::Format;
+import "gtd/color";
+import "gtd/meta";
+import "gtd/option";
+import "gtd/task";
 
 my $Mask = 0;
 

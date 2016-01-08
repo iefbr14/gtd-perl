@@ -33,19 +33,16 @@ NAME:
 
 */
 
-use Hier::Util;
-use Hier::Walk;
-use Hier::Resource;
-use Hier::Meta;
-use Hier::Format;
-use Hier::Option;	// get_today
+import "gtd/meta";
+import "gtd/option";	// get_today
+import "gtd/task";
 
 my $ToOld;
 my $ToFuture;
 
 my $Someday = 0;
 
-our $Debug;
+our report_debug;
 
 //-- generate taskjuggler file from gtd db
 func Report_taskjuggler(args []string) {
@@ -150,7 +147,7 @@ sub hier_detail {
 
 	my($tid) = $ref->get_tid();
 
-	print "# taskjuggler::hier_detail($tid)\n" if $Debug;
+	print "# taskjuggler::hier_detail($tid)\n" if report_debug;
 
 	my($indent) = indent($ref);
 	my($resource) = new Hier::Resource($ref);
@@ -170,7 +167,7 @@ sub hier_detail {
 	my $user = $resource->resource();
 	my $hint = $ref->get_hint();
 
-	print "## $tid $tj_pri $type $name\n" if $Debug;
+	print "## $tid $tj_pri $type $name\n" if report_debug;
 
 	return if skip($walk, $ref);
 
@@ -434,7 +431,7 @@ sub calc_depends {
 sub dep_path {
 	my($tid) = @_;
 
-	my($ref) = gtd.Meta_find($tid);
+	my($ref) = meta.Find($tid);
 	return unless $ref;
 
 	my($path) = $Dep_list{$tid};
