@@ -20,7 +20,6 @@ our $Version = 1.0;
 
 sub by_hier($$);
 
-my(@Criteria);
 my(%Criteria) = (
 	id	 => \&by_tid,
 	tid	 => \&by_tid,
@@ -98,38 +97,6 @@ sub sort_tasks {
 }
 
 my %Sort_cache;
-
-#sub sorter($$) {
-#	my($by, $itemlist) = @_;
-#
-#	###BUG### fetch command line option sort override
-#	if ($by =~ s/^\^// and !defined $Criteria{$by}) {
-#		die "Huh? sort '$by' unknown\n";
-#	}
-#
-#	my $doby = $Criteria{$by};
-#	if (option('Reverse')) {
-#		return reverse sort { &$doby($a, $b) } @$itemlist;
-#	} else {
-#		return sort { &$doby($a, $b) } @$itemlist;
-#	}
-#}
-
-sub sort_by {
-	my($criteria) = @_;
-
-	for my $criteria (@_) {
-		push @Criteria, $criteria;
-	}
-	###BUG### make by_Sort an eval?
-}
-
-sub by_Sort {
-#	for my $criteria (@critera) {
-#		if ($criteria eq 
-#	}
-	return by_tid();
-}
 
 sub by_tid($$) {
 	my($a, $b) = @_;

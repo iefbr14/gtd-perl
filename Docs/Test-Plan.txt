@@ -265,14 +265,6 @@
 #==============================================================================
 # Test gtd sorting
 #==============================================================================
-# by_Sort need to work
-[_] by_Sort
-[_] names are case insensetive.
-
-(lowercase only does what is needed)
-by_Sort does by what is wanted
-sort_by sets the sort criteria
-
 [_] by_activity	(doit)		^next ^doit [ by_doitdate ^doit]
 [_] by_age	(created)	^age
 [_] by_change	(modified)	^change
@@ -284,7 +276,7 @@ sort_by sets the sort criteria
 [_] by_status			^status
 [_] by_task (name)		^task
 
-# sort routines (neet to be in sort.pm)
+# sort routines (need to be in sort.pm)
 [_] by_age
 [_] by_change
 [_] by_due

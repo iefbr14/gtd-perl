@@ -6,7 +6,6 @@
 ../Filter.pm:	print "#-Filter Sub: ", dispflags($Exclude), "\n" if $Debug;
 ../Filter.pm:	print "#-Filter Add: ", dispflags($Include), "\n" if $Debug;
 ../Sort.pm:	###BUG### fetch command line option sort override
-../Sort.pm:	###BUG### make by_Sort an eval?
 ../Sort.pm:	###BUG### junk sub need to walk to hier
 ../util.pm:		print "#-Set space context:  $cct\n" if $Debug;
 ../util.pm:		print "#-Set time context:   $cct\n" if $Debug;
