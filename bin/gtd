@@ -72,8 +72,6 @@ getopts('xX:uS:F:H:f:LaAZ:o:T:c:C:D:p:N:s:t:l:r', \%Opt) or usage();
 
 my $Zname = $Opt{Z} || 'gtd';
 
-#db_load_defaults($Zname);
-
 debug('main') if $Opt{x};
 
 set_option(MetaFix   => !($Opt{u} || 0));

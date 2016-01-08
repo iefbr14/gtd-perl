@@ -703,11 +703,6 @@ my($Prefix) = 'gtd_';
 
 our $Resource;	# used by Hier::Resource
 
-sub db_load_defaults {
-	my($confname) = @_;
-
-}
-
 sub DB_init {
 	my($confname) = @_;
 

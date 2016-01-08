@@ -55,7 +55,7 @@ our $OurPath;
 
 my($Fname) = 0;
 
-sub Report_reports {	#-- List Reports
+sub Report_reports {	#-- List Reports (use 'reports file' for file names)
 	if (@_ && $_[0] =~ /^f/) {
 		$Fname = 1;
 	}
@@ -85,7 +85,9 @@ sub get_reports {
 			$name = $1;
 			if ($Fname) {
 				if ($f =~ /^(.*)\.pm$/) {
-					$name = "$1\t$name";
+					if ($name ne $1) {
+						$name = "$1 ($name.pm)";
+					}
 				} else {
 					$name = "$f\t$name";
 				}

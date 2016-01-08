@@ -50,8 +50,6 @@ use Hier::Walk;
 use Hier::Meta;
 use Hier::Option;
 
-my $Mask = 0;
-
 our $Debug = 0;
 
 sub Report_noop {	#-- No Operation

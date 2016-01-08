@@ -55,7 +55,7 @@ use Hier::Option;
 
 my $Layout = 'Text';
 
-sub Report_print {	#-- dump records in edit format
+sub Report_print {	#-- display records in dump format based on format type
 	# everybody into the pool by id 
 	meta_filter('+any', '^tid', 'doit');	
 
