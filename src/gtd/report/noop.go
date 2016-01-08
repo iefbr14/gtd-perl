@@ -50,8 +50,8 @@ func Report_noop(args []string) {
 	//list := meta.Pick(args)
 	_ = meta.Pick(args)
 
-//???	walk := gtd.Walk()
-//???	walk.Filter()
+	//???	walk := gtd.Walk()
+	//???	walk.Filter()
 
 	if debug {
 		fmt.Printf("noop: %#v\n", args)

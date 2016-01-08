@@ -33,24 +33,24 @@ NAME:
 
 */
 
-import "gtd"
+import "gtd/meta"
 
 //-- list titles for any filtered class (actions/projects etc)
-func Report_list(args ...string) {
-	gtd.Meta_filter("+active", "^title", "title")
+func Report_list(args []string) {
+	meta.Filter("+active", "^title", "title")
 
 	title := string.Join(" ", args)
 
-	var list = gtd.Meta_pick(args)
+	list := meta.Pick(args)
 
 	if len(list) == 0 {
-		fmtp.Println("No items requested")
+		fmt.Println("No items requested")
 		return
 	}
 
 	report_header("List", title)
 
 	for ref := range list.Sort_tasks {
-		display_task(ref)
+		ref.Display()
 	}
 }

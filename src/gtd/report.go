@@ -5,6 +5,7 @@ import "gtd/report"
 
 var reports = map[string]func([]string){
 	"noop": report.Report_noop,
+	"search": report.Report_search,
 }
 
 // load_report -- return 1 if it compile correctly

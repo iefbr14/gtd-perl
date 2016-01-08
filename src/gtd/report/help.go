@@ -33,29 +33,29 @@ NAME:
 
 */
 
-import "gtd"
+import "fmt"
 
 //-- Help on commands
-func Report_help(args ...string) {
+func Report_help(args []string) {
 	helps := map[string]string{
 
 		//------------------------------------------------------------------------------
 		// Obsolete Sac view of projects vs gts view of projects
-		{"Sac", `
+		"Sac": `
 (gtd) Value => Vision => Role => Goal => Project => Action
 (sac)                  Client => Project => Task => Item
-`},
+`,
 
 		//------------------------------------------------------------------------------
-		{"Selection", `
+		"Selection": `
   tid       -- task id
   /title    -- match any with title
   T:/title  -- match only type T,  with title
                (T == A,P,G,R,V)
-`},
+`,
 
 		//------------------------------------------------------------------------------
-		{"Filters", `
+		"Filters": `
 ~NAME -- exclude those of the type (check first)
 +NAME -- include those of the type (check last)
 
@@ -83,10 +83,10 @@ dink => nokids noacts
 kids - hier has sub-hier items
 acts - hier has sub-actions
 
-`},
+`,
 
 		//------------------------------------------------------------------------------
-		{"Sort", `
+		"Sort": `
 id/tid	      - by task id
 task/title    - by task name (title)
 
@@ -102,10 +102,10 @@ doit/doitdate - by doit date
 status        - by completed if done otherwise by modified.
 
 rgpa/goaltask - by task withing goal
-`},
+`,
 
 		//------------------------------------------------------------------------------
-		{"Types", `
+		"Types": `
 m - value
 v - vision
 o - role
@@ -120,10 +120,10 @@ R - reference
 L - list
 C - checklist
 T - item
-`},
+`,
 
 		//------------------------------------------------------------------------------
-		{"Project-Verbs", `
+		"Project-Verbs": `
 * Finalize
 * Resolve
 * Handle
@@ -139,10 +139,10 @@ T - item
 * Install
 * Implement
 * Set-up 
-`},
+`,
 
 		//------------------------------------------------------------------------------
-		{"Action-Verbs", `
+		"Action-Verbs": `
 * Call
 * Review
 * Buy
@@ -158,26 +158,26 @@ T - item
 * Draft
 * Email 
 * Sort
-`},
+`,
 
 		//------------------------------------------------------------------------------
-		{"Planning", `
+		"Planning": `
 1. Define purpose & principles (why)
 2. Outcome visioning
 3. Brainstorming
 4. Organizing material
 5. Identify next actions
-`},
+`,
 
 		//------------------------------------------------------------------------------
-		{"Agile", `
+		"Agile": `
 Using "kanban" and "board" commands to refine project state.
 Then by iterating over those items to create momentum.
-`},
+`,
 	}
 
 	done := false
-	for help := range args {
+	for _, help := range args {
 		if help == "help" {
 			done := true
 			fmt.Println("Help is available for:")
@@ -185,16 +185,16 @@ Then by iterating over those items to create momentum.
 				fmt.Printf("\t%s\n", key.name)
 			}
 			fmt.Println("\nAlso try: help reports")
-			next
+			continue
 		}
 
-		if val, err := helps[help]; err == nil {
-			fmt.Printf("Unknown help for %s\n", val)
-		} else {
+		if val, ok := helps[help]; ok {
 			done := true
 			fmt.Println(val)
-			next
+			continue
 		}
+
+		fmt.Printf("Unknown help for %s\n", val)
 	}
 	if done {
 		return

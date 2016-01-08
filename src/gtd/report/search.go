@@ -33,26 +33,28 @@ NAME:
 
 */
 
-import "gtd"
 import "regexp"
 
+import "gtd/meta"
+import "gtd/task"
+
 //-- Search for items
-func Report_search(args ...string) {
+func Report_search(args []string) {
 	found := 0
 
-	gtd.Meta_filter("+all", "^title", "simple")
-	gtd.Meta_desc(args)
+	meta.Filter("+all", "^title", "simple")
+	meta.Desc(args)
 
 	for name := range args {
-		r, err := regexp.Compile(name)
+		re, err := regexp.Compile(name)
 		if err != nil {
-			fmt.Printf("Compiler error %s: %s", name, err)
+			fmt.Printf("RE Compile error %s: %s", name, err)
 			next
 		}
 
-		for ref := range gtd.Meta_sorted() {
-			if match_desc(ref, r) {
-				display_task(ref)
+		for ref := range meta.Sorted() {
+			if match_desc(ref, re) {
+				ref.Display()
 				found = 1
 			}
 		}
@@ -61,11 +63,10 @@ func Report_search(args ...string) {
 	return !found
 }
 
-func match_desc(ref gtd.Task, r regexp) bool {
-
-	if r.Match(ref.title) ||
-		r.Match(ref.description) ||
-		r.Match(ref.note) {
+func match_desc(ref *task.Task, re regexp) bool {
+	if re.Match(ref.Title) ||
+		re.Match(ref.Description) ||
+		re.Match(ref.Note) {
 		return true
 	}
 	return false

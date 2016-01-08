@@ -1,31 +1,15 @@
-// +build ignore
-package gtd
+package walk
 
-use strict;
-use warnings;
+//?  @EXPORT      = qw(&walk &detail);
 
-use Carp;
+var	walk_debug bool 
 
-use Hier::Util;
-use Hier::Tasks;
-use Hier::Option;
-use Hier::Sort;
-use Hier::Meta;
-use Hier::Format;
-
-BEGIN {
-	use Exporter   ();
-	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
-
-	// set the version for version checking
-	$VERSION     = 1.00;
-	@ISA         = qw(Exporter);
-	@EXPORT      = qw(&walk &detail);
+type Walk struct {
+	done	func()
+	detail	func()
 }
 
-our $Debug;
-
-sub new {
+func New() *Walk {
 	my($class, %opt) = @_;
 
 	my($walk) = {};
@@ -41,6 +25,9 @@ sub new {
 	bless $walk, $class;
 
 	return $walk;
+}
+
+func (self *Walk) SetDetail(detail func()) {
 }
 
 sub walk {

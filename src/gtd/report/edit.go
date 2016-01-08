@@ -33,40 +33,29 @@ NAME:
 
 */
 
-use strict;
-use warnings;
-
-BEGIN {
-	use Exporter   ();
-	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
-
-	// set the version for version checking
-	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw(&Report_edit);
 }
 
-use Hier::Util;
-use Hier::Meta;
+import "gtd/meta"
+import "gtd/task"
 
-use Hier::Option;
-use Hier::Format;
 
-sub Report_edit {	//-- Edit listed actions/projects
+//-- Edit listed actions/projects
+func Report_edit(args []string) {
 	my($key, $val, $changed);
 
-	gtd.Meta_filter("+all", '^tid', "none");
+	meta.Filter("+all", '^tid', "none");
 
-	@_ = ( option("Current") )  if scalar(@_) == 0;
-
-	my(@list) = gtd.Meta_pick(@_);
-	if (@list == 0) {
+	list := meta.Pick(args);
+	if (len(list) == 0) {
+		@_ = ( option("Current") )  if scalar(@_) == 0;
 		panic("No items to edit\n");
 	}
     
 	umask(0077);
 	open(my $ofd, '>', "/tmp/todo.$$") or panic();
-	for my $ref (@list) {
+	for ref := range list {
 		disp_ordered_dump($ofd, $ref);
 	}
 	close($ofd);
@@ -128,7 +117,7 @@ sub save {
 		if (defined $val && defined $newval) {
 			next if $val eq $newval;
 			++$u;
-			$ref->set_KEY($key, $newval);
+			ref.set_KEY(key, newval);
 
 			$Changed .= "$key: $val -> $newval\n";
 			next;

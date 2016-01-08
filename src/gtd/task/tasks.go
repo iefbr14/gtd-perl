@@ -12,20 +12,24 @@ var Max_todo int    // Last todo id (unique for all tables)
 
 type Task struct {
 	Tid      int
-	Tasktype rune
+	Tasktype byte
+
+	Title      string
+	Description string
+	Note       string
 
 	Category    string
-	Completed   time.Time
 	Context     string
 
-	Depends     []int
-	Description string
 	Doit        time.Time
 	Due         time.Time
+	Completed   time.Time
 	Effort      time.Duration
+
+	Priority   int
 	IsSomeday   bool
 	Later       time.Time
-	Nextaction bool
+	IsNextaction bool
 
 	Created     time.Time
 	Modified   time.Time
@@ -33,15 +37,17 @@ type Task struct {
 	live       bool
 	mask       uint
 
-	Note       string
-	Priority   int
-	Title      string
 	Tickledate time.Time
 	Timeframe  []time.Time
 	todo_only  bool
 
 	Resource []string
 	Hint     []string
+	Tags	[]string
+
+	Depends     []* Task
+	Parents     []* Task
+        Children    []* Task
 
 	dirty map[string]bool
 }
@@ -201,6 +207,25 @@ sub default {
 	return $val;
 }
 
+func (self *Task)get_KEY(key string) string {
+	switch key {
+	case "tid": return fmt.Sprintf("%d", self.Tid);
+	case "type": return fmt.Sprintf("%c", self.Tasktype);
+	
+	case "title"
+
+	}
+	panic("Unknown key %s key", key);
+}
+
+func (self *Task)set_KEY(key string, val string) {
+	switch key {
+	case "tid": self.Tid = strconv.Int(val, 10, 32);
+	}
+	panic("Unknown key %s key", key);
+}
+
+
 sub get_KEY { my($self, $key) = @_;  return default($self->{$key}, ''); }
 
 sub get_tid          { my($self) = @_; return $self->{todo_id}; }
@@ -300,6 +325,7 @@ sub get_tags {
 
         my $hash = $ref->{_tags};
 
+	
         return sort {$a cmp $b} keys %$hash;
 }
 sub disp_tags {
