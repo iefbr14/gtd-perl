@@ -62,7 +62,6 @@ my $Limit = 2;
 ### if work list is empty  
 
 sub Report_doit {	#-- doit tracks which projects/actions have had movement
-
 	$Limit = option('Limit', 1);
 
 	$= = lines();

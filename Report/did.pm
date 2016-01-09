@@ -49,13 +49,7 @@ use Hier::Option;
 use Hier::Meta;
 
 sub Report_did {	#-- update listed projects/actions doit date to today
-	for my $tid (@_) {
-		my $ref = meta_find($tid);
-
-		unless (defined $ref) {
-			print "Task $tid not found to tag done\n";
-			next;
-		}
+	for my $ref (meta_pick(@_)) {
 		$ref->set_doit(get_today());
 		$ref->update();
 	}

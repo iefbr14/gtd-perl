@@ -97,7 +97,7 @@ sub list_dump {
 	my($Dates) = '';
 
 	# find all records.
-	for my $ref (meta_sorted('^tid')) {
+	for my $ref (meta_sorted()) {
 		$type = $ref->get_type();
 		next if $want_type && $type ne $want_type;
 

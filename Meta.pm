@@ -66,9 +66,6 @@ sub meta_filtered {
 }
 
 sub meta_sorted {
-	my($mode) = @_;
-
-	sort_mode(option('Sort', $mode));
 	if (@Selected == 0) {
 		@Selected = sort_tasks(meta_filtered());
 	}

@@ -98,7 +98,7 @@ sub reload {
 sub mode_doit {
 	my(@list);
 
-	for my $ref (meta_sorted('^doitdate')) {
+	for my $ref (meta_sorted()) {
 		lookat($ref);
 	}
 }
