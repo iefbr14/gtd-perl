@@ -377,7 +377,7 @@ sub gtdmap {
 
 	G_learn($t_key, $g_key);
 
-	my($val) = html_clean( $db->{$g_key} );
+	my($val) = html_clean($db->{$g_key} , $t_key);
 
 	# New master key
 	if ($t_key eq 'todo_id') {
@@ -401,11 +401,16 @@ sub gtdmap {
 }
 
 sub html_clean {
-	my($val) = @_;
+	my($val, $field) = @_;
 
 	return undef unless defined $val;
 
-	return $val unless $val =~ m/&[a-z]+;/;
+	return $val unless $val =~ m/&[a-z]+;/i;
+
+	$Current_ref->set_dirty($field);
+	my($tid) = $Current_ref->get_tid();
+	print "#!!! HTML clean [$tid] $field: $val\n";
+
 	my %map = (
 		lt	=> '<',
 		gt	=> '>',
@@ -838,18 +843,16 @@ sub G_default_val {
 sub G_renumber {
 	my($ref, $tid, $new) = @_;
 
-        my(@list) = qw(items itemstatus tagmap);
         warn "Setting TID $tid => $new\n";
 
-        G_sql("update gtd_lookup set itemId=$new where itemId=$tid");
         G_sql("update gtd_lookup set parentId=$new where parentId=$tid");
+        G_sql("update gtd_lookup set itemId=$new where itemId=$tid");
+
         G_sql("update gtd_tagmap set itemId=$new where itemId=$tid");
+	G_sql("update gtd_items set itemId=$new where itemId=$tid");
+	G_sql("update gtd_itemstatus set itemId=$new where itemId=$tid");
 
 	G_sql("update gtd_todo set todo_id = ? where todo_id = ?", $new, $tid);
-
-        for my $table (@list) {
-                G_sql("update gtd_$table set itemId=$new where itemId=$tid");
-        }
 }
 
 sub G_val {
