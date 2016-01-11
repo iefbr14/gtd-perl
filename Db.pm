@@ -21,6 +21,8 @@ use DBI;
 use YAML::Syck qw(LoadFile);
 use Data::Dumper;
 
+use Time::HiRes qw(time);
+
 use Carp;
 
 use Hier::CCT;
@@ -176,16 +178,8 @@ sub set {
 	$ref->set_dirty($field);
 }
 
-# gtd_checklist      |	Not used
-# gtd_checklistitems |  Not used
-# gtd_list           |	Not used
-# gtd_listitems      |	Not used
-
-# gtd_tickler        |	Not used 
-
 # gtd_categories     |
 # gtd_context        |
-				# gtd_itemattributes | removed
 # gtd_items          |
 # gtd_itemstatus     |
 # gtd_lookup         |
@@ -656,6 +650,7 @@ sub gtd_delete {
 	gset_delete($tid, 'itemstatus');
 	gset_delete($tid, 'items');
 	gset_delete($tid, 'lookup');
+	gset_delete($tid, 'todo');
 
 	sac_delete($tid);
 }
@@ -763,14 +758,24 @@ sub DB_init {
 
 	option('Changed', G_val('itemstatus', 'max(lastModified)'));
 
-#warn "Start ".localtime()."\n";
-	load_meta();
-#warn "Mid   ".localtime()."\n";
-	load_gtd();
-#warn "End   ".localtime()."\n";
+	warn "Start ".localtime()."\n";
 
+	my($now, $dur);
+
+	$now = time;
+	load_meta();
+	$dur = time - $now; 
+	warn "Mid   ".localtime()." $dur\n";
+
+	$now = time;
+	load_gtd();
+	$dur = time - $now; 
+	warn "End   ".localtime()." $dur\n";
+
+	$now = time;
 	metafix();
-#warn "Done  ".localtime()."\n";
+	$dur = time - $now; 
+	warn "Done  ".localtime()." $dur\n";
 }
 
 sub G_table {

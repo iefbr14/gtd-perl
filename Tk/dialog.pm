@@ -2,7 +2,7 @@ sub hier_edit {
         my($tree, $path) = @_;
 
 	my($ref) = $tree->infoData($path);
-	my($tid) = $ref->{todo_id};
+	my($tid) = $ref->get_tid();
 print "Edit: $path => $tid\n";
 
         my($pkg) = {}; bless $pkg;
