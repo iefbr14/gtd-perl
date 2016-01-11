@@ -107,7 +107,7 @@ func New(tid int) *Task {
 
 	if tid == 0 {
 		if Max_todo == 0 {
-			Max_todo = G_val("todo", "max(todo_id)")
+			Max_todo = G_val("itemstatus", "max(itemId)")
 		}
 		Max_todo++
 		tid = Max_todo
@@ -407,7 +407,7 @@ func clean_up_database() {
 /*
 func reload_if_needed_database() {
 	my($changed) = option("Changed");
-	my($cur) = Hier::Db::G_val("todo", 'max(modified)');
+	my($cur) = Hier::Db::G_val("itemstatus", 'max(lastModified)');
 
 	if ($cur ne $changed) {
 		print "Database changed from $changed => $cur\n";

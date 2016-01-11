@@ -21,6 +21,8 @@ use DBI;
 use YAML::Syck qw(LoadFile);
 use Data::Dumper;
 
+use Carp;
+
 use Hier::CCT;
 use Hier::Tasks;
 use Hier::Hier;
@@ -42,22 +44,22 @@ my($Category, $Context, $Timeframe, $Tags);
 # 1x => in gtd_todo
 # 2x => in gtd
 # 3x => in both
+# 4x => depricated
 my(%Key_type) = (
 	todo_id         => 0x31,
+
+	task            => 0x21,	# title
+	description     => 0x21,
+	note            => 0x21,
+
 	category        => 0x11,
-	task            => 0x31,
 	children        => 0x01,
-	priority        => 0x11,
-	description     => 0x31,
-	note            => 0x31,
-	owner           => 0x11,
-	private         => 0x11,
 
-	created         => 0x32,	# youngest
-	modified        => 0x33,	# oldest
+	created         => 0x22,	# youngest
+	modified        => 0x23,	# oldest
 
-	due             => 0x32,	# youngest
-	completed       => 0x33,	# oldest
+	due             => 0x22,	# youngest
+	completed       => 0x23,	# oldest
 
 	recur		=> 0x21,
 	recurdesc	=> 0x21,
@@ -71,14 +73,15 @@ my(%Key_type) = (
 	context		=> 0x01,
 	_gtd_context	=> 0x21,
 
-	palm_id         => 0x11,
 	type            => 0x21,
 	doit            => 0x11,
-	effort		=> 0x11,
-	'state'		=> 0x11,
+
 	resource	=> 0x11,
-	depends         => 0x11,
+	priority        => 0x11,
+	'state'		=> 0x11,
+	effort		=> 0x11,
 	percent         => 0x11,
+	depends         => 0x11,
 
 	_hint		=> 0x01,	# resource hint
 );
@@ -86,7 +89,7 @@ my(%Key_type) = (
 sub load_meta {
 	my($row, $tid, $ref);
 
-	my($sth) = T_select();
+	my($sth) = G_select('todo');
 	while ($row = $sth->fetchrow_hashref) {
 		$tid = $row->{todo_id};
 
@@ -387,7 +390,7 @@ sub gtdmap {
 		unless ($val) {
 			die "Can't create gtd_todo with todo_id=$val for table $Table\n";
 		}
-		warn "Hard Need Create $val\n" if $Debug;
+		warn "Hard Need Create $val\n";
 		$Current_ref = Hier::Tasks->New($val);
 		$Current_ref->{_todo_only} = 0x03;
 		sac_create($val, {});
@@ -433,6 +436,11 @@ sub cset {
 	# no value defined, skip update/creation of field
 	return unless defined $val;
 
+	if (!defined $Key_type{$key}) {
+		confess("cset: Undefined key $key");
+		return;
+	}
+
 	my($key_type) = $Key_type{$key} & 0x0F;
 	unless ($key_type) {
 		warn "Unknown key: $key\n";
@@ -441,6 +449,9 @@ sub cset {
 		$ref->{$key} = $val;
 		return;
 	}
+
+	return if $key_type == 0x40;	# depricated
+
 	# never seen value, just set it
 	unless (defined $ref->{$key}) {
 		$ref->{$key} = $val;
@@ -454,7 +465,7 @@ sub cset {
 		my($current_value) = $ref->{$key};
 
 		# handle we don't have enough detail
-                if (length($current_value) eq 8 or length($val) == 8) {
+                if (length($current_value) == 8 or length($val) == 8) {
 			return if (substr($current_value,0,8) eq substr($val,0,8));
 		}
 
@@ -559,7 +570,6 @@ sub gtd_fix_maps {
 		set($ref, 'created', $today);
 	}
 	set($ref, 'modified', $today);
-	set($ref, '_gtd_modified', $today);
 
 	_fix_map($ref, 'category',  '_gtd_category',  $Category);
 	_fix_map($ref, 'context',   '_gtd_context',   $Context);
@@ -746,7 +756,7 @@ sub DB_init {
 	$GTD = DBI->connect("dbi:mysql:dbname=$dbname;host=$host", $user, $pass);
 	die "confname=$confname;dbname=$dbname;host=$host;user=$user;pass=$pass\n" unless $GTD;
 
-	option('Changed', G_val('gtd_todo', 'max(modified)'));
+	option('Changed', G_val('itemstatus', 'max(lastModified)'));
 
 #warn "Start ".localtime()."\n";
 	load_meta();
@@ -760,17 +770,6 @@ sub DB_init {
 
 sub G_table {
 	return $Prefix . $_[0];
-}
-
-sub T_select {
-	my($sql) = "select * from gtd_todo";
-
-	my($sth) = $GTD->prepare($sql);
-	my($rv) = $sth->execute();
-	if ($rv < 0) {
-		die "sql=$sql";
-	}
-	return $sth;
 }
 
 sub G_sql {
@@ -856,6 +855,7 @@ sub G_renumber {
 sub G_val {
 	my($table, $query) = @_;
 
+	$table = G_table($table);
 	my($sql) = "select $query from $table";
 	my($sth) = $GTD->prepare($sql);
 	my($rv) = $sth->execute();

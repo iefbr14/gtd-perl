@@ -50,8 +50,6 @@ my(%Key_type) = (
 	priority        => 0x11,
 	description     => 0x31,
 	note            => 0x31,
-	owner           => 0x11,
-	private         => 0x11,
 
 	created         => 0x32,	// youngest
 	modified        => 0x33,	// oldest
@@ -71,7 +69,6 @@ my(%Key_type) = (
 	context		=> 0x01,
 	_gtd_context	=> 0x21,
 
-	palm_id         => 0x11,
 	type            => 0x21,
 	doit            => 0x11,
 	effort		=> 0x11,
@@ -756,7 +753,7 @@ func DB_init(confname string) {
 //?	$GTD = DBI->connect("dbi:mysql:dbname=$dbname;host=$host", $user, $pass);
 //?	panic("confname=$confname;dbname=$dbname;host=$host;user=$user;pass=$pass") unless $GTD;
 //?
-//?	option("Changed", G_val('todo', 'max(modified)'));
+//?	option("Changed", G_val('itemstatus', 'max(lastModified)'));
 //?
 //?warn "Start ".localtime()."\n";
 //?	load_meta();
@@ -867,6 +864,7 @@ sub G_renumber {
 
 func G_val(table, query string) int {
 
+	table = G_table(table);
 	sql := fmt.Sprintf("select %s from %s", query, table);
 	return len(sql)
 /*

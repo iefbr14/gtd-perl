@@ -67,7 +67,6 @@
 
 	[_] +dink
 	[_] +duck
-	[_] +private
 	[_] +recur
 
 	[_] all     => (all of the above)

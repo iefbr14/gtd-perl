@@ -128,11 +128,8 @@ sub merge_project {
 //##	Merge: recur
 //##	Merge: recurdesc
 
-//##	Merge: priority
+//##	Merge: doit
 	merge_date($master, $slave, "doit");
-	merge_first($master, $slave, "owner");
-	merge_first($master, $slave, "private");
-	merge_first($master, $slave, "palm_id");
 
 	$master->set_effort(
 		($master->get_effort() || 0) +

@@ -72,7 +72,7 @@ sub New {
 
 	my($self) = {};
 
-	$Max_todo = Hier::Db::G_val('gtd_todo', 'max(todo_id)') unless $Max_todo;
+	$Max_todo = Hier::Db::G_val('itemstatus', 'max(itemId)') unless $Max_todo;
 
 	if (defined $tid) {
 		die "Task $tid exists won't create it." if defined $Tasks{$tid};
@@ -356,7 +356,7 @@ sub clean_up_database {
 
 sub reload_if_needed_database {
 	my($changed) = option('Changed');
-	my($cur) = Hier::Db::G_val('gtd_todo', 'max(modified)');
+	my($cur) = Hier::Db::G_val('itemstatus', 'max(lastModified)');
 
 	if ($cur ne $changed) {
 		print "Database changed from $changed => $cur\n";

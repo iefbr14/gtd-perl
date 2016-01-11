@@ -45,15 +45,12 @@ var Order []string = {
 	"recur",
 	"recurdesc",
 ".",
-	"owner",
-	"palm_id",
+	"resource",
 	"priority",
 	"state",
 	"effort",
-	"resource",
-	"depends",
-	"private",
 	"percent",
+	"depends",
 ".",
 }
 
