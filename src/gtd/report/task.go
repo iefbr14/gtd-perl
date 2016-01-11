@@ -34,26 +34,23 @@ NAME:
 */
 
 
-import "gtd/task";
-import "gtd/meta";
-import "gtd/task";
-import "gtd/task";
+import "gtd/meta"
+import "gtd/task"
 
 //-- quick List by various methods
 func Report_task(args []string) {
-	gtd.Meta_filter("+g:live", '^title', "task");	// Tasks filtered by goals
+	meta.Filter("+g:live", "^title", "task");	// Tasks filtered by goals
 
-	my($title) = join(' ', @_);
-
-	my(@list) = gtd.Meta_pick(@_);
-	if (@list == 0) {
-		gtd.Meta_pick("actions");
+	list := meta.Pick(args);
+	if len(list) == 0 {
+		list = meta.Pick([]string{"actions"});
 	}
-	report_header("Tasks", $title);
 
-	for my $ref (sort_tasks @list) {
-		display_task($ref);
+	title := meta.Desc(args);
+	task.Header("Tasks", title);
+
+//?	for _,ref := range list.Sort {
+	for _,ref := range list {
+		ref.Display("")
 	}
 }
-
-1;  # don't forget to return a true value from the file

@@ -33,6 +33,7 @@ NAME:
 
 */
 
+/*?
 import "gtd/color";
 import "gtd/meta";
 import "gtd/option";
@@ -157,3 +158,4 @@ sub hier_detail_old {
 
 sub end_detail {
 }
+?*/

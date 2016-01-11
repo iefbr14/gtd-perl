@@ -32,6 +32,7 @@ NAME:
 =head1 HISTORY
 
 */
+/*?
 
 use strict;
 use warnings;
@@ -62,7 +63,7 @@ func Report_records(args []string) {
 sub list_records {
 	my($want_type, $typename) = @_;
 
-	report_header($typename);
+	task.Header($typename);
 
 	my($tid, $proj, $type, $f, $reason, $kids, $acts);
 	my($Dates) = '';
@@ -101,3 +102,4 @@ sub disp {
 
 	return "$type:$tid $key <$pri> $ref->get_title()";
 }
+?*/

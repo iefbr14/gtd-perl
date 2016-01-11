@@ -33,6 +33,7 @@ NAME:
 
 */
 
+/*?
 
 import "gtd/meta";
 import "gtd/option";
@@ -97,7 +98,7 @@ func Report_new(args []string) {
 	$want ||= 'i';	// still unknown at this point!
 
 	my($title) = meta.Desc(args)(@_);
-	$title =~ s/^--\s*//;
+	$title =~ s=^--\s*==;
 
 	print "new: want=$want title=$title\n";
 
@@ -289,3 +290,4 @@ sub input {
 
 	return prompt($prompt, '#');
 }
+?*/

@@ -33,6 +33,7 @@ NAME:
 
 */
 
+/*?
 my @Class = qw(Done Someday Action Next Future Total);
 
 import "gtd/meta";
@@ -304,3 +305,4 @@ sub report_detail {
 		print "\n";
 	}
 }
+?*/

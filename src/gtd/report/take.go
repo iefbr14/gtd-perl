@@ -34,9 +34,9 @@ NAME:
 */
 
 
-import "gtd/task";
-import "gtd/meta";
+/*?
 
+import "gtd/meta";
 import "gtd/option";
 import "gtd/task";
 
@@ -46,7 +46,7 @@ my %Ancestors;
 func Report_take(args []string) {
 	my($key, $val, $changed);
 
-	gtd.Meta_filter("+all", '^tid', "none");
+	gtd.Meta_filter("+all", "^tid", "none");
 
 	my $parent = option("Current");
 	unless ($parent) {
@@ -109,3 +109,4 @@ sub find {
 
 	return Hier::Tasks::find($tid);
 }
+?*/

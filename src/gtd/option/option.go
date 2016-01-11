@@ -1,5 +1,6 @@
 package option
 
+import "flag"
 import "fmt"
 import "time"
 import "strconv"
@@ -117,8 +118,45 @@ func Bool(key string, deflt bool) bool {
 	return rval
 }
 
-func Flag(key string, flag string) {
-	fmt.Printf("... Code option.Flag -%s %s\n", flag, key);
+func Int(key string, deflt int) int {
+	val := Get(key, "")
+
+	if val == "" {
+		return deflt
+	}
+	rval, err := strconv.Atoi(val)
+	if err != nil {
+		fmt.Printf("Conversion failure %s -> %s", key, val)
+		Set(key, "0")
+		return 0
+	}
+	return rval
+}
+
+//==============================================================================
+// Magic opion.Flag parsing to load options from command line
+//------------------------------------------------------------------------------
+type option string
+
+func (i *option) String() string {
+	s := string(*i)
+	return fmt.Sprintf("%s: %s", s, options[s]);
+	return s
+}
+
+func (i *option) Set(value string) error {
+	s := string(*i)
+	fmt.Printf("Setting: %s => %s", s, value);
+	options[s] = value;
+	return nil
+}
+
+func Flag(key string, f string) {
+	var junk option
+
+	//fmt.Printf("### Coding option.Flag -%s %s\n", f, key);
+
+	flag.Var(&junk, f, key);
 }
 
 

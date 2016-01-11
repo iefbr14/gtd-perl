@@ -33,13 +33,14 @@ NAME:
 
 */
 
+/*?
 import "gtd/option"
 
 //-- Tag listed projects/actions as done
-func Report_done(args ...string) {
+func Report_done(args []string) {
 	date := gtd.Today()
 
-	o_date := gtd.Option("Date", "")
+	o_date := option.Date("Date", "")
 	if o_date != "" {
 		date = o_date
 	}
@@ -57,3 +58,4 @@ func Report_done(args ...string) {
 		ref.Update(date)
 	}
 }
+?*/

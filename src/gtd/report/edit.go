@@ -33,9 +33,7 @@ NAME:
 
 */
 
-	@ISA         = qw(Exporter);
-	@EXPORT      = qw(&Report_edit);
-}
+/*?
 
 import "gtd/meta"
 import "gtd/task"
@@ -149,3 +147,4 @@ sub save {
 
 	print  "Saved\n";
 }
+?*/

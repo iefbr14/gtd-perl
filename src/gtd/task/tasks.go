@@ -1,8 +1,8 @@
 package task
 
 import (
-	"time"
 	"fmt"
+	"time"
 )
 
 // Done is used to signal shutdown.  Channel will close at exit
@@ -161,27 +161,28 @@ func (self *Task) clean_dirty() *Task {
 	return self;
 }
 
-func (self *Task) delete  {
+?*/
+func (self *Task) Delete()  {
+	tid := self.Tid
 
-	my $tid = $self->{todo_id};
-	delete $Task{$tid};
+	delete(Tasks, tid)
 
 	// remove my children from self
-	for my $child ($self->get_parents) {
-		$self->orphin_child($child);
+	for _,child := range self.Parents {
+		self.orphin_child(child);
 	}
-	$self->update();
+	self.Update();
 
 	// remove self from my parents
-	for my $parent ($self->get_parents) {
-		$parent->orphin_child($self);
-		$parent->update();
+	for _,parent := range self.Parents {
+		parent.orphin_child(self);
+		parent.Update();
 	}
 
 
 	// commit suicide
-	Hier::Db::sac_delete($tid);
-	Hier::Db::gtd_delete($tid);	// remove from database
+	sac_delete(tid);
+	gtd_delete(tid);	// remove from database
 
 	//##BUG### need to reflect back database changed.
 	//##G_sql("update");
@@ -190,6 +191,7 @@ func (self *Task) delete  {
 
 //------------------------------------------------------------------------------
 
+/*?
 sub default {
 	my($val, $default) = @_;
 
@@ -384,7 +386,6 @@ sub dset {
 */
 
 func (self *Task) Update() {
-
 	gtd_update(self);
 	self.dirty = nil
 }

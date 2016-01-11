@@ -33,6 +33,7 @@ NAME:
 
 */
 
+/*?
 import "gtd/task";
 import "gtd/meta";
 import "gtd/task";
@@ -52,7 +53,7 @@ func Report_projects(args []string) {
 sub report_projects {
 	my($all, $head, $desc) = @_;
 
-	report_header($head, $desc);
+	task.Header($head, $desc);
 
 	my($work_load) = 0;
 	my($proj_cnt) = 0;
@@ -102,3 +103,4 @@ sub report_projects {
 	}
 	print "***** Work Load: $proj_cnt Projects, $work_load action items\n";
 }
+?*/

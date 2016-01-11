@@ -1,15 +1,20 @@
 package main
 
 import "flag"
-import "gtd"
+import "fmt"
 import "os"
+import "path"
+
+import "gtd"
 import "gtd/option"
 import "gtd/task"
 
 
 func usage() {
-	panic(`
-usage: $0 [options] report-cmd [sub-options]
+	cmd := path.Base(os.Args[0])
+
+	fmt.Fprintf(os.Stderr, `
+usage: %s [options] report-cmd [sub-options]
    used to set/query tasks in the gtd database.
 global options:
     -x      -- turn Debug on.
@@ -60,7 +65,7 @@ Meta Info:
 
 Option
 	color	=> none,pri,context,category,hier
-`)
+`, cmd)
 }
 
 var (
@@ -72,20 +77,14 @@ var (
 )
 
 func main() {
+	flag.Usage = usage;
+
 	flag.BoolVar(&main_debug, "x", false, "Turn debugging on")
 
-//?	err := getopts("X:uS:F:H:f:LaAZ:o:T:c:C:D:p:N:s:t:l:r")
-//?	if err {
-//?		usage()
-//?	}
-
-	flag.StringVar(&Zname, "Z", "gtd", "gtd database group (default: test)")
+	Zname := "gtd"
+	flag.StringVar(&Zname, "Z", "test", "gtd database group")
 
 	// db_load_defaults($Zname);
-
-	if main_debug {
-		option.Debug("main")
-	}
 
 	var new bool
 	flag.BoolVar(&new, "n", false, "New item")
@@ -98,7 +97,7 @@ func main() {
 
 	option.Flag("Context", "C")
 	option.Flag("Category", "c")
-	option.Flag("Timeframe", "T")
+	option.Flag("Timeframe", "t")
 
 	option.Flag("Limit", "l") // reports set own defaults
 
@@ -122,10 +121,14 @@ func main() {
 
 	flag.Parse()
 
+	if main_debug {
+		option.Debug("main")
+	}
+
 	task.DB_init(Zname)
 
 	args := flag.Args()
-	cmd := os.Args[0]
+	cmd := path.Base(os.Args[0])
 
 	if new {
 		if cmd == "hier" {
@@ -160,5 +163,6 @@ func main() {
 }
 
 func report(report string, args []string) {
-	gtd.Run_report(report, args)
+	rc := gtd.Run_report(report, args)
+	os.Exit(rc)
 }

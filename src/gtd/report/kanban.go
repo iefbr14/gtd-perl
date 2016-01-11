@@ -33,6 +33,7 @@ NAME:
 
 */
 
+/*?
 
 import "gtd/color";
 import "gtd/meta";
@@ -235,3 +236,4 @@ sub check_title {
 
 	display_task($pref, "\t| !!! no wiki title");
 }
+?*/

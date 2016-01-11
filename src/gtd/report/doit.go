@@ -33,6 +33,7 @@ NAME:
 
 */
 
+/*?
 
 import "gtd/task";
 import "gtd/meta";
@@ -221,3 +222,4 @@ limit :  -- Set the doit limit to this number of items
 
 EOF
 }
+?*/

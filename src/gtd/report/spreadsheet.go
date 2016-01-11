@@ -33,6 +33,7 @@ NAME:
 
 */
 
+/*?
 
 import "gtd/task";
 import "gtd/meta";
@@ -73,7 +74,7 @@ sub load_roles {
 
 		my $pid = $ref->get_tid();
 		my $role = $ref->get_title();
-		$role =~ s/ .*//;
+		$role =~ s= .*==;
 		$role = ucfirst($role);
 		$roles{$role} = $ref;
 	}
@@ -147,3 +148,4 @@ sub get_actions {
 	}
 	return [ $gtitle, $pid, $ptitle, $tid, $title, $hours, $total];
 }
+?*/

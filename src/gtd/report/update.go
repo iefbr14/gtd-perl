@@ -36,6 +36,7 @@ NAME:
 
 //-- Command line update of an action/project
 func Report_update(args []string) {
+}/*?
 	my($task, $desc) = @_;
 
 	unless (defined $task) {
@@ -80,3 +81,4 @@ func Report_update(args []string) {
 
 	$ref->update();
 }
+?*/

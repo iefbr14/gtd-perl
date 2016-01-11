@@ -33,6 +33,7 @@ NAME:
 
 */
 
+/*?
 import "gtd/meta"
 
 my %Count;
@@ -89,7 +90,7 @@ sub report_counts {
 	my($header, $cct) = @_;
 
 	my($tot) = $Total{$cct} || 0;
-	report_header("$header -- $tot");
+	task.Header("$header -- $tot");
 
 	my $hash = $Count{$cct};
 	my(@keys) = sort keys %$hash;
@@ -118,3 +119,4 @@ sub report_counts {
 		printf "= %4d  %2d%s %s\n", $cnt, $id, $dup, $key;
 	}
 }
+?*/

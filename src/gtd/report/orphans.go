@@ -36,16 +36,17 @@ NAME:
 import "strings"
 
 import "gtd/meta"
+import "gtd/task"
 
 //-- list all items without a parent
 func Report_orphans(args []string) {
 	meta.Filter("+any", "^title", "todo")
 
-	list := meta.Pick(args)
+	_ = meta.Pick(args)
 
-	report_header("Orphans", strings.Join(args, " "))
+	task.Header("Orphans", strings.Join(args, " "))
 
-	for ref := range meta.Sorted() {
+	for _,ref := range meta.Sorted() {
 
 		// Values never have parents
 		if ref.Type == 'm' {

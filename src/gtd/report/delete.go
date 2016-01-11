@@ -33,33 +33,29 @@ NAME:
 
 */
 
+import "fmt"
+
 import "gtd/meta"
+import "gtd/task"
 
 //-- Delete listed actions/projects (will orphine items)
 func Report_delete(args ...string) {
-	for tid := range args {
-		ref := meta.Find(tid)
-
-		if ref != nil {
-			fmt.Printf("Task %s doesn't exists\n", tid)
-			continue
-		}
-
-		for child := range ref.Children {
+	for _,ref := range meta.Pick(args) {
+		for _,child := range ref.Children {
 			fmt.Printf("Delete %d first\n", child.Tid)
 			continue
 		}
 
+		tid := ref.Tid
 		ref.Delete()
-		fmt.printf("Task %s deleted\n", tid)
+		fmt.Printf("Task %s deleted\n", tid)
 	}
 }
 
 func delete_hier(tasks []*task.Task) {
-	for tid range tasks {
+	for _,ref := range tasks {
 		delete_hier(ref.Children);
 
 		ref.Delete();
         }
 }
-

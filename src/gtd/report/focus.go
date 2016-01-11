@@ -33,6 +33,7 @@ NAME:
 
 */
 
+/*?
 
 import "gtd/meta";
 import "gtd/task";
@@ -46,7 +47,6 @@ my($Format) = \&focus_summary;
 my($Work_load) = 0;
 my($Proj_cnt) = 0;
 
-my($Dep) = '';   # Project depends on string
 
 //-- List focus -- live, plan or someday
 func Report_focus(args []string) {
@@ -64,12 +64,12 @@ func Report_focus(args []string) {
 
 			my($title) = $ref->get_tid().": ".$ref->get_title();
 
-			report_header(join(' ', "Focus", $title));
+			task.Header(join(' ', "Focus", $title));
 		} else {
-			report_header(join(' ', "Focus", @_));
+			task.Header(join(' ', "Focus", @_));
 		}
 	} else {
-		report_header("Focus Role");
+		task.Header("Focus Role");
 	}
 
 
@@ -88,6 +88,8 @@ func Report_focus(args []string) {
 sub check_task {
 	my($p_ref) = @_;
 	my($deps);
+
+	my($Dep) = '';   # Project depends on string
 
 	my($id) = $p_ref->get_tid(); 
 	printf "X %d %s\n", $id, $p_ref->get_title() if report_debug;
@@ -116,9 +118,9 @@ sub check_task {
 
 	if ($p_ref->get_type() eq 'a') {
 		if ($Dep) {
-			display_rgpa($Dep, "(DEP)");
+			Dep.rgpa("(DEP)");
 			print ("--- ( Depends On ) ----\n");
-			display_rgpa($p_ref, '', 1);
+			display_rgpa($p_ref, "=");
 		} else {
 			display_rgpa($p_ref);
 		}
@@ -141,3 +143,4 @@ sub check_task {
 	}
 	return 0;
 }
+?*/

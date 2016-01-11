@@ -33,6 +33,7 @@ NAME:
 
 */
 
+/*?
 import "gtd/meta";
 import "gtd/task";
 import "gtd/cct";
@@ -244,3 +245,4 @@ sub planner_allocations() {
 	}
 	print "  </allocations>\n";
 }
+?*/

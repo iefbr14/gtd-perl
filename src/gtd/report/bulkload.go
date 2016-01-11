@@ -31,8 +31,6 @@ NAME:
 
 =head1 HISTORY
 
-*/
-
 =head1 Bulk Load Syntax
 
   num:	Id of Roal/Goal/Proj/Action (Tab/Empty for New)
@@ -56,6 +54,7 @@ NAME:
 
 */
 
+/*?
 import "gtd/meta";
 import "gtd/option";
 import "gtd/prompt";
@@ -136,20 +135,20 @@ func Report_bulkload(args []string) {
 			next;
 		}
 
-		if (s/^([a-z]+):\s*//) {
+		if (s=^([a-z]+):\s*==) {
 			chomp;
 			$Info->{$1} = $_;
 			next;
 		}
 
-		if (s/^(\d+)\t[A-Z]:\s*//) {
+		if (s=^(\d+)\t[A-Z]:\s*==) {
 			&$action($parents, $desc);
 			$action = \&add_update;
 			$pid = $1;
 			$parents->{me} = $pid;
 			next;
 		}
-		if (s/^R:\s*//) {
+		if (s=^R:\s*==) {
 			&$action($parents, $desc);
 
 			$pid = find_hier('r', $_);
@@ -157,7 +156,7 @@ func Report_bulkload(args []string) {
 			$parents->{r} = $pid;
 			next;
 		}
-		if (s/^G:\s*//) {
+		if (s=^G:\s*==) {
 			&$action($parents, $desc);
 
 			$pid = find_hier('g', $_);
@@ -169,7 +168,7 @@ func Report_bulkload(args []string) {
 			}
 			next;
 		}
-		if (s/^[P]:\s*//) {
+		if (s=^[P]:\s*==) {
 			&$action($parents, $desc);
 
 			$action = \&add_project;
@@ -179,9 +178,9 @@ func Report_bulkload(args []string) {
 		}
 		// lines that start with bullets or checkboxs:
 		// ie:
-		if (s/^\**\s*\[_*\]\s*//	//    * [_]  title
-		|| s/^\**\s*//			//or  *      title
-		|| s/^\[_*\]\s*//) {		//or  [_]    title
+		if (s=^\**\s*\[_*\]\s*==	//    * [_]  title
+		|| s=^\**\s*==			//or  *      title
+		|| s=^\[_*\]\s*==) {		//or  [_]    title
 			&$action($parents, $desc);
 
 			$action = \&add_action;
@@ -236,7 +235,7 @@ sub add_goal {
 	my($parents, $desc) = @_;
 	my($tid);
 
-	$desc =~ s/^\n*//s;
+	$desc =~ s=^\n*==s;
 
 	$Parent = $parents->{'r'};
 
@@ -249,7 +248,7 @@ sub add_project {
 	my($parents, $desc) = @_;
 	my($tid);
 
-	$desc =~ s/^\n*//s;
+	$desc =~ s=^\n*==s;
 
 	$Parent = $parents->{'g'};
 
@@ -262,7 +261,7 @@ sub add_action {
 	my($parents, $desc) = @_;
 	my($tid);
 
-	$desc =~ s/^\n*//s;
+	$desc =~ s=^\n*==s;
 	$Parent = $parents->{'p'};
 
 	$tid = add_task('a', $desc);
@@ -312,3 +311,4 @@ sub add_task {
 	$ref->insert();
 	return $ref->get_tid();
 }
+?*/

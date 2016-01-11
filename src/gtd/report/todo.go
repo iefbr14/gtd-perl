@@ -33,27 +33,35 @@ NAME:
 
 */
 
-import "gtd/task";
 import "gtd/meta";
 import "gtd/option";
 import "gtd/task";
 
 //-- List high priority next actions
 func Report_todo(args []string) {
-	my($limit) = option("Limit", 10);
+	limit := option.Int("Limit", 10)
 
-	gtd.Meta_filter("+active", '^priority', "priority");
-	my($title) = meta.Desc(args)(@_) || "ToDo Tasks";
+	meta.Filter("+active", "^priority", "priority")
 
-	report_header($title);
+	var title string
+	if len(args) == 0 {
+		title = "ToDo Tasks"
+	} else {
+		title = meta.Desc(args)
+	}
 
-	my($count) = 0;
-	for my $ref (gtd.Meta_sorted("^pri")) {
-		next unless $ref->is_task();	// only actions
-//#FILTER	next if $ref->filtered();		// other filterings
+	task.Header(title, "")
 
-		display_task($ref);
+	count := 0
+	for _,ref := range meta.Sorted() {
+		if !ref.Is_task() {	// only actions
+			continue
+		}
 
-		last if ++$count >= $limit;
+		ref.Display("");
+
+		if count++; count >= limit {
+			break
+		}
 	}
 }

@@ -32,6 +32,7 @@ NAME:
 =head1 HISTORY
 
 */
+/*?
 
 import "gtd/task";
 import "gtd/task";
@@ -64,3 +65,4 @@ sub end_detail {
 
 	print "delete $tid\t# $done -- $title\n";
 }
+?*/

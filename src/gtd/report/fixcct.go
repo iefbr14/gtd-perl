@@ -33,6 +33,7 @@ NAME:
 
 */
 
+/*?
 
 import "gtd/meta";
 
@@ -40,7 +41,7 @@ import "gtd/meta";
 func Report_fixcct(args []string) {
 	my($new_id, $id);
 
-	report_header("Categories");
+	task.Header("Categories");
 	my($Category) = Hier::CCT->use("Category");
 	for my $key (sort $Category->keys()) {
 		$id = $Category->get($key);
@@ -50,7 +51,7 @@ func Report_fixcct(args []string) {
 	
 		sql_fix_cct("category", $id, $new_id, $key);
 	}
-	report_header("Contexts");
+	task.Header("Contexts");
 	my($Context) = Hier::CCT->use("Context");
 	for my $key (sort $Context->keys()) {
 		$id = $Context->get($key);
@@ -61,7 +62,7 @@ func Report_fixcct(args []string) {
 		sql_fix_cct("context", $id, $new_id, $key);
 	}
 	print "\n";
-	report_header("Time Frames");
+	task.Header("Time Frames");
 	my($Timeframe) = Hier::CCT->use("Timeframe");
 	for my $key (sort $Timeframe->keys()) {
 		$id = $Timeframe->get($key) || '';
@@ -99,3 +100,4 @@ sub sql_fix_cct {
 	G_sql("update $itemstatus set $keycol=$new_id where $keycol = $old_id");
 
 }
+?*/

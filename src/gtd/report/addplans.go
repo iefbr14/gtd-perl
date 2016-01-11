@@ -33,8 +33,10 @@ NAME:
 
 */
 
+import "gtd/color"
 import "gtd/meta"
 import "gtd/option"
+import "gtd/task"
 
 /*
 our report_debug = 0;
@@ -46,41 +48,52 @@ my($Proj_cnt) = 0;
 
 //-- add plan action items to unplaned projects
 func Report_addplansp(args []string) {
-	meta.Filter("+live", "^focus", "plan");
-	list = meta.Pick(args);
+	meta.Filter("+live", "^focus", "plan")
+	list := meta.Pick(args)
 
 	limit := 0;
-	if len(list) == 0) {
-		list = meta.Pick("Project");
+	if len(list) == 0 {
+		list = meta.Pick([]string{"Project"});
 		limit = option.Int("Limit", 10);
 	} else {
 		limit = option.Int("Limit", len(list));
 	}
-} /*
-	report_header("Projects needing planning");
+	task.Header("Projects needing planning", "");
 
 	var seen map[int]bool;
 
 	// find all next and remember there focus
 	for len(list) > 0 {
-		my($ref) = shift @List;
+		ref := list[0]
+		list = list[1:]
 
-		my($tid) = $ref->get_tid();
-		next if $Seen{$tid}++;
+		tid := ref.Tid
+		
+		if seen[tid] {
+			continue
+		}
+		seen[tid] = true
 
-		my($reason) = check_task($ref);
-		next unless $reason;
+		reason := check_task(ref)
+		if reason == "" {
+			continue
+		}
 
-		list = append(list, ref.Children);
+		list = append(list, ref.Children...);
 
-		$reason = color("RED") . $reason . color();
-		display_rgpa($ref, "($reason)");
+		reason = color.Join("(",color.On("RED"), reason, color.Off(), ")");
+		ref.Rgpa(reason);
 
-		last if --$Limit <= 0;
+		limit--;
+		if limit <= 0 {
+			break
+		}
 	}
 }
 
-sub check_task {
+func check_task(ref *task.Task) string {
+	return ""
+}/*?
 	my($ref) = @_;
 
 	my($type) = $ref->get_type();
@@ -125,4 +138,4 @@ sub iscomplex {
 	}
 	return 0;
 }
-*/
+?*/

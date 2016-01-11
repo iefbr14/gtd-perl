@@ -63,13 +63,14 @@ sub add_child {
 	$child->set_dirty("parents");
 }
 
-sub orphin_child {
-        my($parent, $child) = @_;
-
-	rel_del($child, parent => $parent);
-	rel_del($parent, child => $child);
-	$child->set_dirty("parents");
+?*/
+func (parent *Task)orphin_child(child *Task) {
+	panic("... code orphin_child");
+//?	rel_del($child, parent => $parent);
+//?	rel_del($parent, child => $child);
+//?	$child->set_dirty("parents");
 }
+/*?
 
 //------------------------------------------------------------------------------
 // access routines but they don't change anything.

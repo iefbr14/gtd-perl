@@ -33,6 +33,7 @@ NAME:
 
 */
 
+/*?
 
 import "gtd/task";
 import "gtd/meta";
@@ -78,3 +79,4 @@ $pid, $pic, $parent,      $tid, $tic, $name,
 		write;
 	}
 }
+?*/

@@ -33,6 +33,8 @@ NAME:
 
 */
 
+/*?
+
 import "gtd/task";
 import "gtd/meta";
 import "gtd/task";
@@ -42,10 +44,10 @@ import "gtd/task";
 //-- list titles for any filtered class (actions/projects etc)
 func Report_items(args []string) {
 	// everybody into the pool by name
-	gtd.Meta_filter("+any", "^title", "item");	
+	meta.Filter("+any", "^title", "item");	
 
-	my($name) = meta.Desc(args)(@_);
-	if ($name) {
+	name := meta.Desc(args);
+	if name != "" {
 		my($want) = type_val($name);
 		if ($want) {
 			$want = 'p" if $want eq "s';
@@ -61,7 +63,7 @@ func Report_items(args []string) {
 sub list_items {	//-- List projects with waiting-fors
 	my($type, $typename) = @_;
 
-	report_header($typename);
+	task.Header($typename);
 
         my($tid, $title, $desc, @list);
         for my $ref (gtd.Meta_matching_type($type)) {
@@ -73,3 +75,4 @@ sub list_items {	//-- List projects with waiting-fors
 		display_task($ref);
         }
 }
+?*/

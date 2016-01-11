@@ -150,7 +150,7 @@ func report_list() {
 sub report_actions {
 	my($all, $head, $desc) = @_;
 
-	report_header($head, $desc);
+	task.Header($head, $desc);
 
 	my($tid, $pid, $pref, $title);
 
@@ -252,3 +252,5 @@ sub has_parent {
 	return $Want{$tid};
 }
 */
+/*?
+?*/

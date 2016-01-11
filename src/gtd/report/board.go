@@ -33,43 +33,49 @@ NAME:
 
 */
 
+import "gtd/meta";
+import "gtd/task";
+
+/*?
 
 import "gtd/color";
-import "gtd/meta";
 import "gtd/option";
-import "gtd/task";
 
 my @Class = qw(Done Someday Action Next Future Total);
 
-our report_debug = 0;
-
 my $Hours_task = 0;
 my $Hours_next = 0;
+*/
 
-my $Lines;
-my $Cols;
-my %Seen;
+var (
+	Lines	int
+	Cols	int
+	Seen	map[*task.Task]bool
+)
 
 func Report_board(args []string) {
 	// counts use it and it give a context
-	gtd.Meta_filter("+active", '^age', "simple");
+	meta.Filter("+active", "^age", "simple");
 
-	my(@list) = gtd.Meta_pick(@_);
+	list := meta.Pick(args);
 
-	if (@list == 0) {
-		@list = gtd.Meta_pick("roles");
+	if len(list) == 0 {
+		list = meta.Pick([]string{"roles"});
 	}
 
-	$Lines = lines();
-	$Cols = int(columns()/4)-(1+5+1);
-	%Seen = ();
+	Lines = task.Lines();
+	Cols = (task.Columns()/4)-(1+5+1);
+	
+	Seen = make(map[*task.Task]bool);
 
 	//## printf "Columns: %s split %s\n", columns(), $Cols;
 
-	check_roles(@list);
-
+	for _,ref := range list {
+		check_a_role(ref);
+	}
 }
 
+/*
 =head
 
 For each role display:
@@ -88,14 +94,8 @@ Purple: overcommited
 
 */
 
-sub check_roles {
-	foreach my $ref (@_) {
-		check_a_role($ref);
-	}
-}
-
-sub check_a_role {
-	my($role_ref) = @_;
+func check_a_role(ref *task.Task) {
+}/*?
 	my(@list) = ($role_ref);
 
 	my(          @want);
@@ -498,3 +498,4 @@ sub calc_class {
 	return 'n' if $ref->is_nextaction();
 	return 'a';
 }
+?*/

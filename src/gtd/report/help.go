@@ -34,6 +34,7 @@ NAME:
 */
 
 import "fmt"
+import "sort"
 
 //-- Help on commands
 func Report_help(args []string) {
@@ -179,23 +180,25 @@ Then by iterating over those items to create momentum.
 	done := false
 	for _, help := range args {
 		if help == "help" {
-			done := true
+			done = true
 			fmt.Println("Help is available for:")
-			for key := range sort_keys(helps) {
-				fmt.Printf("\t%s\n", key.name)
+			for _,name := range sort_keys(helps) {
+				fmt.Printf("\t%s\n", name)
 			}
 			fmt.Println("\nAlso try: help reports")
 			continue
 		}
 
-		if val, ok := helps[help]; ok {
-			done := true
+		val, ok := helps[help]
+		if ok {
+			done = true
 			fmt.Println(val)
 			continue
 		}
 
 		fmt.Printf("Unknown help for %s\n", val)
 	}
+
 	if done {
 		return
 	}
@@ -216,7 +219,6 @@ Then by iterating over those items to create momentum.
 		}
 	*/
 	fmt.Println("? Don't understand help $help, try: help help")
-
 }
 
 func sort_keys(m map[string]string) []string {
@@ -224,5 +226,6 @@ func sort_keys(m map[string]string) []string {
 	for key := range m {
 		keys = append(keys, key)
 	}
-	return sort.Strings(keys)
+	sort.Strings(keys)
+	return keys
 }

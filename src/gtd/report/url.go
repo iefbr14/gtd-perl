@@ -33,6 +33,7 @@ NAME:
 
 */
 
+/*?
 import "gtd/meta";
 import "gtd/task";
 
@@ -54,7 +55,7 @@ func Report_url(args []string) {
 	if (@list == 0) {
 		@Urls = ("Main_Page");
 	}
-	report_header("Tasks", $title);
+	task.Header("Tasks", $title);
 
 	%Seen = ();
 	@Urls = ();
@@ -132,3 +133,4 @@ sub find_url {
 		print "gtd @gtds => wiki @urls\n";
 	}
 }
+?*/

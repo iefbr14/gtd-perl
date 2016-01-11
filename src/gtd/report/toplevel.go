@@ -36,7 +36,7 @@ NAME:
 
 //-- List Values/Visions/Roles
 func Report_toplevel(args []string) {
-	Report_list("Values");
-	Report_list("Visions");
-	Report_list("Roles");
+	Report_list([]string{"Values"});
+	Report_list([]string{"Visions"});
+	Report_list([]string{"Roles"});
 }

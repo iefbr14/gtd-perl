@@ -52,6 +52,7 @@ sub meta_filtered {
 	return @Selected;
 }
 
+
 sub meta_sorted {
 	my($mode) = @_;
 
@@ -68,8 +69,8 @@ sub meta_matching_type {
 	return grep { $_->get_type() eq $type } meta_sorted();
 }
 
-sub meta_all {
-	return Hier::Tasks::all();
+func All() []*Task {
+	return tasks::All();
 }
 
 sub meta_all_matching_type {
@@ -205,6 +206,11 @@ func Argv(args []string) []string {
 
 func Desc(args []string) string {
 	return strings.Join(Argv(args), " ");
+}
+
+func Sorted() []*task.Task {
+	panic("... code meta.Sorted");
+	return nil;
 }
 
 func Pick(args []string) []*task.Task {

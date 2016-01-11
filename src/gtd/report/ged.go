@@ -33,6 +33,7 @@ NAME:
 
 */
 
+/*?
 
 import "gtd/meta";
 import "gtd/option";	// get_today
@@ -399,3 +400,4 @@ sub note {
 	return $res;
 
 }
+?*/

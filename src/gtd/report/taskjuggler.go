@@ -33,6 +33,7 @@ NAME:
 
 */
 
+/*?
 import "gtd/meta";
 import "gtd/option";	// get_today
 import "gtd/task";
@@ -448,3 +449,4 @@ sub dep_path {
 
 
 1;  # don't forget to return a true value from the file
+?*/

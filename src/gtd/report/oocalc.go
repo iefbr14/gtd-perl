@@ -33,6 +33,7 @@ NAME:
 
 */
 
+/*?
 import "gtd/meta";
 import "gtd/task";
 
@@ -61,7 +62,7 @@ sub load_roles {
 
 		my $pid = $ref->get_tid();
 		my $role = $ref->get_title();
-		$role =~ s/ .*//;
+		$role =~ s= .*==;
 		$role = ucfirst($role);
 		$roles{$role} = $ref;
 	}
@@ -346,3 +347,4 @@ sub save_row {
 //	        $Calc->updateCell($Sheet, $line, $col, $value, $string);
 	}
 }
+?*/

@@ -13,6 +13,11 @@ import (
 	"time"
 	"gtd/option"
 //	"gtd/cct"
+
+	"gopkg.in/yaml.v2'
+
+	"database/sql"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 var db_debug bool = false
@@ -549,7 +554,6 @@ func gtd_update(ref *Task) {
 //?	gset_update(ref, "items");
 
 //?	gset_insert_parents(ref, 1);
-//?	ref.dirty = nil
 }
 
 func gtd_fix_maps(ref *Task) {
@@ -635,13 +639,17 @@ func gset_update(ref *Task, table string) {
 	G_sql($sql, @vals);
 }
 
-sub gtd_delete(tid int) {
-	gset_delete(tid, "itemstatus");
-	gset_delete(tid, "items");
-	gset_delete(tid, "lookup");
+?*/
+func gtd_delete(tid int) {
+	panic("... code sac_delete");
 
-	sac_delete(tid);
+//?	gset_delete(tid, "itemstatus");
+//?	gset_delete(tid, "items");
+//?	gset_delete(tid, "lookup");
+
+//?	sac_delete(tid);
 }
+/*?
 
 sub gset_delete(tid int, table string) {
 	table = G_table(table);
@@ -664,10 +672,9 @@ sub sac_update {
 	}
 }
 
-sub sac_create {
-	my($tid, $ref) = @_;
+func sac_create(tid int, ref *Task) {
 
-	G_sql("insert into todo(todo_id) values(?)", $tid);
+	G_sql("insert into todo(todo_id) values(?)", tid);
 	
 	for my $fld (keys %Key_type) {
 		next if $fld eq "todo_id";
@@ -681,11 +688,12 @@ sub sac_create {
 	}
 }
 
-sub sac_delete {
-	my($tid) = @_;
-
-	G_sql("delete from todo where todo_id = ?", $tid);
+?*/
+func sac_delete(tid int) {
+	panic("... code sac_delete");
+//?	G_sql("delete from todo where todo_id = ?", tid);
 }
+/*?
 
 
 //#############################################################################
@@ -716,6 +724,8 @@ func DB_init(confname string) {
 //		confname = "gtd"
 		confname = "gtdtest"
 	}
+
+    db, err := sql.Open("mysql", "astaxie:astaxie@/test?charset=utf8")
 
 //?	my $HOME = $ENV{"HOME"};
 //?	my $conf = LoadFile("$HOME/.todo/Access.yaml");

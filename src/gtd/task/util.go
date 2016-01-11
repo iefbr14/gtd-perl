@@ -32,6 +32,7 @@ var Types = map[string]byte{
 var type_name_map map[byte]string
 
 func init() {
+	type_name_map = make(map[byte]string);
 	for key, val := range Types {
 		type_name_map[val] = key
 	}

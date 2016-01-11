@@ -1,5 +1,13 @@
 package task
 
+func (ref *Task)Display(note string) {
+	panic("... code format.go:task.Display");
+}
+
+func Header(a, b string) {
+	panic("... code format.go:task.Header");
+}
+
 //??	@EXPORT= qw( 
 //?		&report_header &summary_children &summary_line
 //?		&display_mode &display_fd_task &display_task
@@ -515,9 +523,13 @@ my($Prev_role) = 0;
 func header_rpga(fd io.Writer, title string) {
 }
 
-func (ref *Task) display_rgpa(note, nosep string) {
-	if ($nosep) {
-		$Prev_role = 0;
+?*/
+
+func (ref *Task) Rgpa(note string) {
+}/*?
+	if note == "=" {
+		Prev_role = 0;
+		note = ""
 	}
 
 	return unless $ref;

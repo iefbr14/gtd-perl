@@ -33,6 +33,7 @@ NAME:
 
 */
 
+/*?
 //-- Init ~/.todo structure
 func Report_init(args []string) {
 	my($home) = $ENV{HOME};
@@ -70,3 +71,4 @@ EOF
 		print "Please set/verify the values in [gtd] section\n";
 	}
 }
+?*/

@@ -33,6 +33,7 @@ NAME:
 
 */
 
+/*?
 import "gtd/task";
 import "gtd/meta";
 import "gtd/task";
@@ -78,9 +79,9 @@ sub find_list {
 }
 
 sub list_lists {
-	report_header("Lists");
+	task.Header("Lists");
 	disp_list('L', 0);
-	report_header("Checklists");
+	task.Header("Checklists");
 	disp_list('C', 0);
 }
 
@@ -88,7 +89,7 @@ sub list_lists {
 sub list_records {
 	my($list_id, $typename, $desc) = @_;
 
-	report_header($typename, $desc);
+	task.Header($typename, $desc);
 
 	my($pid, $tid, $proj, $type, $f);
 
@@ -146,3 +147,4 @@ sub bulk_display {
 		print "$tag\t$line\n";
 	}
 }
+?*/

@@ -33,6 +33,7 @@ NAME:
 
 */
 
+/*?
 //?	@EXPORT      = qw( &Report_dump &dump_ordered_ref );
 
 import "gtd/task";
@@ -82,7 +83,7 @@ sub dump_list {
 sub list_dump {
 	my($want_type, $typename) = @_;
 
-	report_header($typename);
+	task.Header($typename);
 
 	my($pid, $ref, $proj, $type, $f, $kids, $acts);
 	my($Dates) = '';
@@ -97,3 +98,4 @@ sub list_dump {
 		display_task($ref);
 	}
 }
+?*/

@@ -1,10 +1,16 @@
 package task
 
+func Sort(tasks []*Task) []*Task {
+	return tasks;
+}
+
 //?	@EXPORT      = qw(sort_mode sort_tasks by_task by_goal by_goal_task );
 
 /*
-use Hier::Option;
 
+import "sort"
+
+use Hier::Option;
 
 sub by_hier($$);
 

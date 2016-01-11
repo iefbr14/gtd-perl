@@ -36,14 +36,14 @@ NAME:
 import "fmt"
 
 import "gtd/meta"
-import "gtd/option"
+//? import "gtd/task"
 
 var report_debug = false
 
 //-- No Operation
-func Report_noop(args []string) {
+func Report_noop(args []string) int {
 	if report_debug {
-		fmt.Printf("### Debug noop = %v", debug)
+		fmt.Printf("### Debug noop = %v", report_debug)
 	}
 
 	meta.Filter("+live", "^tid", "tid")
@@ -51,10 +51,11 @@ func Report_noop(args []string) {
 	//list := meta.Pick(args)
 	_ = meta.Pick(args)
 
-	//???	walk := gtd.Walk()
-	//???	walk.Filter()
+	//?	walk := gtd.Walk()
+	//?	walk.Filter()
 
-	if debug {
+	if report_debug {
 		fmt.Printf("noop: %#v\n", args)
 	}
+	return 0
 }

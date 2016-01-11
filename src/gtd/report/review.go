@@ -33,6 +33,7 @@ NAME:
 
 */
 
+/*?
 import "gtd/task";
 import "gtd/meta";
 import "gtd/option";
@@ -120,7 +121,7 @@ sub mode_type {
 sub mode_projects {
 	my($all, $head, $desc) = @_;
 
-	report_header($head, $desc);
+	task.Header($head, $desc);
 
 	my($work_load) = 0;
 	my($proj_cnt) = 0;
@@ -347,7 +348,7 @@ $tid,  $pri, $cat,       $doit,    $desc
 //		next if $gref->hier_filtered();
 
 		if ($List) {
-			$desc =~ s/\n.*//s;
+			$desc =~ s=\n.*==s;
 			print join("\t", $tid, $pri, $cat, $doit, $pname, $task, $desc), "\n";
 		} else {
 			chomp $gname;
@@ -387,3 +388,4 @@ p :    -- priorty :
 EOF
 //limit:  -- Set the doit limit to this number of items
 }
+?*/

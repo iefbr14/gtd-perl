@@ -33,6 +33,7 @@ NAME:
 
 */
 
+/*?
 import (
 	"gtd"
 	"fmt"
@@ -191,3 +192,4 @@ func title(text string) {
 	case MAN:  fmt.Printf(".SH \"%s\"\n", text)
 	} 
 }
+?*/

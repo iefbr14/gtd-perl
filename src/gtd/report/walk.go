@@ -33,6 +33,7 @@ NAME:
 
 */
 
+/*?
 
 import "gtd/meta";
 import "gtd/option";
@@ -178,3 +179,4 @@ sub walk_someday(ref *Task) {
 func walk_active(ref *Task) {
 	ref.IsSomeday = false
 }
+?*/

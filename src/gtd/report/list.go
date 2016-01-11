@@ -33,13 +33,17 @@ NAME:
 
 */
 
+import "strings"
+import "fmt"
+
 import "gtd/meta"
+import "gtd/task"
 
 //-- list titles for any filtered class (actions/projects etc)
 func Report_list(args []string) {
 	meta.Filter("+active", "^title", "title")
 
-	title := string.Join(" ", args)
+	title := strings.Join(args, " ")
 
 	list := meta.Pick(args)
 
@@ -48,9 +52,9 @@ func Report_list(args []string) {
 		return
 	}
 
-	report_header("List", title)
+	task.Header("List", title)
 
-	for ref := range list.Sort_tasks {
-		ref.Display()
-	}
+//?	for _,ref := range list.Sort {
+//?		ref.Display()
+//?	}
 }

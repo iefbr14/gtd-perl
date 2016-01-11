@@ -33,20 +33,12 @@ NAME:
 
 */
 
-
-import "gtd/option";
 import "gtd/meta";
 
 //-- update listed projects/actions doit date to today
 func Report_did(args []string) {
-	for my $tid (@_) {
-		my $ref = meta.Find($tid);
-
-		unless (defined $ref) {
-			print "Task $tid not found to tag done\n";
-			next;
-		}
-		$ref->set_doit(get_today());
-		$ref->update();
+	for _, ref := range meta.Pick(args) {
+//?		ref.Set_doit(get_today());
+		ref.Update();
 	}
 }
