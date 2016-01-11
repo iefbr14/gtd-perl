@@ -210,7 +210,7 @@ sub check_a_role {
 	for my $ick (@ick) {
 		print_color('CYAN');
 		print "I: "; display_task($ick, '(ick)'); 
-		print_color
+		print_color("");
 	}
 
 	for my $test (@test) {

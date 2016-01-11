@@ -533,9 +533,13 @@ sub header_rgpa {
 }
 
 sub display_rgpa {
-	my($ref, $note, $nosep) = @_;
-	if ($nosep) {
+	my($ref, $note) = @_;
+
+	$note ||= "";
+
+	if ($note eq '=') {
 		$Prev_role = 0;
+		$note = '';
 	}
 
 	return unless $ref;
@@ -784,7 +788,7 @@ sub disp_rgpa {
 	my($old) = $Display;
 	$Display = \&disp_simple;
 
-	display_rgpa($ref, $extra, '');
+	display_rgpa($ref, $extra);
 
 	$Display = $old;
 }

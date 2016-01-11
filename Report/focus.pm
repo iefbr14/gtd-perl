@@ -132,7 +132,7 @@ sub check_task {
 		if ($Dep) {
 			display_rgpa($Dep, '(DEP)');
 			print ("--- ( Depends On ) ----\n");
-			display_rgpa($p_ref, '', 1);
+			display_rgpa($p_ref, '=');
 		} else {
 			display_rgpa($p_ref);
 		}

@@ -109,9 +109,11 @@ sub color {
 
 	if ($Type == 3) {
 		unless ($fg) {
-			print "</font>" if $Incolor;
-			$Incolor = 0;
-			return;
+			if ($Incolor) {
+				$Incolor = 0;
+				return "</font>"
+			}
+			return "";
 		}
 
 		$fg = lc($fg);

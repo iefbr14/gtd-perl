@@ -39,7 +39,7 @@ my($Category, $Context, $Timeframe, $Tags);
 # x2 => use youngest
 # x3 => used oldest
 # 0x => virtual
-# 1x => in todo
+# 1x => in gtd_todo
 # 2x => in gtd
 # 3x => in both
 my(%Key_type) = (
@@ -110,7 +110,7 @@ sub metafix {
 		$tid = $ref->get_tid();
 
 		$only = $ref->{_todo_only};
-		if ($only == 1) {	# only in todo (gtd deleted it)
+		if ($only == 1) {	# only in gtd_todo (gtd deleted it)
 			warn "Need delete: $tid\n" if $Debug;
 			dump_task($ref);
 			$ref->delete();
@@ -190,7 +190,7 @@ sub set {
 # gtd_tagmap         |
 # gtd_timeitems      |
 # gtd_version        |
-# todo               <<< this one is mine
+# gtd_todo           <<< this one is mine
 
 sub load_gtd {
 	my($ref, $row, $tid);
@@ -385,7 +385,7 @@ sub gtdmap {
 			return;
 		}
 		unless ($val) {
-			die "Can't create todo whith todo_id=$val for table $Table\n";
+			die "Can't create gtd_todo with todo_id=$val for table $Table\n";
 		}
 		warn "Hard Need Create $val\n" if $Debug;
 		$Current_ref = Hier::Tasks->New($val);
@@ -658,11 +658,11 @@ sub sac_update {
 
 	my($tid) = $ref->{todo_id};
 	for my $fld (keys %Key_type) {
-		next unless $Key_type{$fld} & 0x10;		# in todo db
+		next unless $Key_type{$fld} & 0x10;		# in gtd_todo db
 		next unless defined $ref->{$fld};
 		next unless $ref->get_dirty($fld);
 
-		my($sql) = "update todo set $fld = ? where todo_id = ?";
+		my($sql) = "update gtd_todo set $fld = ? where todo_id = ?";
 		G_sql($sql, $ref->{$fld}, $tid);
 	}
 }
@@ -670,16 +670,16 @@ sub sac_update {
 sub sac_create {
 	my($tid, $ref) = @_;
 
-	G_sql("insert into todo(todo_id) values(?)", $tid);
+	G_sql("insert into gtd_todo(todo_id) values(?)", $tid);
 	
 	for my $fld (keys %Key_type) {
 		next if $fld eq 'todo_id';
-		next unless $Key_type{$fld} & 0x10;	# in todo db
+		next unless $Key_type{$fld} & 0x10;	# in gtd_todo db
 		next unless defined $ref->{$fld};
 
 		next unless $ref->get_dirty($fld);
 
-		my($sql) = "update todo set $fld = ? where todo_id = ?";
+		my($sql) = "update gtd_todo set $fld = ? where todo_id = ?";
 		G_sql($sql, $ref->{$fld}, $tid);
 	}
 }
@@ -687,7 +687,7 @@ sub sac_create {
 sub sac_delete {
 	my($tid) = @_;
 
-	G_sql("delete from todo where todo_id = ?", $tid);
+	G_sql("delete from gtd_todo where todo_id = ?", $tid);
 }
 
 
@@ -746,7 +746,7 @@ sub DB_init {
 	$GTD = DBI->connect("dbi:mysql:dbname=$dbname;host=$host", $user, $pass);
 	die "confname=$confname;dbname=$dbname;host=$host;user=$user;pass=$pass\n" unless $GTD;
 
-	option('Changed', G_val('todo', 'max(modified)'));
+	option('Changed', G_val('gtd_todo', 'max(modified)'));
 
 #warn "Start ".localtime()."\n";
 	load_meta();
@@ -763,7 +763,7 @@ sub G_table {
 }
 
 sub T_select {
-	my($sql) = "select * from todo";
+	my($sql) = "select * from gtd_todo";
 
 	my($sth) = $GTD->prepare($sql);
 	my($rv) = $sth->execute();
@@ -846,7 +846,7 @@ sub G_renumber {
         G_sql("update gtd_lookup set parentId=$new where parentId=$tid");
         G_sql("update gtd_tagmap set itemId=$new where itemId=$tid");
 
-	G_sql("update todo set todo_id = ? where todo_id = ?", $new, $tid);
+	G_sql("update gtd_todo set todo_id = ? where todo_id = ?", $new, $tid);
 
         for my $table (@list) {
                 G_sql("update gtd_$table set itemId=$new where itemId=$tid");
