@@ -2,6 +2,7 @@ package task
 
 import (
 	"fmt"
+	"log"
 	"time"
 )
 
@@ -11,11 +12,12 @@ var Max_todo int    // Last todo id (unique for all tables)
 
 type Task struct {
 	Tid      int
-	Type 	byte
+	Type 	 byte
+	State 	 byte
 
-	Title      string
+	Title       string
 	Description string
-	Note       string
+	Note        string
 
 	Category    string
 	Context     string
@@ -23,26 +25,29 @@ type Task struct {
 	Doit        time.Time
 	Due         time.Time
 	Completed   time.Time
-	Effort      time.Duration
+	Effort      int
+	Percent     int
 
-	Priority   int
+	Priority    int
 	IsSomeday   bool
 	Later       time.Time
 	IsNextaction bool
 
-	Created     time.Time
+	Created    time.Time
 	Modified   time.Time
+
+	Recur    string
+	Rdesc    string
 
 	live       bool
 	mask       uint
 
 	Tickledate time.Time
 	Timeframe  []time.Time
-	todo_only  bool
 
 	Resource []string
 	Hint     []string
-	Tags	[]string
+	Tags	 []string
 
 	Depends     []* Task
 	Parents     []* Task
@@ -50,6 +55,8 @@ type Task struct {
 
 	dirty map[string]bool
 }
+
+type Tasks []*Task;
 
 func init() {
 	Done = make(chan *Task)
@@ -79,20 +86,21 @@ func (ref *Task) Dirty() bool {
 }
 
 // all Todo items (including Hier)
-var Tasks map[int]*Task
+var all_Tasks = map[int]*Task {}
 
+// lookup up a task
 func Find(tid int) *Task {
-	if task, ok := Tasks[tid]; ok {
+	if task, ok := all_Tasks[tid]; ok {
 		return task
 	}
-	fmt.Printf("Can't find task id %d\n", tid);
+	fmt.Printf("Can't find task id %d\n", tid)
 	return nil
 }
 
 func All() []*Task {
-	v := make([]*Task, len(Tasks))
+	v := make([]*Task, len(all_Tasks))
 	idx := 0
-	for _, value := range Tasks {
+	for _, value := range all_Tasks {
 		v[idx] = value
 		idx++
 	}
@@ -100,8 +108,8 @@ func All() []*Task {
 }
 
 func New(tid int) *Task {
-	if tid > 0 && Tasks[tid] != nil {
-		panic("Task $tid exists won't create it.")
+	if tid > 0 && all_Tasks[tid] != nil {
+		log.Fatal("Task %d exists won't create it.", tid)
 	}
 	var self Task
 
@@ -119,7 +127,7 @@ func New(tid int) *Task {
 
 	self.Tid = tid
 
-	Tasks[tid] = &self // keep track of new task
+	all_Tasks[tid] = &self // keep track of new task
 
 	return &self
 }
@@ -138,87 +146,97 @@ func Max() int {
 // Package Dirty
 //
 func (self *Task) Is_dirty() bool {
-	return self.dirty != nil;
+	return self.dirty != nil
 }
 
-/*
-sub get_dirty {
-	my($self,$field) = @_;
-
-	return 0 unless defined $self->{_dirty};
-	return defined $self->{_dirty}{$field};
+func (self *Task)get_dirty(field string) bool {
+	if self.dirty == nil {
+		return false
+	}
+	
+	return self.dirty[field]
 }
 
 func (self *Task) set_dirty(field string) *Task {
-
-	self.dirty[field] = true;
-	return self;
+	if self.dirty == nil {
+		self.dirty = make(map[string]bool)
+	}
+	self.dirty[field] = true
+	return self
 }
 
 func (self *Task) clean_dirty() *Task {
-
 	self.dirty = nil
-	return self;
+	return self
 }
 
-?*/
 func (self *Task) Delete()  {
 	tid := self.Tid
 
-	delete(Tasks, tid)
+	delete(all_Tasks, tid)
 
 	// remove my children from self
 	for _,child := range self.Parents {
-		self.orphin_child(child);
+		self.orphin_child(child)
 	}
-	self.Update();
 
 	// remove self from my parents
 	for _,parent := range self.Parents {
-		parent.orphin_child(self);
-		parent.Update();
+		parent.orphin_child(self)
+		parent.Update()
 	}
 
-
-	// commit suicide
-	sac_delete(tid);
 	gtd_delete(tid);	// remove from database
-
-	//##BUG### need to reflect back database changed.
-	//##G_sql("update");
-	return;
 }
 
 //------------------------------------------------------------------------------
 
 /*?
 sub default {
-	my($val, $default) = @_;
+	my($val, $default) = @_
 
-	return $default unless defined $val;
+	return $default unless defined $val
 
-	return '" if $val eq "0000-00-00';
-	return '" if $val eq "0000-00-00 00:00:00';
+	return '" if $val eq "0000-00-00'
+	return '" if $val eq "0000-00-00 00:00:00'
 
-	return $val;
+	return $val
 }
 
 func (self *Task)get_KEY(key string) string {
 	switch key {
-	case "tid": return fmt.Sprintf("%d", self.Tid);
-	case "type": return fmt.Sprintf("%c", self.Type);
+	case "tid": return fmt.Sprintf("%d", self.Tid)
+	case "type": return fmt.Sprintf("%c", self.Type)
 	
-	case "title"
+	case "title": return self.Title
 
+	"todo_id"       => "itemId")
+	"modified"      => "lastModified")
+	"created"       => "dateCreated")
+	"completed"     => "dateCompleted")
+	"type"          => "type")
+	"_gtd_category" => "categoryId")
+
+	"isSomeday"     => "isSomeday")
+	"_gtd_context"  => "contextId")
+	"_gtd_timeframe"=> "timeframeId")
+	"due"           => "deadline")
+	"nextaction"    => "nextaction")
+	"tickledate"    => "tickledate")
+	default: panic("Unknown key %s key", key)
 	}
-	panic("Unknown key %s key", key);
 }
 
 func (self *Task)set_KEY(key string, val string) {
 	switch key {
-	case "tid": self.Tid = strconv.Int(val, 10, 32);
+	case "tid":   self.Tid = strconv.Atoi(val)
+	case "type":  self.Type = val[0]
+	case "title": self.Title = val
+	case "parents": self.set_parent_ids(val)
+	default:
+		
 	}
-	panic("Unknown key %s key", key);
+	panic("Unknown key %s key", key)
 }
 
 
@@ -252,8 +270,8 @@ sub get_type         { my($self) = @_; return default($self->{type}, '?'); }
 sub get_resource     { my($self) = @_; return default($self->{resource}, ''); }
 sub get_hint         { my($self) = @_; return default($self->{_hint}, ''); }
 
-sub get_focus { return Hier::Sort::calc_focus(@_)};
-sub get_panic { return Hier::Sort::calc_panic(@_)};
+sub get_focus { return Hier::Sort::calc_focus(@_)}
+sub get_panic { return Hier::Sort::calc_panic(@_)}
 
 sub set_category     {return dset("category", @_); }
 sub set_completed    {return dset("completed", @_); }
@@ -285,59 +303,59 @@ sub set_hint         {return dset("_hint", @_); }
 sub hint_resource    {return clean_set("resource", @_); }
 
 sub set_tid          {
-	my($ref, $new) = @_;
+	my($ref, $new) = @_
 
-	my $tid = $ref->get_tid();
+	my $tid = $ref->get_tid()
 
 	if (defined $Task{$new}) {
-		panic("Can't renumber tid $tid => $new (already exists)");
+		panic("Can't renumber tid $tid => $new (already exists)")
 	}
 
 	if ($ref->is_dirty()) {
 		// make sure the rest of the object is clean
-		$ref->update();
+		$ref->update()
 	}
 
-	Hier::Db::G_renumber($ref, $tid, $new);
+	Hier::Db::G_renumber($ref, $tid, $new)
 
-        $Task{$new} = $Task{$tid};
-        delete $Task{$tid};
+        $Task{$new} = $Task{$tid}
+        delete $Task{$tid}
 }
 
 sub clean_set {
-	my($field, $ref, $val) = @_;
+	my($field, $ref, $val) = @_
 
 	unless (defined $val) {
-		panic("Won't set $field to undef");
+		panic("Won't set $field to undef")
 	}
 
 
-	$ref->{$field} = $val;
-	return $ref;
+	$ref->{$field} = $val
+	return $ref
 }
 
 sub get_tags {
-        my ($ref) = @_;
+        my ($ref) = @_
 
-        my $hash = $ref->{_tags};
+        my $hash = $ref->{_tags}
 
 	
-        return sort {$a cmp $b} keys %$hash;
+        return sort {$a cmp $b} keys %$hash
 }
 sub disp_tags {
-        my ($ref) = @_;
+        my ($ref) = @_
 
-        return join(',', $ref->get_tags());
+        return join(',', $ref->get_tags())
 }
 sub set_tags {
-	my($self) = shift @_;
+	my($self) = shift @_
 
-	$self->{_tags} = {};
+	$self->{_tags} = {}
 
 	foreach my $tag (@_) {
-		$self->{_tags}{$tag}++;
+		$self->{_tags}{$tag}++
 	}
-	return $self;
+	return $self
 }
 
 //
@@ -345,165 +363,165 @@ sub set_tags {
 //
 sub set_KEY { my($self, $key, $val) = @_;  return dset($key, $self, $val); }
 sub dset {
-	my($field, $ref, $val) = @_;
+	my($field, $ref, $val) = @_
 
 	if ($field eq "Parents") {
-		$ref->set_parent_ids($val);
-		return;
+		$ref->set_parent_ids($val)
+		return
 	}
 	if ($field eq "Children") {
-		$ref->set_children_ids($val);
-		return;
+		$ref->set_children_ids($val)
+		return
 	}
 	if ($field eq "Tags") {
 		//##BUG### tag setting not done yet
-		panic("Can't set tags yet");
+		panic("Can't set tags yet")
 	}
 
 
 //	unless (defined $val) {
-//		panic("Won't set $field to undef\n");
+//		panic("Won't set $field to undef\n")
 //	}
 
 	// skip setting if already set that way!
 	return $ref if defined($ref->{$field}) && defined($val)
-		    && $ref->{$field} eq $val;
+		    && $ref->{$field} eq $val
 
-	$ref->{$field} = $val;
+	$ref->{$field} = $val
 
 	return $ref if ($field eq "_hint"); # don't drop into dirty
 
-	$ref->{_dirty}{$field}++;
+	$ref->{_dirty}{$field}++
 
-	my($warn_val) = $val || '';
+	my($warn_val) = $val || ''
 	if option.Debug("tasks") {
 		warn "Dirty $field => $warn_val\n"
 	}
 
-	return $ref;
+	return $ref
 }
 
 */
 
 func (self *Task) Update() {
-	gtd_update(self);
+	gtd_update(self)
 	self.dirty = nil
 }
 
 func clean_up_database() {
 	// show what should have been updated.
-//***BUG***	option.Set_debug("tasks");
+//***BUG***	option.Set_debug("tasks")
 
 	for tid, ref := range All() {
 		if !ref.Is_dirty() {
 			continue
 		}
 
-		fmt.Printf("Dirty: %s\n", tid);
-		ref.Update();
+		fmt.Printf("Dirty: %s\n", tid)
+		ref.Update()
 	}
 }
 
 /*
 func reload_if_needed_database() {
-	my($changed) = option("Changed");
-	my($cur) = Hier::Db::G_val("itemstatus", 'max(lastModified)');
+	my($changed) = option("Changed")
+	my($cur) = Hier::Db::G_val("itemstatus", 'max(lastModified)')
 
 	if ($cur ne $changed) {
-		print "Database changed from $changed => $cur\n";
+		print "Database changed from $changed => $cur\n"
 		//##BUG### reload database
-		set_option("Changed", $cur);
+		set_option("Changed", $cur)
 	}
 }
 
 func init {
 	go func() {
 		<-Done
-		clean_up_database();
+		clean_up_database()
 	}()
 }
 
 
 sub is_later {
-	my($ref) = @_;
+	my($ref) = @_
 
-	my($tickle) = $ref->get_tickledate();
+	my($tickle) = $ref->get_tickledate()
 
-	return 0 unless $tickle;
+	return 0 unless $tickle
 	return 0 if $tickle lt get_today();	// tickle is after today
 
-	return 1;
+	return 1
 }
 
 sub is_someday {
-	my($ref) = @_;
+	my($ref) = @_
 
-	return 1 if $ref->is_later();
-	return 1 if $ref->get_isSomeday() eq 'y';
+	return 1 if $ref->is_later()
+	return 1 if $ref->get_isSomeday() eq 'y'
 
-	return 0;
+	return 0
 }
 
 sub is_active {
-	my($ref) = @_;
+	my($ref) = @_
 
-	return 0 if $ref->is_someday();
-	return 0 if $ref->get_completed();
+	return 0 if $ref->is_someday()
+	return 0 if $ref->get_completed()
 
-	return 1;
+	return 1
 }
 
 sub is_completed {
-	my($ref) = @_;
+	my($ref) = @_
 
-	return 1 if $ref->get_completed();
-	return 0;
+	return 1 if $ref->get_completed()
+	return 0
 }
 
 
 sub is_nextaction {
-	my($ref) = @_;
+	my($ref) = @_
 
-	return 0 if $ref->is_someday();
-	return 0 if $ref->get_completed();
-	return 1 if $ref->get_nextaction() eq 'y';
+	return 0 if $ref->is_someday()
+	return 0 if $ref->get_completed()
+	return 1 if $ref->get_nextaction() eq 'y'
 
-	return 0;
+	return 0
 }
 
 // used by Hier::Walk to track depth of the current walk
 sub set_level {
-	my($self, $level) = @_;
+	my($self, $level) = @_
 
-	panic("set_level missing level value") unless defined $level;
+	panic("set_level missing level value") unless defined $level
 
-	// now remember our level;
-	$self->{_level} = $level;
+	// now remember our level
+	$self->{_level} = $level
 }
 
 sub level {
-	my($self) = @_;
+	my($self) = @_
 
-	my($level) = $self->{_level};
+	my($level) = $self->{_level}
 
 	// we have alread defined it, return it.
-	return $level if defined $level;
-	panic("level not set correctly?");
+	return $level if defined $level
+	panic("level not set correctly?")
 }
 
 sub get_state {
-	my($self) = @_;
+	my($self) = @_
 
-	my($state) = default($self->{state}, '-');
+	my($state) = default($self->{state}, '-')
 
 	if ($self->get_type() eq 'w') {
 		if ($state != 'w') {
-			$self->set_state('w');
-			$state = 'w';
+			$self->set_state('w')
+			$state = 'w'
 		}
 	}
 
-	return $state;
+	return $state
 }
 
 */

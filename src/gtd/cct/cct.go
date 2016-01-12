@@ -1,47 +1,69 @@
 package cct
 
+import "log"
+
+var cct_debug bool = false
+
+type CCT struct {
+	name map[int]string
+	desc map[int]string
+	id   map[string]int
+}
+
 var (
 
 	// mapping  Category Id   => Category Name
-	Categories	map[int]string
+	Categories CCT
 
 	// mapping  Context Id    => Context Name
-	Contexts	map[int]string
+	Contexts CCT
 
 	// mapping  Timreframe Id => Timreframe Name
-	Timeframes	map[int]string
+	Timeframes CCT
 
 	// mapping  Tag Id        => Tag Name
-	Tags	map[int]string
+	Tags CCT
 )
 
-/*
-var Maps map[string]map[int]string {
-	"Category"  : Categories,
-	"Context"   : Contexts,
-	"TimeFrame" : Timeframes,
-	"Tag"       : Tags,
+var maps = map[string]CCT{
+	"Category":  Categories,
+	"Context":   Contexts,
+	"Timeframe": Timeframes,
+	"Tags":      Tags,
 }
 
-sub use {
-	my($self, $type) = @_;
+func table(mapname string) *CCT {
+	if cct, ok:= maps[mapname]; ok {
+		return &cct
+	}
 
-	my $ref = _table($type);
-
-	bless $ref;
-	return $ref;
+	panic("Unknown CCT table type: "+mapname);
 }
 
-sub define {
-	my($ref, $key, $val) = @_;;
 
-	confess("key undefined") unless defined $key;
-	$ref->{$key} = $val;
+func Use(mapname string) *CCT {
+	if cct_debug {
+		log.Printf("cct.Use(%s): %v", mapname, table(mapname));
+	}
+	cct := table(mapname);
+
+	if cct.name == nil {
+		cct.name = make(map[int]string);
+		cct.desc = make(map[int]string);
+		cct.id = make(map[string]int);
+	}
+	return cct;
 }
 
-sub set {
-	my($ref, $key, $val) = @_;;
+func (cct *CCT) Define(id int, name,desc string) {
+	//***BUG*** we should check to see if already defined!
+	cct.name[id] = name
+	cct.desc[id] = desc
+	cct.id[name] = id
+}
 
+/*?
+func (cct *CCT) Set(key int, val string) {
 	unless ($val) {
 		$val = 1;
 		foreach my $table_value (values(%$ref)) {
@@ -58,7 +80,7 @@ sub set {
 	}
 }
 
-sub get {
+func (cct *CCT) Get(int) {
 	my($hash, $val) = @_;
 
 	return unless defined $val;
@@ -66,9 +88,8 @@ sub get {
 	return $hash->{$val};
 }
 
-sub keys {
-	my($type) = @_;
-
+func keys(mapname string) []string {
+	cct := table(mapname);
 	if (ref $type) {
 		return keys %$type;
 	}
@@ -76,7 +97,7 @@ sub keys {
 	return keys %$ref;
 }
 
-sub name {
+func Name(val int) {
 	my($ref, $val) = @_;
 
 	//##BUG### $CCT->name is horibly expensive
@@ -85,22 +106,7 @@ sub name {
 	return $rev{$val};
 }
 
-sub rename {
-	my($ref, $key, $newname) = @_;
-
+func (cct *CCT)Rename(key, newname string) {
 	panic("###BUG### Can't rename $key => $newname");
-}
-
-sub _table {
-	my($type) = @_;
-
-	$type = lc($type);
-
-	return Categories if $type eq "category";
-	return Contexts   if $type eq "context";
-	return Timeframes if $type eq "timeframe";
-	return Tags       if $type eq "tag";
-
-	panic("Unknown CCT table type: $type");
 }
 */

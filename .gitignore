@@ -8,3 +8,5 @@ Test/gtd.db.gz
 User/
 Programmer/
 
+src/vendor
+src/main

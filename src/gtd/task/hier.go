@@ -1,99 +1,80 @@
 package task
 
-/*
-sub rel_add {
-	my($obj, $rel, $target) = @_;
+import "log"
+import "sort"
+import "strings"
+import "strconv"
 
-	my($id) = $target->get_tid();
+func rel_add(list Tasks, task *Task) Tasks {
+	list = rel_del(list, task);
+	list = append(list, task);
 
-	$obj->{"_${rel}_"}->{$id} = $target;
-
-	my($rel_ref) = $obj->{"_${rel}_"};
-
-	my @keys  = sort { $a <=> $b } keys %$rel_ref;
-	my @vals  = map { $rel_ref->{$_} } @keys;
-
-	$obj->{"_${rel}_keys"} = [ @keys ];
-	$obj->{"_${rel}_vals"} = [ map { $rel_ref->{$_} } @keys ];
-
+	sort.Sort(list)
+	return list;
 }
 
-sub rel_del {
-	my($obj, $rel, $target) = @_;
-
-	my($id) = $target->get_tid();
-
-	my($rel_ref) = $obj->{"_${rel}_"};
-
-	delete $rel_ref->{$id};
-
-	my @keys  = sort { $a <=> $b } keys %$rel_ref;
-	my @vals  = map { $rel_ref->{$_} } @keys;
-
-	$obj->{"_${rel}_keys"} = [ @keys ];
-	$obj->{"_${rel}_vals"} = [ map { $rel_ref->{$_} } @keys ];
-}
-
-sub rel_keys {
-	my($rel, $obj) = @_;
-
-	return unless defined $obj->{"_${rel}_keys"};
-
-	return @{$obj->{"_${rel}_keys"}};
-}
+func rel_del(list Tasks, task *Task) Tasks{
+	last := len(list)-1
 	
-sub rel_vals {
-	my($rel, $obj) = @_;
+	// just return the empty list if already empty
+	if last < 0 {
+		return list
+	}
 
-	confess unless ref $obj;
+	for i, t := range list {
+		if t == task {
+			list[i] = list[last]
+			list[last]= nil
 
-	return unless defined $obj->{"_${rel}_vals"};
-
-	return @{$obj->{"_${rel}_vals"}};
+			return list[:last]
+		}
+	}
+	return list;
 }
 
 //------------------------------------------------------------------------------
 // core routines.  Only these add/remove relationships
 //
-sub add_child {
-        my($parent, $child) = @_;
+func (parent *Task)add_child(child *Task) {
+	child.Parents   = rel_add(child.Parents, parent);
+	parent.Children = rel_add(parent.Children, child);
 
-	rel_add($child, parent => $parent);
-	rel_add($parent, child => $child);
-	$child->set_dirty("parents");
+	child.set_dirty("parents");
 }
 
-?*/
 func (parent *Task)orphin_child(child *Task) {
-	panic("... code orphin_child");
-//?	rel_del($child, parent => $parent);
-//?	rel_del($parent, child => $child);
-//?	$child->set_dirty("parents");
+	child.Parents = rel_del(child.Parents, parent);
+	parent.Children = rel_del(parent.Children, child);
+
+	child.set_dirty("parents");
 }
-/*?
+
 
 //------------------------------------------------------------------------------
 // access routines but they don't change anything.
 
-sub get_parents {
-	return rel_vals(parent => $_[0]);
+func (t *Task) Parent_ids() []int {
+	list := make([]int, len(t.Parents), 0);
+	for _, t := range t.Parents {
+		list = append(list, t.Tid);
+	}
+	sort.Ints(list)
+	return list
 }
 
-sub get_children {
-	return rel_vals(child => $_[0]);
-}
-
-sub parent_ids {
-	return rel_keys(parent => $_[0]);
-}
-
-sub children_ids {
-	return rel_keys(child => $_[0]);
+func (t *Task) Children_ids() []int {
+	list := make([]int, len(t.Children), 0);
+	for _, t := range t.Children {
+		list = append(list, t.Tid);
+	}
+	sort.Ints(list)
+	return list
 }
 
 //------------------------------------------------------------------------------
 // helper routines they do useful things, but don't know interals
 
+/*?
 sub count_children {
 	my(@children) = get_children(@_);
 
@@ -164,43 +145,48 @@ sub has_parent_id {
 	}
 	return 0;
 }
+?*/
 
 //------------------------------------------------------------------------------
-//# set_parent_ids is used by dset in Tasks.pm
+// set_parent_ids is used by dset in Tasks.pm
 //
-sub set_parent_ids {
-        my($self, $val) = @_;
+func (self *Task) set_parent_ids(val string) {
+	pids := strings.Split(val, ",");
 
-	my(@pid) = split(',', $val);	// parent ids
-	my(%pid);			// parent ids => parent ref
+	var pid_map map[int]*Task
 
 	// find my new parents
-	for my $pid (@pid) {
-		my $p_ref = Hier::Tasks::find($pid);
-		unless ($p_ref) { # opps not a real parent
-			warn "No parent id: $pid\n";
-			next;
+	for _, pid_s := range pids {
+		pid, _ := strconv.Atoi(pid_s)
+		p := Find(pid);
+		if p == nil { 	// opps not a real parent
+			log.Printf("No parent id: %d\n", pid);
+			continue;
 		}
 
-		$pid{$pid} = $p_ref;
+		pid_map[pid] = p
 	}
 
 	// keep parent if already have that one, it otherwise disown it.
-	for my $ref (rel_vals(parent => $self)) {
-		my $pid = $ref->get_tid();
-		if (defined $pid{$pid}) {
-			delete $pid{$pid};	// keeping this one.
+	for _,ref := range self.Parents {
+		pid := ref.Tid
+
+		if _, ok := pid_map[pid]; ok {
+			// keeping this one.
+			delete(pid_map, pid);
 		} else {
 			// disown parent
-			$ref->orphin_child($self);
+			ref.orphin_child(self);
 		}
 	}
+
 	// for my new parents add self as thier child
-	for my $pref (values %pid) {
-		add_child($pref, $self);
+	for _, pref := range pid_map {
+		pref.add_child(self);
 	}
 }
 
+/*?
 sub set_children_ids {
         my($self, $val) = @_;
 
@@ -234,4 +220,5 @@ sub set_children_ids {
 	}
 }
 
-*/
+?*/
+

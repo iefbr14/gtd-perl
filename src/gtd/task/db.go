@@ -1,7 +1,7 @@
 package task
 
 
-//	@EXPORT      = qw(&DB_init &set &gtd_insert &gtd_update);
+//	@EXPORT      = qw(&DB_init &set &gtd_insert &gtd_update)
 
 
 //==============================================================================
@@ -10,7 +10,12 @@ package task
 
 import (
 	"fmt"
+	"log"
+	"os"
 	"time"
+
+	"encoding/json"
+
 	"gtd/option"
 	"gtd/cct"
 
@@ -23,165 +28,33 @@ import (
 var db_debug bool = false
 var MetaFix  bool = false
 
-/*
-use DBI;
-use YAML::Syck qw(LoadFile);
-use Data::Dumper;
+var Prefix string = "gtd_"
+
+var db_Table string = ""
+
+/*?
+use DBI
+use YAML::Syck qw(LoadFile)
+use Data::Dumper
 
 my $Current_ref;	// current gtd mapped item
 
-my $Table;
+my $Table
 
-my($Category, $Context, $Timeframe, $Tags);
+func (t *Task)Set(field string, value string) {
+	tid := t.Tid
 
-// how to handle key
-// x1 => normal
-// x2 => use youngest
-// x3 => used oldest
-// 0x => virtual
-// 1x => in todo
-// 2x => in gtd
-// 3x => in both
-my(%Key_type) = (
-	todo_id         => 0x31,
-	category        => 0x11,
-	task            => 0x31,
-	children        => 0x01,
-	priority        => 0x11,
-	description     => 0x31,
-	note            => 0x31,
-
-	created         => 0x32,	// youngest
-	modified        => 0x33,	// oldest
-
-	due             => 0x32,	// youngest
-	completed       => 0x33,	// oldest
-
-	recur		=> 0x21,
-	recurdesc	=> 0x21,
-
-	_gtd_category	=> 0x21,
-	isSomeday	=> 0x21,
-	nextaction	=> 0x21,
-	tickledate	=> 0x21,
-	timeframe	=> 0x01,
-	_gtd_timeframe	=> 0x21,
-	context		=> 0x01,
-	_gtd_context	=> 0x21,
-
-	type            => 0x21,
-	doit            => 0x11,
-	effort		=> 0x11,
-	"state"		=> 0x11,
-	resource	=> 0x11,
-	depends         => 0x11,
-	percent         => 0x11,
-
-	_hint		=> 0x01,	// resource hint
-);
-
-sub load_meta {
-	my($row, $tid, $ref);
-
-	my($sth) = T_select();
-	while ($row = $sth->fetchrow_hashref) {
-		$tid = $row->{todo_id};
-
-		$ref = Hier::Tasks->new($tid);
-		$ref->{_todo_only} = 0x01;
-
-		delete $row->{todo_id};
-
-		foreach my $key (keys %$row) {
-			cset($ref, $key  => $row->{$key});
-		}
+	if field == "todo_id {
+		panic("set todo_id")
 	}
+
+	t.set_KEY(field, value)
 }
-
-// post process after loading tables;
-sub metafix {
-	my($tid, $pid, $p, $name, $only);
-
-	// Process Tasks (non-hier) items
-	for my $ref (Hier::Tasks::all()) {
-		$tid = $ref->get_tid();
-
-		$only = $ref->{_todo_only};
-		if ($only == 1) {	// only in todo (gtd deleted it)
-			warn "Need delete: $tid\n" if $Debug;
-			dump_task($ref);
-			$ref->delete();
-			next;
-
-		} elsif ($only == 2) {	// only in gtd (we fucked up somewhere)
-			warn "Need create: $tid\n" if $Debug;
-			dump_task($ref);
-
-		} elsif ($only == 3) {	// in both (happyness)
-
-		} else {
-			dump_task($ref);
-			panic("We buggered up: $tid\n");
-		}
-	}
-}
-
-sub dump_task {
-	my ($ref) = @_;
-
-	if db_debug {
-		return
-	}
-
-	my($val);
-	for my $key (sort keys %$ref) {
-		$val = $ref->{$key} || '';
-		$val =~ s/\n.+/.../m;
-		warn "$key:\t$val\n";
-	}
-}
-
-sub set {
-	my($ref, $field, $value, $issafe) = @_;
-
-	my $tid = $ref->{todo_id};
-	unless ($tid) {
-		panic("set field=$field failed for [$value] todo_id undefined");
-		return;
-	}
-
-	if (defined($ref->{$field}) and $ref->{$field} eq $value) {
-		warn "Opps $tid: $field is already $value\n";
-		return;
-	}
-
-	if ($field eq "todo_id") {
-		unless ($issafe) {
-			warn "Won't change todo_id => $value\n";
-			return;
-		}
-	}
-
-	//##ToDo check for parents, call set_parents.
-	if ($field eq "Parents") {
-		$ref->set_parent_ids($value);
-		return;
-	}
-
-	$ref->{$field} = $value;
-	$ref->set_dirty($field);
-}
-
-// gtd_checklist      |	Not used
-// gtd_checklistitems |  Not used
-// gtd_list           |	Not used
-// gtd_listitems      |	Not used
-
-// gtd_tickler        |	Not used 
+?*/
 
 // gtd_categories     |
 // gtd_context        |
-				// gtd_itemattributes | removed
+
 // gtd_items          |
 // gtd_itemstatus     |
 // gtd_lookup         |
@@ -189,12 +62,27 @@ sub set {
 // gtd_tagmap         |
 // gtd_timeitems      |
 // gtd_version        |
-// todo               <<< this one is mine
+// gtd_todo            <<< this one is mine
 
-sub load_gtd {
-	my($ref, $row, $tid);
-	
-	my($XXX) = <<"EOF";
+func db_load_gtd() {
+	// get the cct values before task creation
+	db_load_category()
+	db_load_context()
+	db_load_timeframe()
+
+	// db_load_items to be called first
+	//  since it creates the tasks
+	db_load_items()
+	db_load_itemstatus()
+
+	db_load_todo()
+
+	db_load_lookup()
+
+	db_load_tags()
+}
+
+/*
 +-------------+------------------+------+-----+---------+----------------+
 | Field       | Type             | Null | Key | Default | Extra          |
 +-------------+------------------+------+-----+---------+----------------+
@@ -202,14 +90,26 @@ sub load_gtd {
 | category    | text             |      | MUL |         |                |
 | description | text             | YES  | MUL | NULL    |                |
 +-------------+------------------+------+-----+---------+----------------+
-EOF
-	$Category = Hier::CCT->use("Category");
-	my($sth) = G_select("categories");
-	while ($row = $sth->fetchrow_hashref()) {
-		$Category->define($row->{category}, $row->{categoryId});
-	}
+*/
+func db_load_category() {
+	category := cct.Use("Category")
 
-	$XXX = <<"EOF";
+	var (
+		id	int
+		name	sql.NullString
+		desc	sql.NullString
+	)
+
+	rows := G_select("categories", "categoryId,category,description")
+
+	for rows.Next() {
+		rows.Scan(&id, &name, &desc)
+		category.Define(id, name.String, desc.String)
+	}
+	G_done(rows)
+}
+
+/*
 +-------------+------------------+------+-----+---------+----------------+
 | Field       | Type             | Null | Key | Default | Extra          |
 +-------------+------------------+------+-----+---------+----------------+
@@ -217,14 +117,24 @@ EOF
 | name        | text             |      | MUL |         |                |
 | description | text             | YES  | MUL | NULL    |                |
 +-------------+------------------+------+-----+---------+----------------+
-EOF
-	$Context = Hier::CCT->use("Context");
-	$sth = G_select("context");
-	while ($row = $sth->fetchrow_hashref()) {
-		$Context->define($row->{name}, $row->{contextId});
-	}
+*/
+func db_load_context() {
+	context := cct.Use("Context")
 
-	$XXX = <<"EOF";
+	var (
+		id	int
+		name	sql.NullString
+		desc	sql.NullString
+	)
+
+	rows := G_select("context", "contextId,name,description")
+	for rows.Next() {
+		rows.Scan(&id, &name, &desc)
+		context.Define(id, name.String, desc.String)
+	}
+}
+
+/*
 +-------------+-------------------+------+-----+---------+----------------+
 | Field       | Type              | Null | Key | Default | Extra          |
 +-------------+-------------------+------+-----+---------+----------------+
@@ -233,14 +143,61 @@ EOF
 | description | text              | YES  | MUL | NULL    |                |
 | type        | enum("vogpa")     | NO   | MUL | a       |                |
 +-------------+-------------------+------+-----+---------+----------------+
-EOF
-	$Timeframe = Hier::CCT->use("Timeframe");
-	$sth = G_select("timeitems");
-	while ($row = $sth->fetchrow_hashref()) {
-		$Timeframe->define($row->{timeframe}, $row->{timeframeId});
-	}
+*/
+func db_load_timeframe() {
+	timeframe := cct.Use("Timeframe")
 
-	$XXX = <<"EOF";
+	var (
+		id	int
+		name	sql.NullString
+		desc	sql.NullString
+	)
+
+	rows := G_select("timeitems", "timeframeId,timeframe,description")
+	for rows.Next() {
+		rows.Scan(&id, &name, &desc)
+		timeframe.Define(id, name.String, desc.String)
+	}
+}
+
+/*
+mysql> describe gtd_items
++----------------+------------------+------+-----+---------+----------------+
+| Field          | Type             | Null | Key | Default | Extra          |
++----------------+------------------+------+-----+---------+----------------+
+| itemId         | int(10) unsigned |      | PRI | NULL    | auto_increment |
+| title          | text             |      | MUL |         |                |
+| description    | longtext         | YES  | MUL | NULL    |                |
+| desiredOutcome | text             | YES  | MUL | NULL    |                |
+| recurdesc      | text             | YES  |     | NULL    |                |
+| recur          | text             | YES  |     | NULL    |                |
++----------------+------------------+------+-----+---------+----------------+
+*/
+func db_load_items() {
+	var (
+		todo_id	int
+		title	string
+		desc	sql.NullString
+		note	sql.NullString
+		rdesc	sql.NullString
+		recur	sql.NullString
+	)
+
+	rows := G_select("items", "itemId,title,description,desiredOutcome,recurdesc,recur")
+	for rows.Next() {
+		rows.Scan(&todo_id, &title, &desc, &note, &rdesc, &recur)
+		t := New(todo_id)
+		
+		t.Title       = title
+		t.Description = desc.String
+		t.Note        = note.String
+		t.Rdesc       = rdesc.String
+		t.Recur       = recur.String
+	}
+	G_done(rows)
+}
+
+/*
 +---------------+----------------------+------+-----+-------------------+
 | Field         | Type                 | Null | Key | Default           |
 +---------------+----------------------+------+-----+-------------------+
@@ -258,440 +215,421 @@ EOF
 | tickledate  | date             | YES  |     | NULL    |                |
 | nextaction  | enum('y','n')    | NO   |     | n       |                |
 +---------------+----------------------+------+-----+-------------------+
+*/
 
-EOF
-	$sth = G_select("itemstatus");
-	while ($row = $sth->fetchrow_hashref()) {
-		gtdmap($row, todo_id        => "itemId");
-		gtdmap($row, modified       => "lastModified");
-		gtdmap($row, created        => "dateCreated");
-		gtdmap($row, completed      => "dateCompleted");
-		gtdmap($row, type           => "type");
-		gtdmap($row, _gtd_category  => "categoryId");
+func db_load_itemstatus() {
+//	rows = G_select("itemstatus", "itemId,dateCreated,lastModified,dateCompleted,type,categoryId,isSomeday,contextId,timeframeId,deadline,tickledate,nextaction")
+	rows := G_select("itemstatus", "itemId,type,nextaction")
 
-		gtdmap($row, isSomeday      => "isSomeday");
-		gtdmap($row, _gtd_context   => "contextId");
-		gtdmap($row, _gtd_timeframe => "timeframeId");
-		gtdmap($row, due            => "deadline");
-		gtdmap($row, nextaction     => "nextaction");
-		gtdmap($row, tickledate     => "tickledate");
+	var(
+		todo_id    int
+		tasktype   byte
+		nextaction byte
+	)
 
-		$ref = $Current_ref;
-		cset($ref, category  => $Category->name($row->{categoryId}));
-		cset($ref, context   => $Context->name($row->{contextId}));
-		cset($ref, timeframe => $Timeframe->name($row->{timeframeId}));
-	}
-	G_default("isSomeday", 'n');
+	for rows.Next() {
+		rows.Scan(&todo_id, &tasktype, &nextaction)
 
-	$XXX = <<"EOF";
-mysql> describe gtd_items;
-+----------------+------------------+------+-----+---------+----------------+
-| Field          | Type             | Null | Key | Default | Extra          |
-+----------------+------------------+------+-----+---------+----------------+
-| itemId         | int(10) unsigned |      | PRI | NULL    | auto_increment |
-| title          | text             |      | MUL |         |                |
-| description    | longtext         | YES  | MUL | NULL    |                |
-| desiredOutcome | text             | YES  | MUL | NULL    |                |
-| recurdesc      | text             | YES  |     | NULL    |                |
-| recur          | text             | YES  |     | NULL    |                |
-+----------------+------------------+------+-----+---------+----------------+
-EOF
+		t := Find(todo_id)
+		if t == nil {
+			continue
+		}
 
-	$sth = G_select("items");
-	while ($row = $sth->fetchrow_hashref) {
-		gtdmap($row, todo_id     => "itemId");
-		gtdmap($row, task        => "title");
-		gtdmap($row, description => "description");
-		gtdmap($row, note        => "desiredOutcome");
-
-		gtdmap($row, recurdesc   => "recurdesc");
-		gtdmap($row, recur       => "recur");
-
+		t.Type = tasktype
+		t.IsNextaction = nextaction == 'y'
+//?		gtdmap($row, "todo_id"       => "itemId")
+//?		gtdmap($row, "modified"      => "lastModified")
+//?		gtdmap($row, "created"       => "dateCreated")
+//?		gtdmap($row, "completed"     => "dateCompleted")
+//?		gtdmap($row, "type"          => "type")
+//?		gtdmap($row, "_gtd_category" => "categoryId")
+//?
+//?		gtdmap($row, "isSomeday"     => "isSomeday")
+//?		gtdmap($row, "_gtd_context"  => "contextId")
+//?		gtdmap($row, "_gtd_timeframe"=> "timeframeId")
+//?		gtdmap($row, "due"           => "deadline")
+//?		gtdmap($row, "nextaction"    => "nextaction")
+//?		gtdmap($row, "tickledate"    => "tickledate")
+//?
+//?		$ref = $Current_ref
+//?		cset($ref, category  => $Category->name($row->{categoryId}))
+//?		cset($ref, context   => $Context->name($row->{contextId}))
+//?		cset($ref, timeframe => $Timeframe->name($row->{timeframeId}))
 	}
 
+	G_done(rows);
+}
 
-	$XXX = <<"EOF";
+
+/*
 +----------+------------------+------+-----+---------+-------+
 | Field    | Type             | Null | Key | Default | Extra |
 +----------+------------------+------+-----+---------+-------+
 | parentId | int(11)          |      | PRI | 0       |       |
 | itemId   | int(10) unsigned |      | PRI | 0       |       |
 +----------+------------------+------+-----+---------+-------+
-EOF
-	$sth = G_select("lookup");
-	while ($row = $sth->fetchrow_hashref()) {
-		next if $row->{parentId} == 0;	// handle buggered up data
-		next if $row->{itemId} == 0;	// to non-objects
+*/
+func db_load_lookup() {
+	var (
+		pid	int
+		tid	int
+	)
 
-		add_relationship($row->{parentId}, $row->{itemId});
+	rows := G_select("lookup", "parentId,itemId")
+	for rows.Next() {
+		rows.Scan(&pid, &tid)
+		if pid == 0 || tid == 0 {
+			log.Printf("Invalid tid/pid lookup: (%d, %d)", tid, pid)
+			continue
+		}
 
+		p := Find(pid)
+		if p == nil {
+			log.Printf("Invalid pid in tid/pid (%d, %d)", tid, pid)
+			continue
+		}
+
+		t := Find(pid)
+		if t == nil {
+			log.Printf("Invalid tid in tid/pid (%d, %d)", tid, pid)
+			continue
+		}
+
+		p.add_child(t)
 	}
-	$XXX = <<"EOF";
+	G_done(rows)
+}
+
+
+/*
 +---------+------------------+------+-----+---------+-------+
 | Field   | Type             | Null | Key | Default | Extra |
 +---------+------------------+------+-----+---------+-------+
 | itemId  | int(10) unsigned | NO   | PRI | NULL    |       |
 | tagname | text             | NO   | PRI | NULL    |       |
 +---------+------------------+------+-----+---------+-------+
-EOF
-	my($tags_ref) = Hier::CCT->use("Tag");
-	my($tag);
-	$sth = G_select("tagmap");
-	my($tag_id) = 0;
-	while ($row = $sth->fetchrow_hashref) {
-		$tid = $row->{itemId};
-		$tag = $row->{tagname};
-		$ref = Hier::Tasks::find($tid);
-		next unless defined $ref;
+*/
 
-		$ref->{_tags}{$tag}++;
+func db_load_tags() {
+	tags := cct.Use("Tags")
 
-		$tags_ref->define($tag, ++$tag_id);
+	rows := G_select("tagmap", "itemId,tagname")
+
+	var(
+		id	int
+		tag	string
+	)
+
+	tag_id := 0
+	for rows.Next() {
+		rows.Scan(&id, &tag);
+
+		t := Find(id)
+		if t == nil {
+			continue
+		}
+
+		t.Tags = append(t.Tags, tag);
+
+		tag_id++; tags.Define(tag_id, tag, "")
 	}
-
-	foreach my $ref (Hier::Tasks::all()) {
-		$ref->clean_dirty();		// everything cleanly loaded
-	}
-
+	G_done(rows)
 }
 
-sub add_relationship {
-	my($pid, $tid) = @_;
-
-	my $pref = Hier::Tasks::find($pid);
-	my $tref = Hier::Tasks::find($tid);
-
-	return unless $pref and $tref;	// both must be defined
-
-	$pref->add_child($tref);
-}
-
-sub gtdmap {
-	my($db, $t_key, $g_key) = @_;
-	// add mapping for $Table/g_key => t_key;
-//	$GTd{$t_key} = ...
-
-	G_learn($t_key, $g_key);
-
-	my($val) = html_clean( $db->{$g_key} );
-
-	// New master key
-	if ($t_key eq "todo_id") {
-		my $ref = Hier::Tasks::find($val);
-		if (defined $ref) {
-			$Current_ref = $ref;
-			$Current_ref->{_todo_only} |= 0x02;
-			return;
+/*
+mysql> describe gtd_todo
++----------+-------------+------+-----+---------+----------------+
+| Field    | Type        | Null | Key | Default | Extra          |
++----------+-------------+------+-----+---------+----------------+
+| todo_id  | int(11)     | NO   | MUL | NULL    | auto_increment |
+| category | varchar(16) | YES  |     | NULL    |                |
+| priority | int(11)     | NO   |     | 4       |                |
+| state    | char(1)     | YES  |     | NULL    |                |
+| doit     | datetime    | YES  |     | NULL    |                |
+| effort   | int(11)     | YES  |     | NULL    |                |
+| resource | varchar(60) | YES  |     | NULL    |                |
+| depends  | varchar(60) | YES  |     | NULL    |                |
+| percent  | int(11)     | YES  |     | NULL    |                |
++----------+-------------+------+-----+---------+----------------+
+*/
+func db_load_todo() {
+	var (
+		todo_id		int
+		priority	int
+		state		byte
+		doit		time.Time
+		effort		int
+		resource	sql.NullString
+		depends		sql.NullString
+		percent		int
+	)
+	
+	rows := G_select("todo", "todo_id,priority,state,doit,effort,resource,depends,percent")
+	for rows.Next() {
+		rows.Scan(
+			&todo_id,
+			&priority,
+			&state,
+			&doit,
+			&effort,
+			&resource,
+			&depends,
+			&percent)
+		t := Find(todo_id)
+		if t == nil {
+			continue
 		}
-		unless ($val) {
-			panic("Can't create todo whith todo_id=$val for table $Table");
-		}
-		if db_debug {
-			warn "Hard Need Create $val\n";
-		}
-		$Current_ref = Hier::Tasks->new($val);
-		$Current_ref->{_todo_only} = 0x03;
-		sac_create($val, {});
-		return;
+
+		t.Tid = todo_id
+		t.Priority = priority
+		t.State = state
+		t.Doit = doit
+		t.Effort = effort
+//?		t.Resource = resource.String
+//?		t.Depends = depends.String
+		t.Percent = percent
 	}
+	G_done(rows)
 
-	cset($Current_ref, $t_key, $val);
-}
-
-sub html_clean {
-	my($val) = @_;
-
-	return undef unless defined $val;
-
-	return $val unless $val =~ m/&[a-z]+;/;
-	my %map = (
-		lt	=> '<',
-		gt	=> '>',
-		amp	=> '&',
-		quote	=> "'",
-		dquote	=> '"',
-	);
-
-	my($to) = '';
-	while ($val =~ s/^(.*)&([A-Za-z]+);//) {
-		if (defined $map{lc($2)}) {
-			$to .= $1 . $map{lc($2)};
-		} else {
-			$to .= $1 . '&" . $2 . ";'; # put it back
-			warn "No & XXX ; mapping for $2\n";
-		}
-	}
-
-	return $to . $val;
 }
 
 //
 // create-initial set value. (nothing dirty at this point)
 //
+/*?
 sub cset {
-	my($ref, $key, $val) = @_;
+	my($ref, $key, $val) = @_
 
 	// no value defined, skip update/creation of field
-	return unless defined $val;
+	return unless defined $val
 
-	my($key_type) = $Key_type{$key} & 0x0F;
+	my($key_type) = $Key_type{$key} & 0x0F
 	unless ($key_type) {
-		warn "Unknown key: $key\n";
-		$Key_type{$key} = 1;
+		warn "Unknown key: $key\n"
+		$Key_type{$key} = 1
 
-		$ref->{$key} = $val;
-		return;
+		$ref->{$key} = $val
+		return
 	}
 	// never seen value, just set it
 	unless (defined $ref->{$key}) {
-		$ref->{$key} = $val;
-		return;
+		$ref->{$key} = $val
+		return
 	}
 
 	// keep youngest (smaller value)
 	if ($key_type == 2) {
 		return if $val eq ''; # no new value
 
-		my($current_value) = $ref->{$key};
+		my($current_value) = $ref->{$key}
 
 		// handle we don't have enough detail
                 if (length($current_value) eq 8 or length($val) == 8) {
-			return if (substr($current_value,0,8) eq substr($val,0,8));
+			return if (substr($current_value,0,8) eq substr($val,0,8))
 		}
 
 		if ($current_value eq '' || $val lt $current_value) {
-			$ref->{$key} = $val;
+			$ref->{$key} = $val
 		}
-		return;
+		return
 	}
 
 	// keep oldest (bigger value)
 	if ($key_type == 3) {
 		return if $val eq ''; # no new value
 
-		my($current_value) = $ref->{$key};
+		my($current_value) = $ref->{$key}
 
 		if ($current_value eq '' || $val gt $current_value) {
-			$ref->{$key} = $val;
+			$ref->{$key} = $val
 		}
-		return;
+		return
 	}
 
 	// keep value last seen value
-	$ref->{$key} = $val;
+	$ref->{$key} = $val
 }
 */
 
-func gtd_insert(ref *Task)  {
+func gtd_insert(t *Task)  {
+	gtd_fix_maps(t)
+	gset_insert(t, "itemstatus")
+	gset_insert(t, "items")
+	gset_insert(t, "todo")
 
-/*
-	tid := ref.Tid;
-	sac_create(tid, ref);
-
-	gtd_fix_maps(ref);
-	gset_insert(ref, "itemstatus");
-	gset_insert(ref, "items");
-	gset_insert_parents(ref, 0);
-*/
+	gset_insert_parents(t, false)
 }
-/*
 
-sub gset_insert_parents {
-	my($ref, $del) = @_;
+func gset_insert_parents(t *Task, del bool) {
+	if ! t.dirty["parents"] {
+		return
+	}
+	
+	tid := t.Tid
+	
+	table := G_table("lookup")
 
-	return unless $ref->get_dirty("parents");
+	if (del) {
+		G_sql("delete from "+table+" where itemId=?", tid)
+	}
+	for _, p := range t.Parents {
+		pid := p.Tid
 
-	my $tid = $ref->{todo_id};
-	my $table = "gtd_lookup";
-
-	G_sql("delete from $table where itemId=?", $tid) if $del;
-	foreach my $pid ($ref->parent_ids()) {
-		G_sql("insert into $table(parentId,itemId)values(?,?)",
-			$pid, $tid);
+		G_sql("insert into "+table+"(parentId,itemId)values(?,?)", pid, tid)
 	}
 }
 
-sub gset_insert(ref *Task, table string) {
-	table = G_table(table);
+func gset_insert(ref *Task, table string) {
+	table = G_table(table)
 
-	my $qmark = '';
-	my $sql;
-	my @keys = ();
-	my @vals = ();
+	panic("... code gset_insert")
+/*?
+	my $qmark = ''
+	my $sql
+	my @keys = ()
+	my @vals = ()
 
-	my ($key, $fld, $val);
+	my ($key, $fld, $val)
 
-	my $map = G_list($table);
+	my $map = G_list($table)
 	for my $key (keys %$map) {
-		$fld = $map->{$key};
+		$fld = $map->{$key}
 
-		next unless defined $ref->{$key};
-		next unless $ref->{$key};
+		next unless defined $ref->{$key}
+		next unless $ref->{$key}
 
-		push(@keys, $fld);
-		push(@vals, $ref->{$key});
+		push(@keys, $fld)
+		push(@vals, $ref->{$key})
 
-		$qmark .= ",?";
+		$qmark .= ",?"
 	}
 
-	$qmark =~ s/^,//;
-	$sql = "insert into $table(" . join(',', @keys) . ") values($qmark)";
+	$qmark =~ s/^,//
+	$sql = "insert into $table(" . join(',', @keys) . ") values($qmark)"
 
-	G_sql($sql, @vals);
+	G_sql($sql, @vals)
+?*/
 }
 
-*/
-func gtd_update(ref *Task) {
-	gtd_fix_maps(ref);
+func gtd_update(t *Task) {
+	gtd_fix_maps(t)
 
-	panic("... Code gtd_update");
-//?	sac_update(ref);
+	panic("... Code gtd_update")
 
-//?	gset_update(ref, "itemstatus");
-//?	gset_update(ref, "items");
+//?	gset_update(t, "itemstatus")
+//?	gset_update(t, "items")
 
-//?	gset_insert_parents(ref, 1);
+//?	gset_update(t, "todo")
+
+//?	gset_insert_parents(t, true)
 }
 
 func gtd_fix_maps(ref *Task) {
 
-	today := time.Now();
+	today := time.Now()
 	if ref.Created.IsZero() {
 		ref.Created = today
 	}
 	ref.Modified = today
 
-//***BUG***	ref.fix_map("category",  '_gtd_category',  $Category);
-//***BUG***	ref.fix_map("context",   '_gtd_context',   $Context);
-//***BUG***	ref.fix_map("timeframe", '_gtd_timeframe', $Timeframe);
+	panic("... Code gtd_fix_maps")
+//***BUG***	ref.fix_map("category",  '_gtd_category',  $Category)
+//***BUG***	ref.fix_map("context",   '_gtd_context',   $Context)
+//***BUG***	ref.fix_map("timeframe", '_gtd_timeframe', $Timeframe)
 
-//	_fix_map($ref, "tags", 'timeframeId', \%Timeframes);
+//	_fix_map($ref, "tags", 'timeframeId', \%Timeframes)
 }
 
-/*
+/*?
 sub _fix_map {
-	my($ref, $type, $index, $master) = @_;
+	my($ref, $type, $index, $master) = @_
 
-	return unless $ref->is_dirty($type);
+	return unless $ref->is_dirty($type)
 
-	my($val_id) = 0;
-	my($val) = $ref->{$type};
+	my($val_id) = 0
+	my($val) = $ref->{$type}
 	if (!defined $val) {
 			//# timeframe never set
-			return;
+			return
 	}
 
 	if ($val ne '') {
-		$val_id = $master->get($val);
+		$val_id = $master->get($val)
 		if (!defined $val_id) {
-			warn "unmapped $type: $val";
+			warn "unmapped $type: $val"
 			//##BUG### we need to create it?
-			return;
+			return
 		}
 	}
 
 	if (defined $ref->{$index}) {
-		return if $ref->{$index} == $val_id;
+		return if $ref->{$index} == $val_id
 	}
-	$ref->{$index} = $val_id;
+	$ref->{$index} = $val_id
 
-	$ref->set_dirty($index);
+	$ref->set_dirty($index)
 }
+?*/
 
 func gset_update(ref *Task, table string) {
+	panic("... code gset_update");
+/*?
+	my $qmark = ''
+	my $sql
+	my @keys = ()
+	my @vals = ()
 
-	my $qmark = '';
-	my $sql;
-	my @keys = ();
-	my @vals = ();
+	my ($fld, $val)
 
-	my ($fld, $val);
-
-	my $map = G_list($table);
+	my $map = G_list($table)
 	for my $key (keys %$map) {
 		next unless $ref->get_dirty($key);	// don't update clean fields
 
 		if db_debug {
 			warn "Mapping: $key => $map->{$key}\n"
 		}
-		$fld = $map->{$key};
+		$fld = $map->{$key}
 
-		next unless defined $ref->{$key};
-//		next unless $ref->{$key};
+		next unless defined $ref->{$key}
+//		next unless $ref->{$key}
 
-		push(@keys, $fld);
-		push(@vals, $ref->{$key});
+		push(@keys, $fld)
+		push(@vals, $ref->{$key})
 
-		$qmark .= ",?";
+		$qmark .= ",?"
 	}
 
 	return unless @keys;	// nothing changed
 
 
-	$qmark =~ s/^,//;
+	$qmark =~ s/^,//
 	$sql = "update $table set " . join("=?, ", @keys) .
-	                          "=? where itemId=?";
-	push(@vals, $ref->{todo_id});
+	                          "=? where itemId=?"
+	push(@vals, $ref->{todo_id})
 
-	G_sql($sql, @vals);
+	G_sql($sql, @vals)
+?*/
 }
 
-?*/
 func gtd_delete(tid int) {
-	panic("... code sac_delete");
+	panic("... code sac_delete")
 
-//?	gset_delete(tid, "itemstatus");
-//?	gset_delete(tid, "items");
-//?	gset_delete(tid, "lookup");
-
-//?	sac_delete(tid);
-}
-/*?
-
-sub gset_delete(tid int, table string) {
-	table = G_table(table);
-
-	sql := fmt.Sprintf("delete from %s where itemId = ?", table);
-	G_sql(sql, tid);
+//?	gset_delete(tid, "itemId", "itemstatus")
+//?	gset_delete(tid, "itemId", "items")
+//?	gset_delete(tid, "itemId", "lookup")
+//?	gset_delete(tid, "todo_id", "todo")
 }
 
-sub sac_update {
-	my $ref = shift @_;
 
-	my($tid) = $ref->{todo_id};
-	for my $fld (keys %Key_type) {
-		next unless $Key_type{$fld} & 0x10;		// in todo db
-		next unless defined $ref->{$fld};
-		next unless $ref->get_dirty($fld);
+func gset_delete(tid int, table string) {
+	table = G_table(table)
 
-		my($sql) = "update todo set $fld = ? where todo_id = ?";
-		G_sql($sql, $ref->{$fld}, $tid);
-	}
+	sql := fmt.Sprintf("delete from %s where itemId = ?", table)
+	G_sql(sql, tid)
 }
 
-func sac_create(tid int, ref *Task) {
-
-	G_sql("insert into todo(todo_id) values(?)", tid);
-	
-	for my $fld (keys %Key_type) {
-		next if $fld eq "todo_id";
-		next unless $Key_type{$fld} & 0x10;	// in todo db
-		next unless defined $ref->{$fld};
-
-		next unless $ref->get_dirty($fld);
-
-		my($sql) = "update todo set $fld = ? where todo_id = ?";
-		G_sql($sql, $ref->{$fld}, $tid);
-	}
+func join([]string) {
 }
-
-?*/
-func sac_delete(tid int) {
-	panic("... code sac_delete");
-//?	G_sql("delete from todo where todo_id = ?", tid);
-}
-/*?
-
 
 //#############################################################################
 //#############################################################################
@@ -699,9 +637,13 @@ func sac_delete(tid int) {
 //#############################################################################
 //#############################################################################
 
-my($GTD);
-my($GTD_map, $GTD_default);
-my($Prefix) = "gtd_";
+var db_GTD	*sql.DB
+
+
+/*
+my($GTD_map, $GTD_default)
+var GTD_map = map[string]map[string]string
+var Prefix := "gtd_"
 
 our $Resource;	// used by Hier::Resource
 
@@ -709,178 +651,231 @@ our $Resource;	// used by Hier::Resource
 func DB_init(confname string) {
 	db_debug = option.Bool("Debug", false)
 
-	MetaFix = option.Bool("MetaFix", false);
-
-	fmt.Printf("... code DB_init\n")
+	MetaFix = option.Bool("MetaFix", false)
 
 	if confname != "" {
 		if db_debug {
-//?			warn "#-Using $confname in Access.yaml\n"
+			log.Printf("#-Using %s in Access.yaml\n", confname)
 		}
 	} else {
 //		confname = "gtd"
 		confname = "gtdtest"
 	}
 
-    db, err := sql.Open("mysql", "astaxie:astaxie@/test?charset=utf8")
 
-//?	my $HOME = $ENV{"HOME"};
-//?	my $conf = LoadFile("$HOME/.todo/Access.yaml");
-//?
-//?	$Hier::Resource::Resource = $conf->{resource};
-//?
-//?	my($dbconf) = $conf->{$confname};
-//?
-//?	unless ($dbconf) {
-//?		panic("Can't fine section $confname in ~/.todo/Access.yaml");
-//?	}
-//?
-//?	warn Dumper($dbconf) if $Debug;
-//?
-//?	my($dbname) = $dbconf->{"dbname"};
-//?	my($host)   = $dbconf->{"host"};
-//?	my($user)   = $dbconf->{"user"};
-//?	my($pass)   = $dbconf->{"pass"};
-//?	my($port)   = $dbconf->{"port"} || 3306;
-//?
-//?	if ($confname ne "gtd") {
-//?		warn "confname=$confname;dbname=$dbname;host=$host;port=$port\n";
-//?	}
-//?
-//?	$Prefix = $dbconf->{"prefix"};
-//?	$Prefix = "gtd_" unless defined $Prefix; # empty, but defined ok
-//?
-//?	$GTD = DBI->connect("dbi:mysql:dbname=$dbname;host=$host", $user, $pass);
-//?	panic("confname=$confname;dbname=$dbname;host=$host;user=$user;pass=$pass") unless $GTD;
-//?
-//?	option("Changed", G_val('itemstatus', 'max(lastModified)'));
-//?
-//?warn "Start ".localtime()."\n";
-//?	load_meta();
-//?warn "Mid   ".localtime()."\n";
-//?	load_gtd();
-//?warn "End   ".localtime()."\n";
-//?
-//?	metafix();
-//warn "Done  ".localtime()."\n";
-}
+	home := os.Getenv("HOME")
+	conf := load_config(home+"/.todo/Access.json")
 
-/*
-sub G_table {
-	return $Prefix . $_[0];
-}
-
-sub T_select {
-	my($sql) = "select * from todo";
-
-	my($sth) = $GTD->prepare($sql);
-	my($rv) = $sth->execute();
-	if ($rv < 0) {
-		panic("sql=$sql");
+	if db_debug {
+		dump_config("Access", conf)
 	}
-	return $sth;
+
+//?	resource := load_config(home+"/.todo/Resource.json")
+//?	$Hier::Resource::Resource = $conf->{resource}
+
+	dbconf, ok := conf[confname]
+	if !ok {
+		panic("Can't fine section "+confname+" in ~/.todo/Access.json")
+	}
+
+	dbname := dbconf["dbname"]
+	host   := dbconf["host"]
+	user   := dbconf["user"]
+	pass   := dbconf["pass"]
+	port   := dbconf["port"]
+	if port == "" {
+		port = "3306"
+	}
+
+	if confname != "gtd" {
+		log.Printf("confname=%s;dbname=%s;host=%s;port=%s\n", 
+			confname, dbname, host, port)
+
+	}
+
+	if prefix, ok := dbconf["prefix"]; ok {
+		Prefix = prefix
+	} else {
+		Prefix = "gtd_"
+	}
+		
+        url := fmt.Sprintf("%s:%s@tcp(%s:3306)/%s?%s",
+                user, pass, host, dbname,
+                "allowOldPasswords=1")
+
+	db, err := sql.Open("mysql", url)
+	if err != nil {
+		log.Fatal(err)
+        }
+
+	err = db.Ping()
+        if err != nil {
+                log.Fatal("Can't connect to %s: %s", url, err)
+        }
+	db_GTD = db
+
+	fmt.Printf("... code DB_init lastModified\n")
+//?	option("Changed", G_val('itemstatus', 'max(lastModified)'))
+
+//?warn "Start ".localtime()."\n"
+	db_load_gtd()
+//warn "Done  ".localtime()."\n"
 }
 
-sub G_sql {
-	my($sql) = shift @_;
+func G_table(table string) string {
+	db_Table = table
 
-	warn "gtd-sql: $sql: @_\n" if $Debug;
+	return Prefix+table
+}
+
+func G_sql(sql string, args ...interface{}) {
+	panic("... code G_sql")
+/*?
+	my($sql) = shift @_
+
+	warn "gtd-sql: $sql: @_\n" if $Debug
 
 	unless ($MetaFix) {
-		warn "Skipped: $sql\n";
-		return;
+		warn "Skipped: $sql\n"
+		return
 	}
 
-	my($rv);
+	my($rv)
 	eval {
-		$rv = $GTD->do($sql, undef, @_);
-		warn "-> $rv\n" if $Debug;
+		$rv = $db_GTD->do($sql, undef, @_)
+		warn "-> $rv\n" if $Debug
 	}; if ($@ or !defined $rv) {
-		print "Failed sql: $sql ($rv)\n";
-		print "..........: $@";
+		print "Failed sql: $sql ($rv)\n"
+		print "..........: $@"
 	}
 	
-	return $rv;
+	return $rv
+?*/
 }
 
-sub G_select {
-	my($table) = @_;
+func G_select(table string, fields string) * sql.Rows {
+	q := "select "+fields+" from "+G_table(table)
 
-	$Table = $Prefix . $table;
-
-	my($sql) = "select * from $Table";
-
-	$GTD_map->{$Table} = {};
-
-	my($sth) = $GTD->prepare($sql);
-	my($rv) = $sth->execute;
-	if ($rv < 0) {
-		panic("$table: sql=$sql");
-	}
-	return $sth;
+	rows, err := db_GTD.Query(q)
+        if err != nil {
+		log.Printf("%s: %s", table, q)
+		panic(err);
+        }
+	return rows
 }
 
-sub G_learn {
-	my($from, $to) = @_;
-
-	$GTD_map->{$Table}->{$from} = $to;
-}
-
+/*?
 sub G_list {
-	my($table) = @_;
+	my($table) = @_
 
-	return $GTD_map->{$table};
-}
-
-sub G_default {
-	my($key, $val) = @_;
-
-	$GTD_default->{$key} = $val;
-}
-
-sub G_default_val {
-	my($key) = @_;
-
-	return $GTD_default->{$key};
+	return $GTD_map->{$table}
 }
 
 sub G_renumber {
-	my($ref, $tid, $new) = @_;
+	my($ref, $tid, $new) = @_
 
-        my(@list) = qw(items itemstatus tagmap);
-        warn "Setting TID $tid => $new\n";
+        my(@list) = qw(items itemstatus tagmap)
+        warn "Setting TID $tid => $new\n"
 
-        G_sql("update gtd_lookup set itemId=$new where itemId=$tid");
-        G_sql("update gtd_lookup set parentId=$new where parentId=$tid");
-        G_sql("update gtd_tagmap set itemId=$new where itemId=$tid");
+        G_sql("update gtd_lookup set itemId=$new where itemId=$tid")
+        G_sql("update gtd_lookup set parentId=$new where parentId=$tid")
+        G_sql("update gtd_tagmap set itemId=$new where itemId=$tid")
 
-	G_sql("update todo set todo_id = ? where todo_id = ?", $new, $tid);
+	G_sql("update todo set todo_id = ? where todo_id = ?", $new, $tid)
 
         for my $table (@list) {
-                G_sql("update gtd_$table set itemId=$new where itemId=$tid");
+                G_sql("update gtd_$table set itemId=$new where itemId=$tid")
         }
 }
-*/
+?*/
 
 func G_val(table, query string) int {
 
-	table = G_table(table);
-	sql := fmt.Sprintf("select %s from %s", query, table);
+	table = G_table(table)
+	sql := fmt.Sprintf("select %s from %s", query, table)
 	return len(sql)
-/*
+/*?
 
-	my($sth) = $GTD->prepare($sql);
-	my($rv) = $sth->execute();
+	my($sth) = $db_GTD->prepare($sql)
+	my($rv) = $sth->execute()
 	if ($rv < 0) {
-		panic("sql=$sql");
+		panic("sql=$sql")
 	}
 
-	my($row, $changed);
+	my($row, $changed)
 	while (($row) = $sth->fetchrow_array()) {
-		$changed = $row;
+		$changed = $row
 	}
-	return $changed;
-*/
-return 0
+	return $changed
+?*/
+	return 0
 }
 
+func G_done(rows *sql.Rows) {
+	rows.Close()
+
+	err := rows.Err()
+	if err != nil {
+		log.Fatal("I/O error %s on table %s", err, db_Table)
+	}
+}
+
+//#############################################################################
+// Load up config file
+//#############################################################################
+type Dict map[string]map[string]string
+
+func load_config(file string) Dict {
+        fd, err := os.Open(file)
+        if err != nil {
+                log.Printf("Can't open %s: %s", fd, err)
+                return nil
+        }
+
+        decoder := json.NewDecoder(fd)
+
+        configuration := Dict{}
+        err = decoder.Decode(&configuration)
+        if err != nil {
+                fmt.Println("error:", err)
+        }
+
+//      os.Close(fd)
+        return configuration
+
+}
+
+func dump_config(file string, configuration Dict) {
+        fmt.Printf("==== %s ==== \n", file)
+        for group, group_map := range configuration {
+                fmt.Printf("%s:\n", group)
+
+                for key, val := range group_map {
+                        fmt.Printf("\t%s:%s\n", key, val)
+                }
+        }
+}
+
+//#############################################################################
+// Load up config file
+//#############################################################################
+/*
+type NullTime struct {
+    time.Time
+    Valid bool // Valid is true if Time is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (nt *NullTime) Scan(value interface{}) error {
+    nt.Time, nt.Valid = value.(time.Time)
+    return nil
+}
+
+// Value implements the driver Valuer interface.
+func (nt NullTime) Value() (sql.driver.Value, error) {
+    if !nt.Valid {
+        return nil, nil
+    }
+    return nt.Time, nil
+}
+*/

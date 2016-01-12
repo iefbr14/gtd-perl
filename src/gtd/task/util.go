@@ -140,3 +140,22 @@ func Columns() int {
 	}
 	return 80
 }
+
+//==============================================================================
+func Join(args ...string) string {
+	l := 0
+	for _,s := range args {
+		l += len(s)
+	}
+
+	if l == 0 {
+		return "" 
+	}
+	bs := make([]byte, 0, l)
+
+	bl := 0
+	for _,s := range args {
+		bl += copy(bs[bl:], s);
+	}
+	return string(bs);
+}

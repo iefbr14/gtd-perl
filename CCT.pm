@@ -33,42 +33,51 @@ my %Maps = (
 	'Tag'       => \%Tags,
 );
 
-sub new {
-	my($self) = @_;
+sub _table {
+	my($mapname) = @_;
+
+	$mapname = lc($mapname);
+
+	return \%Categories if $mapname eq 'category';
+	return \%Contexts   if $mapname eq 'context';
+	return \%Timeframes if $mapname eq 'timeframe';
+	return \%Tags       if $mapname eq 'tag';
+
+	die "Unknown CCT table name $mapname\n";
 }
 
 sub use {
-	my($self, $type) = @_;
+	my($class, $mapname) = @_;
 
-	my $ref = _table($type);
+	my $cct = _table($mapname);
 
-	bless $ref;
-	return $ref;
+	bless $cct;
+	return $cct;
 }
 
 sub define {
-	my($ref, $key, $val) = @_;;
+	my($cct, $key, $val) = @_;
 
 	confess("key undefined") unless defined $key;
-	$ref->{$key} = $val;
+	$cct->{$key} = $val;
 }
 
 sub set {
-	my($ref, $key, $val) = @_;;
+	my($cct, $key, $val) = @_;
 
 	unless ($val) {
 		$val = 1;
-		foreach my $table_value (values(%$ref)) {
+		foreach my $table_value (values(%$cct)) {
 			$val = $table_value + 1 if $table_value <= $val;
 		}
 	}
 
 	if (!defined $key) {
 		warn "###BUG### Can't insert $key => $val\n";
-		$ref->{$key} = $val;
+		$cct->{$key} = $val;
 	} else {
 		warn "###BUG### Can't update $key => $val\n";
-		$ref->{$key} = $val;
+		$cct->{$key} = $val;
 	}
 }
 
@@ -86,36 +95,23 @@ sub keys {
 	if (ref $type) {
 		return keys %$type;
 	}
-	my($ref) = _table($type);
-	return keys %$ref;
+	my($cct) = _table($type);
+	return keys %$cct;
 }
 
 sub name {
-	my($ref, $val) = @_;
+	my($cct, $val) = @_;
 
 	###BUG### $CCT->name is horibly expensive
-	my(%rev) = reverse(%$ref);
+	my(%rev) = reverse(%$cct);
 
 	return $rev{$val};
 }
 
 sub rename {
-	my($ref, $key, $newname) = @_;
+	my($cct, $key, $newname) = @_;
 
 	die "###BUG### Can't rename $key => $newname\n";
-}
-
-sub _table {
-	my($type) = @_;
-
-	$type = lc($type);
-
-	return \%Categories if $type eq 'category';
-	return \%Contexts   if $type eq 'context';
-	return \%Timeframes if $type eq 'timeframe';
-	return \%Tags       if $type eq 'tag';
-
-	die "Unknown CCT table type: $type\n";
 }
 
 1;

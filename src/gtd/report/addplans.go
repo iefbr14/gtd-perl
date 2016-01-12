@@ -81,7 +81,7 @@ func Report_addplansp(args []string) {
 
 		list = append(list, ref.Children...);
 
-		reason = color.Join("(",color.On("RED"), reason, color.Off(), ")");
+		reason = task.Join("(",color.On("RED"), reason, color.Off(), ")");
 		ref.Rgpa(reason);
 
 		limit--;

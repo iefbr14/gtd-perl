@@ -69,23 +69,6 @@ var Bg_terminal = map[string]string {
 	"NONE":		"0",
 }
 
-func Join(args ...string) string {
-	l := 0
-	for _,s := range args {
-		l += len(s)
-	}
-
-	if l == 0 {
-		return "" 
-	}
-	bs := make([]byte, 0, l)
-
-	bl := 0
-	for _,s := range args {
-		bl += copy(bs[bl:], s);
-	}
-	return string(bs);
-}
 
 func Off() string {
 	return FgBg("", "");
@@ -110,7 +93,7 @@ func FgBg(fg, bg string) string {
 
 		if fg == "" {
 			if Incolor {
-				color = Join(ESC, "[0m")
+				color = task.Join(ESC, "[0m")
 			}
 			Incolor = false;
 			return color;
@@ -125,10 +108,10 @@ func FgBg(fg, bg string) string {
 		//print "$fg=>cv:$cv, $bg=>bv:$bv\n";
 
 		if cv != "" {
-			color = Join(ESC, "[", cv, "m")
+			color = task.Join(ESC, "[", cv, "m")
 		}
 		if bv != "" {
-			color = Join(ESC, "[", bv, "m")
+			color = task.Join(ESC, "[", bv, "m")
 		}
 		Incolor = true;
 		return color;
@@ -149,7 +132,7 @@ func FgBg(fg, bg string) string {
 			color = "</font>"
 		}
 
-		color = Join(color, "<font color=> ", fg, ">")
+		color = task.Join(color, "<font color=> ", fg, ">")
 		Incolor = true;
 		return color;
 	}
@@ -271,7 +254,7 @@ func nl(fd io.Writer) {
 	color := Off();
 
 	if Type == 3 {
-		color = Join(color, "<br>");
+		color = task.Join(color, "<br>");
 	}
 
 	fmt.Fprintln(fd, color)

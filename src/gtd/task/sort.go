@@ -1,8 +1,17 @@
 package task
 
-func Sort(tasks []*Task) []*Task {
-	return tasks;
+func (slice Tasks)Len() int {
+	return len(slice)
 }
+
+func (slice Tasks)Less(i, j int) bool {
+	return slice[i].Tid < slice[j].Tid
+}
+
+func (slice Tasks)Swap(i, j int) {
+    slice[i], slice[j] = slice[j], slice[i]
+}
+
 
 //?	@EXPORT      = qw(sort_mode sort_tasks by_task by_goal by_goal_task );
 
