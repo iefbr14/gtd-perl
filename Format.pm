@@ -11,7 +11,7 @@ BEGIN {
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw( 
-		&report_header &summary_children &summary_line
+		&report_header &summary_children &display_summary
 		&display_mode &display_fd_task &display_task
 		&display_rgpa &display_hier
 		&disp_ordered_dump
@@ -226,8 +226,8 @@ sub summary_children {
 	return ($work_load, "($counted/$actions/$complet)");
 }
 
-sub summary_line {
-	return format_summary(@_);
+sub display_summary {
+	return Summary(@_);
 }
 
 #==============================================================================
@@ -296,7 +296,7 @@ sub disp_item {
 	my($type) = type_disp($ref);
 	my($title) = $ref->get_title();
 
-	my($desc) = format_summary($ref->get_description(), ' -- ');
+	my($desc) = Summary($ref->get_description(), ' -- ');
 	print {$fd} "$tid\t  [_] $title$desc";
 	nl($fd);
 }
@@ -332,7 +332,7 @@ sub disp_detail {
 sub disp_summary {
 	my($fd, $ref, $extra) = @_;
 
-	my($desc) = format_summary($ref->get_description(), ' -- ');
+	my($desc) = Summary($ref->get_description(), ' -- ');
 	disp_simple(@_, $desc);
 }
 
@@ -363,7 +363,7 @@ sub disp_plan {
 }
 
 
-sub format_summary {
+sub Summary {
 	my($val, $sep, $ishtml) = @_;
 
 	return '' unless $val;
@@ -812,7 +812,7 @@ sub disp_hier {
 
 	my $cnt  = $ref->count_actions() || '';
 	my $pri  = $ref->get_priority();
-	my $desc = summary_line($ref->get_description(), '');
+	my $desc = Summary($ref->get_description(), '');
 
 	color_ref($ref, $fd);
 

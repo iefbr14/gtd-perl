@@ -91,8 +91,8 @@ sub planner_detail {
 
 	$name = xml($ref->get_title() || '');
 	$pri  = $ref->get_priority();
-	$desc = xml(summary_line($ref->get_description(), '', 1));
-	$note = xml(summary_line($ref->get_note(), '', 1));
+	$desc = xml(display.Summary($ref->get_description(), '', 1));
+	$note = xml(display.Summary($ref->get_note(), '', 1));
 	$type = $ref->get_type() || '';
 	$per  = $ref->get_completed() ? 100 : 0;
 	$due  = $ref->get_due() || $Today;

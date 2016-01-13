@@ -180,7 +180,7 @@ sub hier_detail {
 //	$plan = $ref->get_planned() || '';
 	$plan = '';
 	$pri  = $ref->get_priority();
-	$desc = summary_line($ref->get_description(), '');
+	$desc = display.Summary($ref->get_description(), '');
 	$type = $ref->get_type() || '';
 	$done = $ref->get_completed() || '';
 

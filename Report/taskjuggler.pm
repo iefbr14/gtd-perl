@@ -168,8 +168,8 @@ sub hier_detail {
 
 	$name = $ref->get_title() || '';
 	$tj_pri  = task_priority($ref);
-	$desc = summary_line($ref->get_description(), '', 1);
-	$note = summary_line($ref->get_note(), '', 1);
+	$desc = display_summary($ref->get_description(), '', 1);
+	$note = display_summary($ref->get_note(), '', 1);
 	$type = $ref->get_type() || '';
 	$per  = $ref->get_completed() ? 100 : 0;
 	$due  = pdate($ref->get_due());

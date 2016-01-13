@@ -151,7 +151,7 @@ sub hier_detail_old {
 
 	my $cnt  = $ref->count_actions() || '';
 	my $pri  = $ref->get_priority();
-	my $desc = summary_line($ref->get_description(), '');
+	my $desc = display_summary($ref->get_description(), '');
 	my $done = $ref->get_completed() || '';
 
 	color_ref($ref);
