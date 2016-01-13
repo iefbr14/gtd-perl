@@ -46,7 +46,7 @@ func Report_hier(args []string) int {
 //?	depth := 0
 	for _, criteria := range meta.Argv(args) {
 		if task.IsTask(criteria) {
-			top = append(top, task.Lookup(criteria))
+			top = append(top, meta.Find(criteria))
 		} else {
 			panic("... code Report_hier type search");
 //?			my($type) = type_val($criteria)

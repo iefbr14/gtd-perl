@@ -2,6 +2,7 @@ package meta
 
 import	"log"
 import	"fmt"
+import	"regexp"
 import	"sort"
 import	"strconv"
 import	"strings"
@@ -107,12 +108,23 @@ sub meta_all_matching_type {
 
 ?*/
 
-func Find(task_id string) * task.Task {
-	if tid, err := strconv.Atoi(task_id); err == nil {
+// meta.Find map a string taskid to a Task * reporting on errors
+func Find (task_id string) *task.Task {
+	re_is_task_colon := regexp.MustCompile("^[0-9]+:$")
+
+	if re_is_task_colon.MatchString(task_id) {
+		task_id = task_id[:len(task_id)-1]
+	}
+	if task.IsTask(task_id) {
+		tid, err := strconv.Atoi(task_id)
+		if err != nil {
+			fmt.Printf("Invalid task id: %s", task_id)
+			return nil
+		}
 		return task.Find(tid)
 	}
 
-	fmt.Printf("Invalid task id %s\n", task_id)
+	fmt.Printf("No such task: %s", task_id)
 	return nil
 }
 
@@ -236,23 +248,21 @@ func Desc(args []string) string {
 	return strings.Join(Argv(args), " ")
 }
 
-func Pick(args []string) []*task.Task {
-	panic("... code meta.Pick")
-}/*?
-	my(@list) = ()
+func Pick(args []string) task.Tasks {
+	list := task.Tasks{}
 
-	foreach my $arg (meta_argv(@_)) {
-		// comma sperated list of tasks
-                while ($arg =~ s/^(\d+),(\d[\d,]*)$/$2/) {
-                        my($ref) = meta_find($1)
-
-                        unless (defined $ref) {
-                                panic("Task $arg doesn't exits\n")
-                        }
-			push(@list, $ref)
-                        next
-                }
-
+	for _, arg := range Argv(args) {
+		if task.Is_comma_list(arg) {
+			for _, arg := range strings.Split(arg, ",") {
+				t := Find(arg)
+				if t == nil {
+					continue
+				}
+				list = append(list, t);
+				continue
+			}
+		}
+/*?
 		// task all by itself
 		if ($arg=~ s/^(\d+):$/$1/ or $arg =~ m/^\d+$/) {
                         my($ref) = meta_find($arg)
@@ -289,11 +299,14 @@ func Pick(args []string) []*task.Task {
 			}
 			next
 		}
+?*/
 		panic("**** Can't understand argument $arg\n")
 	}
-	return @list
+
+	return list
 }
 
+/*?
 sub find_pattern {
 	my($pat) = @_
 
