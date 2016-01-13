@@ -54,18 +54,21 @@ func Report_planner(args []string) {
 
 	gtd.Meta_filter("+active", '^tid', "none");
 	gtd.Meta_argv(@_);
-	my($planner) = new Hier::Walk(
-		detail => \&hier_detail,
-		done   => \&end_detail,
-	);
-	$planner->set_depth('a');
-	$planner->filter();
+
+	w := meta.Walk(args)
+	w.Detail = planner_detail
+	w.Done   = planner_end
+
+	w.Set_depth('a');
+	w.Filter();
 
 	planner_project();
 	planner_calendar();
 
 	print "<tasks>\n";
-	$planner->walk('m');
+
+	w.Walk('m');
+
 	print "</tasks>\n";
 
 	planner_resource();
@@ -74,7 +77,7 @@ func Report_planner(args []string) {
 
 }
 
-sub hier_detail {
+sub planner_detail {
 	my($planner, $ref) = @_;
 	my($sid, $name, $cnt, $desc, $pri, $type, $note);
 	my($per, $work, $start, $end, $done, $due, $ws);
@@ -140,7 +143,7 @@ sub hier_detail {
 	}
 }
 
-sub end_detail {
+sub planner_end {
 	my($planner, $ref) = @_;
 
 	my($tid) = $ref->get_tid();

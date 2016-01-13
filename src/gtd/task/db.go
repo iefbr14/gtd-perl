@@ -298,13 +298,14 @@ func db_load_lookup() {
 			continue
 		}
 
-		t := Find(pid)
+		t := Find(tid)
 		if t == nil {
 			log.Printf("Invalid tid in tid/pid (%d, %d)", tid, pid)
 			continue
 		}
 
-		p.add_child(t)
+		p.Children = append(p.Children, t)
+		t.Parents = append(t.Parents, p)
 	}
 	G_done(rows)
 }

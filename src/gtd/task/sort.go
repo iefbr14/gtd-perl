@@ -2,8 +2,14 @@ package task
 
 //?	@EXPORT      = qw(sort_mode sort_tasks by_task by_goal by_goal_task )
 
+import "fmt"
 import "sort"
+import "regexp"
 import "strings"
+
+import "gtd/option"
+
+var sort_reverse = true
 
 var by_sort func(a, b *Task) bool = by_tid
 
@@ -12,7 +18,11 @@ func (slice Tasks)Len() int {
 }
 
 func (slice Tasks)Less(i, j int) bool {
-	return by_sort(slice[i], slice[j])
+	if sort_reverse {
+		return by_sort(slice[j], slice[i])
+	} else {
+		return by_sort(slice[i], slice[j])
+	}
 }
 
 func (slice Tasks)Swap(i, j int) {
@@ -51,32 +61,41 @@ var sort_Criteria = map[string]func(*Task, *Task) bool {
 //	"goaltask" : by_goal_task,
 }
 
-//? my(%Meta_key, %Focus_key, %Panic_key)
 
+var sort_Meta_key = map[string]string{}
+var sort_Focus_key = map[string]string{}
+var sort_Panic_key = map[string]string{}
 
 func Sort_mode(mode string) {
-/*?
-	unless (defined $mode) {
-		$Sorter = \&by_task
+	if mode == "" {
+		by_sort = by_task
 		return
 	}
 
-	$mode =~ s/^\^//;	// default is asending 
-	if ($mode =~ s/^\~//) {	// desending
-		option("Reverse", 1)
+	switch mode[0] {
+	case '^': 
+		mode = mode[1:]
+		sort_reverse = false
+	case '~':
+		mode = mode[1:]
+		sort_reverse = true
+		option.Set("Reverse", "1")
 	}
-	$mode = lc($mode)
+	
+	mode = strings.ToLower(mode)
 
-	unless (defined $Criteria{$mode}) {
-		warn "Unknown Sort mode: $mode\n"
+	if f,ok := sort_Criteria[mode]; ok {
+		by_sort = f
+
+		// clear any cached keys
+		sort_Meta_key = map[string]string{};		
 		return
 	}
 
-	$Sorter = $Criteria{$mode}
-
-	%Meta_key = ();		// clear any cached keys
-?*/
+	fmt.Printf("Unknown Sort mode: %s\n", mode);
 }
+
+var sort_title_map = map[string]string{}
 
 /*?
 sub sort_tasks {
@@ -94,7 +113,7 @@ sub sort_tasks {
 		my $tid = $ref->get_tid()
 		my $title = lc_title($ref)
 
-		my $key = $Meta_key{$tid} || ''
+		my $key = sort_Meta_key{$tid} || ''
 		print "$tid => $title\n"
 	}
 	return @list
@@ -247,7 +266,7 @@ sub Meta_key {
 // 012345 12345 12345
 //  abcde fghij klmno z
 
-sub item_focus {
+func item_focus(ref *Task) {
 	my($ref) = @_
 
 	my($pri) = $ref->get_priority()
@@ -270,7 +289,7 @@ sub item_focus {
 	return $pri
 }
 
-sub calc_focus {
+func calc_focus(ref *Task) {
 	my($ref) = @_
 
 	unless (defined $ref) {
@@ -291,17 +310,15 @@ sub calc_focus {
 }
 
 
-sub by_focus($$) {
-	my($a, $b) = @_
-
-	return calc_focus($a) cmp calc_focus($b)
+func by_focus(a, b *Task) bool {
+	return calc_focus(a) < calc_focus(b)
 }
 
 // next   norm  some  done 
 // 012345 12345 12345
 //  abcde fghij klmno z
 
-sub calc_panic {
+func calc_panic(ref *Task) {
 	my($ref) = @_
 
 	unless (defined $ref) {
@@ -336,11 +353,21 @@ sub by_panic($$) {
 ?*/
 
 func lc_title(t *Task) string {
+	// cache titles to make sorting it O(n) 
+	if title, ok := sort_title_map[t.Title]; ok {
+		return title
+	}
+
 	title := strings.ToLower(t.Title)
 
-//?	$title =~ s/\[\[//g
-//?	$title =~ s/\]\]//g
+	re := regexp.MustCompile(`\[\[`)
+	title = re.ReplaceAllLiteralString(title, "")
 
+	re = regexp.MustCompile(`\]\]`)
+	title = re.ReplaceAllLiteralString(title, "")
+
+	// fmt.Printf("lc_title: %s\n    =>  : %s\n", t.Title, title);
+
+	sort_title_map[t.Title] = title
 	return title
 }
-

@@ -83,6 +83,22 @@ type Task struct {
 	level	   int			// used by walk
 }
 
+func (t* Task)String() string {
+	return fmt.Sprintf("%c:%d", t.Type, t.Tid)
+}
+
+func (t* Task)Level() int {
+	if t.level == 0 {
+		p := t.Parent()
+		if p == nil {
+			t.level = 1
+			return t.level
+		}
+		t.level = p.Level()+1
+		return t.level
+	}
+	return t.level
+}
 
 func init() {
 	Done = make(chan *Task)

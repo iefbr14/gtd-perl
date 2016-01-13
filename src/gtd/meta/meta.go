@@ -83,10 +83,10 @@ func Sort(list task.Tasks) task.Tasks {
 
 // meta.Matching_type return a set of tasks matching the requested type
 func Matching_type(kind byte) task.Tasks {
+	selected := Selected();
+	list := make(task.Tasks, 0, len(selected))
 
-	list := make(task.Tasks, 0, len(meta_Selected))
-
-	for _, t := range meta_Selected {
+	for _, t := range selected {
 		if t.Type == kind {
 			list = append(list, t)
 		}
@@ -154,6 +154,7 @@ func Filter(filter, sort, display_mode string) {
 
 	option.Set("Filter", filter)
 	meta_Filter = filter
+	
 }
 
 func Argv(args []string) []string {
@@ -237,6 +238,90 @@ func Argv(args []string) []string {
 
 func Desc(args []string) string {
 	return strings.Join(Argv(args), " ")
+}
+
+
+func Walk(args []string) *task.Walk {
+	w := task.NewWalk()
+/*?
+	if len(args) == 0 {
+	}
+
+	panic("... code walk.Args")
+	my($toptype) = @_
+
+	$toptype ||= 'm'
+
+	if ($toptype =~ /^\d+/) {
+		my($ref) = Find($toptype)
+		if ($ref) {
+			if ($ref->get_type() eq 'm') {
+				$ref->set_level(1)
+			} else {
+				$ref->set_level(2)
+			}
+			$walk->{pre}->($walk, $ref)
+			$walk->detail($ref)
+		} else {
+			warn "No such task: $toptype\n"
+		}
+		return
+	}
+?*/
+	var top task.Tasks
+//?	depth := 0
+	for _, criteria := range Argv(args) {
+		if task.IsTask(criteria) {
+			top = append(top, Find(criteria))
+		} else {
+			panic("... code meta.Walk type search");
+//?			my($type) = type_val($criteria)
+//?			if ($type) {
+//?				$depth = $type
+//?	w.Depth = map_depth(top) // $walk->set_depth(map_depth($top, $depth))
+//?			} else {
+//?				panic("unknown type " + criteria)
+//?			}
+		}
+	}
+
+	if len(top) == 0 {
+		top = Current()
+		if len(top) == 0 {
+			top = Matching_type('m');
+			w.Set_depth('g');
+		}
+	}
+	w.Top = top;
+	return w
+}
+
+func map_depth(ref *task.Task) byte {
+	return 'm'
+/*?
+	my($ref, $depth) = @_
+
+	return $depth if $depth
+
+	my($type) = 'm'
+
+	// not a reference to a task
+	if (!ref $ref) {
+		// is it a tid?
+		if ($ref =~ /^\d+$/) {
+			$ref = Hier::Tasks::find($ref)
+			$type = $ref->get_type()
+		} else {
+			// use the type that was pass
+			$type = $ref
+		}
+	}
+
+	return 'a" if $type eq "p'
+	return 'p" if $type eq "g'
+	return 'g" if $type eq "o'; # o == ROLE
+	return 'o'
+?*/
 }
 
 func Pick(args []string) task.Tasks {

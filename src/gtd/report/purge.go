@@ -32,37 +32,31 @@ NAME:
 =head1 HISTORY
 
 */
-/*?
 
-import "gtd/task";
-import "gtd/task";
-import "gtd/meta";
+import "fmt"
+
+import "gtd/task"
+import "gtd/meta"
 
 //-- interactive purge completed work
-func Report_purge(args []string) {
-	gtd.Meta_filter("+dead", '^tid', "simple");
+func Report_purge(args []string) int {
+	meta.Filter("+dead", "^tid", "simple")
 
-	my($criteria) = meta.Desc(args)(@_);
+	w := meta.Walk(args)
+	w.Done = purge_detail
 
-	my($walk) = new Hier::Walk(
-		done   => \&end_detail,
-	);
-
-	panic("Criteria $criteria ignore for purge (re-write purge)\n");
-	$walk->walk('m');
+	panic("Criteria $criteria ignore for purge (re-write purge)\n")
+	w.Walk()
+	return 0
 }
 
 // purge deletes on walk back up.
-sub end_detail {
-	my($ref) = @_;
+func purge_detail(w *task.Walk, t *task.Task) {
+	done := t.Completed
 
-	my($done) = $ref->get_completed();
+	if done == "" {
+		return 
+	}
 
-	return unless $done;
-
-	my($tid) = $ref->get_tid();
-	my($title) = $ref->get_tid();
-
-	print "delete $tid\t# $done -- $title\n";
+	fmt.Printf("delete %d\t# %s -- %s\n", t.Tid, done, t.Title)
 }
-?*/

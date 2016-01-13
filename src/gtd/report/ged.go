@@ -60,17 +60,17 @@ func Report_ged(args []string) {
 		// don't care about start more > 3 months
 		$ToFuture = pdate(get_today(60));	
 	}
-	gtd.Meta_argv(@_);
-	my($planner) = new Hier::Walk(
-		detail => \&hier_detail,
-		done   => \&end_detail,
-	);
-	$planner->set_depth('a');
-	$planner->filter();
+
+	//	gtd.Meta_argv(@_);
+	w = meta.Walk(args)
+	w.Detail = ged_detail
+
+	w.Set_depth('a');
+	w.Filter();
 
 	ged_header();
 
-	$planner->walk('m');
+	w.Walk();
 	
 	ged_footer();
 }
@@ -99,7 +99,7 @@ sub ged_footer {
 	print "0 TRLR\n";
 }
 
-sub hier_detail {
+sub ged_detail {
 	my($planner, $ref) = @_;
 	my($sid, $name, $cnt, $desc, $type, $note);
 	my($per, $start, $end, $done, $due, $we);

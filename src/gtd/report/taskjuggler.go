@@ -82,17 +82,17 @@ func Report_taskjuggler(args []string) {
 		$ToFuture = pdate(get_today(60));	
 	}
 
-	my($walk) = new Hier::Walk(
-		pre    => \&build_deps,
-		detail => \&hier_detail,
-		done   => \&end_detail,
-	);
-	$walk->set_depth('a');
-	$walk->filter();
+	w := meta.Walk(args)
+	w.Pre = build_deps
+	w.Detail = juggler_detail
+	w.Done = juggler_end
+	
+	w.Set_depth('a');
+	w.Filter();
 
 	tj_header();
 
-	$walk->walk($top);
+	w.Walk();
 }
 
 sub calc_est {
@@ -139,7 +139,7 @@ EOF
 
 }
 
-sub hier_detail {
+sub juggler_detail {
 	my($walk, $ref) = @_;
 	my($sid, $name, $cnt, $desc, $type, $note);
 	my($per, $start, $end, $done, $due, $we);
@@ -240,7 +240,7 @@ sub indent {
 	return "   " x ($level);
 }
 
-sub end_detail {
+sub juggler_end {
 	my($walk, $ref) = @_;
 
 	return if skip($walk, $ref);

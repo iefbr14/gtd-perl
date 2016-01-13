@@ -15,6 +15,8 @@ type Walk struct {
 	want	map[*Task]bool
 
 	Depth	int
+
+	Top	Tasks
 }
 
 // task.NewWalk creates a new toplevel walk structure
@@ -33,54 +35,40 @@ func NewWalk() *Walk {
 	return &w
 }
 
-func (w *Walk)Walk(tasks Tasks) {
-	panic("... code walk.Walk")
-/*?
-	my($toptype) = @_
+func (w *Walk)Walk() {
+	// clear the seen map for pre
+	w.seen = map[*Task]bool{}
 
-	$toptype ||= 'm'
+log.Printf("Walk %v", w.Top);
+	for _,t := range w.Top.Sort() {
+		t.level = 1
+		walk_pre(w, t)
+	}
 
-	if ($toptype =~ /^\d+/) {
-		my($ref) = Find($toptype)
-		if ($ref) {
-			if ($ref->get_type() eq 'm') {
-				$ref->set_level(1)
-			} else {
-				$ref->set_level(2)
-			}
-			$walk->{pre}->($walk, $ref)
-			$walk->detail($ref)
-		} else {
-			warn "No such task: $toptype\n"
+	// clear the seen map for detail
+	w.seen = map[*Task]bool{}
+
+	for _,t := range w.Top.Sort() {
+		if t.Filtered() {
+			continue
 		}
-		return
+
+		t.level = 1
+		walk_detail(w, t)
 	}
 
-	my(@top) = meta_matching_type($toptype)
-
-	for my $ref (sort_tasks @top) {
-		$ref->set_level(1)
-		$walk->{pre}->($walk, $ref)
-	}
-
-	for my $ref (sort_tasks @top) {
-		next if $ref->filtered()
-
-		$ref->set_level(1)
-		$walk->detail($ref)
-	}
-?*/
-	return
+	// clear the seen map to free memory
+	w.seen = map[*Task]bool{}
 }
 
 
-func (w *Walk) set_depth(kind byte) {
+func (w *Walk) Set_depth(kind byte) {
 	w.Depth = Type_depth(kind)
 }
 
 
 func (w *Walk)Filter() {
-	panic("... code walk.Filter")
+	log.Printf("... code walk.Filter\n")
 /*?
 	my($tid, $kind)
 	foreach my $ref (Hier::Tasks::all()) {
@@ -129,9 +117,26 @@ sub _want {
 }
 ?*/
 
-func detail(w *Walk, t *Task) {
-	panic("... code walk.detail")
+func walk_pre(w *Walk, t *Task) {
+	if w.seen[t] {
+		return
+	}
+	w.seen[t] = true
 
+	if t.Is_list() {
+		return
+	}
+
+	w.Pre(w, t)
+
+	level := t.level
+	for _, child := range t.Children.Sort() {
+		child.level = level+1
+		walk_pre(w, child)
+	}
+}
+
+func walk_detail(w *Walk, t *Task) {
 	level := t.level
 	depth := w.Depth
 
@@ -139,8 +144,8 @@ func detail(w *Walk, t *Task) {
 	kind := t.Type
 
 	if walk_Debug {
-		log.Printf("detail(%d:%c level:%d of %d\n",
-			tid, kind, level, depth)
+		log.Printf("detail(%c:%d level:%d of %d)\n",
+			kind, tid, level, depth)
 	}
 
 	if w.seen[t] {
@@ -152,13 +157,13 @@ func detail(w *Walk, t *Task) {
 		return
 	}
 
-	if ! w.want[t] {
-		// we are global filtered
-		if walk_Debug {
-			log.Printf("< detail(%d) filtered\n", tid)
-		}
-		return
-	}
+//	if ! w.want[t] {
+//		// we are global filtered
+//		if walk_Debug {
+//			log.Printf("< detail(%d) filtered\n", tid)
+//		}
+//		return
+//	}
 
 	if kind == 0 {
 		log.Printf("bad kind %c for %d\n", kind, tid);
@@ -179,7 +184,7 @@ func detail(w *Walk, t *Task) {
 			log.Printf("%d => detail(%d)\n", t.Tid, child.Tid)
 		}
 		child.level = level+1
-		detail(w, child)
+		walk_detail(w, child)
 	}
 
 	w.Done(w, t);

@@ -11,7 +11,7 @@ import "gtd/color"
 import "gtd/option"
 
 //??	@EXPORT= qw( 
-//?		&report_header &summary_children &summary_line
+//?		&report_header &summary_children &format_summary
 //?		&display_mode &display_fd_task &display_task
 //?		&display_rgpa &display_hier
 //?		&disp_ordered_dump
@@ -236,9 +236,6 @@ sub summary_children {
 	return ($work_load, "($counted/$actions/$complet)")
 }
 
-sub summary_line {
-	return format_summary(@_)
-}
 ?*/
 
 //==============================================================================
@@ -289,7 +286,7 @@ func disp_title(fd io.Writer, t *task.Task, note string) {
 }
 
 func disp_item(fd io.Writer, t *task.Task, note string) {
-	desc := format_summary(t.Description, " -- ")
+	desc := Summary(t.Description, " -- ")
 	fmt.Fprintf(fd, "%d\t  [_] %s%s", t.Tid, t.Title, desc);
 	color.Nl(fd)
 }
@@ -311,7 +308,7 @@ func disp_detail(fd io.Writer, t *task.Task, note string) {
 }
 
 func disp_summary(fd io.Writer, t *task.Task, note string) {
-	desc := format_summary(t.Description, " -- ")
+	desc := Summary(t.Description, " -- ")
 	disp_simple(fd, t, desc)
 }
 
@@ -343,7 +340,7 @@ func disp_plan(fd io.Writer, t *task.Task, note string) {
 	color.Nl(fd)
 }
 
-func format_summary(val, sep string) string {
+func Summary(val, sep string) string {
 	if val == "" {
 		return ""
 	}
@@ -353,8 +350,9 @@ func format_summary(val, sep string) string {
 //?	$val =~ s=\n.*==s
 //?	$val =~ s=\r.*==s
 
-//?	return "" if $val eq ""
-//?	return "" if $val eq "="
+	if val == "" || val == "=" {
+		return ""
+	}
 
 	return sep + val
 }
@@ -777,44 +775,51 @@ func disp_rgpa(fd io.Writer, ref *task.Task, note string) {
 	format_Display = old
 }
 
-func disp_hier(fd io.Writer, ref *task.Task, note string) {
-/*?
-	my $mask  = option("Mask")
+func disp_hier(fd io.Writer, t *task.Task, note string) {
 
-	my $level = $ref->level()
+//?	my $mask  = option("Mask")
 
-	my $tid  = $ref->get_tid()
-	my $name = $ref->get_title() || ""
+	level := t.Level();
 
-	if ($level == 1) {
-		color_ref($ref, $fd)
-		print {$fd} "===== $tid -- $name ===================="
-		nl($fd)
+	tid  := t.Tid
+	name := t.Title
+
+	if level == 1 {
+		color.Ref(t)
+		fmt.Fprintf(fd, "===== %d -- %s ====================", tid, name)
+		color.Nl(fd)
 		return
 	}
-	if ($level == 2) {
-		color_ref($ref, $fd)
-		print {$fd} "----- $tid -- $name --------------------"
-		nl($fd)
+	if level == 2 {
+		color.Ref(t)
+		fmt.Fprintf(fd, "----- %d -- %s --------------------", tid, name)
+		color.Nl(fd)
 		return
 	}
 
-	my $cnt  = $ref->count_actions() || ""
-	my $pri  = $ref->get_priority()
-	my $desc = summary_line($ref->get_description(), "")
+	//fmt.Fprintf(fd, "%d: %d -- %s", level, tid, name);
 
-	color_ref($ref, $fd)
+//?	my $cnt  = $ref->count_actions() || ""
+//>	my $desc = format_summary($ref->get_description(), "")
 
-	printf {$fd} "%5s %3s ", $tid, $cnt
-	printf {$fd} "%-15s", $ref->task_mask_disp() if $mask
+	cnt := ""
+//	pri := t.Priority
+	desc := ""
 
-	print {$fd} "|  " x ($level-3), "+-", type_disp($ref). "-"
-	if ($name eq $desc or $desc eq "") {
-		printf {$fd} "%.50s",  $name
+	color.Ref(t)
+
+	fmt.Fprintf(fd, "%5d %3s ", tid, cnt)
+//	fmt.Fprintf(fd, "%-15s", $ref->task_mask_disp() if $mask
+
+	s := strings.Repeat("|  ", level-3)
+	fmt.Fprint(fd, s, "+-", Type(t), "-")
+
+	if name == desc || desc == "" {
+		fmt.Fprintf(fd, "%.50s",  name)
 	} else {
-		printf {$fd} "%.50s",  $name . ": " . $desc
+		fmt.Fprintf(fd, "%.50s",  name + ": " + desc)
 	}
-?*/
+
 	color.Nl(fd)
 }
 

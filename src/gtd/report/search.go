@@ -48,7 +48,8 @@ func Report_search(args []string) int {
 	meta.Desc(args)
 
 	for _,name := range args {
-		re, err := regexp.Compile(name)
+		// compile re with case ignore switch
+		re, err := regexp.Compile("(?i)"+name)
 		if err != nil {
 			fmt.Printf("RE Compile error %s: %s", name, err)
 			continue
@@ -62,7 +63,11 @@ func Report_search(args []string) int {
 		}
 	}
 
-	return found 
+	
+	if found == 0 {
+		return 1	// not found
+	}
+	return 0
 }
 
 func match_desc(ref *task.Task, re *regexp.Regexp) bool {

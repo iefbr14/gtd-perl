@@ -36,7 +36,6 @@ NAME:
 import "fmt"
 
 import "gtd/meta"
-//? import "gtd/task"
 
 var report_debug = false
 
@@ -50,11 +49,8 @@ func Report_noop(args []string) int {
 
 	fmt.Print("args:", args);
 
-	//list := meta.Pick(args)
 	_ = meta.Pick(args)
-
-	//?	walk := gtd.Walk()
-	//?	walk.Filter()
+	_ = meta.Walk(args)
 
 	if report_debug {
 		fmt.Printf("noop: %#v\n", args)
