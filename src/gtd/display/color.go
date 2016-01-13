@@ -246,7 +246,7 @@ func pick_color_bg(ref *task.Task) string {
 	return "";
 }
 
-func Nl(fd io.Writer) {
+func nl(fd io.Writer) {
 	if fd == nil {
 		fd = os.Stdout
 	}

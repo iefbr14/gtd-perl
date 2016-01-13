@@ -150,7 +150,7 @@ func report_list() {
 sub report_actions {
 	my($all, $head, $desc) = @_;
 
-	task.Header($head, $desc);
+	display.Header($head, $desc);
 
 	my($tid, $pid, $pref, $title);
 

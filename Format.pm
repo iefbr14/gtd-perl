@@ -390,9 +390,6 @@ sub bulk_display {
 	}
 }
 
-sub disp_bulklist {
-}
-
 sub disp_print {
 	my($fd, $ref) = @_;
 
