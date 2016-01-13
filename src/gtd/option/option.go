@@ -2,12 +2,13 @@ package option
 
 import "flag"
 import "fmt"
+import "log"
 import "time"
 import "strconv"
 
 
 //=============================================================================
-var option_debug bool
+var option_Debug bool
 var options map[string]string
 
 //=============================================================================
@@ -94,8 +95,11 @@ func Get(key string, deflt string) string {
 		return val
 	}
 
-	if option_debug {
+	if option_Debug {
 		fmt.Printf("Fetch Option %s == nil\n", key)
+	}
+	if options == nil {
+		options = make(map[string]string);
 	}
 	if deflt != "" {
 		options[key] = deflt
@@ -140,23 +144,64 @@ type option string
 
 func (i *option) String() string {
 	s := string(*i)
+
 	return fmt.Sprintf("%s: %s", s, options[s]);
-	return s
 }
 
 func (i *option) Set(value string) error {
 	s := string(*i)
-	fmt.Printf("Setting: %s => %s", s, value);
+	log.Printf("Setting: %s => %s\n", s, value);
+	if options == nil {
+		options = make(map[string]string);
+	}
 	options[s] = value;
 	return nil
 }
 
 func Flag(key string, f string) {
-	var junk option
+	var key_val option
 
-	//fmt.Printf("### Coding option.Flag -%s %s\n", f, key);
+	key_val = option(key);
 
-	flag.Var(&junk, f, key);
+	if option_Debug {
+		log.Printf("### Coding option.Flag -%s %s\n", f, key);
+	}
+
+	flag.Var(&key_val, f, key);
+}
+
+//------------------------------------------------------------------------------
+type filter string
+
+func (i *filter) String() string {
+	s := string(*i)
+
+	return fmt.Sprintf("%s: %s", s, options[s]);
+}
+
+func (i *filter) Set(value string) error {
+	s := string(*i)
+	log.Printf("Setting: %s => %s\n", s, value);
+	if options == nil {
+		options = make(map[string]string);
+	}
+	options[s] = value;
+
+	return nil
+}
+
+func Filter(key, f, desc string) {
+	log.Printf("... ***BUG*** option.Filter: %s %s %s", key, f, desc)
+
+	var key_val filter
+
+	key_val = filter(key);
+
+	if option_Debug {
+		log.Printf("### Coding option.Filter -%s %s\n", f, key);
+	}
+
+	flag.Var(&key_val, f, key);
 }
 
 
@@ -164,8 +209,8 @@ func Flag(key string, f string) {
 // Debug
 //------------------------------------------------------------------------------
 func Debug(what string) {
-	if option_debug {
-		fmt.Printf("### Debug: %s\n", what)
+	if option_Debug {
+		log.Printf("### Debug: %s\n", what)
 	}
 
 	// magic push debug into library routines (perl code)
@@ -182,8 +227,13 @@ func Debug(what string) {
 	//		return;
 	//	}
 
+	if what == "option" {
+		option_Debug = true
+		return
+	}
+
 	if what == "on" {
-		option_debug = true
+		option_Debug = true
 		Set("Debug", "1")
 		return
 	}
@@ -206,11 +256,6 @@ func Debug(what string) {
 	//			return;
 	//		}
 	//	}
-}
-
-func Filter(opt, filter, desc string) {
-	// add to options handler for opt to set filter with desc
-	fmt.Printf("... code options.Filter\n")
 }
 
 //==============================================================================

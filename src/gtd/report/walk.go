@@ -40,7 +40,7 @@ import "gtd/option";
 import "gtd/task";
 
 //-- Command line walk of a hier
-func Report_noop(args []string) {
+func Report_walk(args []string) {
 	if len(args) == 0 {
 		fmt.Println("NO task specified to walk");
 		return;
@@ -146,7 +146,7 @@ sub set {
 }
 
 sub walk_down(ref *Task, action func(* task.Task)) {
-	ref.Display();
+	display.Task(ref);
 
 	foreach my $cref (sort_tasks $ref->get_children()) {
 		down($cref, $action);
@@ -161,7 +161,7 @@ sub walk_up(ref *Task, action func(* task.Task)) {
 	foreach my $cref (sort_tasks $ref->get_parents()) {
 		up($cref, $action);
 	}
-	ref.Display();
+	display.Task(ref);
 
 	action(ref);
 }

@@ -62,6 +62,11 @@ func (cct *CCT) Define(id int, name,desc string) {
 	cct.id[name] = id
 }
 
+func (cct *CCT) Name(id int) string {
+	//***BUG*** we should check to see if not defined!
+	return cct.name[id]
+}
+
 /*?
 func (cct *CCT) Set(key int, val string) {
 	unless ($val) {

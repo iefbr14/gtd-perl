@@ -36,7 +36,7 @@ NAME:
 import "strings"
 
 import "gtd/meta"
-import "gtd/task"
+import "gtd/display"
 
 //-- list all items without a parent
 func Report_orphans(args []string) {
@@ -44,7 +44,7 @@ func Report_orphans(args []string) {
 
 	_ = meta.Pick(args)
 
-	task.Header("Orphans", strings.Join(args, " "))
+	display.Header("Orphans -- " + strings.Join(args, " "))
 
 	for _,ref := range meta.Sorted() {
 
@@ -58,6 +58,6 @@ func Report_orphans(args []string) {
 			continue
 		}
 
-		ref.Display("")
+		display.Task(ref, "")
 	}
 }

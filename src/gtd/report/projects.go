@@ -53,7 +53,7 @@ func Report_projects(args []string) {
 sub report_projects {
 	my($all, $head, $desc) = @_;
 
-	task.Header($head, $desc);
+	display.Header($head, $desc);
 
 	my($work_load) = 0;
 	my($proj_cnt) = 0;

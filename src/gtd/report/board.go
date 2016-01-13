@@ -33,6 +33,7 @@ NAME:
 
 */
 
+import "gtd/display";
 import "gtd/meta";
 import "gtd/task";
 
@@ -63,8 +64,8 @@ func Report_board(args []string) {
 		list = meta.Pick([]string{"roles"});
 	}
 
-	Lines = task.Lines();
-	Cols = (task.Columns()/4)-(1+5+1);
+	Lines = display.Lines();
+	Cols = (display.Columns()/4)-(1+5+1);
 	
 	Seen = make(map[*task.Task]bool);
 

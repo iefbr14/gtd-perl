@@ -116,8 +116,8 @@ func main() {
 //?	var myopts []string
 //?	flag.Var(&myopts, "o", "List of options")
 
-	option.Filter("a", "+future", "all")
-	option.Filter("A", "+done", "Any")
+	option.Filter("all", "a", "+future")
+	option.Filter("Any", "A", "+done")
 
 	flag.Parse()
 

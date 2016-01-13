@@ -3,12 +3,35 @@ package task
 import (
 	"fmt"
 	"log"
-	"time"
 )
 
 // Done is used to signal shutdown.  Channel will close at exit
 var Done chan *Task // task that need saving are written here
 var Max_todo int    // Last todo id (unique for all tables)
+
+type T_task byte
+
+const (
+	T_VISION	T_task = 'm'
+	T_VALUE		T_task = 'v'
+
+	T_ROLE		T_task = 'o'
+	T_GOAL		T_task = 'g'
+	T_PROJECT	T_task = 'p'
+	T_SUB_PROJECT	T_task = 's'	// not a real type
+
+	T_ACTION	T_task = 'a'
+	T_NEXT		T_task = 'n'	// next action
+
+	T_INBOX		T_task = 'i'
+	T_WAIT		T_task = 'w'
+
+	T_REFERENCE	T_task = 'r'
+	T_ITEM		T_task = 'T'
+
+	T_LIST		T_task = 'L'
+	T_CHECKLIST	T_task = 'C'
+)
 
 type Task struct {
 	Tid      int
@@ -21,20 +44,25 @@ type Task struct {
 
 	Category    string
 	Context     string
+	Timeframe   string
 
-	Doit        time.Time
-	Due         time.Time
-	Completed   time.Time
+	Doit        string	// time.Time
+	Due         string	// time.Time
+	Tickledate  string	// time.Time
+	Completed   string	// time.Time
+
+	Priority    int
 	Effort      int
 	Percent     int
 
-	Priority    int
-	IsSomeday   bool
-	Later       time.Time
-	IsNextaction bool
+	Resource    string
 
-	Created    time.Time
-	Modified   time.Time
+	IsNextaction bool
+	IsSomeday    bool
+	Later        string	// time.Time
+
+	Created    string	// time.Time
+	Modified   string	// time.Time
 
 	Recur    string
 	Rdesc    string
@@ -42,10 +70,6 @@ type Task struct {
 	live       bool
 	mask       uint
 
-	Tickledate time.Time
-	Timeframe  []time.Time
-
-	Resource []string
 	Hint     []string
 	Tags	 []string
 
@@ -54,6 +78,8 @@ type Task struct {
         Children    []* Task
 
 	dirty map[string]bool
+
+	filtered string
 }
 
 type Tasks []*Task;
@@ -94,15 +120,15 @@ func Find(tid int) *Task {
 		return task
 	}
 	fmt.Printf("Can't find task id %d\n", tid)
+	panic("find");
 	return nil
 }
 
-func All() []*Task {
-	v := make([]*Task, len(all_Tasks))
-	idx := 0
+func All() Tasks {
+	v := make(Tasks, 0, len(all_Tasks))
+
 	for _, value := range all_Tasks {
-		v[idx] = value
-		idx++
+		v = append(v, value);
 	}
 	return v
 }
@@ -229,7 +255,7 @@ func (self *Task)get_KEY(key string) string {
 
 func (self *Task)set_KEY(key string, val string) {
 	switch key {
-	case "tid":   self.Tid = strconv.Atoi(val)
+	case "tid":   panic(set_KEY(tid) // self.Tid = strconv.Atoi(val)
 	case "type":  self.Type = val[0]
 	case "title": self.Title = val
 	case "parents": self.set_parent_ids(val)
@@ -453,15 +479,16 @@ sub is_later {
 	return 1
 }
 
-sub is_someday {
-	my($ref) = @_
+?*/
+func (t *Task) Is_someday() bool {
+	if t.Is_later() {
+		return true
+	}
 
-	return 1 if $ref->is_later()
-	return 1 if $ref->get_isSomeday() eq 'y'
-
-	return 0
+	return t.IsSomeday;
 }
 
+/*?
 sub is_active {
 	my($ref) = @_
 
@@ -470,25 +497,28 @@ sub is_active {
 
 	return 1
 }
+?*/
 
-sub is_completed {
-	my($ref) = @_
-
-	return 1 if $ref->get_completed()
-	return 0
+func (t *Task) Is_completed() bool {
+	return t.Completed != ""
 }
 
 
-sub is_nextaction {
-	my($ref) = @_
-
-	return 0 if $ref->is_someday()
-	return 0 if $ref->get_completed()
-	return 1 if $ref->get_nextaction() eq 'y'
-
-	return 0
+func (t *Task) Is_later() bool {
+//? what is later? see above
+	return false
 }
 
+func (t *Task) Is_nextaction() bool {
+	
+//?	return 0 if $ref->is_someday()
+//?	return 0 if $ref->get_completed()
+//?	return 1 if $ref->get_nextaction() eq 'y'
+
+	return t.IsNextaction
+}
+
+/*?
 // used by Hier::Walk to track depth of the current walk
 sub set_level {
 	my($self, $level) = @_

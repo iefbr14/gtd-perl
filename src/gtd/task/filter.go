@@ -3,7 +3,7 @@ package task
 
 //?	@EXPORT      = qw( &add_filter );
 
-/*
+/*?
 my $Filter_Category;
 my $Filter_Context;
 my $Filter_Timeframe;
@@ -17,32 +17,26 @@ our $filter_debug = 0;
 
 my $Default_level = 'm';
 
+
 sub filtered_reason {
 	my($ref) = @_;
 
 	return $ref->{_filtered} || "-filtered";
 }
+?*/
 
-sub filtered {
-	my ($ref, $display_reason) = @_;
-
-	my($reason) = filtered_reason($ref);
-
-	if (substr($reason,0,1) eq '-') {
-		if ($display_reason) {
-			my($tid) = $ref->get_tid();
-			my($title) = $ref->get_title();
-			print "X: $reason ($tid: $title)\n";
-		}
-		return $reason;
+func(t *Task) Filtered() bool {
+	if t.filtered == "" || t.filtered[:0] == "-" {
+		return false
 	}
-	return '';
+	return true;
 }
 
+/*?
 sub tasks_matching_type {
-	my($type) = @_;
+	my($kind) = @_;
 
-	return grep { $_->get_type() eq $type } Hier::Tasks::all();
+	return grep { $_->get_type() eq $kind } Hier::Tasks::all();
 }
 
 sub reset_filters {
@@ -355,15 +349,15 @@ sub task_mask {
 
 	my($done) = $ref->is_completed();
 	my($due)  = $ref->get_due();
-	my($type) = $ref->get_type();
+	my($kind  = $ref->get_type();
 
 	$mask |= A_DONE		if $done;  # step on next/somday/tickle
 	$mask |= A_SOMEDAY	if $ref->get_isSomeday() eq 'y';
 	$mask |= A_TICKLE	if $ref->get_tickledate() gt $Today;
-	$mask |= A_WAITING	if $type eq 'w';
+	$mask |= A_WAITING	if $kind eq 'w';
 	$mask |= A_NEXT	 	if $ref->get_nextaction() eq 'y';
 
-	if ($type eq 'a') {
+	if ($kind eq 'a') {
 		$mask |= A_ACTION;
 	}
 	$ref->{_mask} = $mask;
@@ -702,17 +696,17 @@ sub filter_walk_down_up {
 sub filter_any {
 	my($ref, $arg) = @_;
 
-	my($type) = $ref->get_type();
+	my($kind) = $ref->get_type();
 
 	if ($arg eq '*') {
-		return "+any=".$type;
+		return "+any=".$kind;
 	}
 	if ($arg eq '=') {
-		return "+any=".$type unless ref.Is_list();
+		return "+any=".$kind unless ref.Is_list();
 	}
-	return "+any=$type" if $arg eq 't' && ref.Is_task();
-	return "+any=$type" if $arg eq 'h' && ref.Is_hier();
-	return "+any=$type" if $arg eq 'l' && ref.Is_list();
+	return "+any=$kind" if $arg eq 't' && ref.Is_task();
+	return "+any=$kind" if $arg eq 'h' && ref.Is_hier();
+	return "+any=$kind" if $arg eq 'l' && ref.Is_list();
 
 	return '?';
 }
@@ -751,8 +745,8 @@ sub filter_tickle {
 sub filter_wait {
 	my($ref, $arg) = @_;
 
-	my($type) = $ref->get_type();
-	return "+wait" if $type eq 'w';
+	my($kind) = $ref->get_type();
+	return "+wait" if $kind eq 'w';
 	return '?';
 }
 

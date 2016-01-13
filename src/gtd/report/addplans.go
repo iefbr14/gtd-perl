@@ -34,6 +34,7 @@ NAME:
 */
 
 import "gtd/color"
+import "gtd/display"
 import "gtd/meta"
 import "gtd/option"
 import "gtd/task"
@@ -58,7 +59,7 @@ func Report_addplansp(args []string) {
 	} else {
 		limit = option.Int("Limit", len(list));
 	}
-	task.Header("Projects needing planning", "");
+	display.Header("Projects needing planning");
 
 	var seen map[int]bool;
 
@@ -82,7 +83,7 @@ func Report_addplansp(args []string) {
 		list = append(list, ref.Children...);
 
 		reason = task.Join("(",color.On("RED"), reason, color.Off(), ")");
-		ref.Rgpa(reason);
+		display.Rgpa(ref, reason);
 
 		limit--;
 		if limit <= 0 {

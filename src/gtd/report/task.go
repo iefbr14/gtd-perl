@@ -35,7 +35,7 @@ NAME:
 
 
 import "gtd/meta"
-import "gtd/task"
+import "gtd/display"
 
 //-- quick List by various methods
 func Report_task(args []string) {
@@ -47,10 +47,9 @@ func Report_task(args []string) {
 	}
 
 	title := meta.Desc(args);
-	task.Header("Tasks", title);
+	display.Header("Tasks -- " + title);
 
-//?	for _,ref := range list.Sort {
 	for _,ref := range list {
-		ref.Display("")
+		display.Task(ref, "")
 	}
 }

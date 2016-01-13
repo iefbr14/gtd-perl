@@ -33,24 +33,29 @@ NAME:
 
 */
 
-/*?
+import "fmt"
+import "log"
 
 import "gtd/meta"
-import "gtd/task"
-
+//import "gtd/task"
+//import "gtd/display"
 
 //-- Edit listed actions/projects
-func Report_edit(args []string) {
-	my($key, $val, $changed);
-
-	meta.Filter("+all", '^tid', "none");
+func Report_edit(args []string) int {
+	meta.Filter("+all", "^tid", "none");
 
 	list := meta.Pick(args);
 	if (len(list) == 0) {
-		@_ = ( option("Current") )  if scalar(@_) == 0;
-		panic("No items to edit\n");
+		list := meta.Current();
+		if (len(list) == 0) {
+			fmt.Println("No items to edit");
+			return 1
+		}
 	}
-    
+	log.Fatal("... Code edit\n");
+/*?
+	my($key, $val, $changed);
+
 	umask(0077);
 	open(my $ofd, '>', "/tmp/todo.$$") or panic();
 	for ref := range list {
@@ -146,5 +151,6 @@ sub save {
 	$ref->update();
 
 	print  "Saved\n";
-}
 ?*/
+	return 0
+}

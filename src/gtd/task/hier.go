@@ -54,7 +54,7 @@ func (parent *Task)orphin_child(child *Task) {
 // access routines but they don't change anything.
 
 func (t *Task) Parent_ids() []int {
-	list := make([]int, len(t.Parents), 0);
+	list := make([]int, 0, len(t.Parents));
 	for _, t := range t.Parents {
 		list = append(list, t.Tid);
 	}
@@ -63,7 +63,7 @@ func (t *Task) Parent_ids() []int {
 }
 
 func (t *Task) Children_ids() []int {
-	list := make([]int, len(t.Children), 0);
+	list := make([]int, 0, len(t.Children));
 	for _, t := range t.Children {
 		list = append(list, t.Tid);
 	}

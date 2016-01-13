@@ -14,12 +14,12 @@ import (
 	"os"
 	"time"
 
+//? use YAML::Syck qw(LoadFile)
+//	"gopkg.in/yaml.v2"
 	"encoding/json"
 
 	"gtd/option"
 	"gtd/cct"
-
-//	"gopkg.in/yaml.v2"
 
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
@@ -31,26 +31,6 @@ var MetaFix  bool = false
 var Prefix string = "gtd_"
 
 var db_Table string = ""
-
-/*?
-use DBI
-use YAML::Syck qw(LoadFile)
-use Data::Dumper
-
-my $Current_ref;	// current gtd mapped item
-
-my $Table
-
-func (t *Task)Set(field string, value string) {
-	tid := t.Tid
-
-	if field == "todo_id {
-		panic("set todo_id")
-	}
-
-	t.set_KEY(field, value)
-}
-?*/
 
 // gtd_categories     |
 // gtd_context        |
@@ -218,43 +198,72 @@ func db_load_items() {
 */
 
 func db_load_itemstatus() {
-//	rows = G_select("itemstatus", "itemId,dateCreated,lastModified,dateCompleted,type,categoryId,isSomeday,contextId,timeframeId,deadline,tickledate,nextaction")
-	rows := G_select("itemstatus", "itemId,type,nextaction")
+	rows := G_select("itemstatus", "itemId,dateCreated,lastModified,dateCompleted,type,categoryId,isSomeday,contextId,timeframeId,deadline,tickledate,nextaction")
+	//rows := G_select("itemstatus", "itemId,type,lastModified,dateCompleted,nextaction")
+
+	category  := cct.Use("Category")
+	context   := cct.Use("Context")
+	timeframe := cct.Use("Timeframe")
 
 	var(
 		todo_id    int
-		tasktype   byte
-		nextaction byte
+
+		dateCreated	sql.NullString	// time.Time
+		lastModified	sql.NullString	// time.Time
+
+		dateCompleted	sql.NullString	// time.Time
+		tasktype        sql.NullString	// enum: m,v,o,g,p,a,r,w,i,L,C,T
+
+		categoryId	int
+		isSomeday	sql.NullString	// enum: y,n
+		contextId	int
+		timeframeId	int
+		deadline	sql.NullString	// time.Time
+		tickledate	sql.NullString	// time.Time
+		nextaction	sql.NullString	// enum: y,n
 	)
 
 	for rows.Next() {
-		rows.Scan(&todo_id, &tasktype, &nextaction)
+		err := rows.Scan(&todo_id, 
 
+			&dateCreated,
+			&lastModified,
+
+			&dateCompleted,
+			&tasktype, 
+
+			&categoryId,
+			&isSomeday,
+			&contextId,
+			&timeframeId,
+			&deadline,
+			&tickledate,
+			&nextaction)
+		if err != nil {
+			panic(err);
+		}
 		t := Find(todo_id)
 		if t == nil {
 			continue
 		}
 
-		t.Type = tasktype
-		t.IsNextaction = nextaction == 'y'
-//?		gtdmap($row, "todo_id"       => "itemId")
-//?		gtdmap($row, "modified"      => "lastModified")
-//?		gtdmap($row, "created"       => "dateCreated")
-//?		gtdmap($row, "completed"     => "dateCompleted")
-//?		gtdmap($row, "type"          => "type")
-//?		gtdmap($row, "_gtd_category" => "categoryId")
-//?
-//?		gtdmap($row, "isSomeday"     => "isSomeday")
-//?		gtdmap($row, "_gtd_context"  => "contextId")
-//?		gtdmap($row, "_gtd_timeframe"=> "timeframeId")
-//?		gtdmap($row, "due"           => "deadline")
-//?		gtdmap($row, "nextaction"    => "nextaction")
-//?		gtdmap($row, "tickledate"    => "tickledate")
-//?
-//?		$ref = $Current_ref
-//?		cset($ref, category  => $Category->name($row->{categoryId}))
-//?		cset($ref, context   => $Context->name($row->{contextId}))
-//?		cset($ref, timeframe => $Timeframe->name($row->{timeframeId}))
+//		t.Kind = T_kind(tasktype.String[0])
+		t.Type = tasktype.String[0]
+		t.IsNextaction = nextaction.String == "y"
+		t.IsSomeday =	isSomeday.String == "y"
+
+		t.Created =	dateCreated.String
+		t.Modified =	lastModified.String
+
+		t.Due =		deadline.String
+		t.Tickledate =	tickledate.String
+		t.Completed =	dateCompleted.String
+
+		t.Category =	category.Name(categoryId)
+		t.Context =	context.Name(contextId)
+		t.Timeframe =	timeframe.Name(timeframeId)
+
+
 	}
 
 	G_done(rows);
@@ -357,7 +366,7 @@ func db_load_todo() {
 		todo_id		int
 		priority	int
 		state		byte
-		doit		time.Time
+		doit		sql.NullString	//time.Time
 		effort		int
 		resource	sql.NullString
 		depends		sql.NullString
@@ -383,7 +392,7 @@ func db_load_todo() {
 		t.Tid = todo_id
 		t.Priority = priority
 		t.State = state
-		t.Doit = doit
+		t.Doit = doit.String
 		t.Effort = effort
 //?		t.Resource = resource.String
 //?		t.Depends = depends.String
@@ -527,10 +536,10 @@ func gtd_update(t *Task) {
 func gtd_fix_maps(ref *Task) {
 
 	today := time.Now()
-	if ref.Created.IsZero() {
-		ref.Created = today
+	if ref.Created == "" {
+		ref.Created = today.Format("2006-02-03")
 	}
-	ref.Modified = today
+	ref.Modified = today.Format("2006-02-03 15:04:05")
 
 	panic("... Code gtd_fix_maps")
 //***BUG***	ref.fix_map("category",  '_gtd_category',  $Category)
@@ -542,12 +551,12 @@ func gtd_fix_maps(ref *Task) {
 
 /*?
 sub _fix_map {
-	my($ref, $type, $index, $master) = @_
+	my($ref, $kind $index, $master) = @_
 
-	return unless $ref->is_dirty($type)
+	return unless $ref->is_dirty($kind
 
 	my($val_id) = 0
-	my($val) = $ref->{$type}
+	my($val) = $ref->{$kind
 	if (!defined $val) {
 			//# timeframe never set
 			return
@@ -556,7 +565,7 @@ sub _fix_map {
 	if ($val ne '') {
 		$val_id = $master->get($val)
 		if (!defined $val_id) {
-			warn "unmapped $type: $val"
+			warn "unmapped $kind $val"
 			//##BUG### we need to create it?
 			return
 		}

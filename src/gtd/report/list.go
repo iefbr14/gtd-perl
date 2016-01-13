@@ -37,24 +37,28 @@ import "strings"
 import "fmt"
 
 import "gtd/meta"
-import "gtd/task"
+import "gtd/display"
 
 //-- list titles for any filtered class (actions/projects etc)
-func Report_list(args []string) {
+func Report_list(args []string) int {
 	meta.Filter("+active", "^title", "title")
 
 	title := strings.Join(args, " ")
+	if title != "" {
+		title = " -- " + title
+	}
 
 	list := meta.Pick(args)
 
 	if len(list) == 0 {
 		fmt.Println("No items requested")
-		return
+		return 1
 	}
 
-	task.Header("List", title)
+	display.Header("List" + title)
 
-//?	for _,ref := range list.Sort {
-//?		ref.Display()
-//?	}
+	for _,ref := range meta.Sort(list) {
+		display.Task(ref, "")
+	}
+	return 0
 }

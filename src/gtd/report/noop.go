@@ -48,6 +48,8 @@ func Report_noop(args []string) int {
 
 	meta.Filter("+live", "^tid", "tid")
 
+	fmt.Print("args:", args);
+
 	//list := meta.Pick(args)
 	_ = meta.Pick(args)
 

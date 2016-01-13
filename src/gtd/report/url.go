@@ -55,7 +55,7 @@ func Report_url(args []string) {
 	if (@list == 0) {
 		@Urls = ("Main_Page");
 	}
-	task.Header("Tasks", $title);
+	display.Header("Tasks", $title);
 
 	%Seen = ();
 	@Urls = ();

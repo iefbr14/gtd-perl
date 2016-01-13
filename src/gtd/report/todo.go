@@ -35,7 +35,7 @@ NAME:
 
 import "gtd/meta";
 import "gtd/option";
-import "gtd/task";
+import "gtd/display";
 
 //-- List high priority next actions
 func Report_todo(args []string) {
@@ -50,7 +50,7 @@ func Report_todo(args []string) {
 		title = meta.Desc(args)
 	}
 
-	task.Header(title, "")
+	display.Header(title)
 
 	count := 0
 	for _,ref := range meta.Sorted() {
@@ -58,7 +58,7 @@ func Report_todo(args []string) {
 			continue
 		}
 
-		ref.Display("");
+		display.Task(ref, "");
 
 		if count++; count >= limit {
 			break

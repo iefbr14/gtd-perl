@@ -23,6 +23,7 @@ use Hier::Option;
 
 sub by_hier($$);
 
+var sort_Criteria map[string]func() int {
 my(%Criteria) = (
 	id	 => \&by_tid,
 	tid	 => \&by_tid,
@@ -54,9 +55,10 @@ my(%Meta_key, %Focus_key, %Panic_key);
 
 my $Sorter = \&by_task;
 
-sub sort_mode {
-	my($mode) = @_;
+?*/
 
+func Sort_mode(mode string) {
+/*?
 	unless (defined $mode) {
 		$Sorter = \&by_task;
 		return;
@@ -76,8 +78,10 @@ sub sort_mode {
 	$Sorter = $Criteria{$mode};
 
 	%Meta_key = ();		// clear any cached keys
+?*/
 }
 
+/*?
 sub sort_tasks {
 	my($rev) = option("Reverse", 0);
 

@@ -1,39 +1,39 @@
 package task
 
 import	"io"
+import	"log"
 
-//?  @EXPORT      = qw(&walk &detail);
+//?  @EXPORT      = qw(&walk &detail)
 
-var	walk_debug bool 
+var	walk_Debug bool 
 
 type Walk struct {
-	done	func()
-	detail	func()
-	pre	func()
+	Pre	func(*Walk, *Task)
+	Detail	func(*Walk, *Task)
+	Done	func(*Walk, *Task)
 
 	seen	map[*Task]bool
 
-	depth	int
+	Depth	int
+
 	fd	*io.Writer
 }
 
-/*
-func New() *Walk {
-	my($class, %opt) = @_;
+// task.NewWalk creates a new toplevel walk structure
+func NewWalk() *Walk {
+	w := Walk{}
 
-	my($walk) = {};
+	w.Detail = show_detail
+	w.Done   = end_detail
+	w.Pre    = pre_detail
 
-	$walk->{fd} = \*STDOUT;
-	$walk->{depth} = type_depth('p');	// projects
 
-	$walk->{detail} = $opt{"detail"} || \&show_detail;
-	$walk->{done}   = $opt{"done"}   || \&end_detail;
-	$walk->{pre}    = $opt{"pre"}    || sub {};
-	$walk->{seen} = {};		
+panic("... code NewWalk type_depth")
+//?	w.fd = os.Stdout
+//?	w.depth = type_depth('p');
+	w.seen = make(map[*Task]bool)
 
-	bless $walk, $class;
-
-	return $walk;
+	return &w
 }
 
 func (self *Walk) SetDetail(detail func()) {
@@ -45,160 +45,170 @@ func (self *Walk) SetDone(detail func()) {
 func (self *Walk) SetPre(detail func()) {
 }
 
-sub walk {
-	my($walk) = shift @_;
+func (w *Walk)walk() {
+	panic("... code walk.Walk")
+/*?
+	my($toptype) = @_
 
-	my($toptype) = @_;
-
-	$toptype ||= 'm';
+	$toptype ||= 'm'
 
 	if ($toptype =~ /^\d+/) {
-		my($ref) = Find($toptype);
+		my($ref) = Find($toptype)
 		if ($ref) {
 			if ($ref->get_type() eq 'm') {
-				$ref->set_level(1);
+				$ref->set_level(1)
 			} else {
-				$ref->set_level(2);
+				$ref->set_level(2)
 			}
-			$walk->{pre}->($walk, $ref);
-			$walk->detail($ref);
+			$walk->{pre}->($walk, $ref)
+			$walk->detail($ref)
 		} else {
-			warn "No such task: $toptype\n";
+			warn "No such task: $toptype\n"
 		}
-		return;
+		return
 	}
 
-	my(@top) = meta_matching_type($toptype);
+	my(@top) = meta_matching_type($toptype)
 
 	for my $ref (sort_tasks @top) {
-		$ref->set_level(1);
-		$walk->{pre}->($walk, $ref);
+		$ref->set_level(1)
+		$walk->{pre}->($walk, $ref)
 	}
 
 	for my $ref (sort_tasks @top) {
-		next if $ref->filtered();
+		next if $ref->filtered()
 
-		$ref->set_level(1);
-		$walk->detail($ref);
+		$ref->set_level(1)
+		$walk->detail($ref)
 	}
-	return;
+?*/
+	return
 }
 
 
-sub set_depth {
-	my($walk, $type) = @_;
-
-	$walk->{depth} = type_depth($type);
-	return;
+func (w *Walk) set_depth(kind byte) {
+	panic("... walk.set_depth  -- code set_depth")
+//?	w.Depth = type_depth(kind)
 }
 
 
-sub filter {
-	my($walk) = shift @_;
-
-	my($tid, $type);
+func Filter(w *Walk) {
+	panic("... code walk.Filter")
+/*?
+	my($tid, $kind)
 	foreach my $ref (Hier::Tasks::all()) {
-		$tid = $ref->get_tid;
-		$walk->{want}{$tid} = 1;
-		$walk->{want}{$tid} = 0 if $ref->filtered();
+		$tid = $ref->get_tid
+		$walk->{want}{$tid} = 1
+		$walk->{want}{$tid} = 0 if $ref->filtered()
 	}
-	return;
+	return
 
+	for 
 	foreach my $ref (Hier::Tasks::all()) {
-		$tid = $ref->get_tid();
-		$type = $ref->get_type();
+		tid := t.Tid
+		kind := t.Kind
 
-		if ($type eq 'p') {
-			next if $ref->filtered();
+		if kind == 'p' {
+			next if $ref->filtered()
 
-			$walk->{want}{$tid}++;
-			$walk->_want($ref->get_parents());
-			next;
+			$walk->{want}{$tid}++
+			$walk->_want($ref->get_parents())
+			next
 		}
 
-		if ($type eq 'a" or $type eq "w') {
-			next if $ref->filtered();
+		if (kind == 'a' or kind == 'w') {
+			next if $ref->filtered()
 
-			$walk->{want}{$tid}++;
-			$walk->_want($ref->get_parents());
-			next;
+			$walk->{want}{$tid}++
+			$walk->_want($ref->get_parents())
+			next
 		}
 	}
+?*/
 }
 
+/*?
 // used by filter to walk up the tree add "want"edness to each parent.
 sub _want {
-	my($walk) = shift @_;
+	my($walk) = shift @_
 
-	my($pid);
+	my($pid)
 	foreach my $ref (@_) {
-		$pid = $ref->get_tid();
-		next if $walk->{want}{$pid}++;
+		$pid = $ref->get_tid()
+		next if $walk->{want}{$pid}++
 
-		$walk->_want($ref->get_parents());
+		$walk->_want($ref->get_parents())
 	}
 }
+?*/
 
-sub detail {
-	my($walk, $ref) = @_;
-	my($sid, $name, $cnt, $desc, $pri, $done);
+func detail(w *Walk, t *Task) {
+	panic("... code walk.detail")
+/*?
+	my($sid, $name, $cnt, $desc, $pri, $done)
 
-	my $level = $ref->level();
-	my $depth = $walk->{depth};
+	my $level = $ref->level()
+	my $depth = $walk->{depth}
 
-	my $tid  = $ref->get_tid();
-	my $type = $ref->get_type();
+	my $tid  = $ref->get_tid()
+	my $kind = $ref->get_type()
 
-	warn "detail($tid:$type) level:$level of $depth\n" if $Debug;
+	warn "detail($tid:$kind level:$level of $depth\n" if $Debug
 
-	return if $walk->{seen}{$tid}++;
+	return if $walk->{seen}{$tid}++
 
-	return if $ref->is_list();
+	return if $ref->is_list()
 
 	if ($walk->{want}{$tid} == 0) {
 		// we are global filtered
-		warn "< detail($tid) filtered\n" if $Debug;
-		return;
+		warn "< detail($tid) filtered\n" if $Debug
+		return
 	}
 
-	unless ($type) {
+	unless ($kind) {
 		//***BUG*** fixed: type was not set by new
-		confess "$tid: bad type "$type"\n"; 
-		return;
+		confess "$tid: bad type "$kind\n"; 
+		return
 	}
-	if (type_depth($type) > $depth) {
-		warn "+ detail($tid)\n" if $Debug;
-		return;
+	if (type_depth($kind) > $depth) {
+		warn "+ detail($tid)\n" if $Debug
+		return
 	}
 
-	$walk->{detail}->($walk, $ref);
+	$walk->{detail}->($walk, $ref)
 
 	foreach my $child (sort_tasks $ref->get_children()) {
-		my $cid = $child->get_tid();
-		warn "$tid => detail($cid)\n" if $Debug;
+		my $cid = $child->get_tid()
+		warn "$tid => detail($cid)\n" if $Debug
 
-		$child->set_level($level+1);
-		$walk->detail($child);
+		$child->set_level($level+1)
+		$walk->detail($child)
 	}
 
-	$walk->{done}->($walk, $ref);
+	$walk->{done}->($walk, $ref)
+?*/
 }
 
-sub show_detail {
-	return unless $Debug;
+func show_detail(w *Walk, t *Task) {
+	if !walk_Debug {
+		return
+	}
 
-	my($ref) = @_;
-
-	my $tid = $ref->get_tid();
-	warn "### Hier::Walk::show_detail($tid)\n" if $Debug;
+	log.Printf("### Hier::Walk::show_detail(%d)\n", t.Tid)
 }
 
-sub end_detail {
-	return unless $Debug;
+func end_detail(w *Walk, t *Task) {
+	if !walk_Debug {
+		return
+	}
 
-	my($ref) = @_;
-
-	my $tid = $ref->get_tid();
-	warn "### Hier::Walk::end_detail($tid)\n" if $Debug;
+	log.Printf("### Hier::Walk::end_detail(%d)\n", t.Tid)
 }
-*/
+
+func pre_detail(w *Walk, t *Task) {
+	if !walk_Debug {
+		return
+	}
+
+	log.Printf("### Hier::Walk::pre_detail(%d)\n", t.Tid)
+}

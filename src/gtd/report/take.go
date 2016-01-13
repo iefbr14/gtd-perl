@@ -38,6 +38,7 @@ NAME:
 
 import "gtd/meta";
 import "gtd/option";
+import "gtd/display";
 import "gtd/task";
 
 my %Ancestors;

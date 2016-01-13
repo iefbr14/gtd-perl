@@ -33,40 +33,41 @@ NAME:
 
 */
 
-/*?
-import "gtd/color";
-import "gtd/meta";
-import "gtd/option";
-import "gtd/task";
+import "gtd/meta"
+import "gtd/color"
+import "gtd/task"
+import "gtd/display"
 
-my $Mask = 0;
+//? my $Mask = 0
 
 //-- Hiericial List of Values/Visions/Roles...
-func Report_hier(args []string) {
-	gtd.Meta_filter("+active", '^title', "hier");
+func Report_hier(args []string) int {
+	meta.Filter("+active", "^title", "hier")
 
-	$Mask  = option("Mask");
+/*?
 
-	my(@top);
-	my($depth) = '';
-	for my $criteria (gtd.Meta_argv(@_)) {
+	$Mask  = option("Mask")
+
+	my(@top)
+	my($depth) = ''
+	for _, criteria := range meta.Argv(args) {
 		if ($criteria =~ /^\d+$/) {
-			push(@top, $criteria);
+			push(@top, $criteria)
 		} else {
-			my($type) = type_val($criteria);
+			my($type) = type_val($criteria)
 			if ($type) {
-				$depth = $type;
+				$depth = $type
 			} else {
-				panic("unknown type $criteria\n");
+				panic("unknown type $criteria\n")
 			}
 		}
 	}
 	if (@top == 0) {
-		my $parent = option("Current");
+		my $parent = option("Current")
 		if ($parent) {
-			@top = ( $parent );
+			@top = ( $parent )
 		} else {
-			@top = ( 'm' );
+			@top = ( 'm' )
 		}
 	}
 
@@ -74,88 +75,48 @@ func Report_hier(args []string) {
 		my($walk) = new Hier::Walk(
 			detail => \&hier_detail,
 			done   => \&end_detail,
-		);
-		$walk->filter();
-		$walk->set_depth(map_depth($top, $depth));
+		)
+		$walk->filter()
+		$walk->set_depth(map_depth($top, $depth))
 
-		$walk->walk($top);
+		$walk->walk($top)
 	}
+?*/
+	return 0
 }
 
+/*?
 sub map_depth {
-	my($ref, $depth) = @_;
+	my($ref, $depth) = @_
 
-	return $depth if $depth;
+	return $depth if $depth
 
-	my($type) = 'm';
+	my($type) = 'm'
 
 	// not a reference to a task
 	if (!ref $ref) {
 		// is it a tid?
 		if ($ref =~ /^\d+$/) {
-			$ref = Hier::Tasks::find($ref);
-			$type = $ref->get_type();
+			$ref = Hier::Tasks::find($ref)
+			$type = $ref->get_type()
 		} else {
 			// use the type that was pass
-			$type = $ref;
+			$type = $ref
 		}
 	}
 
-	return 'a" if $type eq "p';
-	return 'p" if $type eq "g';
+	return 'a" if $type eq "p'
+	return 'p" if $type eq "g'
 	return 'g" if $type eq "o'; # o == ROLE
-	return 'o';
-}
-
-sub hier_detail {
-//	hier_detail_old(@_); # return;
-
-	my($self, $ref) = @_;
-
-	color_ref($ref);
-	display_task($ref);
-}
-
-sub hier_detail_old {
-	my($self, $ref) = @_;
-
-	my $level = $ref->level();
-
-	my $tid  = $ref->get_tid();
-	my $name = $ref->get_title() || '';
-
-	if ($level == 1) {
-		color_ref($ref);
-		print "===== $tid -- $name ====================";
-		nl();
-		return;
-	}
-	if ($level == 2) {
-		color_ref($ref);
-		print "----- $tid -- $name --------------------";
-		nl();
-		return;
-	}
-
-	my $cnt  = $ref->count_actions() || '';
-	my $pri  = $ref->get_priority();
-	my $desc = summary_line($ref->get_description(), '');
-	my $done = $ref->get_completed() || '';
-
-	color_ref($ref);
-
-	printf "%5s %3s ", $tid, $cnt;
-	printf "%-15s", $ref->task_mask_disp() if $Mask;
-
-	print "|  " x ($level-3), "+-", type_disp($ref). '-';
-	if ($name eq $desc or $desc eq '') {
-		printf "%.50s",  $name;
-	} else {
-		printf "%.50s",  $name . ": " . $desc;
-	}
-	nl();
-}
-
-sub end_detail {
+	return 'o'
 }
 ?*/
+
+func hier_detail(w *task.Walk, t *task.Task) {
+	color.Ref(t)
+	display.Task(t, "")
+}
+
+
+func end_detail(w *task.Walk, t *task.Task) {
+}

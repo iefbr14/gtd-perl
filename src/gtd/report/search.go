@@ -37,6 +37,7 @@ import "fmt"
 import "regexp"
 
 import "gtd/meta"
+import "gtd/display"
 import "gtd/task"
 
 //-- Search for items
@@ -55,7 +56,7 @@ func Report_search(args []string) int {
 
 		for _,ref := range meta.Sorted() {
 			if match_desc(ref, re) {
-				ref.Display("")
+				display.Task(ref, "")
 				found = 1
 			}
 		}

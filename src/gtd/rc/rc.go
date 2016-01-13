@@ -273,7 +273,11 @@ sub rc_filter {
 	print "Filter $Filter => $mode\n";
 
 	set_option("Filter", dash_null($mode));
-	gtd.Meta_reset_filters($mode eq '-" ? "+live' : $mode);
+	if mode == "-" {
+		meta.Reset_filters("+live");
+	} else {
+		meta.Reset_filters(mode);
+	}
 
 	$Filter = $mode;
 }

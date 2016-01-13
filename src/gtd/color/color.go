@@ -13,7 +13,6 @@ import "gtd/task"
 var Type = 0
 var Incolor = false
 
-
 var Pri_terminal = map[string]int {
 	"NEXT"	: 1,
 	"DONE"	: 9,
@@ -164,6 +163,11 @@ func guess_type() {
 
 	// guess failed, no color
 	Type = 1
+}
+
+// color.Ref displays the 
+func Ref(ref *task.Task) {
+	color_ref(ref, os.Stdout)
 }
 
 func color_ref(ref *task.Task, fd io.Writer) {
