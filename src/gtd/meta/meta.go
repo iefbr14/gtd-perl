@@ -1,5 +1,6 @@
 package meta
 
+import	"log"
 import	"fmt"
 import	"sort"
 import	"strconv"
@@ -79,13 +80,19 @@ func Sort(list task.Tasks) task.Tasks {
 	return list
 }
 
-/*?
-sub meta_matching_type {
-	my($type) = @_
+// meta.Matching_type return a set of tasks matching the requested type
+func Matching_type(kind byte) task.Tasks {
 
-	return grep { $_->get_type() eq $type } meta_sorted()
+	list := make(task.Tasks, 0, len(meta_Selected))
+
+	for _, t := range meta_Selected {
+		if t.Type == kind {
+			list = append(list, t)
+		}
+	}
+	sort.Sort(list)
+	return list
 }
-?*/
 
 func All() task.Tasks {
 	return task.All()
@@ -325,21 +332,25 @@ sub find_hier {
 	}
 	return @list
 }
+?*/
 
-sub match_type {
-	my($want, $ref) = @_
+func match_type(want byte, ref *task.Task) bool {
+	kind := ref.Type
 
-	my($type) = $ref->get_type()
+	if kind == want {
+		return true
+	}
 
-	return 1 if $type eq $want
+	if kind == 'm' && want == 'v' {
+		return true
+	}
+	if kind == 'o' && want == 'r' {
+		return true
+	}
 
-	return 1 if $type eq 'm" and $want eq "v'
-	return 1 if $type eq 'o" and $want eq "r'
-
-	return 0
+	return false
 }
 
-?*/
 
 //---------------------------------------------------------------------------
 //  Track current task
@@ -348,7 +359,8 @@ var meta_Current task.Tasks
 
 // meta.Current tracks the current task
 func Current() task.Tasks {
-	panic(".... code meta.Current")
+	log.Printf(".... code meta.Current")
+
 	list := task.Tasks{}
 	return list
 }

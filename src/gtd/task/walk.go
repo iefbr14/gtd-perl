@@ -1,6 +1,5 @@
 package task
 
-import	"io"
 import	"log"
 
 //?  @EXPORT      = qw(&walk &detail)
@@ -13,10 +12,9 @@ type Walk struct {
 	Done	func(*Walk, *Task)
 
 	seen	map[*Task]bool
+	want	map[*Task]bool
 
 	Depth	int
-
-	fd	*io.Writer
 }
 
 // task.NewWalk creates a new toplevel walk structure
@@ -27,25 +25,15 @@ func NewWalk() *Walk {
 	w.Done   = end_detail
 	w.Pre    = pre_detail
 
-
-panic("... code NewWalk type_depth")
-//?	w.fd = os.Stdout
-//?	w.depth = type_depth('p');
+	w.Depth = Type_depth('p');
+	
 	w.seen = make(map[*Task]bool)
+	w.want = make(map[*Task]bool)
 
 	return &w
 }
 
-func (self *Walk) SetDetail(detail func()) {
-}
-
-func (self *Walk) SetDone(detail func()) {
-}
-
-func (self *Walk) SetPre(detail func()) {
-}
-
-func (w *Walk)walk() {
+func (w *Walk)Walk(tasks Tasks) {
 	panic("... code walk.Walk")
 /*?
 	my($toptype) = @_
@@ -87,12 +75,11 @@ func (w *Walk)walk() {
 
 
 func (w *Walk) set_depth(kind byte) {
-	panic("... walk.set_depth  -- code set_depth")
-//?	w.Depth = type_depth(kind)
+	w.Depth = Type_depth(kind)
 }
 
 
-func Filter(w *Walk) {
+func (w *Walk)Filter() {
 	panic("... code walk.Filter")
 /*?
 	my($tid, $kind)
@@ -144,49 +131,58 @@ sub _want {
 
 func detail(w *Walk, t *Task) {
 	panic("... code walk.detail")
-/*?
-	my($sid, $name, $cnt, $desc, $pri, $done)
 
-	my $level = $ref->level()
-	my $depth = $walk->{depth}
+	level := t.level
+	depth := w.Depth
 
-	my $tid  = $ref->get_tid()
-	my $kind = $ref->get_type()
+	tid  := t.Tid
+	kind := t.Type
 
-	warn "detail($tid:$kind level:$level of $depth\n" if $Debug
+	if walk_Debug {
+		log.Printf("detail(%d:%c level:%d of %d\n",
+			tid, kind, level, depth)
+	}
 
-	return if $walk->{seen}{$tid}++
+	if w.seen[t] {
+		return
+	}
+	w.seen[t] = true
 
-	return if $ref->is_list()
+	if t.Is_list() {
+		return
+	}
 
-	if ($walk->{want}{$tid} == 0) {
+	if ! w.want[t] {
 		// we are global filtered
-		warn "< detail($tid) filtered\n" if $Debug
+		if walk_Debug {
+			log.Printf("< detail(%d) filtered\n", tid)
+		}
 		return
 	}
 
-	unless ($kind) {
-		//***BUG*** fixed: type was not set by new
-		confess "$tid: bad type "$kind\n"; 
-		return
-	}
-	if (type_depth($kind) > $depth) {
-		warn "+ detail($tid)\n" if $Debug
+	if kind == 0 {
+		log.Printf("bad kind %c for %d\n", kind, tid);
 		return
 	}
 
-	$walk->{detail}->($walk, $ref)
-
-	foreach my $child (sort_tasks $ref->get_children()) {
-		my $cid = $child->get_tid()
-		warn "$tid => detail($cid)\n" if $Debug
-
-		$child->set_level($level+1)
-		$walk->detail($child)
+	if (Type_depth(kind) > depth) {
+		if walk_Debug {
+			log.Printf("+ detail(%d)\n", tid)
+		}
+		return
 	}
 
-	$walk->{done}->($walk, $ref)
-?*/
+	w.Detail(w, t)
+
+	for _, child := range t.Children.Sort() {
+		if walk_Debug {
+			log.Printf("%d => detail(%d)\n", t.Tid, child.Tid)
+		}
+		child.level = level+1
+		detail(w, child)
+	}
+
+	w.Done(w, t);
 }
 
 func show_detail(w *Walk, t *Task) {

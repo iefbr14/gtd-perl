@@ -33,6 +33,8 @@ const (
 	T_CHECKLIST	T_task = 'C'
 )
 
+type Tasks []*Task
+
 type Task struct {
 	Tid      int
 	Type 	 byte
@@ -67,22 +69,20 @@ type Task struct {
 	Recur    string
 	Rdesc    string
 
-	live       bool
-	mask       uint
-
 	Hint     []string
 	Tags	 []string
 
-	Depends     []* Task
-	Parents     []* Task
-        Children    []* Task
+	Depends     Tasks
+	Parents     Tasks
+        Children    Tasks
 
-	dirty map[string]bool
-
-	filtered string
+	dirty      map[string]bool	// used by db
+	filtered   string		// used by filter
+	live       bool
+	mask       uint
+	level	   int			// used by walk
 }
 
-type Tasks []*Task;
 
 func init() {
 	Done = make(chan *Task)

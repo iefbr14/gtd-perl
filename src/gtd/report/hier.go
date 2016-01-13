@@ -38,55 +38,48 @@ import "gtd/color"
 import "gtd/task"
 import "gtd/display"
 
-//? my $Mask = 0
-
 //-- Hiericial List of Values/Visions/Roles...
 func Report_hier(args []string) int {
 	meta.Filter("+active", "^title", "hier")
 
-/*?
-
-	$Mask  = option("Mask")
-
-	my(@top)
-	my($depth) = ''
+	var top task.Tasks
+//?	depth := 0
 	for _, criteria := range meta.Argv(args) {
-		if ($criteria =~ /^\d+$/) {
-			push(@top, $criteria)
+		if task.IsTask(criteria) {
+			top = append(top, task.Lookup(criteria))
 		} else {
-			my($type) = type_val($criteria)
-			if ($type) {
-				$depth = $type
-			} else {
-				panic("unknown type $criteria\n")
-			}
-		}
-	}
-	if (@top == 0) {
-		my $parent = option("Current")
-		if ($parent) {
-			@top = ( $parent )
-		} else {
-			@top = ( 'm' )
+			panic("... code Report_hier type search");
+//?			my($type) = type_val($criteria)
+//?			if ($type) {
+//?				$depth = $type
+//?			} else {
+//?				panic("unknown type " + criteria)
+//?			}
 		}
 	}
 
-	for my $top (@top) {
-		my($walk) = new Hier::Walk(
-			detail => \&hier_detail,
-			done   => \&end_detail,
-		)
-		$walk->filter()
-		$walk->set_depth(map_depth($top, $depth))
-
-		$walk->walk($top)
+	if len(top) == 0 {
+		top = meta.Current()
+		if len(top) == 0 {
+			top = meta.Matching_type('m');
+		}
 	}
-?*/
+
+//?	for _, t := range top {
+		w := task.NewWalk()
+		w.Detail = hier_detail
+
+//?		w.Filter()
+//?		w.Depth = map_depth(top) // $walk->set_depth(map_depth($top, $depth))
+
+		w.Walk(top)
+//?	}
 	return 0
 }
 
+func map_depth(ref *task.Task) byte {
+	return 'm'
 /*?
-sub map_depth {
 	my($ref, $depth) = @_
 
 	return $depth if $depth
@@ -109,14 +102,10 @@ sub map_depth {
 	return 'p" if $type eq "g'
 	return 'g" if $type eq "o'; # o == ROLE
 	return 'o'
-}
 ?*/
+}
 
 func hier_detail(w *task.Walk, t *task.Task) {
 	color.Ref(t)
 	display.Task(t, "")
-}
-
-
-func end_detail(w *task.Walk, t *task.Task) {
 }
