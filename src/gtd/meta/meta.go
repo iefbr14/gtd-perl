@@ -99,15 +99,6 @@ func All() task.Tasks {
 	return task.All()
 }
 
-/*?
-sub meta_all_matching_type {
-	my($type) = @_
-
-	return grep { $_->get_type() eq $type } Hier::Tasks::all()
-}
-
-?*/
-
 // meta.Find map a string taskid to a Task * reporting on errors
 func Find (task_id string) *task.Task {
 	re_is_task_colon := regexp.MustCompile("^[0-9]+:$")

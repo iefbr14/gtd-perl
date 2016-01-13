@@ -82,12 +82,6 @@ sub meta_all {
 	return Hier::Tasks::all();
 }
 
-sub meta_all_matching_type {
-	my($type) = @_;
-
-	return grep { $_->get_type() eq $type } Hier::Tasks::all();
-}
-
 sub meta_find {
 	return Hier::Tasks::find(@_);
 }
