@@ -4,6 +4,7 @@ import "fmt"
 import "gtd/report"
 
 var reports = map[string]func([]string) int{
+	"color":  report.Report_color,
 	"edit":   report.Report_edit,
 	"list":   report.Report_list,
 	"hier":   report.Report_hier,

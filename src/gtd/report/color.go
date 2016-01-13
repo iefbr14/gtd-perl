@@ -33,48 +33,60 @@ NAME:
 
 */
 
-/*?
-import "gtd/task";
+import "fmt"
+
 import "gtd/color";
+import "gtd/display";
 
 //-- Detailed list of projects with (next) actions
-func Report_color(args []string) {
+func Report_color(args []string) int {
+	bg_list := []string{"WHITE","BK","RED","GREEN","YELLOW","BLUE","PURPLE","CYAN"}
+	fg_list := []string{
+		"BLACK","RED","GREEN","BROWN","NAVY","PURPLE","CYAN","GREY",
+		"SILVER","PINK","LIME","YELLOW","BLUE","MAGENTA","AQUA","WHITE",
+	"NONE"}
 
-	my(@bg) = qw(WHITE BK  RED  GREEN YELLOW  BLUE PURPLE  CYAN );
-	my(@fg) = qw(
-	BLACK  RED  GREEN BROWN  NAVY PURPLE  CYAN GREY
-	SILVER PINK LIME  YELLOW BLUE MAGENTA AQUA WHITE
-	NONE);
+	col := display.Columns();
+	wid := col/9-1;
+	sw := wid - 3 - 1 
+	w := fmt.Sprintf("%d", wid);
 
-	my($col) = columns();
-	my($wid) = int($col/9)-1;
-	my($sw) = $wid - 3;
+//	if (report_debug) {
+//		my($use) = $wid*10;
+//		print "col: $col, wid: $wid, sw: $sw, use: $use\n";
+//		my($dash) = substr("----+----|"x20, 0, $wid*10-1);
+//		print "$dash\n";
+//	}
 
-	if (report_debug) {
-		my($use) = $wid*10;
-		print "col: $col, wid: $wid, sw: $sw, use: $use\n";
-		my($dash) = substr("----+----|"x20, 0, $wid*10-1);
-		print "$dash\n";
+	// %-9.9s
+	f := "%-" + w + "." + w + "s "
+
+	title := fmt.Sprintf(f, "fg/bg:");
+	for _, bg := range bg_list {
+		title += fmt.Sprintf(f, bg);
 	}
 
-	my($title) = '';
-	for my $bg ("\fg/bg:", @bg) {
-		$title .= sprintf "%-${wid}.${wid}s ", $bg;
-	}
-	$title =~ s/ *$//;
-	print $title; nl();
+//	title =  strings.Trim(title)
+	fmt.Print(title); display.Nl();
 
-	for my $fg (@fg) {
-		printf "%-${wid}.${wid}s", $fg;
+	for _, fg := range fg_list {
+		f := "%-" + w + "." + w + "s"
+		fmt.Printf(f, fg);
 
-		for my $bg (@bg) {
-			my($label) = sprintf " %-${wid}.${wid}s",
-				substr($fg,0,$sw).'/'.$bg;
+		for _, bg := range bg_list {
+			f := " %-" + w + "." + w + "s"
+			var label string
 
-			print_color($fg, $bg);
-			print $label;
+			if (len(fg) < sw) {
+				label = fmt.Sprintf(f, fg+"/"+bg);
+			} else {
+				label = fmt.Sprintf(f, fg[0:sw]+"/"+bg);
+			}
+			
+
+			fmt.Print(color.FgBg(fg, bg), label)
 		}
-		nl();
+		display.Nl();
 	}
+	return 0
 }
-?*/

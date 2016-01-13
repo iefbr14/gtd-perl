@@ -20,12 +20,14 @@ import "gtd/option"
 var format_Header  func(io.Writer, string) = header_none
 var format_Display func(io.Writer, *task.Task, string) = disp_simple
 
+var Display_fd = os.Stdout
+
 func Header(note string) {
-	format_Header(os.Stdout, note)
+	format_Header(Display_fd, note)
 }
 
 func Task(ref *task.Task, note string) {
-	format_Display(os.Stdout, ref, note)
+	format_Display(Display_fd, ref, note)
 }
 
 
@@ -1011,6 +1013,10 @@ func Type(t *task.Task) string {
 	}
 
 	return fmt.Sprintf("(%c)", c)
+}
+
+func Nl() {
+	color.Nl(Display_fd)
 }
 
 //==============================================================================

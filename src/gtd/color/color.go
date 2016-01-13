@@ -150,7 +150,7 @@ func guess_type() {
 	}
 
 	if (os.Getenv("TERM") != "") {
-		//## print "TERM: color mode TERM\n";
+		// fmt.Println("TERM: color mode TERM");
 
 		Type = 2
 		return
