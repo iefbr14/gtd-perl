@@ -34,31 +34,30 @@ NAME:
 */
 
 import "strings"
-import "fmt"
 
 import "gtd/meta"
 import "gtd/display"
 
-//-- list titles for any filtered class (actions/projects etc)
-func Report_list(args []string) int {
-	meta.Filter("+active", "^title", "title")
+//-- list all items without a parent
+func Report_orphans(args []string) {
+	meta.Filter("+any", "^title", "todo")
 
-	title := strings.Join(args, " ")
-	if title != "" {
-		title = " -- " + title
-	}
+	_ = meta.Pick(args)
 
-	list := meta.Pick(args)
+	display.Header("Orphans -- " + strings.Join(args, " "))
 
-	if len(list) == 0 {
-		fmt.Println("No items requested")
-		return 1
-	}
+	for _, ref := range meta.Sorted() {
 
-	display.Header("List" + title)
+		// Values never have parents
+		if ref.Type == 'm' {
+			continue
+		}
 
-	for _, ref := range meta.Sort(list) {
+		// Has a parent
+		if len(ref.Parents) > 0 {
+			continue
+		}
+
 		display.Task(ref, "")
 	}
-	return 0
 }

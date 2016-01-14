@@ -33,27 +33,13 @@ NAME:
 
 */
 
-import "fmt"
-
 import "gtd/meta"
 
-var report_debug = false
-
-//-- No Operation
-func Report_noop(args []string) int {
-	if report_debug {
-		fmt.Printf("### Debug noop = %v", report_debug)
-	}
-
-	meta.Filter("+live", "^tid", "tid")
-
-	fmt.Print("args:", args)
-
-	_ = meta.Pick(args)
-	_ = meta.Walk(args)
-
-	if report_debug {
-		fmt.Printf("noop: %#v\n", args)
+//-- update listed projects/actions doit date to today
+func Report_did(args []string) int {
+	for _, t := range meta.Pick(args) {
+		t.Doit = get_today()
+		t.Update()
 	}
 	return 0
 }

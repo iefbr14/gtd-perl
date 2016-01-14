@@ -50,7 +50,6 @@ func Report_hier(args []string) int {
 	return 0
 }
 
-
 func hier_detail(w *task.Walk, t *task.Task) {
 	color.Ref(t)
 	display.Task(t, "")

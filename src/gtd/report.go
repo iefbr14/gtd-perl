@@ -4,8 +4,10 @@ import "fmt"
 import "gtd/report"
 
 var reports = map[string]func([]string) int{
-	"color":  report.Report_color,
-	"edit":   report.Report_edit,
+	"addplans": report.Report_addplans,
+
+	"color": report.Report_color,
+	//	"edit":   report.Report_edit,
 	"list":   report.Report_list,
 	"hier":   report.Report_hier,
 	"noop":   report.Report_noop,
@@ -27,9 +29,9 @@ func Load_report(report_name string) func([]string) int {
 // run report but protect caller from report failure
 func Run_report(report_name string, arg []string) int {
 	defer func() {
-//?		if r := recover(); r != nil {
-//?			fmt.Printf("Recovered in %s: %v\n", report_name, r)
-//?		}
+		//?		if r := recover(); r != nil {
+		//?			fmt.Printf("Recovered in %s: %v\n", report_name, r)
+		//?		}
 	}()
 
 	rfunc := Load_report(report_name)

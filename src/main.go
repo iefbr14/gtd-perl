@@ -9,7 +9,6 @@ import "gtd"
 import "gtd/option"
 import "gtd/task"
 
-
 func usage() {
 	cmd := path.Base(os.Args[0])
 
@@ -69,15 +68,15 @@ Option
 }
 
 var (
-	Zname   string
-	main_debug   bool
-	MetaFix int
-	Title   string
-	Task    string
+	Zname      string
+	main_debug bool
+	MetaFix    int
+	Title      string
+	Task       string
 )
 
 func main() {
-	flag.Usage = usage;
+	flag.Usage = usage
 
 	flag.BoolVar(&main_debug, "x", false, "Turn debugging on")
 
@@ -113,8 +112,8 @@ func main() {
 
 	option.Flag("Date", "D")
 
-//?	var myopts []string
-//?	flag.Var(&myopts, "o", "List of options")
+	//?	var myopts []string
+	//?	flag.Var(&myopts, "o", "List of options")
 
 	option.Filter("all", "a", "+future")
 	option.Filter("Any", "A", "+done")
@@ -132,9 +131,11 @@ func main() {
 
 	if new {
 		if cmd == "hier" {
-//?			report("new", append("project", args...))
+			// os.Exit(report.New_project(args))
+			//? report("new", append("project", args...))
 		} else {
-//?			report("new", append("action", args...))
+			// os.Exit(report.New_action(args))
+			//? report("new", append("action", args...))
 		}
 	}
 
@@ -144,6 +145,7 @@ func main() {
 	}
 
 	if cmd == "hier" {
+		//? report.Report_hier(args)
 		report("hier", args)
 		return
 	}

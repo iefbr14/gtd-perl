@@ -33,27 +33,22 @@ NAME:
 
 */
 
-import "fmt"
-
 import "gtd/meta"
+import "gtd/display"
 
-var report_debug = false
+//-- quick List by various methods
+func Report_task(args []string) {
+	meta.Filter("+g:live", "^title", "task") // Tasks filtered by goals
 
-//-- No Operation
-func Report_noop(args []string) int {
-	if report_debug {
-		fmt.Printf("### Debug noop = %v", report_debug)
+	list := meta.Pick(args)
+	if len(list) == 0 {
+		list = meta.Pick([]string{"actions"})
 	}
 
-	meta.Filter("+live", "^tid", "tid")
+	title := meta.Desc(args)
+	display.Header("Tasks -- " + title)
 
-	fmt.Print("args:", args)
-
-	_ = meta.Pick(args)
-	_ = meta.Walk(args)
-
-	if report_debug {
-		fmt.Printf("noop: %#v\n", args)
+	for _, ref := range list {
+		display.Task(ref, "")
 	}
-	return 0
 }

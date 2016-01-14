@@ -182,7 +182,7 @@ Then by iterating over those items to create momentum.
 		if help == "help" {
 			done = true
 			fmt.Println("Help is available for:")
-			for _,name := range sort_keys(helps) {
+			for _, name := range sort_keys(helps) {
 				fmt.Printf("\t%s\n", name)
 			}
 			fmt.Println("\nAlso try: help reports")

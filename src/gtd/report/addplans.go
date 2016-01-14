@@ -33,6 +33,8 @@ NAME:
 
 */
 
+import "regexp"
+
 import "gtd/color"
 import "gtd/display"
 import "gtd/meta"
@@ -48,20 +50,20 @@ my($Proj_cnt) = 0;
 */
 
 //-- add plan action items to unplaned projects
-func Report_addplansp(args []string) {
+func Report_addplans(args []string) int {
 	meta.Filter("+live", "^focus", "plan")
 	list := meta.Pick(args)
 
-	limit := 0;
+	limit := 0
 	if len(list) == 0 {
-		list = meta.Pick([]string{"Project"});
-		limit = option.Int("Limit", 10);
+		list = meta.Pick([]string{"Project"})
+		limit = option.Int("Limit", 10)
 	} else {
-		limit = option.Int("Limit", len(list));
+		limit = option.Int("Limit", len(list))
 	}
-	display.Header("Projects needing planning");
+	display.Header("Projects needing planning")
 
-	var seen map[int]bool;
+	var seen map[int]bool
 
 	// find all next and remember there focus
 	for len(list) > 0 {
@@ -69,7 +71,7 @@ func Report_addplansp(args []string) {
 		list = list[1:]
 
 		tid := ref.Tid
-		
+
 		if seen[tid] {
 			continue
 		}
@@ -80,63 +82,71 @@ func Report_addplansp(args []string) {
 			continue
 		}
 
-		list = append(list, ref.Children...);
+		list = append(list, ref.Children...)
 
-		reason = task.Join("(",color.On("RED"), reason, color.Off(), ")");
-		display.Rgpa(ref, reason);
+		reason = task.Join("(", color.On("RED"), reason, color.Off(), ")")
+		display.Rgpa(ref, reason)
 
-		limit--;
+		limit--
 		if limit <= 0 {
 			break
 		}
 	}
+	return 0
 }
 
-func check_task(ref *task.Task) string {
+var wikiref_re = regexp.MustCompile(`\[\[.*\]\]`)
+
+func check_task(t *task.Task) string {
+	if !t.Is_hier() {
+		return ""
+	}
+
+	children := t.Children
+
+	if !wikiref_re.MatchString(t.Title) {
+		return "Needs wiki ref"
+	}
+
+	if t.Completed != "" {
+		return ""
+	}
+
+	if t.Description == "" {
+		return "Needs description"
+	}
+	if t.Note == "" {
+		return "Needs result"
+	}
+
+	if len(children) == 0 {
+		return "Needs children"
+	}
+
+	if t.Type != 'a' {
+		if len(children) == 0 {
+			return "Needs actions"
+		}
+	}
+
+	if iscomplex(t.Children) {
+		return "Needs progress"
+	}
+
 	return ""
-}/*?
-	my($ref) = @_;
-
-	my($type) = $ref->get_type();
-
-	return unless $ref->is_hier();
-
-	my($pid) = $ref->get_tid();
-	my($title) = $ref->get_title();
-	my($desc) = $ref->get_description();
-	my($result) = $ref->get_note();
-
-	my(@children) = $ref->get_children();
-
-	return "Needs wiki ref" unless $title =~ /\[\[.*\]\]/;
-
-	return if $ref->get_completed();
-
-	return "Needs description" unless $desc;
-	return "Needs result" unless $result;
-
-	return "Needs children"  unless @children;
-
-	my($work) = scalar(@children);
-
-	if ($type ne 'a') {
-		return "Needs actions" unless $work;
-	}
-
-//	if (iscomplex(@children)) {
-//		return "Needs progress";
-//	}
-
-	return;
 }
 
-sub iscomplex {
-	return 1 if scalar(@_) >= 8;	// has 8 or more children
-
-	for my $ref (@_) {
-		// has a non action ie: complex child
-		return 1 if $ref->get_type() ne 'a';	
+func iscomplex(list task.Tasks) bool {
+	// has 8 or more children
+	if len(list) >= 8 {
+		return true
 	}
-	return 0;
+
+	// has a non action ie: complex child
+	for _, t := range list {
+		if t.Type != 'a' {
+			return true
+		}
+	}
+	return false
 }
-?*/

@@ -47,15 +47,15 @@ func Report_search(args []string) int {
 	meta.Filter("+all", "^title", "simple")
 	meta.Desc(args)
 
-	for _,name := range args {
+	for _, name := range args {
 		// compile re with case ignore switch
-		re, err := regexp.Compile("(?i)"+name)
+		re, err := regexp.Compile("(?i)" + name)
 		if err != nil {
 			fmt.Printf("RE Compile error %s: %s", name, err)
 			continue
 		}
 
-		for _,ref := range meta.Sorted() {
+		for _, ref := range meta.Sorted() {
 			if match_desc(ref, re) {
 				display.Task(ref, "")
 				found = 1
@@ -63,9 +63,8 @@ func Report_search(args []string) int {
 		}
 	}
 
-	
 	if found == 0 {
-		return 1	// not found
+		return 1 // not found
 	}
 	return 0
 }
