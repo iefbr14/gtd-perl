@@ -13,11 +13,11 @@ var sort_reverse = true
 
 var by_sort func(a, b *Task) bool = by_tid
 
-func (slice Tasks)Len() int {
+func (slice Tasks) Len() int {
 	return len(slice)
 }
 
-func (slice Tasks)Less(i, j int) bool {
+func (slice Tasks) Less(i, j int) bool {
 	if sort_reverse {
 		return by_sort(slice[j], slice[i])
 	} else {
@@ -25,46 +25,52 @@ func (slice Tasks)Less(i, j int) bool {
 	}
 }
 
-func (slice Tasks)Swap(i, j int) {
-    slice[i], slice[j] = slice[j], slice[i]
+func (slice Tasks) Swap(i, j int) {
+	slice[i], slice[j] = slice[j], slice[i]
 }
 
-func (slice Tasks)Sort() Tasks {
+func (slice Tasks) Sort() Tasks {
 	sort.Sort(slice)
 	return slice
 }
 
-var sort_Criteria = map[string]func(*Task, *Task) bool {
-	"id"	 : by_tid,
-	"tid"	 : by_tid,
-	"task"	 : by_task,
-	"title"	 : by_task,
+var sort_Criteria = map[string]func(*Task, *Task) bool{
+	"id":    by_tid,
+	"tid":   by_tid,
+	"task":  by_task,
+	"title": by_task,
 
-	"hier"	 : by_hier,
+	"hier": by_hier,
 
-	"pri"	 : by_pri,
-	"priority" : by_pri,
-//	"panic"    : by_panic,
-//	"focus"    : by_focus,
+	"pri":      by_pri,
+	"priority": by_pri,
+	"panic":    by_panic,
+	"focus":    by_focus,
 
-	"age"      : by_age,		// created date
-	"date"     : by_age,		// ''
+	"age":  by_age, // created date
+	"date": by_age, // ''
 
-	"change"   : by_change,		// modified date
+	"change": by_change, // modified date
 
-//	"doit"     : by_doitdate,
-//	"doitdate" : by_doitdate,
+	"doit":     by_doitdate,
+	"doitdate": by_doitdate,
 
-//	"status"	 : by_status,
+	"status": by_status,
 
-//	"rgpa"     : by_goal_task,
-//	"goaltask" : by_goal_task,
+	"goal":     by_goal,
+	"rgpa":     by_goal_task,
+	"goaltask": by_goal_task,
 }
 
+var sort_cache_map = map[int]string{}
+var sort_title_map = map[int]string{}
 
-var sort_Meta_key = map[string]string{}
-var sort_Focus_key = map[string]string{}
-var sort_Panic_key = map[string]string{}
+func Sort_invalidate_key(t *Task) {
+	tid := t.Tid
+
+	delete(sort_cache_map, tid)
+	delete(sort_title_map, tid)
+}
 
 func Sort_mode(mode string) {
 	if mode == "" {
@@ -73,7 +79,7 @@ func Sort_mode(mode string) {
 	}
 
 	switch mode[0] {
-	case '^': 
+	case '^':
 		mode = mode[1:]
 		sort_reverse = false
 	case '~':
@@ -81,46 +87,20 @@ func Sort_mode(mode string) {
 		sort_reverse = true
 		option.Set("Reverse", "1")
 	}
-	
+
 	mode = strings.ToLower(mode)
 
-	if f,ok := sort_Criteria[mode]; ok {
+	if f, ok := sort_Criteria[mode]; ok {
 		by_sort = f
 
 		// clear any cached keys
-		sort_Meta_key = map[string]string{};		
+		sort_cache_map = map[int]string{}
+		sort_title_map = map[int]string{}
 		return
 	}
 
-	fmt.Printf("Unknown Sort mode: %s\n", mode);
+	fmt.Printf("Unknown Sort mode: %s\n", mode)
 }
-
-var sort_title_map = map[string]string{}
-
-/*?
-sub sort_tasks {
-	my($rev) = option("Reverse", 0)
-
-	if ($rev) {
-		return reverse sort { &$Sorter($a,$b) } @_
-	}
-	
-	return sort { &$Sorter($a,$b) } @_
-	//# comment out prev line to Debug.
-	my(@list) =  sort { &$Sorter($a,$b) } @_
-
-	for my $ref (@list) {
-		my $tid = $ref->get_tid()
-		my $title = lc_title($ref)
-
-		my $key = sort_Meta_key{$tid} || ''
-		print "$tid => $title\n"
-	}
-	return @list
-}
-
-my %Sort_cache
-?*/
 
 func by_tid(a, b *Task) bool {
 	return a.Tid < b.Tid
@@ -144,25 +124,30 @@ func by_hier(a, b *Task) bool {
 	}
 
 	// no parents or parents equal
-	return  lc_title(a) < lc_title(b) || 
+	return lc_title(a) < lc_title(b) ||
 		a.Tid < b.Tid
 }
 
-/*?
 func by_status(a, b *Task) bool {
-	my $ac = $a->get_completed()
-	my $bc = $b->get_completed()
+	ac := a.Completed
+	bc := b.Completed
 
-	if ($ac and $bc) {
-		return $ac cmp $bc
+	if ac != "" && bc != "" {
+		return ac < bc
 	}
 
-	return -1 if $ac;	// a completed but not b, sort early
-	return  1 if $bc;	// b completed but not a, sort late
+	// a completed but not b, sort early
+	if ac != "" {
+		return true
+	}
 
-	return by_change($a, $b)
+	// b completed but not a, sort later
+	if bc != "" {
+		return false
+	}
+
+	return by_change(a, b)
 }
-?*/
 
 func by_change(a, b *Task) bool {
 	return a.Modified < b.Modified
@@ -173,7 +158,7 @@ func by_age(a, b *Task) bool {
 }
 
 func by_Task(a, b *Task) bool {
-	return by_task(a,b) || by_tid(a,b)
+	return by_task(a, b) || by_tid(a, b)
 }
 
 func by_task(a, b *Task) bool {
@@ -181,185 +166,199 @@ func by_task(a, b *Task) bool {
 }
 
 func by_pri(a, b *Task) bool {
-	// order by priority $order, created $order, due $order 
+	// order by priority $order, created $order, due $order
 
 	return a.Priority < b.Priority ||
 		a.Created < b.Created ||
 		a.Due < b.Due
 }
 
-/*?
-func by_doitdate(a, b *Task) {
-        return sort_doit($a) cmp sort_doit($b)
+func by_doitdate(a, b *Task) bool {
+	return sort_doit(a) < sort_doit(b)
 }
 
-sub sort_doit {
-	my($ref) = @_
-
-	my($tid) = $ref->get_tid()
-	return $Sort_cache{$tid} if defined $Sort_cache{$tid}
-
-	my($v) = $ref->get_doit() || $ref->get_created()
-
-	$Sort_cache{$tid} = $v
-	return $v
-}
-
-
-func by_goal(a, b *Task) {
-	my($a, $b) = @_
-	return sort_goal($a) cmp sort_goal($b)
-}
-
-sub sort_goal {
-	my($ref) = @_
-
-	my($tid) = $ref->get_tid()
-
-	return $Sort_cache{$tid} if defined $Sort_cache{$tid}
-
-	my(@list)
-	for (;;) {
-		unshift(@list, lc_title($ref), $tid)
-		last if $ref->get_type() eq 'g'
-		$ref = $ref->get_parent
-		last if !defined $ref
+func sort_doit(t *Task) string {
+	if v, ok := sort_cache_map[t.Tid]; ok {
+		return v
 	}
-	
-	$Sort_cache{$tid} = join("\t", @list)
 
-	return $Sort_cache{$tid}
+	v := t.Doit
+	if v == "" {
+		v = t.Created
+	}
+
+	sort_cache_map[t.Tid] = v
+	return v
 }
 
-sub by_goal_task($$) {
-	my($a, $b) = @_
-
-	return Meta_key($a) cmp Meta_key($b)
+func by_goal(a, b *Task) bool {
+	return sort_goal(a) < sort_goal(b)
 }
 
-sub Meta_key {
-	my($ref) = @_
+func sort_goal(t *Task) string {
+	tid := t.Tid
 
-	my($tid) = $ref->get_tid()
+	if v, ok := sort_cache_map[tid]; ok {
+		return v
+	}
 
-	my($val) = $Meta_key{$tid}
-	return $val  if defined $val
+	list := make([]string, 0, 5)
+	for {
+		//? list = append(list, lc_title(t), tid)
+		list = append(list, lc_title(t))
 
-	my($title) = lc_title($ref)
-
-	my($p_title) = "--"
-	my($g_title) = "--"
-	my($p_ref) = $ref->get_parent()
-	if ($p_ref) {
-		$p_title = lc_title($p_ref)
-		my($g_ref) = $p_ref->get_parent()
-		if ($g_ref) {
-			$g_title = lc_title($g_ref)
+		if t.Type == 'g' {
+			break
 		}
-	} 
-	$val = "$g_title\t$p_title\t$title\t$tid",  
-	$Meta_key{$tid} = $val
-	return $val
+		t = t.Parent()
+		if t == nil {
+			break
+		}
+	}
+
+	v := strings.Join(list, "\t")
+	sort_cache_map[tid] = v
+
+	return v
 }
 
-// next   norm  some  done 
+func by_goal_task(a, b *Task) bool {
+	return sort_goal_task(a) < sort_goal_task(b)
+}
+
+func sort_goal_task(t *Task) string {
+
+	tid := t.Tid
+
+	if val, ok := sort_cache_map[tid]; ok {
+		return val
+	}
+
+	title := lc_title(t)
+
+	p_title := "--"
+	g_title := "--"
+
+	p_ref := t.Parent()
+	if p_ref != nil {
+		p_title = lc_title(p_ref)
+		g_ref := p_ref.Parent()
+		if g_ref != nil {
+			g_title = lc_title(g_ref)
+		}
+	}
+
+	//? val := Join(g_title, "\t", p_title, "\t", title, tid)
+	val := Join(g_title, "\t", p_title, "\t", title)
+	sort_cache_map[tid] = val
+	return val
+}
+
+// next   norm  some  done
 // 012345 12345 12345
 //  abcde fghij klmno z
 
-func item_focus(ref *Task) {
-	my($ref) = @_
-
-	my($pri) = $ref->get_priority()
-
-	if ($ref->is_nextaction()) {
-				// cool	1-5  == abcde
-	} elsif ($ref->is_someday()) {
-		$pri += 10;	// slow 11-15 == jklmn
-	} else {
-		$pri += 5;	// ok    6-10 == fghij
+func item_focus(t *Task) string {
+	if t == nil {
+		return ""
 	}
 
-	$pri = 1  if $pri < 1
-	$pri = 15 if $pri > 15
+	pri := t.Priority
 
-	$pri = chr(ord('a') + $pri - 1)
-
-	$pri = 'z' if $ref->is_completed()
-
-	return $pri
-}
-
-func calc_focus(ref *Task) {
-	my($ref) = @_
-
-	unless (defined $ref) {
-		return ''
+	switch {
+	case t.Is_nextaction():
+		// cool	1-5  == abcde
+	case t.Is_someday():
+		pri += 10 // slow 11-15 == jklmn
+	default:
+		pri += 5 // ok    6-10 == fghij
 	}
 
-	my($tid) = $ref->get_tid()
+	if pri < 1 {
+		pri = 1
+	}
+	if pri > 15 {
+		pri = 15
+	}
 
-	my($val) = $Focus_key{$tid}
-	return $val  if defined $val
+	// convert pri (int 1 to 15) to string val "a"..."o"
+	val := string([]byte{byte(int('a') + pri - 1)})
 
-	my($pri) = item_focus($ref)
+	if t.Is_completed() {
+		val = "z"
+	}
 
-	$val = calc_focus($ref->get_parent()) . $pri
-	$Focus_key{$tid} = $val
-
-	return $val
+	return val
 }
 
+func calc_focus(t *Task) string {
+	if t == nil {
+		return ""
+	}
+	tid := t.Tid
+
+	if val, ok := sort_cache_map[tid]; ok {
+		return val
+	}
+
+	pri := item_focus(t)
+
+	val := calc_focus(t.Parent()) + pri
+	sort_cache_map[tid] = val
+
+	return val
+}
 
 func by_focus(a, b *Task) bool {
 	return calc_focus(a) < calc_focus(b)
 }
 
-// next   norm  some  done 
+// next   norm  some  done
 // 012345 12345 12345
 //  abcde fghij klmno z
 
-func calc_panic(ref *Task) {
-	my($ref) = @_
+func calc_panic(t *Task) string {
+	tid := t.Tid
 
-	unless (defined $ref) {
-		return ''
+	if val, ok := sort_cache_map[tid]; ok {
+		return val
 	}
 
-	my($tid) = $ref->get_tid()
-
-	my($val) = $Panic_key{$tid}
-	return $val if defined $val
-
-	$val = item_focus($ref)
-	for my $child ($ref->get_children()) {
-		my $pri = calc_panic($child)
-		$val = $pri if $pri lt $val
+	val := item_focus(t)
+	for _, child := range t.Children {
+		pri := calc_panic(child)
+		if pri < val {
+			val = pri
+		}
 	}
-	
-	$Panic_key{$tid} = $val
 
-	return $val
+	sort_cache_map[tid] = val
+
+	return val
 }
 
+func by_panic(a, b *Task) bool {
 
-
-sub by_panic($$) {
-	my($a, $b) = @_
-
-	return (calc_panic($a) cmp calc_panic($b))
-	    || by_hier($a, $b)
+	ca := calc_panic(a)
+	cb := calc_panic(b)
+	if ca == cb {
+		return by_hier(a, b)
+	}
+	return ca < cb
 }
-
-?*/
 
 func lc_title(t *Task) string {
-	// cache titles to make sorting it O(n) 
-	if title, ok := sort_title_map[t.Title]; ok {
+	tid := t.Tid
+
+	// cache titles to make sorting by it O(n)
+	if title, ok := sort_title_map[t.Tid]; ok {
 		return title
 	}
 
+	// lower case it.
 	title := strings.ToLower(t.Title)
 
+	// strip bracket in [[wiki-ref]] => wiki-ref
 	re := regexp.MustCompile(`\[\[`)
 	title = re.ReplaceAllLiteralString(title, "")
 
@@ -368,6 +367,6 @@ func lc_title(t *Task) string {
 
 	// fmt.Printf("lc_title: %s\n    =>  : %s\n", t.Title, title);
 
-	sort_title_map[t.Title] = title
+	sort_title_map[tid] = title
 	return title
 }

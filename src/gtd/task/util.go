@@ -10,8 +10,8 @@ var Types = map[string]byte{
 	"Value":  'm',
 	"Vision": 'v',
 
-	"Role":   'o',
-	"Goal":   'g',
+	"Role": 'o',
+	"Goal": 'g',
 
 	"Project":     'p',
 	"Sub-Project": 's', // we can as for this
@@ -38,13 +38,15 @@ func init() {
 	}
 }
 
-func type_val(val string)byte {
+// task.Type_val maps things like role/goal to types r or g
+func Type_val(val string) byte {
 	id := val[0]
 	if _, ok := type_name_map[id]; ok {
 		return id
 	}
 
-	type_name := strings.ToTitle(val)
+	type_name := strings.Title(val)
+	fmt.Printf("#=== Type_val(%s) => %s\n", val, type_name)
 
 	if id, ok := Types[type_name]; ok {
 		return id
@@ -57,23 +59,24 @@ func type_val(val string)byte {
 	return 0
 }
 
-func Type_name(kind byte)string {
+// task.Type_name converts type like r or g to Role/Goal
+func Type_name(kind byte) string {
 	return type_name_map[kind]
 }
 
-func Type_depth(kind byte)int {
+func Type_depth(kind byte) int {
 	depth := map[byte]int{
-		'm' : 1,		// hier
-		'v' : 2,
-		'o' : 3,
-		'g' : 4,
-		'p' : 5,
-		's' : 6,		// sub-projects
+		'm': 1, // hier
+		'v': 2,
+		'o': 3,
+		'g': 4,
+		'p': 5,
+		's': 6, // sub-projects
 
-		'n' : 7,		// next actions
-		'a' : 7,		// actions (tasks)
-		'i' : 8,		// inbox
-		'w' : 8,		// wait for
+		'n': 7, // next actions
+		'a': 7, // actions (tasks)
+		'i': 8, // inbox
+		'w': 8, // wait for
 	}
 
 	if val, ok := depth[kind]; ok {
@@ -82,7 +85,6 @@ func Type_depth(kind byte)int {
 
 	panic(fmt.Sprintf("Bad type %c", kind))
 }
-
 
 /*?
 sub action_disp {
@@ -101,21 +103,20 @@ sub action_disp {
 }
 */
 
-
 //==============================================================================
 func Join(args ...string) string {
 	l := 0
-	for _,s := range args {
+	for _, s := range args {
 		l += len(s)
 	}
 
 	if l == 0 {
-		return "" 
+		return ""
 	}
 	bs := make([]byte, 0, l)
 
 	bl := 0
-	for _,s := range args {
+	for _, s := range args {
 		bl += copy(bs[bl:], s)
 	}
 	return string(bs)

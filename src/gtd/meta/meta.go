@@ -1,11 +1,11 @@
 package meta
 
-import	"log"
-import	"fmt"
-import	"regexp"
-import	"sort"
-import	"strconv"
-import	"strings"
+import "log"
+import "fmt"
+import "regexp"
+import "sort"
+import "strconv"
+import "strings"
 
 import "gtd/task"
 import "gtd/option"
@@ -19,7 +19,6 @@ import "gtd/display"
 //?		&meta_filter &meta_desc &meta_argv
 //?		&meta_reset_filters
 //?		&meta_pick
-
 
 var meta_Debug = false
 var meta_Filter = "+live"
@@ -46,7 +45,7 @@ func Reset_filters() {
 
 // meta.Selected returns the set of selected tasks
 func Selected() task.Tasks {
-	if len(meta_Selected) > 0{
+	if len(meta_Selected) > 0 {
 		return meta_Selected
 	}
 
@@ -83,7 +82,7 @@ func Sort(list task.Tasks) task.Tasks {
 
 // meta.Matching_type return a set of tasks matching the requested type
 func Matching_type(kind byte) task.Tasks {
-	selected := Selected();
+	selected := Selected()
 	list := make(task.Tasks, 0, len(selected))
 
 	for _, t := range selected {
@@ -100,7 +99,7 @@ func All() task.Tasks {
 }
 
 // meta.Find map a string taskid to a Task * reporting on errors
-func Find (task_id string) *task.Task {
+func Find(task_id string) *task.Task {
 	re_is_task_colon := regexp.MustCompile("^[0-9]+:$")
 
 	if re_is_task_colon.MatchString(task_id) {
@@ -138,13 +137,12 @@ sub delete_hier {
 }
 ?*/
 
-
 //==============================================================================
 //==============================================================================
 //==== filter setup and processing
 //==============================================================================
 
-// meta.Filter is used by reports to sets the 
+// meta.Filter is used by reports to sets the
 //     default task filter, sort order, and display mode
 func Filter(filter, sort, display_mode string) {
 	fmt.Printf("... meta.Filter: %s, %s, %s\n", filter, sort, display_mode)
@@ -154,7 +152,7 @@ func Filter(filter, sort, display_mode string) {
 
 	option.Set("Filter", filter)
 	meta_Filter = filter
-	
+
 }
 
 func Argv(args []string) []string {
@@ -162,76 +160,76 @@ func Argv(args []string) []string {
 
 	ret := make([]string, 0, len(args))
 
-/*?
-	has_filters := false
+	/*?
+	  	has_filters := false
 
-	local($_)
+	  	local($_)
 
-	Hier::Filter::add_filter_tags()
-	while (scalar(@_)) {
-		$_ = shift @_
+	  	Hier::Filter::add_filter_tags()
+	  	while (scalar(@_)) {
+	  		$_ = shift @_
 
-		next unless defined $_;	 # option("Current") may be undef
+	  		next unless defined $_;	 # option("Current") may be undef
 
-		if ($_ eq "!.") {
-			painc("Stopped.\n")
-		}
+	  		if ($_ eq "!.") {
+	  			painc("Stopped.\n")
+	  		}
 
-		if (s/^\@//) {
-			Hier::Filter::meta_find_context($_)
-			next
-		}
+	  		if (s/^\@//) {
+	  			Hier::Filter::meta_find_context($_)
+	  			next
+	  		}
 
-		if (s/^(\d+:)$/$1/ or m/^\d+$/) {
-			push(@ret, $_);		// tid
-			next
-		}
+	  		if (s/^(\d+:)$/$1/ or m/^\d+$/) {
+	  			push(@ret, $_);		// tid
+	  			next
+	  		}
 
-		if (s=^\/==) {				// pattern match
-			push(@ret, find_pattern($_))
-			next
-		}
+	  		if (s=^\/==) {				// pattern match
+	  			push(@ret, find_pattern($_))
+	  			next
+	  		}
 
-		if (s|^=\/||) {				// pattern match
-			push(@ret, find_pattern($_))
-			next
-		}
+	  		if (s|^=\/||) {				// pattern match
+	  			push(@ret, find_pattern($_))
+	  			next
+	  		}
 
 
-		if (s=^\*==) {
-			my($type) = lc(substr($_, 0, 1))
-			$type = type_name($_)
-			print "Type ========($type)=:  $_\n"
-			set_option(Type => $type)
-			next
-		}
-		if (s/^([A-Z])://) {
-			my($type) = lc($1)
-//			set_option(Type => $type)
-//
-//			print "Type: Title =====:  $type: $_\n"
-//			set_option(Title -> $_)
-			push(@ret, find_hier($type, $_))
-			next
-		}
+	  		if (s=^\*==) {
+	  			my($type) = lc(substr($_, 0, 1))
+	  			$type = type_name($_)
+	  			print "Type ========($type)=:  $_\n"
+	  			set_option(Type => $type)
+	  			next
+	  		}
+	  		if (s/^([A-Z])://) {
+	  			my($type) = lc($1)
+	  //			set_option(Type => $type)
+	  //
+	  //			print "Type: Title =====:  $type: $_\n"
+	  //			set_option(Title -> $_)
+	  			push(@ret, find_hier($type, $_))
+	  			next
+	  		}
 
-		if (m/^[-~+]/) {		// add include/exclude
-			Hier::Filter::add_filter($_)
-			$has_filters = 1
-			next
-		}
-//		if ($Title) {
-//			print "Desc:  ", join(' ', $_, @_), "\n"
-//			return join(' ', $_, @_)
-//		}
-		push(@ret, $_)
-	}
+	  		if (m/^[-~+]/) {		// add include/exclude
+	  			Hier::Filter::add_filter($_)
+	  			$has_filters = 1
+	  			next
+	  		}
+	  //		if ($Title) {
+	  //			print "Desc:  ", join(' ', $_, @_), "\n"
+	  //			return join(' ', $_, @_)
+	  //		}
+	  		push(@ret, $_)
+	  	}
 
-	unless ($has_filters) {
-		Hier::Filter::add_filter($Default_filter)
-	}
-	Hier::Filter::apply_filters($Default_filter)
-?*/
+	  	unless ($has_filters) {
+	  		Hier::Filter::add_filter($Default_filter)
+	  	}
+	  	Hier::Filter::apply_filters($Default_filter)
+	  ?*/
 
 	return ret
 }
@@ -240,88 +238,65 @@ func Desc(args []string) string {
 	return strings.Join(Argv(args), " ")
 }
 
-
 func Walk(args []string) *task.Walk {
 	w := task.NewWalk()
-/*?
-	if len(args) == 0 {
-	}
 
-	panic("... code walk.Args")
-	my($toptype) = @_
-
-	$toptype ||= 'm'
-
-	if ($toptype =~ /^\d+/) {
-		my($ref) = Find($toptype)
-		if ($ref) {
-			if ($ref->get_type() eq 'm') {
-				$ref->set_level(1)
-			} else {
-				$ref->set_level(2)
-			}
-			$walk->{pre}->($walk, $ref)
-			$walk->detail($ref)
-		} else {
-			warn "No such task: $toptype\n"
-		}
-		return
-	}
-?*/
 	var top task.Tasks
-//?	depth := 0
+
 	for _, criteria := range Argv(args) {
 		if task.IsTask(criteria) {
-			top = append(top, Find(criteria))
+			t := Find(criteria)
+			if t != nil {
+				if t.Type == 'm' {
+					w.Level = 1
+				} else {
+					w.Level = 2
+				}
+				top = append(top, t)
+				w.Set_depth(map_depth(t.Type))
+			}
 		} else {
-			panic("... code meta.Walk type search");
-//?			my($type) = type_val($criteria)
-//?			if ($type) {
-//?				$depth = $type
-//?	w.Depth = map_depth(top) // $walk->set_depth(map_depth($top, $depth))
-//?			} else {
-//?				panic("unknown type " + criteria)
-//?			}
+			want := task.Type_val(criteria)
+			if want != 0 {
+				w.Set_depth(map_depth(want))
+			} else {
+				panic("unknown type " + criteria)
+			}
 		}
 	}
 
 	if len(top) == 0 {
 		top = Current()
-		if len(top) == 0 {
-			top = Matching_type('m');
-			w.Set_depth('g');
+		if len(top) > 0 {
+			w.Set_depth(map_depth(top[0].Type))
+		} else {
+			top = Matching_type('m')
+			w.Set_depth('o')
 		}
 	}
-	w.Top = top;
+	w.Top = top
 	return w
 }
 
-func map_depth(ref *task.Task) byte {
-	return 'm'
-/*?
-	my($ref, $depth) = @_
+func map_depth(depth byte) byte {
+	//	if depth != 0 {
+	//		return depth
+	//	}
 
-	return $depth if $depth
+	//	want := 'm'
 
-	my($type) = 'm'
-
-	// not a reference to a task
-	if (!ref $ref) {
-		// is it a tid?
-		if ($ref =~ /^\d+$/) {
-			$ref = Hier::Tasks::find($ref)
-			$type = $ref->get_type()
-		} else {
-			// use the type that was pass
-			$type = $ref
-		}
+	switch depth {
+	case 'o': // role
+		return 'g'
+	case 'g': // goal
+		return 'p'
+	case 'p': // project
+		return 'a'
+	case 's': // sub project
+		return 'a'
+	default:
+		return 'o'
 	}
-
-	return 'a" if $type eq "p'
-	return 'p" if $type eq "g'
-	return 'g" if $type eq "o'; # o == ROLE
-	return 'o'
-?*/
 }
 
 func Pick(args []string) task.Tasks {
@@ -334,49 +309,51 @@ func Pick(args []string) task.Tasks {
 				if t == nil {
 					continue
 				}
-				list = append(list, t);
+				list = append(list, t)
 				continue
 			}
 		}
-/*?
 		// task all by itself
-		if ($arg=~ s/^(\d+):$/$1/ or $arg =~ m/^\d+$/) {
-                        my($ref) = meta_find($arg)
-
-                        unless (defined $ref) {
-                                panic("Task $arg doesn't exits\n")
-                        }
-			push(@list, $ref)
-                        next
-                }
-
-                if ($arg =~ /pri\D+(\d+)/) {
-			set_option("Priority", $1)
-                        next
-                }
-                if ($arg =~ /limit\D+(\d+)/) {
-                        set_option("Limit", $1)
-                        next
-                }
-                if ($arg =~ /format\s(\S+)/) {
-                        set_option("Format", $1)
-                        next
-                }
-                if ($arg =~ /header\s(\S+)/) {
-                        set_option("Header", $1)
-                        next
-                }
-
-		my($want) = type_val($arg)
-		if ($want) {
-			for my $ref (meta_matching_type($want)) {
-				next if $ref->filtered()
-				push(@list, $ref)
+		//? if ($arg=~ s/^(\d+):$/$1/ or $arg =~ m/^\d+$/) {
+		if task.IsTask(arg) {
+			t := Find(arg)
+			if t == nil {
+				panic("Task " + arg + " doesn't exits\n")
 			}
-			next
+			list = append(list, t)
+			continue
 		}
-?*/
-		panic("**** Can't understand argument $arg\n")
+
+		/*?
+		  if ($arg =~ /pri\D+(\d+)/) {
+			set_option("Priority", $1)
+			  next
+		  }
+		  if ($arg =~ /limit\D+(\d+)/) {
+			  set_option("Limit", $1)
+			  next
+		  }
+		  if ($arg =~ /format\s(\S+)/) {
+			  set_option("Format", $1)
+			  next
+		  }
+		  if ($arg =~ /header\s(\S+)/) {
+			  set_option("Header", $1)
+			  next
+		  }
+		  ?*/
+
+		want := task.Type_val(arg)
+		if want != 0 {
+			for _, ref := range Matching_type(want) {
+				if ref.Filtered() {
+					continue
+				}
+				list = append(list, ref)
+			}
+			continue
+		}
+		panic("**** Can't understand argument: " + arg)
 	}
 
 	return list
@@ -440,7 +417,6 @@ func match_type(want byte, ref *task.Task) bool {
 	return false
 }
 
-
 //---------------------------------------------------------------------------
 //  Track current task
 //---------------------------------------------------------------------------
@@ -456,4 +432,3 @@ func Current() task.Tasks {
 
 func Set_current(list task.Tasks) {
 }
-

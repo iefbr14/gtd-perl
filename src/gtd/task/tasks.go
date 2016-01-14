@@ -3,6 +3,7 @@ package task
 import (
 	"fmt"
 	"log"
+	"strconv"
 )
 
 // Done is used to signal shutdown.  Channel will close at exit
@@ -12,89 +13,87 @@ var Max_todo int    // Last todo id (unique for all tables)
 type T_task byte
 
 const (
-	T_VISION	T_task = 'm'
-	T_VALUE		T_task = 'v'
+	T_VISION      T_task = 'm'
+	T_VALUE       T_task = 'v'
+	T_ROLE        T_task = 'o'
+	T_GOAL        T_task = 'g'
+	T_PROJECT     T_task = 'p'
+	T_SUB_PROJECT T_task = 's' // not a real type
 
-	T_ROLE		T_task = 'o'
-	T_GOAL		T_task = 'g'
-	T_PROJECT	T_task = 'p'
-	T_SUB_PROJECT	T_task = 's'	// not a real type
+	T_ACTION T_task = 'a'
+	T_NEXT   T_task = 'n' // next action is not a real type
+	T_INBOX  T_task = 'i'
+	T_WAIT   T_task = 'w'
 
-	T_ACTION	T_task = 'a'
-	T_NEXT		T_task = 'n'	// next action
+	T_REFERENCE T_task = 'r'
+	T_ITEM      T_task = 'T'
 
-	T_INBOX		T_task = 'i'
-	T_WAIT		T_task = 'w'
-
-	T_REFERENCE	T_task = 'r'
-	T_ITEM		T_task = 'T'
-
-	T_LIST		T_task = 'L'
-	T_CHECKLIST	T_task = 'C'
+	T_LIST      T_task = 'L'
+	T_CHECKLIST T_task = 'C'
 )
 
 type Tasks []*Task
 
 type Task struct {
-	Tid      int
-	Type 	 byte
-	State 	 byte
+	Tid   int
+	Type  byte // should be T_task
+	State byte
 
 	Title       string
 	Description string
 	Note        string
 
-	Category    string
-	Context     string
-	Timeframe   string
+	Category  string
+	Context   string
+	Timeframe string
 
-	Doit        string	// time.Time
-	Due         string	// time.Time
-	Tickledate  string	// time.Time
-	Completed   string	// time.Time
+	Doit       string // time.Time
+	Due        string // time.Time
+	Tickledate string // time.Time
+	Completed  string // time.Time
 
-	Priority    int
-	Effort      int
-	Percent     int
+	Priority int
+	Effort   int
+	Percent  int
 
-	Resource    string
+	Resource string
 
 	IsNextaction bool
 	IsSomeday    bool
-	Later        string	// time.Time
+	Later        string // time.Time
 
-	Created    string	// time.Time
-	Modified   string	// time.Time
+	Created  string // time.Time
+	Modified string // time.Time
 
-	Recur    string
-	Rdesc    string
+	Recur string
+	Rdesc string
 
-	Hint     []string
-	Tags	 []string
+	Hint []string
+	Tags []string
 
-	Depends     Tasks
-	Parents     Tasks
-        Children    Tasks
+	Depends  Tasks
+	Parents  Tasks
+	Children Tasks
 
-	dirty      map[string]bool	// used by db
-	filtered   string		// used by filter
-	live       bool
-	mask       uint
-	level	   int			// used by walk
+	dirty    map[string]bool // used by db
+	filtered string          // used by filter
+	live     bool
+	mask     uint
+	level    int // used by walk
 }
 
-func (t* Task)String() string {
+func (t *Task) String() string {
 	return fmt.Sprintf("%c:%d", t.Type, t.Tid)
 }
 
-func (t* Task)Level() int {
+func (t *Task) Level() int {
 	if t.level == 0 {
 		p := t.Parent()
 		if p == nil {
 			t.level = 1
 			return t.level
 		}
-		t.level = p.Level()+1
+		t.level = p.Level() + 1
 		return t.level
 	}
 	return t.level
@@ -123,12 +122,12 @@ func init() {
 
 }
 
-func (ref *Task) Dirty() bool {
-	return ref.dirty != nil
+func (t *Task) Dirty() bool {
+	return t.dirty != nil
 }
 
 // all Todo items (including Hier)
-var all_Tasks = map[int]*Task {}
+var all_Tasks = map[int]*Task{}
 
 // lookup up a task
 func Find(tid int) *Task {
@@ -136,7 +135,7 @@ func Find(tid int) *Task {
 		return task
 	}
 	fmt.Printf("Can't find task id %d\n", tid)
-	panic("find");
+	panic("find")
 	return nil
 }
 
@@ -144,7 +143,7 @@ func All() Tasks {
 	v := make(Tasks, 0, len(all_Tasks))
 
 	for _, value := range all_Tasks {
-		v = append(v, value);
+		v = append(v, value)
 	}
 	return v
 }
@@ -153,7 +152,7 @@ func New(tid int) *Task {
 	if tid > 0 && all_Tasks[tid] != nil {
 		log.Fatal("Task %d exists won't create it.", tid)
 	}
-	var self Task
+	var t Task
 
 	if tid == 0 {
 		if Max_todo == 0 {
@@ -167,68 +166,69 @@ func New(tid int) *Task {
 		}
 	}
 
-	self.Tid = tid
+	t.Tid = tid
 
-	all_Tasks[tid] = &self // keep track of new task
+	all_Tasks[tid] = &t // keep track of new task
 
-	return &self
+	return &t
 }
 
-func (self *Task) Insert() {
-	gtd_insert(self)
-	self.dirty = nil
+func (t *Task) Insert() {
+	gtd_insert(t)
+	t.dirty = nil
 }
 
 func Max() int {
 	return Max_todo
 }
 
-
 //------------------------------------------------------------------------------
 // Package Dirty
 //
-func (self *Task) Is_dirty() bool {
-	return self.dirty != nil
+func (t *Task) Is_dirty() bool {
+	return t.dirty != nil
 }
 
-func (self *Task)get_dirty(field string) bool {
-	if self.dirty == nil {
+func (t *Task) get_dirty(field string) bool {
+	if t.dirty == nil {
 		return false
 	}
-	
-	return self.dirty[field]
+
+	return t.dirty[field]
 }
 
-func (self *Task) set_dirty(field string) *Task {
-	if self.dirty == nil {
-		self.dirty = make(map[string]bool)
+func (t *Task) set_dirty(field string) *Task {
+	if t.dirty == nil {
+		t.dirty = make(map[string]bool)
 	}
-	self.dirty[field] = true
-	return self
+	t.dirty[field] = true
+
+	Sort_invalidate_key(t)
+	return t
 }
 
-func (self *Task) clean_dirty() *Task {
-	self.dirty = nil
-	return self
+func (t *Task) clean_dirty() *Task {
+	t.dirty = nil
+	return t
 }
 
-func (self *Task) Delete()  {
-	tid := self.Tid
+func (t *Task) Delete() {
+	tid := t.Tid
 
 	delete(all_Tasks, tid)
 
 	// remove my children from self
-	for _,child := range self.Parents {
-		self.orphin_child(child)
+	for _, child := range t.Parents {
+		t.orphin_child(child)
 	}
 
 	// remove self from my parents
-	for _,parent := range self.Parents {
-		parent.orphin_child(self)
+	for _, parent := range t.Parents {
+		parent.orphin_child(t)
 		parent.Update()
 	}
 
-	gtd_delete(tid);	// remove from database
+	gtd_delete(tid) // remove from database
 }
 
 //------------------------------------------------------------------------------
@@ -244,44 +244,106 @@ sub default {
 
 	return $val
 }
+?*/
 
-func (self *Task)get_KEY(key string) string {
+func (t *Task) get_KEY(key string) string {
 	switch key {
-	case "tid": return fmt.Sprintf("%d", self.Tid)
-	case "type": return fmt.Sprintf("%c", self.Type)
-	
-	case "title": return self.Title
+	case "tid", "todo_id":
+		return fmt.Sprintf("%d", t.Tid)
+	case "type":
+		return fmt.Sprintf("%c", t.Type)
 
-	"todo_id"       => "itemId")
-	"modified"      => "lastModified")
-	"created"       => "dateCreated")
-	"completed"     => "dateCompleted")
-	"type"          => "type")
-	"_gtd_category" => "categoryId")
+	case "title":
+		return t.Title
 
-	"isSomeday"     => "isSomeday")
-	"_gtd_context"  => "contextId")
-	"_gtd_timeframe"=> "timeframeId")
-	"due"           => "deadline")
-	"nextaction"    => "nextaction")
-	"tickledate"    => "tickledate")
-	default: panic("Unknown key %s key", key)
-	}
-}
+	case "modified":
+		return t.Modified
+	case "created":
+		return t.Created
+	case "completed":
+		return t.Completed
 
-func (self *Task)set_KEY(key string, val string) {
-	switch key {
-	case "tid":   panic(set_KEY(tid) // self.Tid = strconv.Atoi(val)
-	case "type":  self.Type = val[0]
-	case "title": self.Title = val
-	case "parents": self.set_parent_ids(val)
+	case "category":
+		return t.Category
+
+	case "nextaction":
+		if t.IsNextaction {
+			return "y"
+		} else {
+			return "n"
+		}
+	case "issomeday":
+		if t.IsSomeday {
+			return "y"
+		} else {
+			return "n"
+		}
+	case "context":
+		return t.Context
+	case "timeframe":
+		return t.Timeframe
+	case "due":
+		return t.Due
+	case "tickledate":
+		return t.Tickledate
+
 	default:
-		
+		panic("Unknown key: " + key)
 	}
-	panic("Unknown key %s key", key)
 }
 
+func (t *Task) set_KEY(key string, val string) {
+	var err error = nil
 
+	switch key {
+	case "tid", "todo_id":
+		// t.Tid = strconv.Atoi(val)
+		panic("set_KEY(tid) not allowd")
+	case "type":
+		t.Type = val[0]
+	case "title":
+		t.Title = val
+	case "parents":
+		t.set_parent_ids(val)
+
+	case "modified":
+		t.Modified = val
+	case "created":
+		t.Created = val
+	case "completed":
+		t.Completed = val
+	case "category":
+		t.Category = val
+		panic(".... code category update")
+
+	case "issomeday":
+		t.IsSomeday, err = strconv.ParseBool(val)
+	case "context":
+		t.Context = val
+		panic(".... code context update")
+	case "timeframe":
+		t.Timeframe = val
+		panic(".... code timeframe update")
+	case "due":
+		t.Due = val
+	case "nextaction":
+		t.IsNextaction, err = strconv.ParseBool(val)
+	case "tickledate":
+		t.Tickledate = val
+
+	default:
+		panic("Unknown key " + key)
+
+	}
+	if err != nil {
+		panic("Conversion error for " + key + ": " + val)
+	}
+
+	t.set_dirty(key)
+	//return nil
+}
+
+/*?
 sub get_KEY { my($self, $key) = @_;  return default($self->{$key}, ''); }
 
 sub get_tid          { my($self) = @_; return $self->{todo_id}; }
@@ -381,7 +443,7 @@ sub get_tags {
 
         my $hash = $ref->{_tags}
 
-	
+
         return sort {$a cmp $b} keys %$hash
 }
 sub disp_tags {
@@ -452,7 +514,7 @@ func (self *Task) Update() {
 
 func clean_up_database() {
 	// show what should have been updated.
-//***BUG***	option.Set_debug("tasks")
+	//***BUG***	option.Set_debug("tasks")
 
 	for tid, ref := range All() {
 		if !ref.Is_dirty() {
@@ -501,7 +563,7 @@ func (t *Task) Is_someday() bool {
 		return true
 	}
 
-	return t.IsSomeday;
+	return t.IsSomeday
 }
 
 /*?
@@ -519,17 +581,16 @@ func (t *Task) Is_completed() bool {
 	return t.Completed != ""
 }
 
-
 func (t *Task) Is_later() bool {
-//? what is later? see above
+	//? what is later? see above
 	return false
 }
 
 func (t *Task) Is_nextaction() bool {
-	
-//?	return 0 if $ref->is_someday()
-//?	return 0 if $ref->get_completed()
-//?	return 1 if $ref->get_nextaction() eq 'y'
+
+	//?	return 0 if $ref->is_someday()
+	//?	return 0 if $ref->get_completed()
+	//?	return 1 if $ref->get_nextaction() eq 'y'
 
 	return t.IsNextaction
 }

@@ -63,7 +63,7 @@ func Report_addplans(args []string) int {
 	}
 	display.Header("Projects needing planning")
 
-	var seen map[int]bool
+	seen := map[int]bool{}
 
 	// find all next and remember there focus
 	for len(list) > 0 {
