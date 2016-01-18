@@ -40,65 +40,65 @@ import "gtd/task"
 func Report_records(args []string) int {
 	/*?
 		// everybody into the pool
-		meta.ilter("+active", '^tid', "simple");
+		meta.ilter("+active", '^tid', "simple")
 
-		my($desc) = join(' ', @_);
+		my($desc) = join(' ', @_)
 
 		my($name) = ucfirst(meta.Desc(args)(@_));	// some out
 		if ($name) {
-			my($want) = type_val($name);
+			my($want) = type_val($name)
 			unless ($want) {
-				panic("**** Can't understand Type $name\n");
+				panic("**** Can't understand Type $name\n")
 			}
-			$want = 'p" if $want eq "s';
-			list_records($want, $name.' '.$desc);
-			return;
+			$want = 'p" if $want == "s'
+			list_records($want, $name.' '.$desc)
+			return
 		}
-		list_records('", "All '.$desc);
+		list_records('", "All '.$desc)
 	?*/
 }
 
 func list_records() { /*?
-		my($want_type, $typename) = @_;
+		my($want_type, $typename) = @_
 
-		task.Header($typename);
+		task.Header($typename)
 
-		my($tid, $proj, $type, $f, $reason, $kids, $acts);
-		my($Dates) = '';
+		my($tid, $proj, $type, $f, $reason, $kids, $acts)
+		my($Dates) = ''
 
 		// find all records.
 		for my $ref (sort_tasks meta.ll()) {
-			$tid  = $ref->get_tid();
-			$type = $ref->get_type();
+			$tid  = $ref->get_tid()
+			$type = $ref->get_type()
 
-			next if $want_type && $type ne $want_type;
+			next if $want_type && $type != $want_type
 
-			my($flags) = $ref->Hier::Filter::task_mask_disp();
+			my($flags) = $ref->Hier::Filter::task_mask_disp()
 
 			if ($reason = $ref->filtered()) {
-				$f = "X $type $reason";
+				$f = "X $type $reason"
 			} elsif ($reason = $ref->filtered_reason()) {
-				$f = "+ $type $reason";
+				$f = "+ $type $reason"
 			} else {
-				$f = "  $type";
+				$f = "  $type"
 			}
 
-			printf ("%-15s %6d %s ", $f, $tid, $flags);
+			printf ("%-15s %6d %s ", $f, $tid, $flags)
 
-			print "\t", $ref->get_title(), "\n";
+			print "\t", $ref->get_title(), "\n"
 		}
 	?*/
 }
 
 func disp() { /*?
-		my($ref) = @_;
-		my($tid) = $ref->get_tid();
+		my($ref) = @_
+		my($tid) = $ref->get_tid()
 
-		my($key) = action_disp($ref);
+		my($key) = action_disp($ref)
 
-		my $pri = $ref->get_priority();
-		my $type = uc($ref->get_type());
+		my $pri = $ref->get_priority()
+		my $type = uc($ref->get_type())
 
-		return "$type:$tid $key <$pri> $ref->get_title()";
+		return "$type:$tid $key <$pri> $ref->get_title()"
 	?*/
 }

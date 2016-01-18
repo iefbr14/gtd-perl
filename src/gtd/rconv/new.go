@@ -39,9 +39,9 @@ import "gtd/task"
 import "gtd/prompt"
 
 /*?
-my $First = '';
-my $Parent;
-my $P_ref;
+my $First = ''
+my $Parent
+my $P_ref
 
 //##BUG### ^c in new kills report rc
 
@@ -70,231 +70,231 @@ func Report_new(args []string) {
 	meta.Filter("+all", "^tid", "none")
 	/*?
 
-		my($want) = '';
+		my($want) = ''
 
 		if (@_) {
-			my($type_arg) = type_val($_[0]);
+			my($type_arg) = type_val($_[0])
 			if ($type_arg) {
-				$want = $type_arg;
-				shift @_;
+				$want = $type_arg
+				shift @_
 			}
 		}
 
-		my $parent = option("Current");
+		my $parent = option("Current")
 		if ($parent) {
-			$P_ref = Hier::Tasks::find($parent);
+			$P_ref = Hier::Tasks::find($parent)
 			unless ($P_ref) {
-				panic("Can't use $parent no such task\n");
+				panic("Can't use $parent no such task\n")
 			}
-			$Parent = $parent;
+			$Parent = $parent
 			unless ($want) {
-				$want = $P_ref->get_type();
+				$want = $P_ref->get_type()
 				$want =~ tr{mvogpawi}
-					   {vogpaXXX};
+					   {vogpaXXX}
 			//##BUG### in mapping sub-type prompmote actions to projects?
-			panic("Won"t create sub-actions of actions") if $want eq "X';
+			panic("Won"t create sub-actions of actions") if $want == "X'
 			}
 		}
 
 		$want ||= 'i';	// still unknown at this point!
 
-		my($title) = meta.Desc(args)(@_);
-		$title =~ s=^--\s*==;
+		my($title) = meta.Desc(args)(@_)
+		$title =~ s=^--\s*==
 
-		print "new: want=$want title=$title\n";
+		print "new: want=$want title=$title\n"
 
 		// command line path
 		if ($title) {
-			new_item($want, $title);
-			return;
+			new_item($want, $title)
+			return
 		}
 
 		if (is_type_hier($want)) {
-			new_project($want);
+			new_project($want)
 		} else {
-			new_action($want);
+			new_action($want)
 		}
 	?*/
 }
 
 func is_type_hier() { /*?
-		my($type) = @_;
+		my($type) = @_
 
-		return 1 if $type =~ /^[mvogp]/;
-		return 0;
+		return 1 if $type =~ /^[mvogp]/
+		return 0
 	?*/
 }
 
 // command line version, no prompting
 func new_item() { /*?
-		my($type, $title) = @_;
+		my($type, $title) = @_
 
-		my($pri, $task, $category, $note, $desc, $line);
+		my($pri, $task, $category, $note, $desc, $line)
 
-		$task     = option("Title") || $title;
-		$pri      = option("Priority") || 4;
-		$desc     = option("Desc") || '';
+		$task     = option("Title") || $title
+		$pri      = option("Priority") || 4
+		$desc     = option("Desc") || ''
 
-		$category = option("Category") || '';
-		$note     = option("Note") || '';
+		$category = option("Category") || ''
+		$note     = option("Note") || ''
 
-		my($tid) = next_avail_task($type);
-		my $ref = Hier::Tasks->new($tid);
+		my($tid) = next_avail_task($type)
+		my $ref = Hier::Tasks->new($tid)
 
 		if ($pri > 5) {
-			$pri -= 5;
-			$ref->set_isSomeday('y');
+			$pri -= 5
+			$ref->set_isSomeday('y')
 		} else {
-			$ref->set_isSomeday('n');
+			$ref->set_isSomeday('n')
 		}
-		if ($type eq 'n') {
-			$type = 'a';
-			$ref->set_nextaction('y');
+		if ($type == 'n') {
+			$type = 'a'
+			$ref->set_nextaction('y')
 		} else {
-			$ref->set_nextaction('n');
+			$ref->set_nextaction('n')
 		}
-		$ref->set_type($type);
+		$ref->set_type($type)
 
-		$ref->set_priority($pri);
+		$ref->set_priority($pri)
 
-		$ref->set_category($category);
-		$ref->set_title($task);
-		$ref->set_description($desc);
-		$ref->set_note($note);
+		$ref->set_category($category)
+		$ref->set_title($task)
+		$ref->set_description($desc)
+		$ref->set_note($note)
 
 
-		$ref->set_parent_ids($Parent) if $Parent;
-		$ref->insert();
+		$ref->set_parent_ids($Parent) if $Parent
+		$ref->insert()
 
-		print "Created: ", $ref->get_tid(), "\n";
+		print "Created: ", $ref->get_tid(), "\n"
 	?*/
 }
 
 // detailed task
 func new_action() { /*?
-		my($type) = @_;
+		my($type) = @_
 
-		my($title, $pri, $category, $desc, $note, $line);
+		my($title, $pri, $category, $desc, $note, $line)
 
-		my($type_name) = type_name($type);
+		my($type_name) = type_name($type)
 
-		first("Enter $type_name: Task, Desc, Category, Notes...");
+		first("Enter $type_name: Task, Desc, Category, Notes...")
 
-		$title    = input("Title", option("Title"));
-		$pri      = input("Priority", option("Priority")) || 4;
-		$desc     = prompt_desc("Desc", $desc);
+		$title    = input("Title", option("Title"))
+		$pri      = input("Priority", option("Priority")) || 4
+		$desc     = prompt_desc("Desc", $desc)
 
-		$category = input("Category", option("Category"));
-		$note     = prompt_desc("Note", option("Note"));
+		$category = input("Category", option("Category"))
+		$note     = prompt_desc("Note", option("Note"))
 
-		my($tid) = next_avail_task('a');
-		my $ref = Hier::Tasks->new($tid);
+		my($tid) = next_avail_task('a')
+		my $ref = Hier::Tasks->new($tid)
 
-		if ($type eq 'n') {
-			$type = 'a';
-			$ref->set_nextaction('y');
+		if ($type == 'n') {
+			$type = 'a'
+			$ref->set_nextaction('y')
 		} else {
-			$ref->set_nextaction('n');
+			$ref->set_nextaction('n')
 		}
 		$ref->set_type($type); # action/inbox/wait
 
 		if ($pri > 5) {
-			$pri -= 5;
-			$ref->set_isSomeday('y');
+			$pri -= 5
+			$ref->set_isSomeday('y')
 		} else {
-			$ref->set_isSomeday('n');
+			$ref->set_isSomeday('n')
 		}
-		$ref->set_priority($pri);
-		$ref->set_category($category);
-		$ref->set_title($title);
-		$ref->set_description($desc);
-		$ref->set_note($note);
+		$ref->set_priority($pri)
+		$ref->set_category($category)
+		$ref->set_title($title)
+		$ref->set_description($desc)
+		$ref->set_note($note)
 
-		$ref->set_parent_ids($Parent) if $Parent;
-		$ref->insert();
+		$ref->set_parent_ids($Parent) if $Parent
+		$ref->insert()
 
-		print "Created: ", $ref->get_tid(), "\n";
+		print "Created: ", $ref->get_tid(), "\n"
 	?*/
 }
 
 func new_project() { /*?
-		my($type) = @_;
+		my($type) = @_
 
-		my($pri, $category, $title, $desc, $note);
+		my($pri, $category, $title, $desc, $note)
 
-		my($type_name) = type_name($type);
+		my($type_name) = type_name($type)
 
-		first("Enter $type_name: Category, Title, Description, Outcome...");
+		first("Enter $type_name: Category, Title, Description, Outcome...")
 
-		$category = input("Category", option("Category"));
-		$title    = input("Title", option("Title"));
-		$pri      = option("Priority") || 4;
+		$category = input("Category", option("Category"))
+		$title    = input("Title", option("Title"))
+		$pri      = option("Priority") || 4
 
-		$desc     = prompt_desc("Description", option("Desc"));
-		$note     = prompt_desc("Outcome", option("Note"));
+		$desc     = prompt_desc("Description", option("Desc"))
+		$note     = prompt_desc("Outcome", option("Note"))
 
-		my($tid) = next_avail_task($type);
-		my $ref = Hier::Tasks->new($tid);
+		my($tid) = next_avail_task($type)
+		my $ref = Hier::Tasks->new($tid)
 
-		$ref->set_type($type);
-		$ref->set_nextaction('n');
-		$ref->set_isSomeday('n');
+		$ref->set_type($type)
+		$ref->set_nextaction('n')
+		$ref->set_isSomeday('n')
 
-		$ref->set_priority($pri);
-		$ref->set_category($category);
-		$ref->set_title($title);
-		$ref->set_description($desc);
-		$ref->set_note($note);
+		$ref->set_priority($pri)
+		$ref->set_category($category)
+		$ref->set_title($title)
+		$ref->set_description($desc)
+		$ref->set_note($note)
 
-		$ref->set_parent_ids($Parent) if $Parent;
-		$ref->insert();
+		$ref->set_parent_ids($Parent) if $Parent
+		$ref->insert()
 
-		print "Created: ", $ref->get_tid(), "\n";
+		print "Created: ", $ref->get_tid(), "\n"
 	?*/
 }
 
 func first() { /*?
-		my($text) = @_;
+		my($text) = @_
 		$First = "$text\n" .
 		 "  enter ^D to stop, entry not added\n" .
-		 "  use '.' to stop adding notes.\n";
+		 "  use '.' to stop adding notes.\n"
 	?*/
 }
 
 func prompt_desc() { /*?
-		my($prompt, $default) = @_;
+		my($prompt, $default) = @_
 
-		return $default if $default;
-		my($text) = '';
+		return $default if $default
+		my($text) = ''
 
-		my($line) = prompt($prompt);
+		my($line) = prompt($prompt)
 		for ($text=''; $line; $line=prompt("+")) {
-			last if !defined $line;
-			last if $line eq '.';
+			last if !defined $line
+			last if $line == '.'
 
-			$text .= $line . "\n";
+			$text .= $line . "\n"
 		}
-		chomp $text;
-		return $text;
+		chomp $text
+		return $text
 	?*/
 }
 
 func input() { /*?
-		my($prompt, $default) = @_;
+		my($prompt, $default) = @_
 
-		return $default if defined $default && $default ne '';
+		return $default if defined $default && $default != ''
 
 		if ($prompt =~ /^[A-Z]/) {
-			$prompt = sprintf("Add %-9s", $prompt . ':');
+			$prompt = sprintf("Add %-9s", $prompt . ':')
 		}
 
-		local($|) = 1;
+		local($|) = 1
 		if ($First) {
-			print $First;
-			$First = '';
+			print $First
+			$First = ''
 		}
 
 
-		return prompt($prompt, '#');
+		return prompt($prompt, '#')
 	?*/
 }

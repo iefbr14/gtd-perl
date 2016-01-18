@@ -38,145 +38,145 @@ import "gtd/task"
 import "gtd/cct"
 
 /*?
-my $Today = `date +%04Y%02m%02dT080000Z`; chomp $Today;
+my $Today = `date +%04Y%02m%02dT080000Z`; chomp $Today
 
-my %Pred;
-my $Pred_id = 0;
+my %Pred
+my $Pred_id = 0
 
-my %Alloc_resource = ( 999 => "Drew");
-my %Alloc_tasks = ();
+my %Alloc_resource = ( 999 => "Drew")
+my %Alloc_tasks = ()
 ?*/
 
 //-- Create a planner file from gtd db
 func Report_planner(args []string) {
 	/*?
-		my($criteria) = @_;
-		my($tid, $pri, $task, $cat, $ins, $due, $desc);
-		my(@row);
+		my($criteria) = @_
+		my($tid, $pri, $task, $cat, $ins, $due, $desc)
+		my(@row)
 
-		meta.ilter("+active", '^tid', "none");
-		meta.rgv(@_);
+		meta.ilter("+active", '^tid', "none")
+		meta.rgv(@_)
 
 		w := meta.Walk(args)
 		w.Detail = planner_detail
 		w.Done   = planner_end
 
-		w.Set_depth('a');
-		w.Filter();
+		w.Set_depth('a')
+		w.Filter()
 
-		planner_project();
-		planner_calendar();
+		planner_project()
+		planner_calendar()
 
-		print "<tasks>\n";
+		print "<tasks>\n"
 
-		w.Walk('m');
+		w.Walk('m')
 
-		print "</tasks>\n";
+		print "</tasks>\n"
 
-		planner_resource();
-		planner_allocations();
-		print "</project>\n";
+		planner_resource()
+		planner_allocations()
+		print "</project>\n"
 
 	?*/
 }
 
 func planner_detail() { /*?
-		my($planner, $ref) = @_;
-		my($sid, $name, $cnt, $desc, $pri, $type, $note);
-		my($per, $work, $start, $end, $done, $due, $ws);
+		my($planner, $ref) = @_
+		my($sid, $name, $cnt, $desc, $pri, $type, $note)
+		my($per, $work, $start, $end, $done, $due, $ws)
 
-		my($tid) = $ref->get_tid();
+		my($tid) = $ref->get_tid()
 
 
-		my($indent) = indent($ref);
-		my($resource) = new Hier::Resource($ref);
-		my($user) = $resource->resource();
+		my($indent) = indent($ref)
+		my($resource) = new Hier::Resource($ref)
+		my($user) = $resource->resource()
 
-		$name = xml($ref->get_title() || '');
-		$pri  = $ref->get_priority();
-		$desc = xml(display.Summary($ref->get_description(), '', 1));
-		$note = xml(display.Summary($ref->get_note(), '', 1));
-		$type = $ref->get_type() || '';
-		$per  = $ref->get_completed() ? 100 : 0;
-		$due  = $ref->get_due() || $Today;
-		$done = pdate($ref->get_completed());
-		$start = pdate($ref->get_created());
+		$name = xml($ref->get_title() || '')
+		$pri  = $ref->get_priority()
+		$desc = xml(display.Summary($ref->get_description(), '', 1))
+		$note = xml(display.Summary($ref->get_note(), '', 1))
+		$type = $ref->get_type() || ''
+		$per  = $ref->get_completed() ? 100 : 0
+		$due  = $ref->get_due() || $Today
+		$done = pdate($ref->get_completed())
+		$start = pdate($ref->get_created())
 
 	//	if ($done && $done lt "2010-") {
-	//		$planner->{want}{$tid} = 0;
-	//		return;
+	//		$planner->{want}{$tid} = 0
+	//		return
 	//	}
 
 		// number of hours/days => min
-		$work  = $resource->hours($ref) * 60;
-		$ws    = $due;
-		$end   = $ws;
+		$work  = $resource->hours($ref) * 60
+		$ws    = $due
+		$end   = $ws
 
-		my($fd) = $planner->{fd};
+		my($fd) = $planner->{fd}
 
 	// <task id="1" name="Task 1" note="" work="28800" start="20090319T000000Z" end="20090319T170000Z" work-start="20090319T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
 
 		print {$fd} $indent, qq(<task id="$tid" name="$name" note="$note" work="$work" ) ,
 			qq(start="$start" end="$end" work-start="$ws" ),
-			qq(percent-complete="$per" priority="$pri" type="normal" scheduling="fixed-work">), "\n";
+			qq(percent-complete="$per" priority="$pri" type="normal" scheduling="fixed-work">), "\n"
 
-		if ($type eq 'a') {
-			my($pred) = $Pred{$user} || '';
-			//print "# $type $tid $user $pred\n";
+		if ($type == 'a') {
+			my($pred) = $Pred{$user} || ''
+			//print "# $type $tid $user $pred\n"
 			if ($pred) {
-				++$Pred_id;
+				++$Pred_id
 				print {$fd}
 					$indent, "  <predecessors>\n",
 					$indent, "    <predecessor id=\"1\" predecessor-id=\"$pred\" type=\"FS\"/>\n",
 					$indent, "  </predecessors>\n",
 			}
-			$Pred{$user} = $tid;
+			$Pred{$user} = $tid
 
 
-			my($context) = $ref->get_context();
-			my($cid);
+			my($context) = $ref->get_context()
+			my($cid)
 			if ($context) {
-				my($cref) = Hier::CCT->use("Context");
-				$cid = $cref->get($context);
-				$Alloc_resource{$cid} = $context;
+				my($cref) = Hier::CCT->use("Context")
+				$cid = $cref->get($context)
+				$Alloc_resource{$cid} = $context
 			} else {
-				$cid = 999;
+				$cid = 999
 			}
-			$Alloc_tasks{$tid} = $cid;
+			$Alloc_tasks{$tid} = $cid
 		}
 	?*/
 }
 
 func planner_end() { /*?
-		my($planner, $ref) = @_;
+		my($planner, $ref) = @_
 
-		my($tid) = $ref->get_tid();
-		return if $planner->{want}{$tid} == 0;
+		my($tid) = $ref->get_tid()
+		return if $planner->{want}{$tid} == 0
 
-		my($fd) = $planner->{fd};
+		my($fd) = $planner->{fd}
 
-		my($indent) = $planner->indent();
-		print {$fd} $indent, "</task>\n";
+		my($indent) = $planner->indent()
+		print {$fd} $indent, "</task>\n"
 	?*/
 }
 
 func pdate() { /*?
-		my($date) = @_;
+		my($date) = @_
 
-		return $Today unless $date;
+		return $Today unless $date
 
-		$date =~ s/-//g;
+		$date =~ s/-//g
 
-		$date .= "T000000Z";
+		$date .= "T000000Z"
 
-		return $date;
+		return $date
 	?*/
 }
 
 func xml() { /*?
-		my($str) = @_;
+		my($str) = @_
 
-		return '' unless defined $str;
+		return '' unless defined $str
 
 		my %map = (
 			'&" => "&amp;',
@@ -184,26 +184,26 @@ func xml() { /*?
 			'>" => "&lt;',
 			'"" => "&dquote;',
 			""" => "&quote;',
-		);
+		)
 
-		$str =~ s/[&<>'"]/ /g;
-		return $str;
+		$str =~ s/[&<>'"]/ /g
+		return $str
 	?*/
 }
 
 func indent() { /*?
-		my($ref) = @_;
+		my($ref) = @_
 
-		my($level) = $ref->level() || 0;
+		my($level) = $ref->level() || 0
 
-		return '' if $level <= 0;
+		return '' if $level <= 0
 
-		return "  " x $level;
+		return "  " x $level
 	?*/
 }
 
 func planner_project() { /*?
-		print <<"EOF";
+		print <<"EOF"
 	<?xml version="1.0"?>
 	<project name="" company="" manager="" phase="" project-start="$Today" mrproject-version="2" calendar="1">
 	  <properties/>
@@ -213,7 +213,7 @@ func planner_project() { /*?
 }
 
 func planner_calendar() { /*?
-		print <<"EOF";
+		print <<"EOF"
 	  <calendars>
 	    <day-types>
 	      <day-type id="0" name="Working" description="A default working day"/>
@@ -236,26 +236,26 @@ func planner_calendar() { /*?
 }
 
 func planner_resource() { /*?
-		my($who);
+		my($who)
 
-		print "  <resource-groups/>\n";
-		print "  <resources>\n";
+		print "  <resource-groups/>\n"
+		print "  <resources>\n"
 		foreach my $id (sort {$a <=> $b } keys %Alloc_resource) {
-			$who = $Alloc_resource{$id};
-			print qq(    <resource id="$id" name="$who" short-name="" type="1" units="0" email="" note="" std-rate="0"/>\n);
+			$who = $Alloc_resource{$id}
+			print qq(    <resource id="$id" name="$who" short-name="" type="1" units="0" email="" note="" std-rate="0"/>\n)
 		}
-		print "  </resources>\n";
+		print "  </resources>\n"
 	?*/
 }
 
 func planner_allocations() { /*?
-		my($who);
+		my($who)
 
-		print "  <allocations>\n";
+		print "  <allocations>\n"
 		foreach my $id (sort {$a <=> $b } keys %Alloc_tasks) {
-			$who = $Alloc_tasks{$id};
-			print qq(    <allocation task-id="$id" resource-id="$who" units="100"/>\n);
+			$who = $Alloc_tasks{$id}
+			print qq(    <allocation task-id="$id" resource-id="$who" units="100"/>\n)
 		}
-		print "  </allocations>\n";
+		print "  </allocations>\n"
 	?*/
 }

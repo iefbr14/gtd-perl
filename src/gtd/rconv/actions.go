@@ -89,11 +89,11 @@ func report_select(top_name string) {
 
 	  //#FILTER	next if $pref->filtered()
 
-	  		pid := pref->Tid
+	  		pid := pref.Tid
 	  		Active[pid] = pref
 
 	  		tid = ref.Tid()
-	  		Projects.[pid][tid] = ref
+	  		Projects[pid][tid] = ref
 	  	}
 	  ?*/
 }
@@ -210,7 +210,7 @@ func get_goal() { /*?
 			return
 		}
 
-		while ($gref->get_type() eq 'p') {
+		while ($gref->get_type() == 'p') {
 	//warn join(' ', "up:", $gref->get_tid(), $gref->get_title), "\n"
 			$gref = $gref->get_parent()
 		}
@@ -220,9 +220,9 @@ func get_goal() { /*?
 
 func find_in_hier(title string) {
 
-	for my $ref (meta.elected()) {
-		next unless t.is_hier()
-		next if t.get_title() ne $title
+	for _, ref := meta.Selected() {
+		next unless t.Is_hier()
+		next if t.Title != $title
 
 		add_children($ref)
 		//##BUG### should walk down from here vi get_children

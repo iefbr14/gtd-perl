@@ -45,33 +45,33 @@ func Report_items(args []string) int {
 
 	/*?
 	if name != "" {
-		my($want) = type_val($name);
+		my($want) = type_val($name)
 		if ($want) {
-			$want = 'p" if $want eq "s';
-			list_items($want, $name);
-			return;
+			$want = 'p" if $want == "s'
+			list_items($want, $name)
+			return
 		}
-		print "**** Can't understand Type $name\n";
-		return 1;
+		print "**** Can't understand Type $name\n"
+		return 1
 	}
-	print "No items requested\n";
+	print "No items requested\n"
 	?*/
 	return 0
 }
 
 func list_items() { /*?	//-- List projects with waiting-fors
-		my($type, $typename) = @_;
+		my($type, $typename) = @_
 
-		task.Header($typename);
+		task.Header($typename)
 
-	        my($tid, $title, $desc, @list);
+	        my($tid, $title, $desc, @list)
 	        for my $ref (meta.atching_type($type)) {
-	//#FILTER	next if $ref->filtered();
+	//#FILTER	next if $ref->filtered()
 
-	                push(@list, $ref);
+	                push(@list, $ref)
 	        }
 	        for my $ref (sort_tasks @list) {
-			display_task($ref);
+			display_task($ref)
 	        }
 	?*/
 }

@@ -38,50 +38,50 @@ import "gtd/option" // get_today
 import "gtd/task"
 
 /*?
-my $ToOld;
-my $ToFuture;
+my $ToOld
+my $ToFuture
 
-my $Someday = 0;
+my $Someday = 0
 
-our report_debug;
+our report_debug
 ?*/
 
 //-- generate taskjuggler file from gtd db
 func Report_taskjuggler(args []string) {
 	/*?
-		my($tid, $task, $cat, $ins, $due, $desc);
+		my($tid, $task, $cat, $ins, $due, $desc)
 
 		$ToOld = pdate(get_today(-7));	// don't care about done items > 2 week
 
-		meta.ilter("+all", '^focus', "none");
+		meta.ilter("+all", '^focus', "none")
 		my($top) = 'o';			// default to top of everything
 		for my $criteria (meta.rgv(@_)) {
-			if ($criteria eq "all") {
-				$Someday = 1;
-				next;
+			if ($criteria == "all") {
+				$Someday = 1
+				next
 			}
 
 			if ($criteria =~ /^\d+$/) {
-				$top = $criteria;
-				next;
+				$top = $criteria
+				next
 			}
-			my($type) = type_val($criteria);
+			my($type) = type_val($criteria)
 			if ($type) {
-				$type = 'p" if $type eq "s';
-				$top = $type;
+				$type = 'p" if $type == "s'
+				$top = $type
 			} else {
-				panic("unknown type $criteria\n");
+				panic("unknown type $criteria\n")
 			}
 		}
 
 		if ($Someday) {
-			meta.ilter("+all", '^focus', "none");
+			meta.ilter("+all", '^focus', "none")
 			// 5 year plan everything plan
-			$ToFuture = pdate(get_today(5*365));
+			$ToFuture = pdate(get_today(5*365))
 		} else {
-			meta.ilter("+active", '^focus', "none");
+			meta.ilter("+active", '^focus', "none")
 			// don't care about start more > 3 months
-			$ToFuture = pdate(get_today(60));
+			$ToFuture = pdate(get_today(60))
 		}
 
 		w := meta.Walk(args)
@@ -89,38 +89,38 @@ func Report_taskjuggler(args []string) {
 		w.Detail = juggler_detail
 		w.Done = juggler_end
 
-		w.Set_depth('a');
-		w.Filter();
+		w.Set_depth('a')
+		w.Filter()
 
-		tj_header();
+		tj_header()
 
-		w.Walk();
+		w.Walk()
 	?*/
 }
 
 func calc_est() { /*?
-		my($hours) = 0;
-		my($task) = 0;
+		my($hours) = 0
+		my($task) = 0
 
 		for my $ref (meta.elected()) {
-			++$task;
+			++$task
 
-			my($resource) = new Hier::Resource($ref);
-			$hours += $resource->hours($ref);
+			my($resource) = new Hier::Resource($ref)
+			$hours += $resource->hours($ref)
 		}
-		my($days) = $hours / 4;
+		my($days) = $hours / 4
 
-		warn "Tasks: $task Est days $days (min 90)\n";
+		warn "Tasks: $task Est days $days (min 90)\n"
 
-		$days = 90 if $days < 90;
-		return $days;
+		$days = 90 if $days < 90
+		return $days
 	?*/
 }
 
 func tj_header() { /*?
-		my $est = calc_est();
-		my $projection = pdate(get_today($est));
-	print <<"EOF";
+		my $est = calc_est()
+		my $projection = pdate(get_today($est))
+	print <<"EOF"
 	project GTD "Get Things Done" "1.0" $ToOld - $projection {
 	  # Hide the clock time. Only show the date.
 	  timeformat "%Y-%m-%d"
@@ -144,78 +144,78 @@ func tj_header() { /*?
 	}
 
 	func juggler_detail() {/*?
-		my($walk, $ref) = @_;
-		my($sid, $name, $cnt, $desc, $type, $note);
-		my($per, $start, $end, $done, $due, $we);
-		my($who, $doit, $depends);
-		my($tj_pri);
+		my($walk, $ref) = @_
+		my($sid, $name, $cnt, $desc, $type, $note)
+		my($per, $start, $end, $done, $due, $we)
+		my($who, $doit, $depends)
+		my($tj_pri)
 
-		my($tid) = $ref->get_tid();
+		my($tid) = $ref->get_tid()
 
-		print "# taskjuggler::hier_detail($tid)\n" if report_debug;
+		print "# taskjuggler::hier_detail($tid)\n" if report_debug
 
-		my($indent) = indent($ref);
-		my($resource) = new Hier::Resource($ref);
+		my($indent) = indent($ref)
+		my($resource) = new Hier::Resource($ref)
 
-		$name = $ref->get_title() || '';
-		$tj_pri  = task_priority($ref);
-		$desc = display.Summary($ref->get_description(), '', 1);
-		$note = display.Summary($ref->get_note(), '', 1);
-		$type = $ref->get_type() || '';
-		$per  = $ref->get_completed() ? 100 : 0;
-		$due  = pdate($ref->get_due());
-		$done = pdate($ref->get_completed());
-		$start = pdate($ref->get_tickledate());
-		$doit = pdate($ref->get_doit());
-		$depends = $ref->get_depends();
+		$name = $ref->get_title() || ''
+		$tj_pri  = task_priority($ref)
+		$desc = display.Summary($ref->get_description(), '', 1)
+		$note = display.Summary($ref->get_note(), '', 1)
+		$type = $ref->get_type() || ''
+		$per  = $ref->get_completed() ? 100 : 0
+		$due  = pdate($ref->get_due())
+		$done = pdate($ref->get_completed())
+		$start = pdate($ref->get_tickledate())
+		$doit = pdate($ref->get_doit())
+		$depends = $ref->get_depends()
 
-		my $user = $resource->resource();
-		my $hint = $ref->get_hint();
+		my $user = $resource->resource()
+		my $hint = $ref->get_hint()
 
-		print "## $tid $tj_pri $type $name\n" if report_debug;
+		print "## $tid $tj_pri $type $name\n" if report_debug
 
-		return if skip($walk, $ref);
+		return if skip($walk, $ref)
 
 		if ($start && $start lt $ToOld) {
-			$start = '';
+			$start = ''
 		}
 
-		$who = "drew";
+		$who = "drew"
 
-		my($effort) = $resource->effort();
+		my($effort) = $resource->effort()
 
-		$due = '" if $due && $due lt "2010-';
-		$we    = $due || '';
+		$due = '" if $due && $due lt "2010-'
+		$we    = $due || ''
 
-		my($pri) = $ref->get_priority();
-		$we    = '' if $pri >= 6;
+		my($pri) = $ref->get_priority()
+		$we    = '' if $pri >= 6
 
-		my($fd) = $walk->{fd};
+		my($fd) = $walk->{fd}
 
-		$name =~ s/"/'/g;
-		print {$fd} $indent, qq(task $type\_$tid "$name" \{\n);
+		$name =~ s/"/'/g
+		print {$fd} $indent, qq(task $type\_$tid "$name" \{\n)
 
-		if ($indent eq '') {
-			print {$fd} $indent, qq(   start \${now}\n);
-			print {$fd} $indent, qq(   allocate $user # $hint\n);
-		} elsif ($user && parent_user($ref) ne $user) {
-			print {$fd} $indent, qq(   allocate $user { mandatory } # $hint\n);
+		if ($indent == '') {
+			print {$fd} $indent, qq(   start \${now}\n)
+			print {$fd} $indent, qq(   allocate $user # $hint\n)
+		} elsif ($user && parent_user($ref) != $user) {
+			print {$fd} $indent, qq(   allocate $user { mandatory } # $hint\n)
 		}
 
 		foreach my $depend (split(/[ ,]/, $depends)) {
-			my($dep_path) = dep_path($depend);
+			my($dep_path) = dep_path($depend)
 
 			unless ($dep_path) {
-				warn "depend $tid: needs $depend failed to produce path!";
-				next;
+				warn "depend $tid: needs $depend failed to produce path!"
+				next
 			}
 			if ($dep_path =~ /^\s*#/) {
-				warn "depend $tid: no-longer depends: $depend $dep_path\n";
-				next;
+				warn "depend $tid: no-longer depends: $depend $dep_path\n"
+				next
 			}
 
-			warn "depend $tid: $depend dep_path $dep_path\n";
-			print {$fd} $indent, qq(   depends $dep_path\n);
+			warn "depend $tid: $depend dep_path $dep_path\n"
+			print {$fd} $indent, qq(   depends $dep_path\n)
 		}
 
 		//##BUG### taskjuggler need to check for un-filtered children for effort
@@ -223,241 +223,241 @@ func tj_header() { /*?
 			// nope has children, we just accumlate effor in them
 		} else {
 			if ($effort) {
-				++$ref->{_effort};
+				++$ref->{_effort}
 			}
-			print {$fd} $indent, qq(   effort $effort\n) if $effort;
+			print {$fd} $indent, qq(   effort $effort\n) if $effort
 		}
-		print {$fd} $indent, qq(   priority $tj_pri\n) if $tj_pri;
+		print {$fd} $indent, qq(   priority $tj_pri\n) if $tj_pri
 
-		print {$fd} $indent, qq(   start $start\n) if $start && $we eq '';
-		print {$fd} $indent, qq(   maxend  $we\n)   if $we && $we gt $ToOld;
-		print {$fd} $indent, qq(   complete  100\n)   if $done;
+		print {$fd} $indent, qq(   start $start\n) if $start && $we == ''
+		print {$fd} $indent, qq(   maxend  $we\n)   if $we && $we gt $ToOld
+		print {$fd} $indent, qq(   complete  100\n)   if $done
 	?*/
 }
 
 func indent() { /*?
-		my($ref) = @_;
+		my($ref) = @_
 
-		my($level) = $ref->level() - 1;
+		my($level) = $ref->level() - 1
 
-		return '' if $level <= 0;
+		return '' if $level <= 0
 
-		return "   " x ($level);
+		return "   " x ($level)
 	?*/
 }
 
 func juggler_end() { /*?
-		my($walk, $ref) = @_;
+		my($walk, $ref) = @_
 
-		return if skip($walk, $ref);
+		return if skip($walk, $ref)
 
-		my($tid) = $ref->get_tid();
+		my($tid) = $ref->get_tid()
 
-		my($fd) = $walk->{fd};
-		my($indent) = indent($ref);
+		my($fd) = $walk->{fd}
+		my($indent) = indent($ref)
 
-		my($type) = $ref->get_type();
+		my($type) = $ref->get_type()
 
 		unless ($ref->{_effort}) {
-			my($task) = $ref->get_title();
-			my($type) = $ref->get_type();
-			my ($effort) = "1h # action";
-			$effort = "2h # Need planning" if $type eq 'p';
-			$effort = "8h # Need planning" if $type eq 'g';
+			my($task) = $ref->get_title()
+			my($type) = $ref->get_type()
+			my ($effort) = "1h # action"
+			$effort = "2h # Need planning" if $type == 'p'
+			$effort = "8h # Need planning" if $type == 'g'
 
-			print {$fd} $indent, qq(   effort $effort\n);
-			warn "Task $tid: $task |<<< Needs effort planning\n";
+			print {$fd} $indent, qq(   effort $effort\n)
+			warn "Task $tid: $task |<<< Needs effort planning\n"
 
-			++$ref->{_effort};
+			++$ref->{_effort}
 		}
 
-		my($pref) = $ref->get_parent();
-		++$pref->{_effort};
+		my($pref) = $ref->get_parent()
+		++$pref->{_effort}
 
 		if ($type =~ /[mvog]/) {
-			print {$fd} $indent, qq(} # $type\_$tid\n);
-			return;
+			print {$fd} $indent, qq(} # $type\_$tid\n)
+			return
 		}
-		print {$fd} $indent, qq(}\n);
+		print {$fd} $indent, qq(}\n)
 	?*/
 }
 
 func pdate() { /*?
-		my($date) = @_;
+		my($date) = @_
 
-		return '" if $date eq "';
-		return '' if $date =~ /^0000/;
+		return '" if $date == "'
+		return '' if $date =~ /^0000/
 
-		$date =~ s/ .*$//;
-		return $date;
+		$date =~ s/ .*$//
+		return $date
 	?*/
 }
 
 func parent_user() { /*?
-		my($ref) = @_;
+		my($ref) = @_
 
-		my($pref) = $ref->get_parent();
-		return '' unless $pref;
+		my($pref) = $ref->get_parent()
+		return '' unless $pref
 
-		my($resource) = new Hier::Resource($pref);
-		return $resource->resource();
+		my($resource) = new Hier::Resource($pref)
+		return $resource->resource()
 	?*/
 }
 
 func old_task_priority() { /*?
-		my($ref) = @_;
+		my($ref) = @_
 
-		my($pri) = $ref->get_priority();
+		my($pri) = $ref->get_priority()
 
-		return '' unless $pri;
+		return '' unless $pri
 
-		my($type) = $ref->get_type();
-		return '" if $type eq "o';
-		return '" if $type eq "g';
-		return '" if $type eq "p';
+		my($type) = $ref->get_type()
+		return '" if $type == "o'
+		return '" if $type == "g'
+		return '" if $type == "p'
 
-		my($boost) = $ref->is_nextaction();
+		my($boost) = $ref->is_nextaction()
 
-		my($prival) = '';
+		my($prival) = ''
 
 		for (;;) {
-			$pri = $ref->get_priority();
-			$pri += 4 if $ref->is_someday();
-			$prival = $pri . $prival;
+			$pri = $ref->get_priority()
+			$pri += 4 if $ref->is_someday()
+			$prival = $pri . $prival
 
-			last if $ref->get_type() eq 'g';
+			last if $ref->get_type() == 'g'
 
-			$ref = $ref->get_parent();
-			last unless $ref;
-			last if $ref->get_type() eq 'g';
+			$ref = $ref->get_parent()
+			last unless $ref
+			last if $ref->get_type() == 'g'
 		}
 
 		return '' if $prival =~ /^4+$/;	 # all defaults
 
-		my($tj_pri) = 1100 - int(('.' . $prival) * 1000);
+		my($tj_pri) = 1100 - int(('.' . $prival) * 1000)
 
-		$tj_pri = 1 if $tj_pri <= 0;
+		$tj_pri = 1 if $tj_pri <= 0
 
-		if ($type eq 'a' && $boost) {
-			$tj_pri += 100;
-			$tj_pri = 999 if $tj_pri >= 1000;
+		if ($type == 'a' && $boost) {
+			$tj_pri += 100
+			$tj_pri = 999 if $tj_pri >= 1000
 		}
-		return $tj_pri . " # $prival.$boost";
+		return $tj_pri . " # $prival.$boost"
 	?*/
 }
 
 func task_priority() { /*?
-		my($ref) = @_;
+		my($ref) = @_
 
-		my($pf) = Hier::Sort::calc_focus($ref);
+		my($pf) = Hier::Sort::calc_focus($ref)
 
-		my($tj_pri) = substr($pf."zzzzzz", 2, 3);
-		$pf =~ s/^(..)/$1./;
+		my($tj_pri) = substr($pf."zzzzzz", 2, 3)
+		$pf =~ s/^(..)/$1./
 
 		//         123451234512345
 		$tj_pri =~ tr{abcdefghijklmnoz}
-	                     {9987766544321000};
+	                     {9987766544321000}
 
-		$tj_pri = 1000 if $tj_pri >= 1000;
-		$tj_pri = 1 if $tj_pri <= 0;
+		$tj_pri = 1000 if $tj_pri >= 1000
+		$tj_pri = 1 if $tj_pri <= 0
 
-		return $tj_pri . " # $pf";
+		return $tj_pri . " # $pf"
 	?*/
 }
 
 func skip() { /*?
-		my($walk, $ref) = @_;
+		my($walk, $ref) = @_
 
-		my $start = pdate($ref->get_tickledate());
-		my $done = pdate($ref->get_completed());
+		my $start = pdate($ref->get_tickledate())
+		my $done = pdate($ref->get_completed())
 
 		if ($Someday == 0 && $ref->is_someday()) {
-			supress($walk, $ref);
-			return 1;
+			supress($walk, $ref)
+			return 1
 		}
 
 		if ($done) {
-			supress($walk, $ref);
-			return 1;
+			supress($walk, $ref)
+			return 1
 		}
 		if ($start && $start gt $ToFuture) {
-			supress($walk, $ref);
-			return 1;
+			supress($walk, $ref)
+			return 1
 		}
 
-		return 0;
+		return 0
 	?*/
 }
 
 func supress() { /*?
-		my($walk, $ref) = @_;
+		my($walk, $ref) = @_
 
-		my($tid) = $ref->get_tid();
-		$walk->{want}{$tid} = 0;
+		my($tid) = $ref->get_tid()
+		$walk->{want}{$tid} = 0
 
 		foreach my $child ($ref->get_children()) {
-			supress($walk, $child);
+			supress($walk, $child)
 		}
 	?*/
 }
 
 //==============================================================================
 
-//? my %Dep_list;
+//? my %Dep_list
 
 func build_deps() { /*?
-		my($walk, $ref, $level) = @_;
+		my($walk, $ref, $level) = @_
 
-		$level ||= 1;
+		$level ||= 1
 
-		calc_depends($walk, $ref, $level);
+		calc_depends($walk, $ref, $level)
 		for my $child ($ref->get_children()) {
-			build_deps($walk, $child, $level+1);
+			build_deps($walk, $child, $level+1)
 		}
 	?*/
 }
 
 func calc_depends() { /*?
-		my($walk, $ref, $level) = @_;
+		my($walk, $ref, $level) = @_
 
-		my($tid) = $ref->get_tid();
-		return if defined $Dep_list{$tid};
+		my($tid) = $ref->get_tid()
+		return if defined $Dep_list{$tid}
 
-	//	return if skip($walk, $ref);
+	//	return if skip($walk, $ref)
 
-		my($path) = $ref->get_type() . '_' . $tid;
+		my($path) = $ref->get_type() . '_' . $tid
 
 		if ($level == 1) {
-			$Dep_list{$tid} = $path;
-			return;
+			$Dep_list{$tid} = $path
+			return
 		}
 
-		my $pref = $ref->get_parent();
-		my $pid = $pref->get_tid();
+		my $pref = $ref->get_parent()
+		my $pid = $pref->get_tid()
 
 		if ($Dep_list{$pid}) {
-			$path = $Dep_list{$pid} . '.' . $path;
-			$Dep_list{$tid} = $path;
+			$path = $Dep_list{$pid} . '.' . $path
+			$Dep_list{$tid} = $path
 
-			return;
+			return
 		}
 	?*/
 }
 
 func dep_path() { /*?
-		my($tid) = @_;
+		my($tid) = @_
 
-		my($ref) = meta.Find($tid);
-		return unless $ref;
+		my($ref) = meta.Find($tid)
+		return unless $ref
 
-		my($path) = $Dep_list{$tid};
+		my($path) = $Dep_list{$tid}
 
-		my($task) = $ref->get_title($ref);
+		my($task) = $ref->get_title($ref)
 
-		return "$path # $task" if $path;
+		return "$path # $task" if $path
 
-		print "# Can't map $tid ($task) as a depencency\n";
-		warn "Can't map $tid ($task) as a depencency\n";
+		print "# Can't map $tid ($task) as a depencency\n"
+		warn "Can't map $tid ($task) as a depencency\n"
 
 		return ''
 	?*/

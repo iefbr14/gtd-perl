@@ -33,7 +33,7 @@ NAME:
 
 */
 
-//?	@EXPORT      = qw( &Report_dump &dump_ordered_ref );
+//?	@EXPORT      = qw( &Report_dump &dump_ordered_ref )
 
 import "gtd/task"
 import "gtd/meta"
@@ -43,60 +43,60 @@ import "gtd/task"
 func Report_dump(args []string) {
 	/*?
 		// everybody into the pool by id
-		meta.ilter("+any", '^tid', "dump");
+		meta.ilter("+any", '^tid', "dump")
 
 		my($name) = ucfirst(meta.Desc(args)(@_));	// some out
 		if ($name) {
 			if ($name =~ /^\d+/) {
-				dump_list($name);
-				return;
+				dump_list($name)
+				return
 			}
-			my($want) = type_val($name);
+			my($want) = type_val($name)
 			unless ($want) {
-				warn "**** Can't understand Type $name\n";
-				return 1;
+				warn "**** Can't understand Type $name\n"
+				return 1
 			}
 			//##BUG### dump needs to handle sub-projects properly
-			$want = 'p" if $want eq "s';	// sub-project are real
-			list_dump($want, $name);
-			return;
+			$want = 'p" if $want == "s';	// sub-project are real
+			list_dump($want, $name)
+			return
 		}
-		list_dump('', "All");
+		list_dump('', "All")
 	?*/
 }
 
 func dump_list() { /*?
-		my($list) = @_;
+		my($list) = @_
 
-		my @list = split(/[^\d]+/, $list);
+		my @list = split(/[^\d]+/, $list)
 
 		for my $tid (@list) {
-			my $ref = meta.Find($tid);
+			my $ref = meta.Find($tid)
 			unless (defined $ref) {
-				warn "#*** No task: $tid\n";
-				next;
+				warn "#*** No task: $tid\n"
+				next
 			}
-			display_task($ref);
+			display_task($ref)
 		}
 	?*/
 }
 
 func list_dump() { /*?
-		my($want_type, $typename) = @_;
+		my($want_type, $typename) = @_
 
-		task.Header($typename);
+		task.Header($typename)
 
-		my($pid, $ref, $proj, $type, $f, $kids, $acts);
-		my($Dates) = '';
+		my($pid, $ref, $proj, $type, $f, $kids, $acts)
+		my($Dates) = ''
 
 		// find all records.
 		for my $ref (meta.orted("^tid")) {
-			$type = $ref->get_type();
-			next if $want_type && $type ne $want_type;
+			$type = $ref->get_type()
+			next if $want_type && $type != $want_type
 
-	//#FILTER	next if $ref->filtered();
+	//#FILTER	next if $ref->filtered()
 
-			display_task($ref);
+			display_task($ref)
 		}
 	?*/
 }

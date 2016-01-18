@@ -40,57 +40,57 @@ import "gtd/task"
 //-- Project Summary for a role
 func Report_spreadsheet(args []string) {
 	/*?
-		meta.ilter("+active", '^tid', "none");
-		my @want = meta.rgv(@_);
+		meta.ilter("+active", '^tid', "none")
+		my @want = meta.rgv(@_)
 
 		if (@want == 0) {
-			my($roles) = load_roles();
+			my($roles) = load_roles()
 			foreach my $role (sort keys %$roles) {
-				display_role($role, $roles->{$role});
+				display_role($role, $roles->{$role})
 			}
-			return;
+			return
 		}
 
-		my($roles) = load_roles();
+		my($roles) = load_roles()
 		foreach my $role (@want) {
 			if (defined $roles->{$role}) {
-				display_role($role, $roles->{$role});
+				display_role($role, $roles->{$role})
 			} else {
-				warn "No such role: $role\n";
+				warn "No such role: $role\n"
 			}
 		}
 	?*/
 }
 
 func load_roles() { /*?
-		my($role) = @_;
+		my($role) = @_
 
-		my(%roles);
+		my(%roles)
 
 		// find all next and remember there projects
 		for my $ref (meta.atching_type('o')) {
-	//#FILTER	next if $ref->filtered();
+	//#FILTER	next if $ref->filtered()
 
-			my $pid = $ref->get_tid();
-			my $role = $ref->get_title();
-			$role =~ s= .*==;
-			$role = ucfirst($role);
-			$roles{$role} = $ref;
+			my $pid = $ref->get_tid()
+			my $role = $ref->get_title()
+			$role =~ s= .*==
+			$role = ucfirst($role)
+			$roles{$role} = $ref
 		}
-		return \%roles;
+		return \%roles
 	?*/
 }
 
 func display_role() { /*?
-		my($role, $ref) = @_;
+		my($role, $ref) = @_
 
-		print "\fGoal:$role\tProj-id\tProject\tItem-id\tNext-Action\tHours\tTotal-$role\n";
+		print "\fGoal:$role\tProj-id\tProject\tItem-id\tNext-Action\tHours\tTotal-$role\n"
 
-		my(@list);
+		my(@list)
 		foreach my $gref ($ref->get_children()) {
-			next if $gref->filtered();
+			next if $gref->filtered()
 
-			push(@list, get_projects($gref));
+			push(@list, get_projects($gref))
 		}
 
 		foreach my $line (sort {
@@ -98,56 +98,56 @@ func display_role() { /*?
 		   ||	$a->[2] cmp $b->[2]
 		   ||	$a->[4] cmp $b->[4]
 		} @list) {
-			print join("\t", @$line), "\n";
+			print join("\t", @$line), "\n"
 		}
 	?*/
 }
 
 func get_projects() { /*?
-		my($gref) = @_;
+		my($gref) = @_
 
-		my(@list);
+		my(@list)
 
 		foreach my $pref ($gref->get_children()) {
-			next if $pref->filtered();
+			next if $pref->filtered()
 
-			push(@list, get_actions($gref, $pref));
+			push(@list, get_actions($gref, $pref))
 		}
-		return @list;
+		return @list
 	?*/
 }
 
 func get_actions() { /*?
-		my($gref, $pref) = @_;
+		my($gref, $pref) = @_
 
-		my($gtitle) = $gref->get_title();
+		my($gtitle) = $gref->get_title()
 
-		my($total) = 0;
-		my($pid, $ptitle);
-		my($tid, $title, $hours);
+		my($total) = 0
+		my($pid, $ptitle)
+		my($tid, $title, $hours)
 		foreach my $ref ($pref->get_children()) {
-			next if $ref->filtered();
+			next if $ref->filtered()
 
-			my($resource) = new Hier::Resource($ref);
-			my($effort) = $resource->hours();
-			$effort = .5 unless $effort;
+			my($resource) = new Hier::Resource($ref)
+			my($effort) = $resource->hours()
+			$effort = .5 unless $effort
 
 			unless ($tid) {
-				$pid = $pref->get_tid();
-				$ptitle = $pref->get_title();
+				$pid = $pref->get_tid()
+				$ptitle = $pref->get_title()
 
-				$tid = $ref->get_tid();
-				$title = $ref->get_title();
-				$hours = $effort;
+				$tid = $ref->get_tid()
+				$title = $ref->get_title()
+				$hours = $effort
 			}
-			$total += $effort;
+			$total += $effort
 		}
 
 		unless ($tid) {
-			$pid = $pref->get_tid();
-			$ptitle = $pref->get_title();
-			return [ $gtitle, $pid, $ptitle, '", "', 2, '' ];
+			$pid = $pref->get_tid()
+			$ptitle = $pref->get_title()
+			return [ $gtitle, $pid, $ptitle, '", "', 2, '' ]
 		}
-		return [ $gtitle, $pid, $ptitle, $tid, $title, $hours, $total];
+		return [ $gtitle, $pid, $ptitle, $tid, $title, $hours, $total]
 	?*/
 }

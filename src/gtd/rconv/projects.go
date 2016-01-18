@@ -37,41 +37,41 @@ import "gtd/task"
 import "gtd/meta"
 import "gtd/option"
 
-//?my %Meta_key;
+//?my %Meta_key
 
 //-- List projects -- live, plan or someday
 func Report_projects(args []string) {
 	/*?
-		//meta.ilter("+next", '^focus', "rgpa");
-		meta.ilter("+p:next", '^focus', "simple");
+		//meta.ilter("+next", '^focus', "rgpa")
+		meta.ilter("+p:next", '^focus', "simple")
 
-		report_projects(1, "Projects", meta.Desc(args)(@_));
+		report_projects(1, "Projects", meta.Desc(args)(@_))
 	?*/
 }
 
 func report_projects() { /*?
-		my($all, $head, $desc) = @_;
+		my($all, $head, $desc) = @_
 
-		display.Header($head, $desc);
+		display.Header($head, $desc)
 
-		my($work_load) = 0;
-		my($proj_cnt) = 0;
-		my($ref, $proj, %wanted, %counted, %actions);
+		my($work_load) = 0
+		my($proj_cnt) = 0
+		my($ref, $proj, %wanted, %counted, %actions)
 
 		// find all next and remember there projects
 		for my $ref (meta.atching_type('p')) {
-	//#FILTER	next if $ref->filtered();
+	//#FILTER	next if $ref->filtered()
 
-			my $pid = $ref->get_tid();
-			$wanted{$pid} = $ref;
-			$counted{$pid} = 0;
-			$actions{$pid} = 0;
+			my $pid = $ref->get_tid()
+			$wanted{$pid} = $ref
+			$counted{$pid} = 0
+			$actions{$pid} = 0
 
 			for my $child ($ref->get_children()) {
-				$counted{$pid}++ unless $child->filtered();
-				$actions{$pid}++;
+				$counted{$pid}++ unless $child->filtered()
+				$actions{$pid}++
 
-				$work_load++ unless $child->filtered();
+				$work_load++ unless $child->filtered()
 			}
 		}
 
@@ -80,26 +80,26 @@ func report_projects() { /*?
 	//## Value Vision Role
 	//## -------------------------
 	//## 99	Goal 999 Project
-		my($cols) = columns() - 2;
+		my($cols) = columns() - 2
 
-		my($g_id) = 0;
-		my($prev_goal) = 0;
+		my($g_id) = 0
+		my($prev_goal) = 0
 
-		my($r_id) = 0;
-		my($prev_role) = 0;
+		my($r_id) = 0
+		my($prev_role) = 0
 
-		my($pid, $title, $g_ref, $r_ref);
+		my($pid, $title, $g_ref, $r_ref)
 
 		for my $ref (sort by_goal_task values %wanted) {
 
-			my($work, $counts) = summary_children($ref);
-			$work_load += $work;
-			display_rgpa($ref, $counts);
-	//		display_task($ref, $counts);
+			my($work, $counts) = summary_children($ref)
+			$work_load += $work
+			display_rgpa($ref, $counts)
+	//		display_task($ref, $counts)
 
-			++$proj_cnt;
+			++$proj_cnt
 
 		}
-		print "***** Work Load: $proj_cnt Projects, $work_load action items\n";
+		print "***** Work Load: $proj_cnt Projects, $work_load action items\n"
 	?*/
 }

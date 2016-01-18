@@ -36,48 +36,48 @@ NAME:
 //-- Command line update of an action/project
 func Report_update(args []string) {
 	/*?
-		my($task, $desc) = @_;
+		my($task, $desc) = @_
 
 		unless (defined $task) {
-			print "NO task specified to update\n";
-			return;
+			print "NO task specified to update\n"
+			return
 		}
-		my $ref = meta.Find($task);
+		my $ref = meta.Find($task)
 		unless (defined $ref) {
-			print "Task $task not found to update\n";
-			return;
+			print "Task $task not found to update\n"
+			return
 		}
 
-		my $val;
+		my $val
 
 		if ($val = option("Category")) {
-			$ref->set_category($val);
+			$ref->set_category($val)
 		}
 
 		if ($val = option("Context")) {
-			$ref->set_context($val);
+			$ref->set_context($val)
 		}
 
 		if ($val = option("Timeframe")) {
-			$ref->set_timeframe($val);
+			$ref->set_timeframe($val)
 		}
 
 		if ($val = option("Note")) {
-			$ref->set_note($val);
+			$ref->set_note($val)
 		}
 
 		if ($val = option("Priority")) {
-			$ref->set_priority($val);
+			$ref->set_priority($val)
 		}
 
 		if ($val = option("Complete")) {
-			$ref->set_priority($val);
+			$ref->set_priority($val)
 		}
 
 		if ($val = option("Description")) {
-			$ref->set_description($val);
+			$ref->set_description($val)
 		}
 
-		$ref->update();
+		$ref->update()
 	?*/
 }

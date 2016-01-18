@@ -33,7 +33,7 @@ NAME:
 
 */
 
-//?	@EXPORT      = qw(&Report_renumber &next_avail_task);
+//?	@EXPORT      = qw(&Report_renumber &next_avail_task)
 
 import "gtd/meta"
 import "gtd/task"
@@ -47,23 +47,23 @@ my %Dep_info = (
   'o' => [ \&is_roles,      10,   29, "Roles" ],
   'v' => [ \&is_vision,      5,    9, "Vision" ],
   'm' => [ \&is_value,       1,    4, "Values" ],
-);
+)
 
-my %Dep_map;
+my %Dep_map
 ?*/
 
 //-- Renumber task Ids
 func Report_renumber(args []string) int {
 	/*?
-		meta.ilter("+any", '^tid', "none");
-		my(@list) = meta.rgv(@_);
+		meta.ilter("+any", '^tid', "none")
+		my(@list) = meta.rgv(@_)
 
 		if (@list) {
 			foreach my $pair (@list) {
-				renumber_pair($pair);
+				renumber_pair($pair)
 			}
 		} else {
-			renumber_all();
+			renumber_all()
 		}
 	?*/
 }
@@ -81,128 +81,128 @@ func renumber_all() { /*? #-- Renumber task Ids
 }
 
 func renumber_pair() { /*?
-		my($pair) = @_;
+		my($pair) = @_
 		if ($pair =~ m/^(\d+)=(\d+)/) {
-			my($to, $tid) = ($1, $2);
+			my($to, $tid) = ($1, $2)
 
-			renumber_task($tid, $to);
+			renumber_task($tid, $to)
 		} else {
-			renumber_a_task($pair);
+			renumber_a_task($pair)
 		}
 	?*/
 }
 
 func is_value() { /*?
-		my($ref) = @_;
+		my($ref) = @_
 
-		return 1 if $ref->get_type() eq 'm';	// Value
-		return 0;
+		return 1 if $ref->get_type() == 'm';	// Value
+		return 0
 	?*/
 }
 func is_vision() { /*?
-		my($ref) = @_;
+		my($ref) = @_
 
-		return 1 if $ref->get_type() eq 'v';	// Vision
-		return 0;
+		return 1 if $ref->get_type() == 'v';	// Vision
+		return 0
 	?*/
 }
 func is_roles() { /*?
-		my($ref) = @_;
+		my($ref) = @_
 
-		return 1 if $ref->get_type() eq 'o';	// Role
-		return 0;
+		return 1 if $ref->get_type() == 'o';	// Role
+		return 0
 	?*/
 }
 func is_goals() { /*?
-		my($ref) = @_;
+		my($ref) = @_
 
-		return 1 if $ref->get_type() eq 'g';	// Goal
-		return 0;
+		return 1 if $ref->get_type() == 'g';	// Goal
+		return 0
 	?*/
 }
 
 func is_project() { /*?
-		my($ref) = @_;
+		my($ref) = @_
 
-		return 0 if $ref->get_type() ne 'p';	// ! Project
+		return 0 if $ref->get_type() != 'p';	// ! Project
 
 		// return 1 iff any parents are not project
 		for my $pref ($ref->get_parents()) {
-			return 1 if $pref->get_type() ne 'p';	// Parrent ! Project
+			return 1 if $pref->get_type() != 'p';	// Parrent ! Project
 		}
 
 		// is a project and some parent is not projects
-		return 0;
+		return 0
 	?*/
 }
 
 func is_subject() { /*?
-		my($ref) = @_;
+		my($ref) = @_
 
-		return 0 if $ref->get_type() ne 'p';	// ! Project
+		return 0 if $ref->get_type() != 'p';	// ! Project
 
 		// return 1 iff all parents are projects
 		for my $pref ($ref->get_parents()) {
-			return 0 if $pref->get_type() ne 'p';	// Parrent is project
+			return 0 if $pref->get_type() != 'p';	// Parrent is project
 		}
 
 		// is a project and all parents are projects
-		return 1;
+		return 1
 	?*/
 }
 
 func is_action() { /*?
-		my($ref) = @_;
+		my($ref) = @_
 
-		return $ref->is_task();
+		return $ref->is_task()
 	?*/
 }
 
 func next_avail_task() { /*?
-		my($type) = @_;
+		my($type) = @_
 
-		$type = 'a" if $type eq "n';	// next action => min action
-		$type = 'a" if $type eq "w';	// wait        => min action
+		$type = 'a" if $type == "n';	// next action => min action
+		$type = 'a" if $type == "w';	// wait        => min action
 
-		my($test, $min, $max, $who) = @{ $Dep_info{$type} };
+		my($test, $min, $max, $who) = @{ $Dep_info{$type} }
 
-		panic("***BUG*** next_avail_task: Unknown type "$type"\n") unless $test;
+		panic("***BUG*** next_avail_task: Unknown type "$type"\n") unless $test
 
 		for (my $tid=$min; $tid <= $max; ++$tid) {
-			next if Hier::Tasks::find($tid);
+			next if Hier::Tasks::find($tid)
 
-			return $tid;
+			return $tid
 		}
-		return undef;
+		return undef
 	?*/
 }
 
 func renumb() { /*?
-		my($type) = @_;
+		my($type) = @_
 
-		my($test, $min, $max, $who) = @{ $Dep_info{$type} };
+		my($test, $min, $max, $who) = @{ $Dep_info{$type} }
 
-		print "Processing $who range: $min $max\n";
-		my(%inuse, $tid, @try);
+		print "Processing $who range: $min $max\n"
+		my(%inuse, $tid, @try)
 
 		for my $ref (Hier::Tasks::all()) {
-			$tid = $ref->get_tid();
+			$tid = $ref->get_tid()
 
 			if ($min <= $tid && $tid <= $max) {
-				$inuse{$tid} = 1;
+				$inuse{$tid} = 1
 			}
 
 			//##BUG### need to check if filtered
 			if ($tid < $min) {
 				if (&$test($ref)) {
-					push(@try, $tid);
-					next;
+					push(@try, $tid)
+					next
 				}
 			}
 			if ($tid > $max) {
 				if (&$test($ref)) {
-					push(@try, $tid);
-					next;
+					push(@try, $tid)
+					next
 				}
 			}
 		}
@@ -210,87 +210,87 @@ func renumb() { /*?
 		for my $tid (@try) {
 			while ($min < $max) {
 				if ($inuse{$min}) {
-					++$min;
-					next;
+					++$min
+					next
 				}
 
-				renumber_task($tid, $min);
+				renumber_task($tid, $min)
 
-				$inuse{$tid} = 0;
-				$inuse{$min} = 1;
-				++$min;
-				next TASK;
+				$inuse{$tid} = 0
+				$inuse{$min} = 1
+				++$min
+				next TASK
 			}
-			print "Out of slots for $who.\n";
-			return;
+			print "Out of slots for $who.\n"
+			return
 		}
-		print "Completed $who.\n";
+		print "Completed $who.\n"
 	?*/
 }
 
 func renumber_a_task() { /*?
-		my($tid) = @_;
+		my($tid) = @_
 
-		my $ref = meta.Find($tid);
+		my $ref = meta.Find($tid)
 
-		panic("Can"t renumber task $tid (doesn"t exists)\n") unless $ref;
+		panic("Can"t renumber task $tid (doesn"t exists)\n") unless $ref
 
-		panic("Can't renumber task $tid (has depedencies)\n") if dependent($ref);
+		panic("Can't renumber task $tid (has depedencies)\n") if dependent($ref)
 
-		my($type) = $ref->get_type();
+		my($type) = $ref->get_type()
 
-		my($new) = next_avail_task($type);
+		my($new) = next_avail_task($type)
 
 		if ($tid < $new) {
-			print "First slot $new > task $tid (skipped)\n";
-			return;
+			print "First slot $new > task $tid (skipped)\n"
+			return
 		}
 
-		print "$tid => $new\n";
+		print "$tid => $new\n"
 
-	//	print "Can't yet renumber singletons($tid), use TO=FROM syntax\n";
-	//	return;
-		$ref->set_tid($new);
-		$ref->update();
+	//	print "Can't yet renumber singletons($tid), use TO=FROM syntax\n"
+	//	return
+		$ref->set_tid($new)
+		$ref->update()
 	?*/
 }
 
 func renumber_task() { /*?
-		my($tid, $new) = @_;
+		my($tid, $new) = @_
 
-		my $ref = meta.Find($tid);
+		my $ref = meta.Find($tid)
 
-		panic("Can"t renumber task $tid (doesn"t exists)\n") unless $ref;
+		panic("Can"t renumber task $tid (doesn"t exists)\n") unless $ref
 
-		panic("Can't renumber task $tid (has depedencies)\n") if dependent($ref);
-		print "$tid => $new\n";
+		panic("Can't renumber task $tid (has depedencies)\n") if dependent($ref)
+		print "$tid => $new\n"
 
-		$ref->set_tid($new);
-		$ref->update();
+		$ref->set_tid($new)
+		$ref->update()
 	?*/
 }
 
 func dependent() { /*?
-		my($ref) = @_;
+		my($ref) = @_
 
-		my($id) = $ref->get_tid();
+		my($id) = $ref->get_tid()
 
 		unless (%Dep_map) {
-			return $Dep_map{$id};
+			return $Dep_map{$id}
 		}
-		warn "Building Dep_map\n";
+		warn "Building Dep_map\n"
 
-		my($pref, $pid, $depends);
+		my($pref, $pid, $depends)
 		foreach my $pref ( meta.ll()) {
-			$depends = $pref->get_depends();
-			$pid = $pref->get_tid();
+			$depends = $pref->get_depends()
+			$pid = $pref->get_tid()
 
 			foreach my $depend (split(/[ ,]/, $depends)) {
-				$Dep_map{$depend} .= ','.$pid;
+				$Dep_map{$depend} .= ','.$pid
 			}
 		}
 
 
-		return $Dep_map{$id};
+		return $Dep_map{$id}
 	?*/
 }

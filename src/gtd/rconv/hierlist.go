@@ -39,13 +39,13 @@ import "gtd/meta"
 //-- List all top level item (Project and above)
 func Report_hierlist(args []string) {
 	/*?
-	  	my($tid, $pid, $pref, $cnt, $parent, $cat, $name, $desc);
-	  	my(@row);
+	  	my($tid, $pid, $pref, $cnt, $parent, $cat, $name, $desc)
+	  	my(@row)
 
-	  	meta.ilter("+p:live", '^title', "simple");
-	  	meta.Desc(args)(@_);
+	  	meta.ilter("+p:live", '^title', "simple")
+	  	meta.Desc(args)(@_)
 
-	  print <<"EOF";
+	  print <<"EOF"
 	  -Gtd -Par Cnt Category  Parent       Name         Description
 	  ==== ==== === ========= ============ =========== ==============================
 	  EOF
@@ -57,26 +57,26 @@ func Report_hierlist(args []string) {
 	  	$~ = "HIER";	// set STDOUT format name to HIER
 
 	  	for my $ref (meta.orted("^title")) {
-	  		$tid = $ref->get_tid();
+	  		$tid = $ref->get_tid()
 
-	  //#FILTER	next if $ref->filtered();
+	  //#FILTER	next if $ref->filtered()
 
-	  		$cnt = $ref->count_children() || '';
+	  		$cnt = $ref->count_children() || ''
 
-	  		$cat = $ref->get_category() || '';
-	  		$name = $ref->get_title() || '';
-	  		$desc = $ref->get_description() || '';
+	  		$cat = $ref->get_category() || ''
+	  		$name = $ref->get_title() || ''
+	  		$desc = $ref->get_description() || ''
 
-	  		$pref = $ref->get_parent();
+	  		$pref = $ref->get_parent()
 	  		if (defined $pref) {
-	  			$parent = $pref->get_title();
-	  			$pid = $pref->get_tid();
+	  			$parent = $pref->get_title()
+	  			$pid = $pref->get_tid()
 	  		} else {
-	  			$parent = "orphined";
-	  			$pid = "--";
+	  			$parent = "orphined"
+	  			$pid = "--"
 	  		}
 
-	  		write;
+	  		write
 	  	}
 	  ?*/
 }

@@ -39,10 +39,10 @@ import "gtd/task"
 
 /*?
 
-my $Today = get_today(0);
-my $Later = get_today(+7);
-my $Priority = 0;
-my $Limit = 2;
+my $Today = get_today(0)
+my $Later = get_today(+7)
+my $Priority = 0
+my $Limit = 2
 
 //## rethink totally
 //## REWRITE --- scan list for \d+ and put in work list
@@ -54,74 +54,74 @@ func Report_doit(args []string) int {
 
 	Limit = option("Limit", 1)
 	/*?
-	$= = lines();
-	meta.ilter("+a:live", '^doitdate', "rpga");
-	my($target) = 0;
-	my($action) = \&doit_list;
+	$= = lines()
+	meta.ilter("+a:live", '^doitdate', "rpga")
+	my($target) = 0
+	my($action) = \&doit_list
 
 	foreach my $arg (meta.rgv(@_)) {
 		if ($arg =~ /^\d+$/) {
-			my(t) = meta.Find($arg);
+			my(t) = meta.Find($arg)
 
 			unless (defined t) {
-				warn "$arg doesn't exits\n";
-				next;
+				warn "$arg doesn't exits\n"
+				next
 			}
-			&$action(t);
-			++$target;
-			next;
+			&$action(t)
+			++$target
+			next
 		}
-		if ($arg eq "help") {
-			doit_help();
-			next;
+		if ($arg == "help") {
+			doit_help()
+			next
 		}
-		if ($arg eq "list") {
-			display_mode("d_lst");
-			next;
+		if ($arg == "list") {
+			display_mode("d_lst")
+			next
 		}
-		if ($arg eq "task") {
-			display_mode("task");
-			next;
+		if ($arg == "task") {
+			display_mode("task")
+			next
 		}
-		if ($arg eq "later") {
-			$action = \&doit_later;
-			next;
+		if ($arg == "later") {
+			$action = \&doit_later
+			next
 		}
-		if ($arg eq "next") {
-			$action = \&doit_next;
-			next;
+		if ($arg == "next") {
+			$action = \&doit_next
+			next
 		}
-		if ($arg eq "done") {
-			$action = \&doit_done;
-			next;
+		if ($arg == "done") {
+			$action = \&doit_done
+			next
 		}
 
-		if ($arg eq "someday") {
-			$action = \&doit_someday;
-			next;
+		if ($arg == "someday") {
+			$action = \&doit_someday
+			next
 		}
-		if ($arg eq "did") {
-			$action = \&doit_now;
-			next;
+		if ($arg == "did") {
+			$action = \&doit_now
+			next
 		}
-		if ($arg eq "now") {
-			$action = \&doit_now;
-			next;
+		if ($arg == "now") {
+			$action = \&doit_now
+			next
 		}
 		if ($arg =~ /pri\D+(\d+)/) {
-			$Priority = $1;
-			$action = \&doit_priority;
-			next;
+			$Priority = $1
+			$action = \&doit_priority
+			next
 		}
 		if ($arg =~ /limit\D+(\d+)/) {
-			$Limit = $1;
-			set_option("Limit", $Limit);
-			next;
+			$Limit = $1
+			set_option("Limit", $Limit)
+			next
 		}
-		print "Unknown option: $arg (ignored) (try help)\n";
+		print "Unknown option: $arg (ignored) (try help)\n"
 	}
 	if ($target == 0) {
-		list_all($action);
+		list_all($action)
 	}
 	?*/
 }
@@ -153,47 +153,47 @@ func doit_now(t *task.Task) {
 
 func doit_priority(t *task.Task) {
 	/*?
-	my(t) = @_;
+	my(t) = @_
 
 	if (t->get_priority() == $Priority) {
 		print t->get_tid() . ": " . t->get_description() .
-			" already at priority $Priority\n";
-		return;
+			" already at priority $Priority\n"
+		return
 	}
 
-	t->set_priority($Priority);
-	t->update();
+	t->set_priority($Priority)
+	t->update()
 	?*/
 }
 
 func list_all() {
 	/*?
-	  	my($action) = @_;
-	  	my(@list);
+	  	my($action) = @_
+	  	my(@list)
 
 	  	for my t (meta.orted()) {
-	  		next unless t->is_task();
-	  //#FILTER	next if t->filtered();
+	  		next unless t->is_task()
+	  //#FILTER	next if t->filtered()
 
-	  		my $pref = t->get_parent();
-	  		next unless defined $pref;
-	  		next if $pref->filtered();
-	  		push(@list, t);
+	  		my $pref = t->get_parent()
+	  		next unless defined $pref
+	  		next if $pref->filtered()
+	  		push(@list, t)
 
-	  		last if (scalar @list >= $Limit);
+	  		last if (scalar @list >= $Limit)
 	  	}
 
-	  	&$action(@list);
+	  	&$action(@list)
 	  ?*/
 }
 
 func doit_list() {
 	/*?
 		foreach my t (@_) {
-			my($date) = t->get_doit() || t->get_created();
-			display_task(t, "{{doit|$date}}");
+			my($date) = t->get_doit() || t->get_created()
+			display_task(t, "{{doit|$date}}")
 
-			last if $Limit-- <= 0;
+			last if $Limit-- <= 0
 		}
 
 	?*/

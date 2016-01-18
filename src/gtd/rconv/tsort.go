@@ -39,117 +39,117 @@ import "gtd/option"
 import "gtd/task"
 
 /*?
-our report_debug = 0;
-my %Depth;
+our report_debug = 0
+my %Depth
 
 ?*/
 //-- write out hier as as set of nodes
 func Report_tsort(args []string) {
 	/*?
 	  	for my $ref (meta.atching_type('a')) {
-	  		up($ref);
+	  		up($ref)
 	  	}
 
 	  	if (@_ == 0) {
 	  		for my $ref (meta.atching_type('m')) {
-	  			dpos($ref, 1);
+	  			dpos($ref, 1)
 	  		}
-	  		return;
+	  		return
 	  	}
 
 
 	  	for my $task (@_) {
-	  		my $ref = meta.Find($task);
-	  //		down($ref, 1);
-	  		dpos($ref, 1);
+	  		my $ref = meta.Find($task)
+	  //		down($ref, 1)
+	  		dpos($ref, 1)
 	  	}
 
 	  ?*/
 }
 
 func down() { /*?
-		my($ref, $level) = @_;
+		my($ref, $level) = @_
 
-		my $id = $ref->get_tid();
+		my $id = $ref->get_tid()
 
 		if ($Depth{$id} && $level != $Depth{$id}) {
-			warn "Recurson: $id at $level (was $Depth{$id})\n";
-			return;
+			warn "Recurson: $id at $level (was $Depth{$id})\n"
+			return
 		}
-		$Depth{$id} = $level;
+		$Depth{$id} = $level
 
 		foreach my $pref ($ref->get_parents()) {
-			my $pid = $pref->get_tid();
+			my $pid = $pref->get_tid()
 
 			if ($Depth{$pid} > $level) {
-				warn "Depth: $id at $level (pid $pid > $Depth{$pid})\n";
+				warn "Depth: $id at $level (pid $pid > $Depth{$pid})\n"
 			}
 
-			print $pid, ' ', $ref->get_tid(), "\n";
+			print $pid, ' ', $ref->get_tid(), "\n"
 		}
 
 		foreach my $cref ($ref->get_children()) {
-			down($cref, $level+1);
+			down($cref, $level+1)
 		}
 	?*/
 }
 
 func dpos() { /*?
-		my($ref, $level) = @_;
+		my($ref, $level) = @_
 
-		my $id = $ref->get_tid();
-		my $type = $ref->get_type();
+		my $id = $ref->get_tid()
+		my $type = $ref->get_type()
 
-		print "$id\t$type $level:\t";
+		print "$id\t$type $level:\t"
 
 		if ($Depth{$id} && $level != $Depth{$id}) {
-			warn "Recurson: $id at $level (was $Depth{$id})\n";
-			return;
+			warn "Recurson: $id at $level (was $Depth{$id})\n"
+			return
 		}
-		$Depth{$id} = $level;
+		$Depth{$id} = $level
 
-		my($join) = ' ';
+		my($join) = ' '
 		foreach my $pref ($ref->get_parents()) {
-			my $pid = $pref->get_tid();
+			my $pid = $pref->get_tid()
 
-			$Depth{$pid} = '0' unless defined $Depth{$pid};
+			$Depth{$pid} = '0' unless defined $Depth{$pid}
 			if ($Depth{$pid} > $level) {
-				warn "Depth: $id at $level (pid $pid > $Depth{$pid})\n";
+				warn "Depth: $id at $level (pid $pid > $Depth{$pid})\n"
 			}
 
-			print "$join$pid";
-			$join = ',';
+			print "$join$pid"
+			$join = ','
 		}
-		print " <$id>";
+		print " <$id>"
 
 		foreach my $cref ($ref->get_children()) {
-			my $cid = $cref->get_tid();
-			print " $cid";
+			my $cid = $cref->get_tid()
+			print " $cid"
 		}
-		print "\n";
+		print "\n"
 
 		foreach my $cref ($ref->get_children()) {
-			dpos($cref, $level+1);
+			dpos($cref, $level+1)
 		}
 	?*/
 }
 
 func up() { /*?
-		my($ref) = shift @_;
+		my($ref) = shift @_
 
-		my $id = $ref->get_tid();
+		my $id = $ref->get_tid()
 
-		print "up: $id @_\n" if report_debug;
+		print "up: $id @_\n" if report_debug
 
 		for my $cid (@_) {
-			next if $id != $cid;
+			next if $id != $cid
 
-			panic("Stack fault: $id in @_\n");
+			panic("Stack fault: $id in @_\n")
 		}
 
 
 		foreach my $pref ($ref->get_parents()) {
-			up($pref, $id, @_);
+			up($pref, $id, @_)
 
 		}
 	?*/

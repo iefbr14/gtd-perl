@@ -39,13 +39,13 @@ import "gtd/meta"
 //-- List next actions
 func Report_nextactions(args []string) {
 	/*?
-	  	my($tid, $pid, $pref, $tic, $parent, $pic, $name, $desc);
-	  	my(@row);
+	  	my($tid, $pid, $pref, $tic, $parent, $pic, $name, $desc)
+	  	my(@row)
 
-	  	meta.ilter("+next", '^title', "none");
-	  	meta.Desc(args)(@_);
+	  	meta.ilter("+next", '^title', "none")
+	  	meta.Desc(args)(@_)
 
-	  print <<"EOF";
+	  print <<"EOF"
 	  -Par [-] Parent           -Tid [-] Next Action
 	  ==== === ================ ==== === ============================================
 	  EOF
@@ -57,25 +57,25 @@ func Report_nextactions(args []string) {
 	  	$~ = "HIER";	// set STDOUT format name to HIER
 
 	  	for my $ref (meta.ick("actions")) {
-	  		$tid = $ref->get_tid();
-	  //#FILTER	next unless $ref->is_nextaction();
-	  //#FILTER	next if $ref->filtered();
+	  		$tid = $ref->get_tid()
+	  //#FILTER	next unless $ref->is_nextaction()
+	  //#FILTER	next if $ref->filtered()
 
-	  		$name = $ref->get_title() || '';
-	  		$tic = action_disp($ref);
+	  		$name = $ref->get_title() || ''
+	  		$tic = action_disp($ref)
 
-	  		$pref = $ref->get_parent();
-	  //next unless $pref->is_nextaction();
+	  		$pref = $ref->get_parent()
+	  //next unless $pref->is_nextaction()
 	  		if (defined $pref) {
-	  			$parent = $pref->get_title();
-	  			$pid = $pref->get_tid();
+	  			$parent = $pref->get_title()
+	  			$pid = $pref->get_tid()
 	  		} else {
-	  			$parent = "-orphined-";
-	  			$pid = "--";
+	  			$parent = "-orphined-"
+	  			$pid = "--"
 	  		}
-	  		$pic = type_disp($pref);
+	  		$pic = type_disp($pref)
 
-	  		write;
+	  		write
 	  	}
 	  ?*/
 }

@@ -39,75 +39,75 @@ import "gtd/option"
 //-- clean unused categories
 func Report_clean(args []string) {
 	/*?
-		my $Yesterday = get_today(-1);
+		my $Yesterday = get_today(-1)
 
-		meta.ilter("+all", '^tid', "task");
-		my($done, $tickle, $type);
+		meta.ilter("+all", '^tid', "task")
+		my($done, $tickle, $type)
 
 		for my $ref (meta.elected()) {
-			$done = $ref->is_completed();
+			$done = $ref->is_completed()
 			if ($done) {
-				set_active($ref);
-				fix_done_0000($ref, $done);
-				clear_next($ref);
-				clear_tickle($ref);
+				set_active($ref)
+				fix_done_0000($ref, $done)
+				clear_next($ref)
+				clear_tickle($ref)
 			}
 
-			$tickle = $ref->get_tickledate() <= $Yesterday;
+			$tickle = $ref->get_tickledate() <= $Yesterday
 			if ($tickle) {
-				clear_next($ref);
-				clear_tickle($ref);
+				clear_next($ref)
+				clear_tickle($ref)
 			}
 
-			$type = $ref->get_type();
+			$type = $ref->get_type()
 
 			// all values and visions are active
 			if ($type =~ /[mv]/) {
-				set_active($ref);
+				set_active($ref)
 			}
 		}
 	?*/
 }
 
 func set_active() { /*?
-		my($ref) = @_;
+		my($ref) = @_
 
 		if ($ref->is_someday()) {
-			$ref->set_isSomeday('n');
-			display_task($ref, "active");
-			return;
+			$ref->set_isSomeday('n')
+			display_task($ref, "active")
+			return
 		}
-		return;
+		return
 	?*/
 }
 
 func fix_done_0000() { /*?
-		my($ref, $done) = @_;
+		my($ref, $done) = @_
 
-		return unless $done =~ /^0000/;
+		return unless $done =~ /^0000/
 
-		display_task($ref, "clean done bug");
-		$ref->set_completed(undef);
-		return;
+		display_task($ref, "clean done bug")
+		$ref->set_completed(undef)
+		return
 	?*/
 }
 
 func clear_next() { /*?
-		my $ref = @_;
+		my $ref = @_
 
-		return unless $ref->get_nextaction() eq 'y';
+		return unless $ref->get_nextaction() == 'y'
 
-		display_task($ref, "clear next action");
-		$ref->set_nextaction('n');
+		display_task($ref, "clear next action")
+		$ref->set_nextaction('n')
 	?*/
 }
 
 func clear_tickle() { /*?
-		my $ref = @_;
+		my $ref = @_
 
-		return unless $ref->get_tickledate();
+		return unless $ref->get_tickledate()
 
-		display_task($ref, "clear tickle date");
-		$ref->set_tickledate(undef);
+		display_task($ref, "clear tickle date")
+		$ref->set_tickledate(undef)
 	?*/
 }

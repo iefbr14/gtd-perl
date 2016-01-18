@@ -39,108 +39,108 @@ import "gtd/task"
 //-- Project Summary for a role
 func Report_oocalc(args []string) {
 	/*?
-		meta.ilter("+live", '^tid', "none");
-		my @want = meta.rgv(@_);
+		meta.ilter("+live", '^tid', "none")
+		my @want = meta.rgv(@_)
 
-		new_calc();
+		new_calc()
 
-		my($roles) = load_roles();
+		my($roles) = load_roles()
 		foreach my $role (sort keys %$roles) {
-			display_role($role, $roles->{$role});
+			display_role($role, $roles->{$role})
 		}
-		save_calc();
+		save_calc()
 	?*/
 }
 
 func load_roles() { /*?
-		my($role) = @_;
+		my($role) = @_
 
-		my(%roles);
+		my(%roles)
 
 		// find all next and remember there projects
 		for my $ref (meta.atching_type('o')) {
-	//#FILTER	next if $ref->filtered();
+	//#FILTER	next if $ref->filtered()
 
-			my $pid = $ref->get_tid();
-			my $role = $ref->get_title();
-			$role =~ s= .*==;
-			$role = ucfirst($role);
-			$roles{$role} = $ref;
+			my $pid = $ref->get_tid()
+			my $role = $ref->get_title()
+			$role =~ s= .*==
+			$role = ucfirst($role)
+			$roles{$role} = $ref
 		}
-		return \%roles;
+		return \%roles
 	?*/
 }
 func display_role() { /*?
-		my($role, $ref) = @_;
+		my($role, $ref) = @_
 
-		my(@head) = qw(Goal P-id Project T-id Next-Action Hours .);
+		my(@head) = qw(Goal P-id Project T-id Next-Action Hours .)
 
-		my(@list);
+		my(@list)
 		foreach my $gref ($ref->get_children()) {
-			next if $gref->filtered();
+			next if $gref->filtered()
 
-			push(@list, get_projects($gref));
+			push(@list, get_projects($gref))
 		}
 
-		new_sheet($role, scalar @list, 7);
-		save_row(1, @head);
-		my($row) = 2;
+		new_sheet($role, scalar @list, 7)
+		save_row(1, @head)
+		my($row) = 2
 		foreach my $line (sort {
 			lc($a->[0]) cmp lc($b->[0])
 		   ||	lc($a->[2]) cmp lc($b->[2])
 		   ||	lc($a->[4]) cmp lc($b->[4])
 		} @list) {
-			save_row($row++, @$line);
+			save_row($row++, @$line)
 		}
 	?*/
 }
 
 func get_projects() { /*?
-		my($gref) = @_;
+		my($gref) = @_
 
-		my(@list);
+		my(@list)
 
 		foreach my $pref ($gref->get_children()) {
-			next if $pref->filtered();
+			next if $pref->filtered()
 
-			push(@list, get_actions($gref, $pref));
+			push(@list, get_actions($gref, $pref))
 		}
-		return @list;
+		return @list
 	?*/
 }
 
 func get_actions() { /*?
-		my($gref, $pref) = @_;
+		my($gref, $pref) = @_
 
-		my($gtitle) = $gref->get_title();
+		my($gtitle) = $gref->get_title()
 
-		my($pid)    = $pref->get_tid();
-		my($ptitle) = $pref->get_title();
+		my($pid)    = $pref->get_tid()
+		my($ptitle) = $pref->get_title()
 
-		my(@next) = ();
-		my(@doit) = ();
-		my(@some) = ();
-		my(@done) = ();
+		my(@next) = ()
+		my(@doit) = ()
+		my(@some) = ()
+		my(@done) = ()
 
 		// figure out which order.
 		foreach my $ref ($pref->get_children()) {
-			next if $ref->filtered();
+			next if $ref->filtered()
 
 			if ($ref->get_completed()) {
-				push(@done, $ref);
-				next;
+				push(@done, $ref)
+				next
 			}
 
 			if ($ref->is_someday()) {
-				push(@some, $ref);
-				next;
+				push(@some, $ref)
+				next
 			}
 			if ($ref->is_nextaction()) {
-				push(@next, $ref);
-				next;
+				push(@next, $ref)
+				next
 			}
 
-			push(@doit, $ref);
+			push(@doit, $ref)
 		}
 
 		if (@next == 0) {	// no next actions
@@ -151,12 +151,12 @@ func get_actions() { /*?
 					join(':", pnum($gref), pnum($pref), "0')
 					])
 				   if $pref->get_completed() or
-					$pref->is_someday();
+					$pref->is_someday()
 
 				return ([ $gtitle, $pid, $ptitle,
 					'-", "##   gtd plan $pid   ##", ".1',
 					join(':", pnum($gref), pnum($pref), "6')
-					]);
+					])
 
 			} elsif (@doit == 0 && @some == 0) {
 				// is complete
@@ -165,123 +165,123 @@ func get_actions() { /*?
 					'", "", "',
 					join(':", pnum($gref), pnum($pref), "0')
 					])
-				   if $pref->get_completed();
+				   if $pref->get_completed()
 
 				return ([ $gtitle, $pid, $ptitle,
 					'-", "##   gtd done $pid   ##", "2',
 					join(':", pnum($gref), pnum($pref), "6')
-				]);
+				])
 			}
 			// pick best
-			@next = ( @doit, @some, @done ) [0];
+			@next = ( @doit, @some, @done ) [0]
 		}
 
-		my($tid, $title, $hours, $pri);
+		my($tid, $title, $hours, $pri)
 
 		if ($pref->get_completed() or $pref->is_someday()) {
 			// slice it down to first item only
-			@next = ( $next[0] );
+			@next = ( $next[0] )
 		}
 
-		my(@list);
+		my(@list)
 		for my $ref (@next) {
-			my($resource) = new Hier::Resource($ref);
-			my($effort) = $resource->hours();
-			$effort = .5 unless $effort;
+			my($resource) = new Hier::Resource($ref)
+			my($effort) = $resource->hours()
+			$effort = .5 unless $effort
 
-			$tid = $ref->get_tid();
-			$title = $ref->get_title();
-			$hours = $effort;
-			$pri = join(':', pnum($gref), pnum($pref), pnum($ref));
+			$tid = $ref->get_tid()
+			$title = $ref->get_title()
+			$hours = $effort
+			$pri = join(':', pnum($gref), pnum($pref), pnum($ref))
 
-			push(@list,  [ $gtitle, $pid, $ptitle, $tid, $title, $hours, $pri]);
+			push(@list,  [ $gtitle, $pid, $ptitle, $tid, $title, $hours, $pri])
 		}
 
-		return @list;
+		return @list
 	?*/
 }
 
 func pnum() { /*?
-		my($ref) = @_;
+		my($ref) = @_
 
-		return 9 if $ref->get_completed();
+		return 9 if $ref->get_completed()
 
-		return 7 if $ref->is_someday();
+		return 7 if $ref->is_someday()
 
-		return $ref->get_priority();
+		return $ref->get_priority()
 	?*/
 }
 
 /*?
-use OpenOffice::OOCBuilder;
+use OpenOffice::OOCBuilder
 
-my $Calc;
-my $Sheet;
-my @Widths = ('');
+my $Calc
+my $Sheet
+my @Widths = ('')
 ?*/
 
 func new_calc() {
 	/*?
-	  	$Sheet = 0;
+	  	$Sheet = 0
 
-	  	$Calc = OpenOffice::OOCBuilder->new();
+	  	$Calc = OpenOffice::OOCBuilder->new()
 	  	// - Set Meta.xml data
-	  	$Calc->set_title ("GTD");
-	  	$Calc->set_author ("Drew Sullivan");
-	  	$Calc->set_subject ("gtd oocalc");
+	  	$Calc->set_title ("GTD")
+	  	$Calc->set_author ("Drew Sullivan")
+	  	$Calc->set_subject ("gtd oocalc")
 
-	  //	$sheet->set_comments ("Fill in your comments here");
-	  //	$sheet->set_keywords ("openoffice autogeneration", 'OpenOffice::OOBuilder');
-	  //	$sheet->push_keywords ("OpenOffice::OOCBuilder");
-	  //	$sheet->set_meta (1, "name 1", 'value 1');
+	  //	$sheet->set_comments ("Fill in your comments here")
+	  //	$sheet->set_keywords ("openoffice autogeneration", 'OpenOffice::OOBuilder')
+	  //	$sheet->push_keywords ("OpenOffice::OOCBuilder")
+	  //	$sheet->set_meta (1, "name 1", 'value 1')
 	  ?*/
 }
 
 func new_sheet() { /*?
-		my($title, $rows, $cols) = @_;
+		my($title, $rows, $cols) = @_
 
-		++$Sheet;
-		$Calc->add_sheet() unless $Sheet == 1;
-		$Calc->goto_sheet($Sheet);
-		$Calc->set_sheet_name($title, $Sheet);
+		++$Sheet
+		$Calc->add_sheet() unless $Sheet == 1
+		$Calc->goto_sheet($Sheet)
+		$Calc->set_sheet_name($title, $Sheet)
 	?*/
 }
 
 func save_row() { /*?
-		my($line, @row) = @_;
+		my($line, @row) = @_
 
-		//my($pri) = pop @row;
-		my($pri) = $row[-1];
-		my($g,$p,$t);
+		//my($pri) = pop @row
+		my($pri) = $row[-1]
+		my($g,$p,$t)
 		if ($line > 1) {
-			($g,$p,$t) = split(':', $pri);
+			($g,$p,$t) = split(':', $pri)
 		}
 
-		$Calc->set_bold($line == 1);
-		my($col) = 1;
+		$Calc->set_bold($line == 1)
+		my($col) = 1
 		for my $value (@row) {
-			my($type) = "string";
-			$type = "float" if $value =~ /^[\d.]+$/;
+			my($type) = "string"
+			$type = "float" if $value =~ /^[\d.]+$/
 
-			$Widths[$col] ||= 7;
-			my $old_width = $Widths[$col];
-			my $new_width = length($value);
+			$Widths[$col] ||= 7
+			my $old_width = $Widths[$col]
+			my $new_width = length($value)
 
 			if ($old_width < $new_width) {
-				$Widths[$col] = $new_width;
+				$Widths[$col] = $new_width
 			}
-			color_ref($g) if $col == 1;
-			color_ref($p) if $col == 3;
-			color_ref($t) if $col == 5;
+			color_ref($g) if $col == 1
+			color_ref($p) if $col == 3
+			color_ref($t) if $col == 5
 
-			$Calc->set_data_xy($col++, $line, $value, $type);
-			set_color();
+			$Calc->set_data_xy($col++, $line, $value, $type)
+			set_color()
 		}
 	?*/
 }
 
 func set_color() { /*?
-		my ($pri) = @_;
+		my ($pri) = @_
 
 		my(%c) = (
 			"white"	=> "FFFFFF",
@@ -291,21 +291,21 @@ func set_color() { /*?
 			"cyan"	=> "80FFFF",
 			"blue"	=> "99CCFF",
 			"ivory" => "FFFFD0",
-		);
+		)
 
-		$Calc->set_bgcolor("white");
+		$Calc->set_bgcolor("white")
 
-		return unless defined $pri;
+		return unless defined $pri
 
-		$Calc->set_bgcolor($c{"pink"})	if $pri == 1;
-		$Calc->set_bgcolor($c{"cyan"})	if $pri == 2;
+		$Calc->set_bgcolor($c{"pink"})	if $pri == 1
+		$Calc->set_bgcolor($c{"cyan"})	if $pri == 2
 
-	//	$Calc->set_bgcolor($c{"red"})	if $pri == 1;
-	//	$Calc->set_bgcolor($c{"pink"})	if $pri == 2;
-	//	$Calc->set_bgcolor($c{"cyan"})	if $pri == 3;
+	//	$Calc->set_bgcolor($c{"red"})	if $pri == 1
+	//	$Calc->set_bgcolor($c{"pink"})	if $pri == 2
+	//	$Calc->set_bgcolor($c{"cyan"})	if $pri == 3
 
 
-	//	$Calc->set_bgcolor("blue")	if $pri == 3;
+	//	$Calc->set_bgcolor("blue")	if $pri == 3
 
 	//	$Calc->set_bgcolor("FFCC99") if $pri == 4; # yellow
 	//	$Calc->set_bgcolor("FFDD99") if $pri == 5; # orange
@@ -317,50 +317,50 @@ func set_color() { /*?
 }
 
 func save_calc() { /*?
-		print "Widths: @Widths\n";
+		print "Widths: @Widths\n"
 		for my $sheet (1..$Sheet) {
-			$Calc->goto_sheet($sheet);
+			$Calc->goto_sheet($sheet)
 			for my $col (1..7) {
-				$Calc->set_colwidth($col, $Widths[$col]*170);
+				$Calc->set_colwidth($col, $Widths[$col]*170)
 			}
 		}
-		$Calc->generate("gtd");
+		$Calc->generate("gtd")
 	?*/
 }
 
-//? package Calc::CSV;
+//? package Calc::CSV
 
 func new() { /*?
 	?*/
 }
 
-//? package Calc::OOC;
+//? package Calc::OOC
 
-//? use OpenOffice::OODoc;
-//? use OpenOffice::OOSheets;
+//? use OpenOffice::OODoc
+//? use OpenOffice::OOSheets
 
 func new() { /*?
-		my $calc;
-		$Calc = odfContainer("gtd.ods", create => "spreadsheet");
-		$Sheet = 0;
+		my $calc
+		$Calc = odfContainer("gtd.ods", create => "spreadsheet")
+		$Sheet = 0
 	?*/
 }
 
 func new_sheet() { /*?
-		my($title, $rows, $cols) = @_;
-		++$Sheet;
+		my($title, $rows, $cols) = @_
+		++$Sheet
 
-		$Calc->expandTable($Sheet, $rows, $cols);
+		$Calc->expandTable($Sheet, $rows, $cols)
 	?*/
 }
 
 func save_row() { /*?
-		my($line, @row) = @_;
+		my($line, @row) = @_
 
-		my($col) = 1;
+		my($col) = 1
 		for my $value (@row) {
-			$Calc->updateCell($Sheet, $line, ++$col, $value);
-	//	        $Calc->updateCell($Sheet, $line, $col, $value, $string);
+			$Calc->updateCell($Sheet, $line, ++$col, $value)
+	//	        $Calc->updateCell($Sheet, $line, $col, $value, $string)
 		}
 	?*/
 }
