@@ -1,6 +1,5 @@
 package meta
 
-import "log"
 import "fmt"
 import "regexp"
 import "sort"
@@ -303,6 +302,8 @@ func Pick(args []string) task.Tasks {
 	list := task.Tasks{}
 
 	for _, arg := range Argv(args) {
+
+		// task,task,task...
 		if task.Is_comma_list(arg) {
 			for _, arg := range strings.Split(arg, ",") {
 				t := Find(arg)
@@ -310,9 +311,10 @@ func Pick(args []string) task.Tasks {
 					continue
 				}
 				list = append(list, t)
-				continue
 			}
+			continue
 		}
+
 		// task all by itself
 		//? if ($arg=~ s/^(\d+):$/$1/ or $arg =~ m/^\d+$/) {
 		if task.IsTask(arg) {
@@ -324,6 +326,12 @@ func Pick(args []string) task.Tasks {
 			continue
 		}
 
+		//		if check_option(arg, "priority") {
+		//			continue
+		//		}
+		//		if check_option(arg, "pri") {
+		//			continue
+		//		}
 		/*?
 		  if ($arg =~ /pri\D+(\d+)/) {
 			set_option("Priority", $1)
@@ -345,17 +353,22 @@ func Pick(args []string) task.Tasks {
 
 		want := task.Type_val(arg)
 		if want != 0 {
-			for _, ref := range Matching_type(want) {
-				if ref.Filtered() {
+			for _, t := range Matching_type(want) {
+				if t.Filtered() {
 					continue
 				}
-				list = append(list, ref)
+				list = append(list, t)
 			}
 			continue
 		}
 		panic("**** Can't understand argument: " + arg)
 	}
 
+	if len(list) == 0 {
+		list = Current()
+	}
+
+	//***debug*** log.Printf("meta.Pick: %v\n", list)
 	return list
 }
 
@@ -424,11 +437,10 @@ var meta_Current task.Tasks
 
 // meta.Current tracks the current task
 func Current() task.Tasks {
-	log.Printf(".... code meta.Current")
-
-	list := task.Tasks{}
-	return list
+	return meta_Current
 }
 
+// meta.Set_current set the current task to the list passed
 func Set_current(list task.Tasks) {
+	meta_Current = list
 }

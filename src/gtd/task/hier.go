@@ -13,9 +13,9 @@ func rel_add(list Tasks, task *Task) Tasks {
 	return list
 }
 
-func rel_del(list Tasks, task *Task) Tasks{
-	last := len(list)-1
-	
+func rel_del(list Tasks, task *Task) Tasks {
+	last := len(list) - 1
+
 	// just return the empty list if already empty
 	if last < 0 {
 		return list
@@ -24,7 +24,7 @@ func rel_del(list Tasks, task *Task) Tasks{
 	for i, t := range list {
 		if t == task {
 			list[i] = list[last]
-			list[last]= nil
+			list[last] = nil
 
 			return list[:last]
 		}
@@ -35,20 +35,19 @@ func rel_del(list Tasks, task *Task) Tasks{
 //------------------------------------------------------------------------------
 // core routines.  Only these add/remove relationships
 //
-func (parent *Task)add_child(child *Task) {
-	child.Parents   = rel_add(child.Parents, parent)
+func (parent *Task) add_child(child *Task) {
+	child.Parents = rel_add(child.Parents, parent)
 	parent.Children = rel_add(parent.Children, child)
 
 	child.set_dirty("parents")
 }
 
-func (parent *Task)orphin_child(child *Task) {
+func (parent *Task) orphin_child(child *Task) {
 	child.Parents = rel_del(child.Parents, parent)
 	parent.Children = rel_del(parent.Children, child)
 
 	child.set_dirty("parents")
 }
-
 
 //------------------------------------------------------------------------------
 // access routines but they don't change anything.
@@ -119,17 +118,30 @@ sub safe_parent {
         return $parent_ids[0]
 }
 
-sub disp_parents {
-        my ($ref) = @_
-
-        return join(',', $ref->parent_ids())
+?*/
+func (t *Task) Disp_parents() string {
+	s := ""
+	for _, p := range t.Parents {
+		s += "," + strconv.Itoa(p.Tid)
+	}
+	if len(s) == 0 {
+		return ""
+	}
+	return s[1:]
 }
 
-sub disp_children {
-        my ($ref) = @_
-
-        return join(',', children_ids($ref))
+func (t *Task) Disp_children() string {
+	s := ""
+	for _, c := range t.Children {
+		s += "," + strconv.Itoa(c.Tid)
+	}
+	if len(s) == 0 {
+		return ""
+	}
+	return s[1:]
 }
+
+/*?
 
 sub parent_id {
 	my($self) = @_
@@ -159,7 +171,7 @@ func (self *Task) set_parent_ids(val string) {
 	for _, pid_s := range pids {
 		pid, _ := strconv.Atoi(pid_s)
 		p := Find(pid)
-		if p == nil { 	// opps not a real parent
+		if p == nil { // opps not a real parent
 			log.Printf("No parent id: %d\n", pid)
 			continue
 		}
@@ -168,7 +180,7 @@ func (self *Task) set_parent_ids(val string) {
 	}
 
 	// keep parent if already have that one, it otherwise disown it.
-	for _,ref := range self.Parents {
+	for _, ref := range self.Parents {
 		pid := ref.Tid
 
 		if _, ok := pid_map[pid]; ok {
@@ -221,4 +233,3 @@ sub set_children_ids {
 }
 
 ?*/
-

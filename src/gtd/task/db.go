@@ -1,8 +1,6 @@
 package task
 
-
 //	@EXPORT      = qw(&DB_init &set &gtd_insert &gtd_update)
-
 
 //==============================================================================
 // Low level database abstraction
@@ -14,19 +12,19 @@ import (
 	"os"
 	"time"
 
-//? use YAML::Syck qw(LoadFile)
-//	"gopkg.in/yaml.v2"
+	//? use YAML::Syck qw(LoadFile)
+	//	"gopkg.in/yaml.v2"
 	"encoding/json"
 
-	"gtd/option"
 	"gtd/cct"
+	"gtd/option"
 
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
 )
 
 var db_debug bool = false
-var MetaFix  bool = false
+var MetaFix bool = false
 
 var Prefix string = "gtd_"
 
@@ -75,9 +73,9 @@ func db_load_category() {
 	category := cct.Use("Category")
 
 	var (
-		id	int
-		name	sql.NullString
-		desc	sql.NullString
+		id   int
+		name sql.NullString
+		desc sql.NullString
 	)
 
 	rows := G_select("categories", "categoryId,category,description")
@@ -102,9 +100,9 @@ func db_load_context() {
 	context := cct.Use("Context")
 
 	var (
-		id	int
-		name	sql.NullString
-		desc	sql.NullString
+		id   int
+		name sql.NullString
+		desc sql.NullString
 	)
 
 	rows := G_select("context", "contextId,name,description")
@@ -128,9 +126,9 @@ func db_load_timeframe() {
 	timeframe := cct.Use("Timeframe")
 
 	var (
-		id	int
-		name	sql.NullString
-		desc	sql.NullString
+		id   int
+		name sql.NullString
+		desc sql.NullString
 	)
 
 	rows := G_select("timeitems", "timeframeId,timeframe,description")
@@ -155,24 +153,24 @@ mysql> describe gtd_items
 */
 func db_load_items() {
 	var (
-		todo_id	int
-		title	string
-		desc	sql.NullString
-		note	sql.NullString
-		rdesc	sql.NullString
-		recur	sql.NullString
+		todo_id int
+		title   string
+		desc    sql.NullString
+		note    sql.NullString
+		rdesc   sql.NullString
+		recur   sql.NullString
 	)
 
 	rows := G_select("items", "itemId,title,description,desiredOutcome,recurdesc,recur")
 	for rows.Next() {
 		rows.Scan(&todo_id, &title, &desc, &note, &rdesc, &recur)
 		t := New(todo_id)
-		
-		t.Title       = title
+
+		t.Title = title
 		t.Description = desc.String
-		t.Note        = note.String
-		t.Rdesc       = rdesc.String
-		t.Recur       = recur.String
+		t.Note = note.String
+		t.Rdesc = rdesc.String
+		t.Recur = recur.String
 	}
 	G_done(rows)
 }
@@ -201,36 +199,36 @@ func db_load_itemstatus() {
 	rows := G_select("itemstatus", "itemId,dateCreated,lastModified,dateCompleted,type,categoryId,isSomeday,contextId,timeframeId,deadline,tickledate,nextaction")
 	//rows := G_select("itemstatus", "itemId,type,lastModified,dateCompleted,nextaction")
 
-	category  := cct.Use("Category")
-	context   := cct.Use("Context")
+	category := cct.Use("Category")
+	context := cct.Use("Context")
 	timeframe := cct.Use("Timeframe")
 
-	var(
-		todo_id    int
+	var (
+		todo_id int
 
-		dateCreated	sql.NullString	// time.Time
-		lastModified	sql.NullString	// time.Time
+		dateCreated  sql.NullString // time.Time
+		lastModified sql.NullString // time.Time
 
-		dateCompleted	sql.NullString	// time.Time
-		tasktype        sql.NullString	// enum: m,v,o,g,p,a,r,w,i,L,C,T
+		dateCompleted sql.NullString // time.Time
+		tasktype      sql.NullString // enum: m,v,o,g,p,a,r,w,i,L,C,T
 
-		categoryId	int
-		isSomeday	sql.NullString	// enum: y,n
-		contextId	int
-		timeframeId	int
-		deadline	sql.NullString	// time.Time
-		tickledate	sql.NullString	// time.Time
-		nextaction	sql.NullString	// enum: y,n
+		categoryId  int
+		isSomeday   sql.NullString // enum: y,n
+		contextId   int
+		timeframeId int
+		deadline    sql.NullString // time.Time
+		tickledate  sql.NullString // time.Time
+		nextaction  sql.NullString // enum: y,n
 	)
 
 	for rows.Next() {
-		err := rows.Scan(&todo_id, 
+		err := rows.Scan(&todo_id,
 
 			&dateCreated,
 			&lastModified,
 
 			&dateCompleted,
-			&tasktype, 
+			&tasktype,
 
 			&categoryId,
 			&isSomeday,
@@ -240,35 +238,33 @@ func db_load_itemstatus() {
 			&tickledate,
 			&nextaction)
 		if err != nil {
-			panic(err);
+			panic(err)
 		}
 		t := Find(todo_id)
 		if t == nil {
 			continue
 		}
 
-//		t.Kind = T_kind(tasktype.String[0])
+		//		t.Kind = T_kind(tasktype.String[0])
 		t.Type = tasktype.String[0]
 		t.IsNextaction = nextaction.String == "y"
-		t.IsSomeday =	isSomeday.String == "y"
+		t.IsSomeday = isSomeday.String == "y"
 
-		t.Created =	dateCreated.String
-		t.Modified =	lastModified.String
+		t.Created = dateCreated.String
+		t.Modified = lastModified.String
 
-		t.Due =		deadline.String
-		t.Tickledate =	tickledate.String
-		t.Completed =	dateCompleted.String
+		t.Due = deadline.String
+		t.Tickledate = tickledate.String
+		t.Completed = dateCompleted.String
 
-		t.Category =	category.Name(categoryId)
-		t.Context =	context.Name(contextId)
-		t.Timeframe =	timeframe.Name(timeframeId)
-
+		t.Category = category.Name(categoryId)
+		t.Context = context.Name(contextId)
+		t.Timeframe = timeframe.Name(timeframeId)
 
 	}
 
-	G_done(rows);
+	G_done(rows)
 }
-
 
 /*
 +----------+------------------+------+-----+---------+-------+
@@ -280,8 +276,8 @@ func db_load_itemstatus() {
 */
 func db_load_lookup() {
 	var (
-		pid	int
-		tid	int
+		pid int
+		tid int
 	)
 
 	rows := G_select("lookup", "parentId,itemId")
@@ -310,7 +306,6 @@ func db_load_lookup() {
 	G_done(rows)
 }
 
-
 /*
 +---------+------------------+------+-----+---------+-------+
 | Field   | Type             | Null | Key | Default | Extra |
@@ -325,23 +320,24 @@ func db_load_tags() {
 
 	rows := G_select("tagmap", "itemId,tagname")
 
-	var(
-		id	int
-		tag	string
+	var (
+		id  int
+		tag string
 	)
 
 	tag_id := 0
 	for rows.Next() {
-		rows.Scan(&id, &tag);
+		rows.Scan(&id, &tag)
 
 		t := Find(id)
 		if t == nil {
 			continue
 		}
 
-		t.Tags = append(t.Tags, tag);
+		t.Tags = append(t.Tags, tag)
 
-		tag_id++; tags.Define(tag_id, tag, "")
+		tag_id++
+		tags.Define(tag_id, tag, "")
 	}
 	G_done(rows)
 }
@@ -364,16 +360,16 @@ mysql> describe gtd_todo
 */
 func db_load_todo() {
 	var (
-		todo_id		int
-		priority	int
-		state		byte
-		doit		sql.NullString	//time.Time
-		effort		int
-		resource	sql.NullString
-		depends		sql.NullString
-		percent		int
+		todo_id  int
+		priority int
+		state    byte
+		doit     sql.NullString //time.Time
+		effort   int
+		resource sql.NullString
+		depends  sql.NullString
+		percent  int
 	)
-	
+
 	rows := G_select("todo", "todo_id,priority,state,doit,effort,resource,depends,percent")
 	for rows.Next() {
 		rows.Scan(
@@ -395,8 +391,8 @@ func db_load_todo() {
 		t.State = state
 		t.Doit = doit.String
 		t.Effort = effort
-//?		t.Resource = resource.String
-//?		t.Depends = depends.String
+		t.Resource = resource.String
+		t.Depends = depends.String
 		t.Percent = percent
 	}
 	G_done(rows)
@@ -461,7 +457,7 @@ sub cset {
 }
 */
 
-func gtd_insert(t *Task)  {
+func gtd_insert(t *Task) {
 	gtd_fix_maps(t)
 	gset_insert(t, "itemstatus")
 	gset_insert(t, "items")
@@ -471,15 +467,15 @@ func gtd_insert(t *Task)  {
 }
 
 func gset_insert_parents(t *Task, del bool) {
-	if ! t.dirty["parents"] {
+	if !t.dirty["parents"] {
 		return
 	}
-	
+
 	tid := t.Tid
-	
+
 	table := G_table("lookup")
 
-	if (del) {
+	if del {
 		G_sql("delete from "+table+" where itemId=?", tid)
 	}
 	for _, p := range t.Parents {
@@ -493,32 +489,32 @@ func gset_insert(ref *Task, table string) {
 	table = G_table(table)
 
 	panic("... code gset_insert")
-/*?
-	my $qmark = ''
-	my $sql
-	my @keys = ()
-	my @vals = ()
+	/*?
+		my $qmark = ''
+		my $sql
+		my @keys = ()
+		my @vals = ()
 
-	my ($key, $fld, $val)
+		my ($key, $fld, $val)
 
-	my $map = G_list($table)
-	for my $key (keys %$map) {
-		$fld = $map->{$key}
+		my $map = G_list($table)
+		for my $key (keys %$map) {
+			$fld = $map->{$key}
 
-		next unless defined $ref->{$key}
-		next unless $ref->{$key}
+			next unless defined $ref->{$key}
+			next unless $ref->{$key}
 
-		push(@keys, $fld)
-		push(@vals, $ref->{$key})
+			push(@keys, $fld)
+			push(@vals, $ref->{$key})
 
-		$qmark .= ",?"
-	}
+			$qmark .= ",?"
+		}
 
-	$qmark =~ s/^,//
-	$sql = "insert into $table(" . join(',', @keys) . ") values($qmark)"
+		$qmark =~ s/^,//
+		$sql = "insert into $table(" . join(',', @keys) . ") values($qmark)"
 
-	G_sql($sql, @vals)
-?*/
+		G_sql($sql, @vals)
+	?*/
 }
 
 func gtd_update(t *Task) {
@@ -526,12 +522,12 @@ func gtd_update(t *Task) {
 
 	panic("... Code gtd_update")
 
-//?	gset_update(t, "itemstatus")
-//?	gset_update(t, "items")
+	//?	gset_update(t, "itemstatus")
+	//?	gset_update(t, "items")
 
-//?	gset_update(t, "todo")
+	//?	gset_update(t, "todo")
 
-//?	gset_insert_parents(t, true)
+	//?	gset_insert_parents(t, true)
 }
 
 func gtd_fix_maps(ref *Task) {
@@ -543,11 +539,11 @@ func gtd_fix_maps(ref *Task) {
 	ref.Modified = today.Format("2006-02-03 15:04:05")
 
 	panic("... Code gtd_fix_maps")
-//***BUG***	ref.fix_map("category",  '_gtd_category',  $Category)
-//***BUG***	ref.fix_map("context",   '_gtd_context',   $Context)
-//***BUG***	ref.fix_map("timeframe", '_gtd_timeframe', $Timeframe)
+	//***BUG***	ref.fix_map("category",  '_gtd_category',  $Category)
+	//***BUG***	ref.fix_map("context",   '_gtd_context',   $Context)
+	//***BUG***	ref.fix_map("timeframe", '_gtd_timeframe', $Timeframe)
 
-//	_fix_map($ref, "tags", 'timeframeId', \%Timeframes)
+	//	_fix_map($ref, "tags", 'timeframeId', \%Timeframes)
 }
 
 /*?
@@ -582,54 +578,53 @@ sub _fix_map {
 ?*/
 
 func gset_update(ref *Task, table string) {
-	panic("... code gset_update");
-/*?
-	my $qmark = ''
-	my $sql
-	my @keys = ()
-	my @vals = ()
+	panic("... code gset_update")
+	/*?
+	  	my $qmark = ''
+	  	my $sql
+	  	my @keys = ()
+	  	my @vals = ()
 
-	my ($fld, $val)
+	  	my ($fld, $val)
 
-	my $map = G_list($table)
-	for my $key (keys %$map) {
-		next unless $ref->get_dirty($key);	// don't update clean fields
+	  	my $map = G_list($table)
+	  	for my $key (keys %$map) {
+	  		next unless $ref->get_dirty($key);	// don't update clean fields
 
-		if db_debug {
-			warn "Mapping: $key => $map->{$key}\n"
-		}
-		$fld = $map->{$key}
+	  		if db_debug {
+	  			warn "Mapping: $key => $map->{$key}\n"
+	  		}
+	  		$fld = $map->{$key}
 
-		next unless defined $ref->{$key}
-//		next unless $ref->{$key}
+	  		next unless defined $ref->{$key}
+	  //		next unless $ref->{$key}
 
-		push(@keys, $fld)
-		push(@vals, $ref->{$key})
+	  		push(@keys, $fld)
+	  		push(@vals, $ref->{$key})
 
-		$qmark .= ",?"
-	}
+	  		$qmark .= ",?"
+	  	}
 
-	return unless @keys;	// nothing changed
+	  	return unless @keys;	// nothing changed
 
 
-	$qmark =~ s/^,//
-	$sql = "update $table set " . join("=?, ", @keys) .
-	                          "=? where itemId=?"
-	push(@vals, $ref->{todo_id})
+	  	$qmark =~ s/^,//
+	  	$sql = "update $table set " . join("=?, ", @keys) .
+	  	                          "=? where itemId=?"
+	  	push(@vals, $ref->{todo_id})
 
-	G_sql($sql, @vals)
-?*/
+	  	G_sql($sql, @vals)
+	  ?*/
 }
 
 func gtd_delete(tid int) {
 	panic("... code sac_delete")
 
-//?	gset_delete(tid, "itemId", "itemstatus")
-//?	gset_delete(tid, "itemId", "items")
-//?	gset_delete(tid, "itemId", "lookup")
-//?	gset_delete(tid, "todo_id", "todo")
+	//?	gset_delete(tid, "itemId", "itemstatus")
+	//?	gset_delete(tid, "itemId", "items")
+	//?	gset_delete(tid, "itemId", "lookup")
+	//?	gset_delete(tid, "todo_id", "todo")
 }
-
 
 func gset_delete(tid int, table string) {
 	table = G_table(table)
@@ -647,8 +642,7 @@ func join([]string) {
 //#############################################################################
 //#############################################################################
 
-var db_GTD	*sql.DB
-
+var db_GTD *sql.DB
 
 /*
 my($GTD_map, $GTD_default)
@@ -668,37 +662,36 @@ func DB_init(confname string) {
 			log.Printf("#-Using %s in Access.yaml\n", confname)
 		}
 	} else {
-//		confname = "gtd"
+		//		confname = "gtd"
 		confname = "gtdtest"
 	}
 
-
 	home := os.Getenv("HOME")
-	conf := load_config(home+"/.todo/Access.json")
+	conf := load_config(home + "/.todo/Access.json")
 
 	if db_debug {
 		dump_config("Access", conf)
 	}
 
-//?	resource := load_config(home+"/.todo/Resource.json")
-//?	$Hier::Resource::Resource = $conf->{resource}
+	//?	resource := load_config(home+"/.todo/Resource.json")
+	//?	$Hier::Resource::Resource = $conf->{resource}
 
 	dbconf, ok := conf[confname]
 	if !ok {
-		panic("Can't fine section "+confname+" in ~/.todo/Access.json")
+		panic("Can't fine section " + confname + " in ~/.todo/Access.json")
 	}
 
 	dbname := dbconf["dbname"]
-	host   := dbconf["host"]
-	user   := dbconf["user"]
-	pass   := dbconf["pass"]
-	port   := dbconf["port"]
+	host := dbconf["host"]
+	user := dbconf["user"]
+	pass := dbconf["pass"]
+	port := dbconf["port"]
 	if port == "" {
 		port = "3306"
 	}
 
 	if confname != "gtd" {
-		log.Printf("confname=%s;dbname=%s;host=%s;port=%s\n", 
+		log.Printf("confname=%s;dbname=%s;host=%s;port=%s\n",
 			confname, dbname, host, port)
 
 	}
@@ -708,69 +701,69 @@ func DB_init(confname string) {
 	} else {
 		Prefix = "gtd_"
 	}
-		
-        url := fmt.Sprintf("%s:%s@tcp(%s:3306)/%s?%s",
-                user, pass, host, dbname,
-                "allowOldPasswords=1")
+
+	url := fmt.Sprintf("%s:%s@tcp(%s:3306)/%s?%s",
+		user, pass, host, dbname,
+		"allowOldPasswords=1")
 
 	db, err := sql.Open("mysql", url)
 	if err != nil {
 		log.Fatal(err)
-        }
+	}
 
 	err = db.Ping()
-        if err != nil {
-                log.Fatal("Can't connect to %s: %s", url, err)
-        }
+	if err != nil {
+		log.Fatal("Can't connect to %s: %s", url, err)
+	}
 	db_GTD = db
 
 	fmt.Printf("... code DB_init lastModified\n")
-//?	option("Changed", G_val('itemstatus', 'max(lastModified)'))
+	//?	option("Changed", G_val('itemstatus', 'max(lastModified)'))
 
-//?warn "Start ".localtime()."\n"
+	//?warn "Start ".localtime()."\n"
 	db_load_gtd()
-//warn "Done  ".localtime()."\n"
+	//warn "Done  ".localtime()."\n"
 }
 
 func G_table(table string) string {
 	db_Table = table
 
-	return Prefix+table
+	return Prefix + table
 }
 
 func G_sql(sql string, args ...interface{}) {
 	panic("... code G_sql")
-/*?
-	my($sql) = shift @_
+	/*?
+		my($sql) = shift @_
 
-	warn "gtd-sql: $sql: @_\n" if $Debug
+		warn "gtd-sql: $sql: @_\n" if $Debug
 
-	unless ($MetaFix) {
-		warn "Skipped: $sql\n"
-		return
-	}
+		unless ($MetaFix) {
+			warn "Skipped: $sql\n"
+			return
+		}
 
-	my($rv)
-	eval {
-		$rv = $db_GTD->do($sql, undef, @_)
-		warn "-> $rv\n" if $Debug
-	}; if ($@ or !defined $rv) {
-		print "Failed sql: $sql ($rv)\n"
-		print "..........: $@"
-	}
-	
-	return $rv
-?*/
+		my($rv)
+		eval {
+			$rv = $db_GTD->do($sql, undef, @_)
+			warn "-> $rv\n" if $Debug
+		}; if ($@ or !defined $rv) {
+			print "Failed sql: $sql ($rv)\n"
+			print "..........: $@"
+		}
+
+		return $rv
+	?*/
 }
 
-func G_select(table string, fields string) * sql.Rows {
-	q := "select "+fields+" from "+G_table(table)
+func G_select(table string, fields string) *sql.Rows {
+	q := "select " + fields + " from " + G_table(table)
 
 	rows, err := db_GTD.Query(q)
-        if err != nil {
+	if err != nil {
 		log.Printf("%s: %s", table, q)
-		panic(err);
-        }
+		panic(err)
+	}
 	return rows
 }
 
@@ -804,20 +797,20 @@ func G_val(table, query string) int {
 	table = G_table(table)
 	sql := fmt.Sprintf("select %s from %s", query, table)
 	return len(sql)
-/*?
+	/*?
 
-	my($sth) = $db_GTD->prepare($sql)
-	my($rv) = $sth->execute()
-	if ($rv < 0) {
-		panic("sql=$sql")
-	}
+		my($sth) = $db_GTD->prepare($sql)
+		my($rv) = $sth->execute()
+		if ($rv < 0) {
+			panic("sql=$sql")
+		}
 
-	my($row, $changed)
-	while (($row) = $sth->fetchrow_array()) {
-		$changed = $row
-	}
-	return $changed
-?*/
+		my($row, $changed)
+		while (($row) = $sth->fetchrow_array()) {
+			$changed = $row
+		}
+		return $changed
+	?*/
 	return 0
 }
 
@@ -836,34 +829,34 @@ func G_done(rows *sql.Rows) {
 type Dict map[string]map[string]string
 
 func load_config(file string) Dict {
-        fd, err := os.Open(file)
-        if err != nil {
-                log.Printf("Can't open %s: %s", fd, err)
-                return nil
-        }
+	fd, err := os.Open(file)
+	if err != nil {
+		log.Printf("Can't open %s: %s", fd, err)
+		return nil
+	}
 
-        decoder := json.NewDecoder(fd)
+	decoder := json.NewDecoder(fd)
 
-        configuration := Dict{}
-        err = decoder.Decode(&configuration)
-        if err != nil {
-                fmt.Println("error:", err)
-        }
+	configuration := Dict{}
+	err = decoder.Decode(&configuration)
+	if err != nil {
+		fmt.Println("error:", err)
+	}
 
-//      os.Close(fd)
-        return configuration
+	//      os.Close(fd)
+	return configuration
 
 }
 
 func dump_config(file string, configuration Dict) {
-        fmt.Printf("==== %s ==== \n", file)
-        for group, group_map := range configuration {
-                fmt.Printf("%s:\n", group)
+	fmt.Printf("==== %s ==== \n", file)
+	for group, group_map := range configuration {
+		fmt.Printf("%s:\n", group)
 
-                for key, val := range group_map {
-                        fmt.Printf("\t%s:%s\n", key, val)
-                }
-        }
+		for key, val := range group_map {
+			fmt.Printf("\t%s:%s\n", key, val)
+		}
+	}
 }
 
 //#############################################################################

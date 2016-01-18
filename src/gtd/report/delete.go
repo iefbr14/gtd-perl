@@ -40,9 +40,11 @@ import "gtd/task"
 
 //-- Delete listed actions/projects (will orphine items)
 func Report_delete(args []string) int {
+	ok := true
 	for _, ref := range meta.Pick(args) {
 		for _, child := range ref.Children {
 			fmt.Printf("Delete %d first\n", child.Tid)
+			ok = false
 			continue
 		}
 
@@ -50,6 +52,10 @@ func Report_delete(args []string) int {
 		ref.Delete()
 		fmt.Printf("Task %s deleted\n", tid)
 	}
+	if ok {
+		return 0
+	}
+	return 1
 }
 
 func delete_hier(tasks []*task.Task) {

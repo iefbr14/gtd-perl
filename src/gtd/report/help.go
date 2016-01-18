@@ -37,7 +37,7 @@ import "fmt"
 import "sort"
 
 //-- Help on commands
-func Report_help(args []string) {
+func Report_help(args []string) int {
 	helps := map[string]string{
 
 		//------------------------------------------------------------
@@ -175,6 +175,69 @@ T - item
 Using "kanban" and "board" commands to refine project state.
 Then by iterating over those items to create momentum.
 `,
+
+		//------------------------------------------------------------
+		// generated from gtd-perl: gtd reports
+		"reports": `
+#=============================================================================
+#== Reports
+#=============================================================================
+actions      -- Detailed list of projects with (next) actions
+addplans     -- add plan action items to unplaned projects
+board        -- report board of projects/actions
+bulk         -- Create Bulk create Projects/Actions items from a file
+bulklist     -- Bulk List project for use in bulk load
+bulkload     -- Create Projects/Actions items from a file
+cct          -- List Categories/Contexts/Time Frames
+checklist    -- display a check list
+clean        -- clean unused categories
+color        -- Detailed list of projects with (next) actions
+delete       -- Delete listed actions/projects (will orphine items)
+did          -- update listed projects/actions doit date to today
+doit         -- doit tracks which projects/actions have had movement
+done         -- Tag listed projects/actions as done
+dump         -- dump records in edit format
+edit         -- Edit listed actions/projects
+fixcct       -- Fix Categories/Contexts/Time Frames
+focus        -- List focus -- live, plan or someday
+ged          -- generate a gedcom file from gtd db
+gui          -- Tk gui front end
+help         -- Help on commands
+hier         -- Hiericial List of Values/Visions/Roles...
+hierlist     -- List all top level item (Project and above)
+init         -- Init ~/.todo structure
+items        -- list titles for any filtered class (actions/projects etc)
+kanban       -- report kanban of projects/actions
+list         -- list titles for any filtered class (actions/projects etc)
+merge        -- Merge Projects (first list is receiver)
+new          -- create a new action or project
+nextactions  -- List next actions
+noop         -- No Operation
+oocalc       -- Project Summary for a role
+orphans      -- list all items without a parent 
+planner      -- Create a planner file from gtd db
+print        -- display records in dump format based on format type
+projects     -- List projects -- live, plan or someday
+purge        -- interactive purge completed work
+rc           -- rc - Run Commands
+records      -- detailed list all records for a type
+renumber     -- Renumber task Ids 
+reports      -- List Reports (use 'reports file' for file names)
+review       -- Review all projects with actions
+search       -- Search for items
+spreadsheet  -- Project Summary for a role
+status       -- report status of projects/actions
+take         -- take listed actions/projects
+task         -- quick List by various methods
+taskjuggler  -- generate taskjuggler file from gtd db
+todo         -- List high priority next actions
+toplevel     -- List Values/Visions/Roles
+tsort        -- write out hier as as set of nodes
+update       -- Command line update of an action/project
+url          -- open browser window for wiki and gtd
+walk         -- Command line walk of a hier
+
+`,
 	}
 
 	done := false
@@ -200,7 +263,7 @@ Then by iterating over those items to create momentum.
 	}
 
 	if done {
-		return
+		return 0
 	}
 	fmt.Println("No help specified: Try gtd help")
 
@@ -218,7 +281,8 @@ Then by iterating over those items to create momentum.
 			return;
 		}
 	*/
-	fmt.Println("? Don't understand help $help, try: help help")
+	fmt.Printf("? Don't understand help %v, try: help help\n", args)
+	return 1
 }
 
 func sort_keys(m map[string]string) []string {

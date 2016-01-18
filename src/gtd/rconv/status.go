@@ -39,284 +39,293 @@ import "gtd/task"
 import "gtd/task" // %Types and typemap
 
 /*?
-my @Class = qw(Done Someday Action Next Future Total);
+my @Class = qw(Done Someday Action Next Future Total)
 
 
-my $Hours_proj = 0;
-my $Hours_task = 0;
-my $Hours_next = 0;
+my $Hours_proj = 0
+my $Hours_task = 0
+my $Hours_next = 0
 ?*/
 
 //-- report status of projects/actions
 func Report_status(args []string) int {
-	/*?
-	  	// counts use it and it give a context
-	  	meta.ilter("+active", '^tid', "none");
+	// counts use it and it give a context
+	meta.Filter("+active", '^tid', "none")
 
-	  	my $desc = meta.Desc(args)(@_);
+	desc := meta.Desc(args)
 
-	  	if (lc($desc) eq "all") {
-	  		report_detail();
-	  		return;
-	  	}
+	if (strings.Lower(desc) == "all") {
+		report_detail()
+		return
+	}
 
-	  	$Hours_proj = $Hours_task = $Hours_next = 0;
+	Hours_proj = 0
+	Hours_task = 0
+	Hours_next = 0
 
-	  	my $hier = count_hier();
-	  	my $proj = count_proj();
-	  	my $task = count_task();
-	  	my $next = count_next();
+	  	hier := count_hier()
+	  	proj := count_proj()
+	  	task := count_task()
+	  	next := count_next()
 
-	  //	print "Options:\n";
+	  //	print "Options:\n"
 	  //	for my $option (qw(pri debug db title report)) {
-	  //		printf "%10s %s\n", $option, get_info($option);
+	  //		printf "%10s %s\n", $option, get_info($option)
 	  //	}
-	  //	print "\n";
+	  //	print "\n"
 
-	  	if ($desc) {
-	  		print "For: $desc \n";
-	  //		my ($ref) = meta.ask($desc);
-	  //		print $ref->get_title(), "\n";
+	  	if (desc) {
+	  		fmtp.Print("For: $desc \n")
+	  //		ref := meta.ask($desc)
+	  //		print ref.get_title(), "\n"
 	  	}
-	  	my($total) = $task + $next;
+	  	total := task + next
 
-	  	printf "hier: %6s  projects: %6s  next,actions: %6s %6s  = %s\n",
-	  		$hier, $proj, $next, $task, $total;
+	  	fmt.Printf("hier: %6s  projects: %6s  next,actions: %6s %6s  = %s\n",
+	  		hier, proj, next, task, total)
 
-	  	my($t_p) = f_h($Hours_proj);
-	  	my($t_a) = f_h($Hours_task);
-	  	my($t_n) = f_h($Hours_next);
+	  	t_p := f_h(Hours_proj)
+	  	t_a := f_h(Hours_task)
+	  	t_n := f_h(Hours_next)
 
-	  	my($time) = f_h($Hours_proj+$Hours_task+$Hours_next);
+	  	t_time := f_h(Hours_proj+Hours_task+Hours_next)
 
-	  	printf "time:  %6s projects:  %6s next,actions:  %6s %6s = %s\n",
-	  		$time, $t_p, $t_n, $t_a, f_h($Hours_next+$Hours_task);
+	  	fmt.Printf("time:  %6s projects:  %6s next,actions:  %6s %6s = %s\n",
+	  		t_time, t_p, t_n, t_a, f_h(Hours_next+Hours_task))
 
-	  	print "Next";
-	  	for my $type (qw(m v o g p s a)) {
-	  		my($n_tid) = next_avail_task($type);
-	  		$n_tid ||= '-';
+	  	fmt.Print("Next")
+		for _,kind := range "mvogpsa" {
+	  		n_tid := next_avail_task(kind)
+			if n_tid == 0 {
+				n_tid = '-'
+				}
 
-	  		print "\t$type => $n_tid\n";
+	  		fmt.Printf("\t%s => %s\n",  kind , n_tid)
 	  	}
-	  ?*/
 }
 
-func f_h() { /*?
-		my($hours) = @_;
-
-		return $hours.' '                     if $hours < 8;
-		return sprintf("%.1fd", $hours/8)     if $hours < 8*20;
-		return sprintf("%.2fm", $hours/8/20)  if $hours < 8*20*15;
-		return sprintf("%.3fy", $hours/8/20/12);
-	?*/
+func f_h(hours int) {
+	switch {                     
+	case hours < 8:
+		return fmt.Sprintf("%.1f ", hours)
+		case hours < 8*20:
+		return fmt.Sprintf("%.1fd", hours/8)     
+		case hours < 8*20*15:
+		return fmt.Sprintf("%.2fm", hours/8/20)  
+		default:
+		return fmt.Sprintf("%.3fy", hours/8/20/12)
+		}
 }
 
 func count_hier() { /*?
-		my($count) = 0;
+		my($count) = 0
 
 		// find all hier records
-		foreach my $ref (meta.ll()) {
-			next unless $ref->is_hier();
-			next if $ref->filtered();
+		foreach my ref (meta.ll()) {
+			next unless ref.is_hier()
+			next if ref.filtered()
 
-			++$count;
+			++$count
 		}
-		return $count;
+		return $count
 	?*/
 }
 
-func count_proj() { /*?
-		my($count) = 0;
+func count_proj() {
+	count := 0
 
 		// find all projects
-		foreach my $ref (meta.atching_type('p')) {
-	//##FILTER	next if $ref->filtered();
+		for _, t := range meta.Matching_type('p') {
+	//##FILTER	next if t.Filtered()
 
-			++$count;
+			count++
 
-			my($resource) = new Hier::Resource($ref);
-			my($hours) = $resource->hours($ref);
-			if ($hours == 0) {
-				if ($ref->get_children()) {
-					$hours = 1;
+			resource := resource.New(t)
+			hours := resource.hours(t)
+			if (hours == 0) {
+				if len(t.Children) > 0{
+					hours = 1
 					// to manage done.
 				} else {
-					$hours = 4;
+					hours = 4
 					// to start planning.
 				}
 			}
-			$Hours_proj += $hours;
+			$Hours_proj += hours
 		}
-		return $count;
-	?*/
+		return $count
 }
 
-func count_liveproj() { /*?
-		my($count) = 0;
+func count_liveproj() int {
+		count := 0
 
 		// find all projects
-		foreach my $ref (meta.atching_type('p')) {
-	//##FILTER	next if $ref->filtered();
+		for _, ref := range meta.Matching_type('p') {
+	//##FILTER	next if ref.filtered()
 
-			next unless project_live($ref);
+			if !  project_live(ref) {
+				continue
+				}
 
-			++$count;
+			count++
 		}
-		return $count;
-	?*/
+		return$count
 }
 
-func count_task() { /*?
-		my($count) = 0;
-		my($time) = 0;
+func count_task() int { 
+		count := 0
+		time := 0
 
 		// find all records.
-		foreach my $ref (meta.elected()) {
-			next unless $ref->is_task();
+		for _,ref := range meta.Selected() {
+			next unless ref.is_task()
 
-			next if $ref->filtered();
+			next if ref.filtered()
 
-			next unless project_live($ref);
+			next unless project_live(ref)
 
-			++$count;
+			++$count
 
-			my($resource) = new Hier::Resource($ref);
-			$Hours_task += $resource->hours($ref);
+			my($resource) = new Hier::Resource(ref)
+			$Hours_task += $resource->hours(ref)
 		}
-		return $count;
-	?*/
+		return $count
 }
 
-func count_next() { /*?
-		my($count) = 0;
-		my($time) = 0;
+func count_next() {
+		my($count) = 0
+		my($time) = 0
 
 		// find all records.
-		foreach my $ref (meta.elected()) {
-			next unless $ref->is_task();
+		foreach my ref (meta.elected()) {
+			next unless ref.is_task()
 
-			next if $ref->filtered();
+			next if ref.filtered()
 
-			next unless project_live($ref);
+			next unless project_live(ref)
 
-			next unless $ref->is_nextaction();
+			next unless ref.is_nextaction()
 
-			++$count;
+			++$count
 
-			my($resource) = new Hier::Resource($ref);
-			$Hours_next += $resource->hours($ref);
+			my($resource) = new Hier::Resource(ref)
+			$Hours_next += $resource->hours(ref)
 		}
-		return $count;
-	?*/
+		return $count
 }
 
-func count_tasklive() { /*?
-		my($count) = 0;
-		my($time) = 0;
+func count_tasklive() {
+		my($count) = 0
+		my($time) = 0
 
 		// find all records.
-		foreach my $ref (meta.elected()) {
+		foreach my ref (meta.elected()) {
 
-			next unless $ref->is_task();
+			next unless ref.is_task()
 
-			next if $ref->filtered();
-			next unless project_live($ref);
+			next if ref.filtered()
+			next unless project_live(ref)
 
-			++$count;
+			++$count
 		}
-		return $count;
-	?*/
+		return $count
 }
 
-func project_live() { /*?
-		my($ref) = @_;
+func project_live() { 
+		my(ref) = @_
 
-		return $ref->get_live() if defined $ref;
+		return ref.get_live() if defined ref
 
-		my($type) = $ref->get_type();
+		my($type) = ref.get_type()
 
-		if ($ref->is_task()) {
-			$ref->get_live() = ! task_filtered($ref);
-			return $ref->get_live();
+		if (ref.is_task()) {
+			ref.get_live() = ! task_filtered(ref)
+			return ref.get_live()
 		}
 
-		if ($ref->is_hier()) {
-			foreach my $pref ($ref->get_parents()) {
-				$ref->get_live() |= project_live($pref);
+		if (ref.is_hier()) {
+			foreach my $pref (ref.get_parents()) {
+				ref.get_live() |= project_live($pref)
 			}
-			foreach my $cref ($ref->get_children()) {
-				$ref->get_live() |= project_live($cref);
+			foreach my $cref (ref.get_children()) {
+				ref.get_live() |= project_live($cref)
 			}
 
-			$ref->get_live() = ! task_filtered($ref);
-			return $ref->get_live();
+			ref.get_live() = ! task_filtered(ref)
+			return ref.get_live()
 		}
 
-		return 0;
-	?*/
+		return 0
 }
 
-func calc_type() { /*?
-		my($ref) = @_;
+func calc_type(t *task.Task) {
 
-		return 'h' if $ref->is_hier();
-		return 'a' if $ref->is_task();
-		return 'l';
-	?*/
+	switch {
+		case t.Is_hier():
+		return 'h' 
+		case: t.is_task()
+		return 'a'
+		default:
+		return 'l'
+		}
 }
 
-func calc_class() { /*?
-		my($ref) = @_;
+func calc_class() { 
+		my(ref) = @_
 
-		return 'd' if $ref->get_completed();
-		return 's' if $ref->is_someday();
-		return 'f' if $ref->is_later();
+	switch {
+		case ref.Completed != "":
+		return 'd' 
+		case ref.Is_someday():
+		return 's' 
+		case ref.Is_later():
+		return 'f' 
 
-		return 'n' if $ref->is_nextaction();
-		return 'a';
-	?*/
+		case ref.Is_nextaction():
+		return 'n' 
+		default:
+		return 'a'
+		}
 }
 
-func report_detail() { /*?
-		meta.ilter("+all", '^title', "simple");
+func report_detail() {
+		meta.ilter("+all", '^title', "simple")
 
-		my @Types = qw(Hier Action List Total);
-		my @Class = qw(Done Someday Action Next Future Total);
+		my @Types = qw(Hier Action List Total)
+		my @Class = qw(Done Someday Action Next Future Total)
 
-		my(%data);
-		my($type, $class);
-		for my $ref (meta.ll()) {
-			$type = calc_type($ref);
-			$class = calc_class($ref);
+		my(%data)
+		my($type, $class)
+		for my ref (meta.ll()) {
+			$type = calc_type(ref)
+			$class = calc_class(ref)
 
-			++$data{$type}{$class};
+			++$data{$type}{$class}
 
-			// totals;
-			++$data{'t'}{$class};
-			++$data{$type}{'t'};
-			++$data{'t"}{"t'};
+			// totals
+			++$data{'t'}{$class}
+			++$data{$type}{'t'}
+			++$data{'t"}{"t'}
 		}
 
 		for my $title ("Type", @Class) {
-			printf "   %7s", $title;
+			printf "   %7s", $title
 		}
-		print "\n".('-'x75)."\n";
+		print "\n".('-'x75)."\n"
 
 		for my $type (@Types) {
-			my $tk = lc(substr($type,0, 1));
-			my $classes = $data{$tk};
+			my $tk = lc(substr($type,0, 1))
+			my $classes = $data{$tk}
 
-			printf "%7s | ", $type;
+			printf "%7s | ", $type
 
 			for my $class (@Class) {
-				my $ck = lc(substr($class,0, 1));
-				my $val = $classes->{$ck};
-				$val ||= '';
+				my $ck = lc(substr($class,0, 1))
+				my $val = $classes->{$ck}
+				$val ||= ''
 
-				printf "   %7s", $val;
+				printf "   %7s", $val
 			}
-			print "\n";
+			print "\n"
 		}
-	?*/
 }

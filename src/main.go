@@ -5,7 +5,7 @@ import "fmt"
 import "os"
 import "path"
 
-import "gtd"
+import "gtd/rc"
 import "gtd/option"
 import "gtd/task"
 
@@ -160,11 +160,11 @@ func main() {
 		return
 	}
 
-	report("rc", nil)
+	report("rc", []string{})
 	return
 }
 
 func report(report string, args []string) {
-	rc := gtd.Run_report(report, args)
+	rc := rc.Run_report(report, args)
 	os.Exit(rc)
 }

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"strconv"
+	"strings"
 )
 
 // Done is used to signal shutdown.  Channel will close at exit
@@ -71,7 +72,8 @@ type Task struct {
 	Hint []string
 	Tags []string
 
-	Depends  Tasks
+	// Depends  Tasks
+	Depends  string // we really need to upgrade this
 	Parents  Tasks
 	Children Tasks
 
@@ -246,25 +248,12 @@ sub default {
 }
 ?*/
 
-func (t *Task) get_KEY(key string) string {
+func (t *Task) Get_KEY(key string) string {
 	switch key {
 	case "tid", "todo_id":
 		return fmt.Sprintf("%d", t.Tid)
 	case "type":
 		return fmt.Sprintf("%c", t.Type)
-
-	case "title":
-		return t.Title
-
-	case "modified":
-		return t.Modified
-	case "created":
-		return t.Created
-	case "completed":
-		return t.Completed
-
-	case "category":
-		return t.Category
 
 	case "nextaction":
 		if t.IsNextaction {
@@ -278,69 +267,56 @@ func (t *Task) get_KEY(key string) string {
 		} else {
 			return "n"
 		}
+
+	case "title":
+		return t.Title
+	case "desc", "description":
+		return t.Description
+	case "note", "result":
+		return t.Note
+
+	case "category":
+		return t.Category
 	case "context":
 		return t.Context
 	case "timeframe":
 		return t.Timeframe
-	case "due":
-		return t.Due
+
+	case "created":
+		return t.Created
+	case "modified":
+		return t.Modified
+	case "completed":
+		return t.Completed
+
+	case "doit":
+		return t.Doit
 	case "tickledate":
 		return t.Tickledate
+	case "due":
+		return t.Due
+
+	case "recur":
+		return t.Recur
+	case "recurdesc":
+		return t.Rdesc
+
+	case "resource":
+		return t.Resource
+	case "priority":
+		return fmt.Sprintf("%d", t.Priority)
+	case "state":
+		return fmt.Sprintf("%c", t.State)
+	case "effort":
+		return fmt.Sprintf("%d", t.Effort)
+	case "percent":
+		return fmt.Sprintf("%d", t.Percent)
+	case "depends":
+		return t.Depends
 
 	default:
 		panic("Unknown key: " + key)
 	}
-}
-
-func (t *Task) set_KEY(key string, val string) {
-	var err error = nil
-
-	switch key {
-	case "tid", "todo_id":
-		// t.Tid = strconv.Atoi(val)
-		panic("set_KEY(tid) not allowd")
-	case "type":
-		t.Type = val[0]
-	case "title":
-		t.Title = val
-	case "parents":
-		t.set_parent_ids(val)
-
-	case "modified":
-		t.Modified = val
-	case "created":
-		t.Created = val
-	case "completed":
-		t.Completed = val
-	case "category":
-		t.Category = val
-		panic(".... code category update")
-
-	case "issomeday":
-		t.IsSomeday, err = strconv.ParseBool(val)
-	case "context":
-		t.Context = val
-		panic(".... code context update")
-	case "timeframe":
-		t.Timeframe = val
-		panic(".... code timeframe update")
-	case "due":
-		t.Due = val
-	case "nextaction":
-		t.IsNextaction, err = strconv.ParseBool(val)
-	case "tickledate":
-		t.Tickledate = val
-
-	default:
-		panic("Unknown key " + key)
-
-	}
-	if err != nil {
-		panic("Conversion error for " + key + ": " + val)
-	}
-
-	t.set_dirty(key)
-	//return nil
 }
 
 /*?
@@ -376,34 +352,36 @@ sub get_hint         { my($self) = @_; return default($self->{_hint}, ''); }
 
 sub get_focus { return Hier::Sort::calc_focus(@_)}
 sub get_panic { return Hier::Sort::calc_panic(@_)}
+?*/
 
-sub set_category     {return dset("category", @_); }
-sub set_completed    {return dset("completed", @_); }
-sub set_context      {return dset("context", @_); }
-sub set_created      {return dset("created", @_); }
-sub set_depends      {return dset("depends", @_); }
-sub set_description  {return dset("description", @_); }
-sub set_doit         {return dset("doit", @_); }
-sub set_due          {return dset("due", @_); }
-sub set_effort       {return dset("effort", @_); }
-sub set_state        {return dset("state", @_); }
-sub set_gtd_modified {return dset("gtd_modified", @_); }
-sub set_isSomeday    {return dset("isSomeday", @_); }
-sub set_later        {return dset("later", @_); }
-sub set_live         {return dset("live", @_); }
-sub set_mask         {return dset("mask", @_); }
-sub set_modified     {return dset("modified", @_); }
-sub set_nextaction   {return dset("nextaction", @_); }
-sub set_note         {return dset("note", @_); }
-sub set_priority     {return dset("priority", @_); }
-sub set_title        {return dset("task", @_); }
-sub set_tickledate   {return dset("tickledate", @_); }
-sub set_timeframe    {return dset("timeframe", @_); }
-sub set_todo_only    {return dset("_todo_only", @_); }
-sub set_type         {return dset("type", @_); }
+func (t *Task) Set_category(v string)     { t.Set_KEY("category", v) }
+func (t *Task) Set_completed(v string)    { t.Set_KEY("completed", v) }
+func (t *Task) Set_context(v string)      { t.Set_KEY("context", v) }
+func (t *Task) Set_created(v string)      { t.Set_KEY("created", v) }
+func (t *Task) Set_depends(v string)      { t.Set_KEY("depends", v) }
+func (t *Task) Set_description(v string)  { t.Set_KEY("description", v) }
+func (t *Task) Set_doit(v string)         { t.Set_KEY("doit", v) }
+func (t *Task) Set_due(v string)          { t.Set_KEY("due", v) }
+func (t *Task) Set_effort(v string)       { t.Set_KEY("effort", v) }
+func (t *Task) Set_state(v string)        { t.Set_KEY("state", v) }
+func (t *Task) Set_gtd_modified(v string) { t.Set_KEY("gtd_modified", v) }
+func (t *Task) Set_isSomeday(v string)    { t.Set_KEY("isSomeday", v) }
+func (t *Task) Set_later(v string)        { t.Set_KEY("later", v) }
+func (t *Task) Set_live(v string)         { t.Set_KEY("live", v) }
+func (t *Task) Set_mask(v string)         { t.Set_KEY("mask", v) }
+func (t *Task) Set_modified(v string)     { t.Set_KEY("modified", v) }
+func (t *Task) Set_nextaction(v string)   { t.Set_KEY("nextaction", v) }
+func (t *Task) Set_note(v string)         { t.Set_KEY("note", v) }
+func (t *Task) Set_priority(v string)     { t.Set_KEY("priority", v) }
+func (t *Task) Set_title(v string)        { t.Set_KEY("task", v) }
+func (t *Task) Set_tickledate(v string)   { t.Set_KEY("tickledate", v) }
+func (t *Task) Set_timeframe(v string)    { t.Set_KEY("timeframe", v) }
+func (t *Task) Set_todo_only(v string)    { t.Set_KEY("_todo_only", v) }
+func (t *Task) Set_type(v string)         { t.Set_KEY("type", v) }
+func (t *Task) Set_resource(v string)     { t.Set_KEY("resource", v) }
+func (t *Task) Set_hint(v string)         { t.Set_KEY("_hint", v) }
 
-sub set_resource     {return dset("resource", @_); }
-sub set_hint         {return dset("_hint", @_); }
+/*?
 sub hint_resource    {return clean_set("resource", @_); }
 
 sub set_tid          {
@@ -446,11 +424,13 @@ sub get_tags {
 
         return sort {$a cmp $b} keys %$hash
 }
-sub disp_tags {
-        my ($ref) = @_
+?*/
 
-        return join(',', $ref->get_tags())
+func (t *Task) Disp_tags() string {
+	return strings.Join(t.Tags, ", ")
 }
+
+/*?
 sub set_tags {
 	my($self) = shift @_
 
@@ -462,50 +442,77 @@ sub set_tags {
 	return $self
 }
 
-//
-// dirty set
-//
-sub set_KEY { my($self, $key, $val) = @_;  return dset($key, $self, $val); }
-sub dset {
-	my($field, $ref, $val) = @_
+?*/
 
-	if ($field eq "Parents") {
-		$ref->set_parent_ids($val)
+// Set_KEY -- access field indirectly by name
+func (t *Task) Set_KEY(key string, val string) {
+	//	my($warn_val) = $val || ''
+	//	if option.Debug("tasks") {
+	//		warn "Dirty $field => $warn_val\n"
+	//	}
+
+	var err error = nil
+
+	switch key {
+	case "tid", "todo_id":
+		// t.Tid = strconv.Atoi(val)
+		panic("set_KEY(tid) not allowd")
+	case "type":
+		t.Type = val[0]
+	case "title":
+		t.Title = val
+	case "parents":
+		t.set_parent_ids(val)
+
+	case "modified":
+		t.Modified = val
+	case "created":
+		t.Created = val
+	case "completed":
+		t.Completed = val
+	case "category":
+		t.Category = val
+		panic(".... code category update")
+
+	case "issomeday":
+		t.IsSomeday, err = strconv.ParseBool(val)
+	case "context":
+		t.Context = val
+		panic(".... code context update")
+	case "timeframe":
+		t.Timeframe = val
+		panic(".... code timeframe update")
+	case "due":
+		t.Due = val
+	case "doit":
+		t.Doit = val
+	case "nextaction":
+		t.IsNextaction, err = strconv.ParseBool(val)
+	case "tickledate":
+		t.Tickledate = val
+
+	case "Parents":
+		log.Printf(".... code set_KEY parents")
+		//? t.Set_parent_ids(val)
 		return
-	}
-	if ($field eq "Children") {
-		$ref->set_children_ids($val)
+	case "Children":
+		log.Printf(".... code set_KEY children")
+		//? t.Set_children_ids(val)
 		return
-	}
-	if ($field eq "Tags") {
+	case "Tags":
 		//##BUG### tag setting not done yet
-		panic("Can't set tags yet")
+		log.Printf(".... code set_KEY tags")
+
+	default:
+		panic("task.Set_KEY: Unknown key " + key)
 	}
 
-
-//	unless (defined $val) {
-//		panic("Won't set $field to undef\n")
-//	}
-
-	// skip setting if already set that way!
-	return $ref if defined($ref->{$field}) && defined($val)
-		    && $ref->{$field} eq $val
-
-	$ref->{$field} = $val
-
-	return $ref if ($field eq "_hint"); # don't drop into dirty
-
-	$ref->{_dirty}{$field}++
-
-	my($warn_val) = $val || ''
-	if option.Debug("tasks") {
-		warn "Dirty $field => $warn_val\n"
+	if err != nil {
+		panic("Conversion error for " + key + ": " + val)
 	}
 
-	return $ref
+	t.set_dirty(key)
 }
-
-*/
 
 func (self *Task) Update() {
 	gtd_update(self)

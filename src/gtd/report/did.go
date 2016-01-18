@@ -33,13 +33,32 @@ NAME:
 
 */
 
+import "fmt"
+
+import "gtd/option"
 import "gtd/meta"
 
 //-- update listed projects/actions doit date to today
 func Report_did(args []string) int {
-	for _, t := range meta.Pick(args) {
-		t.Doit = get_today()
-		t.Update()
+	date := option.Today(0)
+
+	o_date := option.Date("Date", "")
+	if o_date != "" {
+		date = o_date
 	}
-	return 0
+
+	// count number of tasks marked as completed
+	done := 0
+	for _, t := range meta.Pick(args) {
+		t.Set_doit(date)
+		t.Update()
+
+		fmt.Printf("Task %d tagged as worked on as of %s\n", t.Tid, date)
+		done++
+	}
+
+	if done > 0 {
+		return 0
+	}
+	return 1
 }

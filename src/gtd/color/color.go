@@ -13,150 +13,159 @@ import "gtd/task"
 var Type = 0
 var Incolor = false
 
-var Pri_terminal = map[string]int {
-	"NEXT"	: 1,
-	"DONE"	: 9,
+var Pri_terminal = map[string]int{
+	"NEXT": 1,
+	"DONE": 9,
 }
 
-const ESC = "\027"
+const ESC = "\x1b"
 
-var Fg_terminal = map[string]string { 
-	"BOLD":	"1",
-	"STRIKE":	"9",
+var Fg_terminal = map[string]string{
+	"BOLD":   "1",
+	"STRIKE": "9",
 
-	"BLACK":	"0;30",
-	"RED":		"0;31",
-	"GREEN":	"0;32",
-	"BROWN":	"0;33",		// dark yellow
-	"NAVY":		"0;34",		// dark blue
-	"PURPLE":	"0;35",	
-	"CYAN":		"0;36",
-	"GREY":		"0;37",
-	"GRAY":		"0;37",
-//light
-	"SILVER":	"1;30",		// light black
-	"PINK":		"1;31",		// light red
-	"LIME":		"1;32",		// light green
-	"YELLOW":	"1;33",		// light brown
-	"BLUE":		"1;34",		
-	"MAGENTA":	"1;35",		// light purple
-	"AQUA":		"1;36",		// light cyan
-	"WHITE":	"1;37",		// light grey :-)
-	"NONE":		"0",
+	"BLACK":  "0;30",
+	"RED":    "0;31",
+	"GREEN":  "0;32",
+	"BROWN":  "0;33", // dark yellow
+	"NAVY":   "0;34", // dark blue
+	"PURPLE": "0;35",
+	"CYAN":   "0;36",
+	"GREY":   "0;37",
+	"GRAY":   "0;37",
+	//light
+	"SILVER":  "1;30", // light black
+	"PINK":    "1;31", // light red
+	"LIME":    "1;32", // light green
+	"YELLOW":  "1;33", // light brown
+	"BLUE":    "1;34",
+	"MAGENTA": "1;35", // light purple
+	"AQUA":    "1;36", // light cyan
+	"WHITE":   "1;37", // light grey :-)
+	"NONE":    "0",
 }
 
-var Bg_terminal = map[string]string { 
-	"BLACK":	"40", "BK":		"40",
-	"RED":		"41",
-	"GREEN":	"42",
-	"BROWN":	"43",		// dark yellow
-	"NAVY":		"44",		// dark blue
-	"PURPLE":	"45",	
-	"CYAN":		"46",
-	"GRAY":		"47", "GREY":		"47",
-//light
-	"SILVER":	"40",		// light black
-	"PINK":		"41",		// light red
-	"LIME":		"42",		// light green
-	"YELLOW":	"43",		// light brown
-	"BLUE":		"44",		
-	"MAGENTA":	"45",		// light purple
-	"AQUA":		"46",		// light cyan
-//	"WHITE":	"47",		// light grey :-)
+var Bg_terminal = map[string]string{
+	"BLACK": "40", "BK": "40",
+	"RED":    "41",
+	"GREEN":  "42",
+	"BROWN":  "43", // dark yellow
+	"NAVY":   "44", // dark blue
+	"PURPLE": "45",
+	"CYAN":   "46",
+	"GRAY":   "47", "GREY": "47",
+	//light
+	"SILVER":  "40", // light black
+	"PINK":    "41", // light red
+	"LIME":    "42", // light green
+	"YELLOW":  "43", // light brown
+	"BLUE":    "44",
+	"MAGENTA": "45", // light purple
+	"AQUA":    "46", // light cyan
+	//	"WHITE":	"47",		// light grey :-)
 
-	"WHITE":	"49",
-	"NONE":		"0",
+	"WHITE": "49",
+	"NONE":  "0",
 }
-
 
 func Off() string {
-	return FgBg("", "");
+	return FgBg("", "")
 }
 
 func On(fg string) string {
-	return FgBg(fg, "");
+	return FgBg(fg, "")
 }
 
 func FgBg(fg, bg string) string {
-	//## print "color: Type:Type Incolor:$Incolor\n";
-	if (Type == 0) {
-		guess_type();
+	//fmt.Printf("color: Type:%d Incolor:%t, fg:%s\n", Type, Incolor, fg)
+
+	if Type == 0 {
+		guess_type()
 	}
 
-	if (Type == 1) {
-		return "";
+	if Type == 1 {
+		return ""
 	}
 
-	if (Type == 2) {
+	if Type == 2 {
 		color := ""
 
 		if fg == "" {
 			if Incolor {
 				color = task.Join(ESC, "[0m")
 			}
-			Incolor = false;
-			return color;
+			Incolor = false
+			return color
 		}
 
-		fg = strings.ToUpper(fg);
-		bg = strings.ToUpper(fg);
+		// fg = strings.ToUpper(fg)
+		// bg = strings.ToUpper(bg)
 
-		cv := Fg_terminal[fg];
-		bv := Bg_terminal[bg];
-
-		//print "$fg=>cv:$cv, $bg=>bv:$bv\n";
-
-		if cv != "" {
-			color = task.Join(ESC, "[", cv, "m")
+		cv, ok := Fg_terminal[fg]
+		if ok {
+			color = task.Join(color, ESC, "[", cv, "m")
+		} else {
+			fmt.Printf("Invalid fg color '%s'\n", fg)
+			panic("")
 		}
-		if bv != "" {
-			color = task.Join(ESC, "[", bv, "m")
+		// fmt.Printf("fg=%s, cv=%v, bv=%v", fg, bg, cv)
+
+		if bg != "" {
+			bv, ok := Bg_terminal[bg]
+			if ok {
+				color = task.Join(color, ESC, "[", bv, "m")
+			} else {
+				fmt.Printf("Invalid bg color '%s'\n", bg)
+			}
 		}
-		Incolor = true;
-		return color;
+		if color != "" {
+			Incolor = true
+		}
+		return color
 	}
 
-	if (Type == 3) {
+	if Type == 3 {
 		color := ""
 		if fg == "" {
 			if Incolor {
-				Incolor = false;
+				Incolor = false
 				return "</font>"
 			}
 			return ""
 		}
 
-		fg = strings.ToLower(fg);
+		fg = strings.ToLower(fg)
 		if Incolor {
 			color = "</font>"
 		}
 
 		color = task.Join(color, "<font color=> ", fg, ">")
-		Incolor = true;
-		return color;
+		Incolor = true
+		return color
 	}
 
 	return ""
 }
 
-func print_color(fg string) {
+// print_color => color.Print
+func Print(fg string) {
 	fmt.Print(On(fg))
 }
 
 func guess_type() {
-	if (option.Get("Color", "guess") != "guess") {
+	if option.Get("Color", "guess") != "guess" {
 		Type = 1
 		return
 	}
 
-	if (os.Getenv("TERM") != "") {
+	if os.Getenv("TERM") != "" {
 		// fmt.Println("TERM: color mode TERM");
 
 		Type = 2
 		return
-	} 
+	}
 
-	if (os.Getenv("HTTP_ACCEPT") != "") {
+	if os.Getenv("HTTP_ACCEPT") != "" {
 		Type = 3
 		return
 	}
@@ -165,7 +174,8 @@ func guess_type() {
 	Type = 1
 }
 
-// color.Ref displays the 
+//***BUG*** should be named color.Task and be part of display
+// color.Ref displays the
 func Ref(ref *task.Task) {
 	color_ref(ref, os.Stdout)
 }
@@ -175,12 +185,12 @@ func color_ref(ref *task.Task, fd io.Writer) {
 		fmt.Fprint(fd, Off())
 		return
 	}
-		
-	fg := pick_color_fg(ref);
-//	my($bg) = pick_color_bg($ref);
+
+	fg := pick_color_fg(ref)
+	//	my($bg) = pick_color_bg($ref);
 	bg := ""
 
-	fmt.Fprint(fd, FgBg(fg, bg));
+	fmt.Fprint(fd, FgBg(fg, bg))
 }
 
 func pick_color_pri(ref *task.Task) string {
@@ -193,7 +203,6 @@ func pick_color_pri(ref *task.Task) string {
 	// pick pri
 	// pick category
 
-
 	if ref.IsNextaction {
 		return "BOLD"
 	}
@@ -204,50 +213,62 @@ func pick_color_pri(ref *task.Task) string {
 	return ""
 }
 
-func pick_color_fg(ref *task.Task) string {
-//?	return '' unless defined $ref;
+func pick_color_fg(t *task.Task) string {
+	//?	return '' unless defined $ref;
 	// pick context
 	// pick pri
 	// pick category
 
-//	return "RED" if $ref->is_nextaction();
-//?	return "GREY" if $ref->is_someday();
-//?	return "STRIKE" if $ref->get_completed();
+	//	if t.Is_nextaction() {
+	//		return "RED"
+	//	}
+	if t.Is_someday() {
+		return "GREY"
+	}
+	if t.Is_completed() {
+		return "STRIKE"
+	}
 
-//?	my($pri) = $ref->get_priority();
-//?	return "RED"   if $pri <= 1;
-//?	return "PINK"  if $pri <= 2;
-//?	return "GREEN" if $pri <= 3;
-//?	return "BLACK" if $pri <= 4;
-//?	return "CYAN"  if $pri > 4;
+	switch t.Priority {
+	case 1:
+		return "RED"
+	case 2:
+		return "PINK"
+	case 3:
+		return "GREEN"
+	case 4:
+		return "BLACK"
+	default:
+		return "CYAN"
+	}
 
-	return "";
+	return ""
 }
 
 func pick_color_bg(ref *task.Task) string {
-//?	my($ref) = @_;
+	//?	my($ref) = @_;
 
-//?	return '' unless defined $ref;
+	//?	return '' unless defined $ref;
 	// pick context
 	// pick pri
 	// pick category
 
-//	my($context) = uc($ref->get_context());
+	//	my($context) = uc($ref->get_context());
 
-//	switch context {
-//	"CC":	return "YELLOW" if $context eq 'CC';
-//	"HOME:	return "RED"    if $context eq 'HOME';
-//	"OFFICE":	return "BLUE"   if $context eq 'OFFICE';
-//	"COMPUTER"
-//	return "CYAN"   if $context eq 'COMPUTER';
-//	return "PURPLE" if $context eq 'MAUREEN';
-//	return "GREY"   if $context eq 'HOME';
+	//	switch context {
+	//	"CC":	return "YELLOW" if $context eq 'CC';
+	//	"HOME:	return "RED"    if $context eq 'HOME';
+	//	"OFFICE":	return "BLUE"   if $context eq 'OFFICE';
+	//	"COMPUTER"
+	//	return "CYAN"   if $context eq 'COMPUTER';
+	//	return "PURPLE" if $context eq 'MAUREEN';
+	//	return "GREY"   if $context eq 'HOME';
 
 	//return "YELLOW" if $ref->get_type eq 'm';	# Value
 	//return "YELLOW" if $ref->get_type eq 'v';	# Vision
 	//return "BLUE" if $ref->get_type eq 'o';	# Vision
 
-	return "";
+	return ""
 }
 
 func Nl(fd io.Writer) {
@@ -255,10 +276,10 @@ func Nl(fd io.Writer) {
 		fd = os.Stdout
 	}
 
-	color := Off();
+	color := Off()
 
 	if Type == 3 {
-		color = task.Join(color, "<br>");
+		color = task.Join(color, "<br>")
 	}
 
 	fmt.Fprintln(fd, color)

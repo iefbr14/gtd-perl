@@ -6,7 +6,6 @@ import "log"
 import "time"
 import "strconv"
 
-
 //=============================================================================
 var option_Debug bool
 var options map[string]string
@@ -89,7 +88,7 @@ func Set(key string, val string) {
 }
 
 func Get(key string, deflt string) string {
-	key = option_key(key)		// map alias
+	key = option_key(key) // map alias
 	val, ok := options[key]
 	if ok {
 		return val
@@ -99,7 +98,7 @@ func Get(key string, deflt string) string {
 		fmt.Printf("Fetch Option %s == nil\n", key)
 	}
 	if options == nil {
-		options = make(map[string]string);
+		options = make(map[string]string)
 	}
 	if deflt != "" {
 		options[key] = deflt
@@ -137,6 +136,26 @@ func Int(key string, deflt int) int {
 	return rval
 }
 
+//***BUG*** option.Date needs to take,vet,use internal date format!
+func Date(key string, deflt string) string {
+	val := Get(key, "")
+
+	if val == "" {
+		return deflt
+	}
+
+	/*?
+	rval, err := strconv.Atoi(val)
+	if err != nil {
+		fmt.Printf("Conversion failure %s -> %s", key, val)
+		Set(key, "0")
+		return 0
+	}
+	return rval
+	?*/
+	return val
+}
+
 //==============================================================================
 // Magic opion.Flag parsing to load options from command line
 //------------------------------------------------------------------------------
@@ -145,29 +164,29 @@ type option string
 func (i *option) String() string {
 	s := string(*i)
 
-	return fmt.Sprintf("%s: %s", s, options[s]);
+	return fmt.Sprintf("%s: %s", s, options[s])
 }
 
 func (i *option) Set(value string) error {
 	s := string(*i)
-	log.Printf("Setting: %s => %s\n", s, value);
+	log.Printf("Setting: %s => %s\n", s, value)
 	if options == nil {
-		options = make(map[string]string);
+		options = make(map[string]string)
 	}
-	options[s] = value;
+	options[s] = value
 	return nil
 }
 
 func Flag(key string, f string) {
 	var key_val option
 
-	key_val = option(key);
+	key_val = option(key)
 
 	if option_Debug {
-		log.Printf("### Coding option.Flag -%s %s\n", f, key);
+		log.Printf("### Coding option.Flag -%s %s\n", f, key)
 	}
 
-	flag.Var(&key_val, f, key);
+	flag.Var(&key_val, f, key)
 }
 
 //------------------------------------------------------------------------------
@@ -176,16 +195,16 @@ type filter string
 func (i *filter) String() string {
 	s := string(*i)
 
-	return fmt.Sprintf("%s: %s", s, options[s]);
+	return fmt.Sprintf("%s: %s", s, options[s])
 }
 
 func (i *filter) Set(value string) error {
 	s := string(*i)
-	log.Printf("Setting: %s => %s\n", s, value);
+	log.Printf("Setting: %s => %s\n", s, value)
 	if options == nil {
-		options = make(map[string]string);
+		options = make(map[string]string)
 	}
-	options[s] = value;
+	options[s] = value
 
 	return nil
 }
@@ -195,15 +214,14 @@ func Filter(key, f, desc string) {
 
 	var key_val filter
 
-	key_val = filter(key);
+	key_val = filter(key)
 
 	if option_Debug {
-		log.Printf("### Coding option.Filter -%s %s\n", f, key);
+		log.Printf("### Coding option.Filter -%s %s\n", f, key)
 	}
 
-	flag.Var(&key_val, f, key);
+	flag.Var(&key_val, f, key)
 }
-
 
 //==============================================================================
 // Debug
@@ -259,16 +277,10 @@ func Debug(what string) {
 }
 
 //==============================================================================
-var Today = time.Now()
-
-func get_today(days int) time.Time {
-	if days == 0 {
-		return Today
+func Today(days int) string {
+	t := time.Now()
+	if days > 0 {
+		t.AddDate(0, 0, days) // years,months,days
 	}
-
-	panic("write get_today")
-	//	Today = time.Now()
-	//       my($when) = $now + 60*60*24 * $later; # 7 days
-	//
-	//	return fmt.Sprintf("%04Y-%02m-%02d \%T", gmtime($when));
+	return t.Format("2006-01-02")
 }

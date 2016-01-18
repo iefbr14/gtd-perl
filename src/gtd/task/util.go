@@ -113,11 +113,32 @@ func Join(args ...string) string {
 	if l == 0 {
 		return ""
 	}
-	bs := make([]byte, 0, l)
+	bs := make([]byte, l)
 
 	bl := 0
 	for _, s := range args {
 		bl += copy(bs[bl:], s)
 	}
 	return string(bs)
+}
+
+// task.EmptyLine return true if it is a blank or comment line
+func EmptyLine(s string) bool {
+	for _, c := range s {
+		// line starts with blanks
+		if c == ' ' || c == '\t' {
+			continue
+		}
+
+		// first non-blank character is a '#'
+		if c == '#' {
+			return true
+		}
+
+		// nope, not a comment line
+		return false
+	}
+
+	// nothing but blanks it must be empty
+	return true
 }

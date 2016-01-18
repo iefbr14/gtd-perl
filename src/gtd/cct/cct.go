@@ -25,37 +25,36 @@ var (
 	Tags CCT
 )
 
-var maps = map[string]CCT{
-	"Category":  Categories,
-	"Context":   Contexts,
-	"Timeframe": Timeframes,
-	"Tags":      Tags,
+var maps = map[string]*CCT{
+	"Category":  &Categories,
+	"Context":   &Contexts,
+	"Timeframe": &Timeframes,
+	"Tags":      &Tags,
 }
 
 func table(mapname string) *CCT {
-	if cct, ok:= maps[mapname]; ok {
-		return &cct
+	if cct, ok := maps[mapname]; ok {
+		return cct
 	}
 
-	panic("Unknown CCT table type: "+mapname);
+	panic("Unknown CCT table type: " + mapname)
 }
-
 
 func Use(mapname string) *CCT {
 	if cct_debug {
-		log.Printf("cct.Use(%s): %v", mapname, table(mapname));
+		log.Printf("cct.Use(%s): %v", mapname, table(mapname))
 	}
-	cct := table(mapname);
+	cct := table(mapname)
 
 	if cct.name == nil {
-		cct.name = make(map[int]string);
-		cct.desc = make(map[int]string);
-		cct.id = make(map[string]int);
+		cct.name = make(map[int]string)
+		cct.desc = make(map[int]string)
+		cct.id = make(map[string]int)
 	}
-	return cct;
+	return cct
 }
 
-func (cct *CCT) Define(id int, name,desc string) {
+func (cct *CCT) Define(id int, name, desc string) {
 	//***BUG*** we should check to see if already defined!
 	cct.name[id] = name
 	cct.desc[id] = desc
@@ -65,6 +64,10 @@ func (cct *CCT) Define(id int, name,desc string) {
 func (cct *CCT) Name(id int) string {
 	//***BUG*** we should check to see if not defined!
 	return cct.name[id]
+}
+
+func (cct *CCT) Id(name string) int {
+	return cct.id[name]
 }
 
 /*?
@@ -83,14 +86,6 @@ func (cct *CCT) Set(key int, val string) {
 		warn "###BUG### Can't update $key => $val\n";
 		$ref->{$key} = $val;
 	}
-}
-
-func (cct *CCT) Get(int) {
-	my($hash, $val) = @_;
-
-	return unless defined $val;
-	return unless defined $hash->{$val};
-	return $hash->{$val};
 }
 
 func keys(mapname string) []string {

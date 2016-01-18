@@ -38,17 +38,23 @@ func Report_init(args []string) int {
 	home := os.Getenv("HOME")
 	todo := home + "/.todo"
 
-	
-	  	unless (-d todo) {
-	  		mkdir $todo, 0700 or panic("Can't mkdir $todo ($!)\n");
-	  		print "mkdir $todo\n";
-	  	}
+	status := os.Stat(todo)
+	if !status.IsDir() {
+		err := os.Mkdir(todo, 0700)
+		if err != nil {
+			panic("Can't mkdir $todo ($!)\n")
+		}
+		fmt.Printf("mkdir $todo\n")
+	}
 
-	  	my($ini) = "$todo/Access.yaml";
-	  	unless (-f $ini) {
-	  		open(my $fh, '>", $ini) or panic("Can"t create $ini ($!)\n");
-	  ?*/
-fmt.Print(fh, `
+	ini := todo + "/Access.yaml"
+	status := os.Stat(todo)
+	if err != nil {
+		fh, err := os.Create(ini)
+		if err != nil {
+			panic("Can't create $ini ($!)\n")
+		}
+		fmt.Fprintf(fh, "%s", `
 gtd:
       host:      localhost
       dbname:    gtd
@@ -57,20 +63,29 @@ gtd:
       prefix:    gtd_
 `)
 
-fmt.Print(fh, `
-  resource:
-	      category:
-	  	Where: personal
-	      context:
-	  	Context: personal
-	      goal:
-	          Golename: personal
-	      role:
-	          Rolename: personal
+		err := os.Close(fh)
+
+	}
+	ini := todo + "/Access.yaml"
+	status := os.Stat(todo)
+	if err != nil {
+		fh, err := os.Create(ini)
+		if err != nil {
+			panic("Can't create $ini ($!)\n")
+		}
+		fmt.Fprintf(fh, "%s", `
+category:
+	Where: personal
+context:
+	Context: personal
+goal:
+	Golename: personal
+role:
+	Rolename: personal
 `)
-	fh.Close()
-	  		print("created $ini\n")
-	  		print("Please set/verify the values in [gtd] section\n")
-	  	}
+		fh.Close()
+		fmt.Print("created $ini\n")
+		fmt.Print("Please set/verify the values in [gtd] section\n")
+	}
 	return 0
 }

@@ -1,4 +1,4 @@
-package report
+package rc
 
 /*
 NAME:
@@ -7,7 +7,7 @@ rc
 
 =head1 USAGE
 
-rc 
+rc
 
 =head1 REQUIRED ARGUMENTS
 
@@ -15,7 +15,7 @@ rc
 
 =head1 DESCRIPTION
 
-rc is 
+rc is
 
 =head1 DIAGNOSTICS
 
@@ -45,166 +45,206 @@ Started life as a copy of the bulkload but tuned for more interactive processing
 
 */
 
-use Term::ReadLine;
+import "os"
+import "os/exec"
+import "fmt"
+import "regexp"
+import "strings"
 
-use Hier::Meta;
-use Hier::Option;
-use Hier::Format;
-use Hier::Sort;
-use Hier::Prompt;
+import "gtd/task"
+import "gtd/meta"
+import "gtd/display"
+import "gtd/option"
 
-my $Parent;
-my $Child;
-my $Type;
-my $Info = {};
+//? use Term::ReadLine
+import "github.com/chzyer/readline"
 
-my $Mode = option("Mode", "task");
+//? use Hier::Prompt
 
-my $Filter = '-';
-my $Format = '-';
-my $Header = '-';
-my $Sort   = '-';
+var Parent *task.Task
+var Child *task.Task
+var Type byte
+var Info = map[string]string{}
 
-my $Prompt = '>';
-our $Debug = 0;
+var Mode = option.Get("Mode", "task")
 
-my($Pid) = '';	// current Parrent task;
-my($Pref);	// current Parrent task reference;
+var Filter string = "-"
+var Format string = "-"
+var Header string = "-"
+var Sort_mode string = "-"
 
-my($Parents) = {};	// parents we know about
+var Prompt string = "> "
+var Debug bool = true
 
-my($Cmds) = {
-	help    => \&rc_help,
+var Pid int = 0     // current Parrent task
+var Pref *task.Task // current Parrent task reference
 
-	"up"	=> \&rc_up,
-	'p'	=> \&rc_print,
+var Parents = map[byte]*task.Task{} // parents we know about
 
-	option	=> \&rc_option,
-	filter  => \&rc_filter,
-	format  => \&rc_format,
-	sort    => \&rc_sort,
+var rc_cmds_map = map[string]func(...string){
+	"help": rc_help,
 
-	clear   => \&rc_clear,
-	gtd     => \&rc_clear,
-};
+	"up": rc_up,
+	"p":  rc_print,
 
-//-- rc - Run Commands
-func Report_rc(args []string) {
-	// init from command line.
-	// there are commands to override later
-	$Filter = option("Filter") || '-';
-	$Format = option("Format") || '-';
-	$Sort   = option("Sort")   || '-';
-
-//	my $OUT = $term->OUT || \*STDOUT;
-//       print $OUT $res, "\n" unless $@;
-
-	for (;;) {
-		prompt($Prompt, '#');
-		last unless defined $_;
-
-		eval {
-			rc($_);
-		}; if ($@) {
-			print "? $@\n";
-		}
-	}
-	rc_save();
+	"option": rc_option,
+	"filter": rc_filter,
+	"format": rc_format,
+	"sort":   rc_sort,
 }
 
-sub rc {
-	my($line) = @_;
+//-- rc - Run Commands
+func Report_rc(args []string) int {
+	// init from command line.
+	// there are commands to override later
+	Filter = option.Get("Filter", "-")
+	Format = option.Get("Format", "-")
+	Sort_mode = option.Get("Sort", "-")
+
+	rl, err := readline.New(Prompt)
+	if err != nil {
+		panic(err)
+	}
+	defer rl.Close()
+
+	for {
+		line, err := rl.Readline()
+		if err != nil { // io.EOF
+			break
+		}
+		rc(line)
+	}
+	rc_save()
+	return 0
+}
+
+func rc(line string) {
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Printf("Recovered from: %v\n", line)
+		}
+	}()
+
+	//## skip blank lines, comments
+	if task.EmptyLine(line) {
+		return
+	}
 
 	//## remove leading white space from commands.
-	$line =~ s/^\s+//;
+	line = strings.Trim(line, " \t")
 
 	//##   :cmd  =>  rc command mode (noop here)
-	if ($line =~ s/^\://) {
+	if line[0] == ':' {
+		line = line[1:]
 		//## continue this is redundent
 	}
 
-	if ($line =~ s/^set\s+//) {
-		//# continue as if set wasn't said
-	}
-
-	if ($line =~ s/^debug\s*//) {
-		if ($line) {
-			debug($line);
-			return;
-		}
-
-		$Debug = 1;
-		print "Debug rc on\n";
-		return;
-	}
-
-	if ($line =~ s/^\?//) {
-		rc_help($line);
-		return;
+	if line[0] == '?' {
+		rc_help(line[1:])
+		return
 	}
 
 	//##   .tid  =>  kanban .tid
-	if ($line =~ m/^\./) {
-		report("kanban", split(' ', $line));
-		return;
+	if line[0] == '.' {
+		args := strings.Split(line, " \t")
+		Do_report("kanban", args)
+		return
 	}
 
 	//##   /key  =>  search  key
-	if ($line =~ s/^\///) {
-		rc_find_tasks($line);
-		return;
+	if line[0] == '/' {
+		rc_find_tasks(line)
+		return
 	}
 
 	//##   !cmd  =>  shell out for cmd
-	if ($line =~ s/^\!//) {
-		system($line);
-		return;
+	if line[0] == '!' {
+		if err := exec.Command(line[1:]).Run(); err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+		return
 	}
 
 	// check for task member updates ie: "key:value" pairs
-	if ($line =~ s/^(\w+)\:\s*//) {
-		rc_set_key($1, $line);
-		return;
+	if key, _ := task.IsKeyValue(line); key != "" {
+		fmt.Println("key:val not supported")
+		//?if (line =~ s/^(\w+)\:\s*//)
+		//?rc_set_key(r[0], line)
+		return
 	}
 
-	my($cmd, @args) = split(/[\s;]+/, $line);
+	args := strings.SplitN(line, " \t:", 2)
+	cmd := args[0]
 
-	if (defined $Cmds->{$cmd}) {
-		my($func) = $Cmds->{$cmd};
+	if cmd == "clear" {
+		fmt.Print("\x1b[H\x1b[2J")
 
-		&$func(@args);
-		return;
+		args = strings.SplitN(args[1], " \t", 2)
+		cmd = args[0]
+		//# continue as if gtd or clear  wasn't said
 	}
 
-	return load_task($cmd) if $cmd =~ /^\d+$/;
+	if cmd == "set" || cmd == "gtd" {
+		args = strings.SplitN(args[1], " \t", 2)
+		cmd = args[0]
+		//# continue as if set wasn't said
+	}
 
-	rc_save();
-	report($cmd, @args);
+	if cmd == "debug" {
+		if len(args) > 0 {
+			option.Debug(args[0])
+			return
+		}
+
+		Debug = true
+		fmt.Print("Debug rc on\n")
+		return
+	}
+
+	if rc, ok := rc_cmds_map[cmd]; ok {
+		rc(args[1])
+		return
+	}
+
+	if task.IsTask(cmd) {
+		load_task(cmd)
+		return
+	}
+
+	rc_save()
+	args = strings.Split(args[1], " \t")
+	Do_report(args[0], args[1:])
 }
 
-sub rc_set_key {
-	my($key) = shift(@_);
+func rc_set_key(args ...string) {
+	key := args[0]
 
-	unless (defined $Pref) {
-		print "No task set.\n";
-		return;
+	if Pref == nil {
+		fmt.Print("No task set.\n")
+		return
 	}
-	$Pref->set_KEY($key, join(' ', @_));
+	//Pref.set_KEY(key, task.Join(args[1:]...)
+	Pref.Set_KEY(key, args[1])
 }
 
-sub rc_save {
-	return unless $Pref;
-
-	$Pref->update() if $Pref->is_dirty();
-}
-
-sub rc_help {
-	if (@_ && $_[0] ne '') {
-		report("help", @_);
-		return;
+func rc_save() {
+	if Pref == nil {
+		return
 	}
 
-print << "EOF";
+	if Pref.Is_dirty() {
+		Pref.Update()
+	}
+}
+
+func rc_help(args ...string) {
+	if len(args) > 0 {
+		//		Do_report("help", args)
+		return
+	}
+
+	fmt.Print(`
    #        comments (and blank lines ignored)
    !        shell commands
    /        search and set task
@@ -221,414 +261,422 @@ print << "EOF";
    field:    to change any field in the current task
 
    ....      to run any current report
-EOF
+`)
 }
-   
 
-sub rc_up {
-	unless (defined $Pref) {
-		print "No task set.\n";
-		return;
+func rc_up(args ...string) {
+	if Pref == nil {
+		fmt.Print("No task set.\n")
+		return
 	}
 
-	load_task_ref("Parent", $Pref->get_parent());
+	load_task_ref("Parent", Pref.Parent())
 }
 
-sub rc_option {
-	my($option, $value) = @_;
+func rc_option(args ...string) {
+	key := args[0]
+	val := args[1]
 
-	my($old) = option($option, $value);
+	old := option.Get(key, val)
 
-	print "Option $option: $old => $value\n";
+	fmt.Printf("Option option: %s => %s\n", old, val)
 }
 
-sub rc_print {
-	if (scalar(@_) == 0) {
-		display_task($Pref);
-		return;
+func rc_print(args ...string) {
+	if len(args) == 0 {
+		display.Task(Pref, "")
+		return
 	}
 
-	for my $tid (@_) {
-		my($ref) = gtd.Meta_find($tid);
+	for _, task_id := range args {
+		t := meta.Find(task_id)
 
-		unless ($ref) {
-			print "? not found: $ref\n";
-			next;
+		if t == nil {
+			fmt.Print("? not found: ref\n")
+			continue
 		}
-		display_task($ref);
+		display.Task(t, "")
 	}
 }
 
 //==============================================================================
 // Mode setting
 //------------------------------------------------------------------------------
-sub rc_filter {
-	my($mode) = @_;
-
-	unless ($mode) {
-		print "Filter: $Filter\n";
-		return;
+func rc_filter(args ...string) {
+	if len(args) == 0 {
+		fmt.Printf("Filter: %s\n", Filter)
+		return
 	}
-	
-	print "Filter $Filter => $mode\n";
 
-	set_option("Filter", dash_null($mode));
+	mode := args[0]
+
+	fmt.Printf("Filter %s => %s\n", Filter, mode)
+
+	option.Set("Filter", dash_null(mode))
 	if mode == "-" {
-		meta.Reset_filters("+live");
+		//? meta.Reset_filters("+live")
 	} else {
-		meta.Reset_filters(mode);
+		//? meta.Reset_filters(mode)
 	}
 
-	$Filter = $mode;
+	Filter = mode
 }
 
-sub rc_format {
-	my($mode) = @_;
-
-	unless ($mode) {
-		print "Format $Format\n";
-		return;
+func rc_format(args ...string) {
+	if len(args) == 0 {
+		fmt.Printf("Format: %s\n", Format)
+		return
 	}
-	
-	print "Format $Format => $mode\n";
 
-	set_option("Format", dash_null($mode));
-	display_mode($mode eq '-' ? "task" : $mode);
+	mode := args[0]
 
-	$Format = $mode;
+	fmt.Printf("Format %s => %s\n", Format, mode)
+
+	option.Set("Format", dash_null(mode))
+
+	if mode == "-" {
+		display.Mode("task")
+	} else {
+		display.Mode(mode)
+	}
+
+	Format = mode
 }
 
-sub rc_header {
-	my($mode) = @_;
-
-	unless ($mode) {
-		print "Header $Header\n";
-		return;
+func rc_header(args ...string) {
+	if len(args) == 0 {
+		fmt.Printf("Header: %s\n", Header)
+		return
 	}
-	
-	print "Header $Header => $mode\n";
 
-	set_option("Header", dash_null($mode));
-	display_mode($mode eq '-' ? "task" : $mode);
+	mode := args[0]
 
-	$Header = $mode;
+	fmt.Printf("Header %s => %s\n", Header, mode)
+
+	option.Set("Header", dash_null(mode))
+
+	/*
+		if mode == "-" {
+			display.Mode("task")
+		} else {
+			display.Mode(mode)
+		}
+	*/
+
+	Header = mode
 }
 
-sub rc_sort {
-	my($mode) = @_;
-
-	unless ($mode) {
-		print "Sort $Sort\n";
-		return;
+func rc_sort(args ...string) {
+	if len(args) == 0 {
+		fmt.Print("Sort: %s\n", Sort_mode)
+		return
 	}
+	mode := args[0]
 
-	print "Sort $Sort => $mode\n";
+	fmt.Printf("Sort %s => %s\n", Sort_mode, mode)
 
-	set_option("Sort", dash_null($mode));
-	sort_mode($mode eq '-" ? "^title' : $mode);
+	option.Set("Sort", dash_null(mode))
+	//?sort_mode(mode == '-" ? "^title' : mode)
 
-	$Sort = $mode;
+	Sort_mode = mode
 }
 
 //==============================================================================
 // Utility builtins
 //------------------------------------------------------------------------------
-sub rc_clear {
-	//##BUG### this should call ff and have it
-	//######## clear the screen in termial mode
 
-	local($|) = 1;
-	print "\e[H\e[2J";
-
-	if (@_) {
-		rc(join(' ", @_));	// shouldn"t have to do this
-	}
+func rc_prompt(args ...string) {
+	Prompt = args[0]
 }
 
-sub rc_prompt {
-	my($prompt) = @_;
-
-}
-
-sub load_task {
-	my($tid) = @_;
-
-	rc_save();
+func load_task(tid string) {
+	rc_save()
 
 	// get context
-	my($ref) = gtd.Meta_find($tid);
-	unless ($ref) {
-		print "Can't find tid: $tid\n";
-		return;
+	t := meta.Find(tid)
+	if t == nil {
+		fmt.Print("Can't find tid: tid\n")
+		return
 	}
 
-	load_task_ref("Current", $ref);
+	meta.Set_current(task.Tasks{t})
 }
 
-sub load_task_ref {
-	my($why, $ref) = @_;
+func load_task_ref(why string, t *task.Task) {
+	Pref = t
+	Pid = t.Tid
 
-	$Pref = $ref;
-	$Pid = $ref->get_tid();
+	kind := t.Type
+	title := t.Title
 
-	my($type) = $ref->get_type();
-	my($title) = $ref->get_title();
+	Parents[kind] = Pref
 
-	$Parents->{$type} = $Pid;
+	Prompt = fmt.Sprintf("%d> ")
+	// rb.SetPrompt(Prompt)
+	meta.Set_current(task.Tasks{Pref})
+	//	option.Set("Current", Pid)
 
-	$Prompt = "$Pid>";
-	set_option("Current", $Pid);
-		
-	print "$why($type): $Pid - $title\n";
+	fmt.Printf("%s(%c): %s - %s\n", why, kind, Pid, title)
 }
 
 //==============================================================================
 
-sub fixme {
-	my($action) = \&add_nothing;
-	my($desc) = '';
+func fixme() {
+	/*?
+	my(action) = \&add_nothing
+	my(desc) = ''
 
-	my(@lines);
+	my(@lines)
 
 	//---------------------------------------------------
 	// default values
 	if (/^pri\D+(\d+)/) {
-		set_option("Priority", $1);
-		next;
+		option.Set("Priority", 1)
+		next
 	}
 	if (/^limit\D+(\d+)/) {
-		set_option("Limit", $1);
-		next;
+		option.Set("Limit", 1)
+		next
 	}
 	if (/^format\s(\S+)/) {
-		set_option("Format", $1);
-		next;
+		option.Set("Format", 1)
+		next
 	}
 	if (/^header\s(\S+)/) {
-		set_option("Header", $1);
-		next;
+		option.Set("Header", 1)
+		next
 	}
 
 	if (/^sort\s(\S+)/) {
-		set_option("Header", $1);
-		next;
+		option.Set("Header", 1)
+		next
 	}
 
 	//---------------------------------------------------
 
 
-	if (s/^([a-z]+):\s*//) {
-		$Info->{$1} = $_;
-		next;
+	if (s=^([a-z]+):\s*==) {
+		Info->{1} = _
+		next
 	}
 
-	if (s/^(\d+)\t[A-Z]:\s*//) {
-		&$action($Parents, $desc);
-		$action = \&add_update;
-		$Pid = $1;
-		$Parents->{me} = $Pid;
-		next;
+	if (s==(\d+)\t[A-Z]:\s*==) {
+		&action(Parents, desc)
+		action = \&add_update
+		Pid = 1
+		Parents->{me} = Pid
+		next
 	}
-	if (s/^R:\s*//) {
-		&$action($Parents, $desc);
+	if (s=^R:\s*==) {
+		&action(Parents, desc)
 
-		$Pid = find_hier('r', $_);
-		panic("No parge $_") unless $Pid;
-		$Parents->{r} = $Pid;
-		next;
+		Pid = find_hier('r', _)
+		panic("No parge _") unless Pid
+		Parents->{r} = Pid
+		next
 	}
-	if (s/^G:\s*//) {
-		&$action($Parents, $desc);
+	if (s=^G:\s*==) {
+		&action(Parents, desc)
 
-		$Pid = find_hier('g', $_);
-		if ($Pid) {
-			$action = \&add_nothing;
-			$Parents->{g} = $Pid;
+		Pid = find_hier('g', _)
+		if (Pid) {
+			action = \&add_nothing
+			Parents->{g} = Pid
 		} else {
-			$action = \&add_goal;
+			action = \&add_goal
 		}
-		next;
+		next
 	}
-	if (s/^[P]:\s*//) {
-		&$action($Parents, $desc);
+	if (s=^[P]:\s*==) {
+		&action(Parents, desc)
 
-		$action = \&add_project;
-		set_option(Title => $_);
-		$desc = '';
-		next;
+		action = \&add_project
+		option.Set(Title => _)
+		desc = ''
+		next
 	}
-	if (s/^\[_*\]\s*//) {
-		&$action($Parents, $desc);
+	if (s=^\[_*\]\s*==) {
+		&action(Parents, desc)
 
-		$action = \&add_action;
-		set_option(Title => $_);
-		$desc = '';
-		next;
+		action = \&add_action
+		option.Set(Title => _)
+		desc = ''
+		next
 	}
-	$desc .= "\n" . $_;
+	desc .= "\n" . _
+	*/
 }
 
+func rc_find_tasks(pattern string) {
+	//***BUG*** remove trailing slash not correct in perl code
+	// pattern =~ s=/==;	// remove trailing /
 
-sub rc_find_tasks {
-	my($pattern) = @_;
+	re, err := regexp.Compile("(?i)" + pattern)
+	if err != nil {
+		fmt.Printf("RE Compile error %s: %s", pattern, err)
+		return
+	}
 
-	$pattern =~ s=/$==;	// remove trailing /
-
-	my(@list);
-
-	for my $ref (Hier::Tasks::all()) {
-		my($title) = $ref->get_title();
-		if ($title =~ /$pattern/i) {
-			display_task($ref);
+	for _, t := range task.All() {
+		if re.MatchString(t.Title) {
+			display.Task(t, "")
 		}
 	}
 }
 
-sub find_hier {
-	my($type, $goal) = @_;
+/*
+func find_hier(kind, goal string) {
 
-	for my $ref (gtd.Meta_hier()) {
-		next unless $ref->get_type() eq $type;
-		next unless $ref->get_title() eq $goal;
-
-		return $ref->get_tid();
-	}
-	for my $ref (gtd.Meta_hier()) {
-		next unless $ref->get_type() eq $type;
-		next unless lc($ref->get_title()) eq lc($goal);
-
-		return $ref->get_tid();
+	for _, ref := meta.Hier() {
+		if t.Type == kind && t.Title == goal {
+			return t.Tid
+		}
 	}
 
-	for my $ref (gtd.Meta_hier()) {
-		next unless $ref->get_title() eq $goal;
-	
-		my($type) = $ref->get_type();
-		my($tid) = $ref->get_tid();
-		warn "Found: something close($type) $tid: $goal\n";
-		return $tid;
+	goal = strings.ToLower(goal)
+	for _, ref := meta.Hier() {
+		if t.Type == kind && t.Title == goal {
+			return t.Tid
+		}
 	}
-	panic("Can"t find a hier item for "$goal' let alone a $type.\n");
+
+	for _, ref := meta.Hier() {
+		if t.Title != goal {
+			continue
+		}
+
+		fmt.Printf("Found: something close(%c) %d: %s\n" , t.Type, t.Tid, t.Title)
+		return t.Tid
+	}
+	panic("Can"t find a hier item for "goal' let alone a type.\n")
 }
 
-sub add_nothing {
-	my($parents, $desc) = @_;
+func add_nothing() {
+	my(parents, desc) = args
 
 	// do nothing
-	print "# nothing pending\n" if $Debug;
+	fmt.Print("# nothing pending\n" if Debug
 
-	if ($desc) {
-		print "Lost description\n" if $desc;
+	if desc != "" {
+		fmt.Print("Lost description\n" if desc
 	}
 }
 
-sub add_goal {
-	my($parents, $desc) = @_;
-	my($tid);
+func add_goal() {
+	my(parents, desc) = args
+	my(tid)
 
-	$desc =~ s/^\n*//s;
+	desc =~ s=^\n*==s
 
-	$Parent = $parents->{'r'};
+	Parent = parents->{'r'}
 
-	$tid = add_task('g', $desc);
+	tid = add_task('g', desc)
 
-	$parents->{'g'} = $tid;
+	parents->{'g'} = tid
 }
 
-sub add_project {
-	my($parents, $desc) = @_;
-	my($tid);
+func add_project() {
+	my(parents, desc) = args
+	my(tid)
 
-	$desc =~ s/^\n*//s;
+	desc =~ s=^\n*==s
 
-	$Parent = $parents->{'g'};
+	Parent = parents->{'g'}
 
-	$tid = add_task('p', $desc);
+	tid = add_task('p', desc)
 
-	$parents->{'p'} = $tid;
+	parents->{'p'} = tid
 }
 
-sub add_action {
-	my($parents, $desc) = @_;
-	my($tid);
+func add_action() {
+	my(parents, desc) = args
+	my(tid)
 
-	$desc =~ s/^\n*//s;
-	$Parent = $parents->{'p'};
+	desc =~ s=^\n*==s
+	Parent = parents->{'p'}
 
-	$tid = add_task('a', $desc);
+	tid = add_task('a', desc)
 }
 
-sub add_task {
-	my($type, $desc) = @_;
+func add_task() {
+	my(kind, desc) = args
 
-	my($pri, $title, $category, $note, $line);
+	my(pri, title, category, note, line)
 
-	$title    = option("Title");
-	$pri      = option("Priority") || 4;
-	$desc     = option("Desc") || $desc;
+	title    = option("Title")
+	pri      = option("Priority") || 4
+	desc     = option("Desc") || desc
 
-	$category = option("Category") || '';
-	$note     = option("Note"); 
+	category = option("Category") || ''
+	note     = option("Note");
 
-	my $ref = Hier::Tasks->new(undef);
+	my ref = Hier::Tasks->new(nil)
 
-	$ref->set_category($category);
-	$ref->set_title($title);
-	$ref->set_description($desc);
-	$ref->set_note($note);
+	t.set_category(category)
+	t.set_title(title)
+	t.set_description(desc)
+	t.set_note(note)
 
-	$ref->set_type($type);
+	t.set_type(kind)
 
-	if ($pri > 5) {
-		$pri -= 5;
-		$ref->set_isSomeday('y');
+	if (pri > 5) {
+		pri -= 5
+		t.set_isSomeday('y')
 	}
-	$ref->set_nextaction('y') if $pri < 3;
-	$ref->set_priority($pri);
+	t.set_nextaction('y') if pri < 3
+	t.set_priority(pri)
 
-	print "Parent: $Parent\n";
+	fmt.Print("Parent: Parent\n")
 
-	$Child = $ref->get_tid();
+	Child = t.get_tid()
 
-	$ref->set_parent_ids($Parent);
+	t.set_parent_ids(Parent)
 
-	print "Created ($type): ", $ref->get_tid(), "\n";
+	fmt.Print("Created (type): ", t.get_tid(), "\n")
 
-	for my $key (keys %$Info) {
-		$ref->set_KEY($key, $Info->{$key});
+	for my key (keys %Info) {
+		t.set_KEY(key, Info->{key})
 	}
-	$Info = {};
+	Info = {}
 
-	$ref->insert();
-	return $ref->get_tid();
+	t.insert()
+	return t.get_tid()
 }
 
-sub report {
-	my($report) = shift @_;
+?*/
+func Do_report(cmd string, args []string) {
 
-	Hier::Tasks::clean_up_database();
+	//?Hier::Tasks::clean_up_database()
+	rfunc := Load_report(cmd)
+	if rfunc == nil {
+		return
+	}
 
-	return unless load_report($report);
-	print "### Report $report args: @_\n" if $Debug;
+	if Debug {
+		fmt.Printf("### Report %s args: %v\n", cmd, args)
+	}
 
 	// force options back to our defaults (including no defaults)
-	set_option("Filter", dash_null($Filter));
-	set_option("Format", dash_null($Format));
-	set_option("Header", dash_null($Header));
-	set_option("Sort",   dash_null($Sort));
+	option.Set("Filter", dash_null(Filter))
+	option.Set("Format", dash_null(Format))
+	option.Set("Header", dash_null(Header))
+	option.Set("Sort", dash_null(Sort_mode))
 
-//	$Cmds->{$report} = \&"Report_$report";
+	//	Cmds->{report} = \&"Report_report"
 
-	run_report($report, @_);
-	display_mode(option("Mode", "task"));
-	Hier::Tasks::reload_if_needed_database();
+	Run_report(cmd, args)
+
+	display.Mode(option.Get("Mode", "task"))
+	//Hier::Tasks::reload_if_needed_database()
 }
 
-sub dash_null {
-	my($val) = @_;
+func dash_null(val string) string {
 
-	return undef if $val eq '-';
-	return $val;
+	if val == "-" {
+		return ""
+	}
+	return val
 }
-
-1;  # don't forget to return a true value from the file
+func prepend(slice []string, new string) []string {
+	return append([]string{new}, slice...)
+}

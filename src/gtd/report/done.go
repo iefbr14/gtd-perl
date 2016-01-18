@@ -33,27 +33,32 @@ NAME:
 
 */
 
+import "fmt"
+
 import "gtd/option"
+import "gtd/meta"
 
 //-- Tag listed projects/actions as done
-func Report_done(args []string) {
-	date := gtd.Today()
+func Report_done(args []string) int {
+	date := option.Today(0)
 
 	o_date := option.Date("Date", "")
 	if o_date != "" {
 		date = o_date
 	}
 
-	for tid := range args {
-		t := meta.Find(tid)
-
-		if t != nil {
-			fmt.Printf("Task %s not found to tag done")
-			next
-		}
-		fmt.Printf("Task %s completed %s", tid, date)
-
+	// count number of tasks marked as completed
+	done := 0
+	for _, t := range meta.Pick(args) {
 		t.Set_completed(date)
-		t.Update(date)
+		t.Update()
+
+		fmt.Printf("Task %d set as completed on %s\n", t.Tid, date)
+		done++
 	}
+
+	if done > 0 {
+		return 0
+	}
+	return 1
 }

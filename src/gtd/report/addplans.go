@@ -77,7 +77,7 @@ func Report_addplans(args []string) int {
 		}
 		seen[tid] = true
 
-		reason := check_task(ref)
+		reason := focus_check_task(ref)
 		if reason == "" {
 			continue
 		}
@@ -97,7 +97,7 @@ func Report_addplans(args []string) int {
 
 var wikiref_re = regexp.MustCompile(`\[\[.*\]\]`)
 
-func check_task(t *task.Task) string {
+func focus_check_task(t *task.Task) string {
 	if !t.Is_hier() {
 		return ""
 	}
