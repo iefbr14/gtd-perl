@@ -758,24 +758,27 @@ sub DB_init {
 
 	option('Changed', G_val('itemstatus', 'max(lastModified)'));
 
-	warn "Start ".localtime()."\n";
+
+	my($perf) = option('Perf', '');
+
+	warn "Start ".localtime()."\n" if $perf; 
 
 	my($now, $dur);
 
 	$now = time;
 	load_meta();
 	$dur = time - $now; 
-	warn "Mid   ".localtime()." $dur\n";
+	warn "Mid   ".localtime()." $dur\n" if $perf;
 
 	$now = time;
 	load_gtd();
 	$dur = time - $now; 
-	warn "End   ".localtime()." $dur\n";
+	warn "End   ".localtime()." $dur\n" if $perf;
 
 	$now = time;
 	metafix();
 	$dur = time - $now; 
-	warn "Done  ".localtime()." $dur\n";
+	warn "Done  ".localtime()." $dur\n" if $perf;
 }
 
 sub G_table {

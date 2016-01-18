@@ -59,6 +59,8 @@ my %Option_keys = (
 	'Date'        => '',	# Date (completed etc)
 
 	'Mode'        => '',    # no mode set yet
+
+	'Perf'        => '',    # report performace info
 );
 
 our $Debug = 0;

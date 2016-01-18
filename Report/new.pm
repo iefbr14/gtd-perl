@@ -192,7 +192,8 @@ sub new_action {
 	$pri      = input("Priority", option('Priority')) || 4;
 	$desc     = prompt_desc("Desc", $desc);
 
-	$category = input("Category", option('Category'));
+	
+#	$category = input("Category", option('Category'));
 	$note     = prompt_desc("Note", option('Note')); 
 
 	my($tid) = next_avail_task('a');
@@ -234,7 +235,7 @@ sub new_project {
 
 	first("Enter $type_name: Category, Title, Description, Outcome...");
 
-	$category = input("Category", option('Category'));
+#	$category = input("Category", option('Category'));
 	$title    = input("Title", option('Title'));
 	$pri      = option('Priority') || 4;
 

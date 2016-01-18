@@ -117,7 +117,6 @@ sub Report_walk {	#-- Command line walk of a hier
 		}
 
 		# apply all actions to task in direction specified
-		$ref->set_level(1);
 		&$dir($ref, $action);
 	}
 }
@@ -163,7 +162,9 @@ sub walk_down {
 
 	display_task($ref);
 
+	my($level) = $ref->level();
 	foreach my $cref (sort_tasks $ref->get_children()) {
+		$cref->set_level($level+1);
 		walk_down($cref, $action);
 	}
 
@@ -171,14 +172,15 @@ sub walk_down {
 }
 
 sub walk_up {
-	my($ref, $action) = @_;
+	my($t, $action) = @_;
 
-	foreach my $cref (sort_tasks $ref->get_parents()) {
+	my($level) = $t->level();
+	foreach my $cref (sort_tasks $t->get_parents()) {
 		walk_up($cref, $action);
 	}
-	display_task($ref);
+	display_task($t);
 
-	&$action($ref);
+	&$action($t);
 }
 
 sub walk_noop {

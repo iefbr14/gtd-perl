@@ -434,7 +434,13 @@ sub level {
 
 	# we have alread defined it, return it.
 	return $level if defined $level;
-	die "level not set correctly?";
+
+	my($pref) = $self->get_parent();
+	if ($pref) {
+		$self->{_level} = $pref->level()+1;
+	} else {
+		$self->{_level} = 1
+	}
 }
 
 sub get_state {
