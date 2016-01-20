@@ -12,3 +12,4 @@ src/vendor
 src/main
 
 pkg/
+bin/gtd-go
