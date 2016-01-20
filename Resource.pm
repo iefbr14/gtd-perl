@@ -102,6 +102,15 @@ sub hint {
 sub effort {
 	my($self) = @_;
 
+	my($effort) = $self->how();
+
+	$effort =~ s/ \#.*//;
+	return $effort;
+}
+
+sub how {
+	my($self) = @_;
+
 	my($ref) = $self->task();
 
 	my($effort) = $ref->get_effort();

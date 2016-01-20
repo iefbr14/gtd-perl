@@ -121,8 +121,9 @@ sub by_hier($$) {
 	}
 
 	# no parents or parents equal
-	return  lc_title($a) cmp lc_title($b)
-	||      $a->get_tid() <=> $b->get_tid();
+#	return  lc_title($a) cmp lc_title($b)
+#	||      $a->get_tid() <=> $b->get_tid();
+	return $a->get_tid() <=> $b->get_tid();
 }
 
 sub by_status($$) {

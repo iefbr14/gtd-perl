@@ -191,7 +191,7 @@ sub hier_detail {
 
 	$who = 'drew';
 
-	my($effort) = $resource->effort();
+	my($effort) = $resource->how();
 
 	$due = '' if $due && $due lt '2010-';
 	$we    = $due || '';
