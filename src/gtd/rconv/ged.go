@@ -53,16 +53,16 @@ func Report_ged(args []string) {
 
 		if (scalar(@_) && $_[0] == "all") {
 			$Someday = 1
-			meta.ilter("+all", '^focus', "none")
+			meta.Filter("+all", "^focus", "none")
 			// 5 year plan everything plan
 			$ToFuture = pdate(get_today(5*365))
 		} else {
-			meta.ilter("+active", '^focus', "none")
+			meta.Filter("+active", "^focus", "none")
 			// don't care about start more > 3 months
 			$ToFuture = pdate(get_today(60))
 		}
 
-		//	meta.rgv(@_)
+		//	meta.Argv(args))
 		w = meta.Walk(args)
 		w.Detail = ged_detail
 

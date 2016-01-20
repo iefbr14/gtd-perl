@@ -36,12 +36,10 @@ NAME:
 import "gtd/display"
 import "gtd/meta"
 import "gtd/task"
-
-/*?
-
 import "gtd/color"
 import "gtd/option"
 
+/*?
 my @Class = qw(Done Someday Action Next Future Total)
 
 my $Hours_task = 0

@@ -42,7 +42,7 @@ func Report_hierlist(args []string) {
 	  	my($tid, $pid, $pref, $cnt, $parent, $cat, $name, $desc)
 	  	my(@row)
 
-	  	meta.ilter("+p:live", '^title', "simple")
+	  	meta.Filter("+p:live", "^title", "simple")
 	  	meta.Desc(args)(@_)
 
 	  print <<"EOF"

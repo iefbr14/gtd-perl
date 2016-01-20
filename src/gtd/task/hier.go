@@ -35,14 +35,14 @@ func rel_del(list Tasks, task *Task) Tasks {
 //------------------------------------------------------------------------------
 // core routines.  Only these add/remove relationships
 //
-func (parent *Task) add_child(child *Task) {
+func (parent *Task) Add_child(child *Task) {
 	child.Parents = rel_add(child.Parents, parent)
 	parent.Children = rel_add(parent.Children, child)
 
 	child.set_dirty("parents")
 }
 
-func (parent *Task) orphin_child(child *Task) {
+func (parent *Task) Orphin_child(child *Task) {
 	child.Parents = rel_del(child.Parents, parent)
 	parent.Children = rel_del(parent.Children, child)
 
@@ -74,15 +74,6 @@ func (t *Task) Children_ids() []int {
 // helper routines they do useful things, but don't know interals
 
 /*?
-sub count_children {
-	my(@children) = get_children(@_)
-
-	//## see Hier::Format::summray_children for counts
-	//## based on filters
-
-	return scalar @children
-}
-
 sub count_actions {
 	my(@children) = get_children(@_)
 
@@ -188,13 +179,13 @@ func (self *Task) set_parent_ids(val string) {
 			delete(pid_map, pid)
 		} else {
 			// disown parent
-			ref.orphin_child(self)
+			ref.Orphin_child(self)
 		}
 	}
 
 	// for my new parents add self as thier child
 	for _, pref := range pid_map {
-		pref.add_child(self)
+		pref.Add_child(self)
 	}
 }
 
@@ -223,7 +214,7 @@ sub set_children_ids {
 			delete $cid{$cid};	// keeping this one.
 		} else {
 			// disown parent
-			$self->orphin_child($ref)
+			self.Orphin_child(ref)
 		}
 	}
 	// for my new children add self as their parent
@@ -233,3 +224,16 @@ sub set_children_ids {
 }
 
 ?*/
+
+// check to see if some thas has the dep task as a decendent
+func (parent *Task) Has_decendent(dep *Task) bool {
+	for _, child := range parent.Children {
+		if child == dep {
+			return true
+		}
+		if child.Has_decendent(dep) {
+			return true
+		}
+	}
+	return false
+}

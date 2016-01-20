@@ -38,9 +38,10 @@ import "gtd/task"
 
 //-- Project Summary for a role
 func Report_oocalc(args []string) {
+	meta.Filter("+live", "^tid", "none")
+
 	/*?
-		meta.ilter("+live", '^tid', "none")
-		my @want = meta.rgv(@_)
+		my @want = meta.Argv(args))
 
 		new_calc()
 

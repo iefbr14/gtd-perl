@@ -38,10 +38,11 @@ import "gtd/task"
 
 //-- detailed list all records for a type
 func Report_records(args []string) int {
-	/*?
-		// everybody into the pool
-		meta.ilter("+active", '^tid', "simple")
+	meta.Filter("+active", "^tid", "simple")
 
+	// everybody into the pool
+
+	/*?
 		my($desc) = join(' ', @_)
 
 		my($name) = ucfirst(meta.Desc(args)(@_));	// some out

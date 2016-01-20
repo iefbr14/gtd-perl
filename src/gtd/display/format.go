@@ -318,31 +318,22 @@ func disp_summary(fd io.Writer, t *task.Task, note string) {
 }
 
 func disp_plan(fd io.Writer, t *task.Task, note string) {
-	panic(".... code display_plan")
-	/*?
-		my($fd, $ref, $note) = @_
+	r := t.NewResource()
+	user := r.Resource()
+	why := r.Hint()
 
-		my($tid) = $ref->get_tid()
-		my($kind = type_disp($ref)
-		my($title) = $ref->get_title()
-
-		my($resource) = new Hier::Resource($ref)
-		my($effort)  = $resource->effort()
-		my($user)    = $resource->resource()
-		my($why)     = $resource->hint()
-
-		if ($note) {
-			$note = " ".$note
-		} elsif ($why) {
-			$note = " ".color("BROWN")."$user ($why)".color()
-		} else {
-			$note = ""
+	if note != "" {
+		note = " " + note
+	} else {
+		if why != "" {
+			note = " " + color.On("BROWN") + user + " (" + why + color.Off()
 		}
+	}
 
-		print {$fd} "$tid:\t".
-			color("GREEN")."$effort\t".color().
-			"$kind$title$note"
-	?*/
+	fmt.Fprintf(fd, "%d:\t%s %s%s%s",
+		t.Tid,
+		color.On("GREEN")+r.Effort()+color.Off(),
+		Type(t), t.Title, note)
 	color.Nl(fd)
 }
 
@@ -407,7 +398,7 @@ func disp_print(fd io.Writer, ref *task.Task, note string) {
 	color.Nl(fd)
 }
 
-func chomp(s string) string {
+func Chomp(s string) string {
 	//***BUG*** re-write to this form
 	//	for l := len(s); l > 0; --l {
 	//		if s[l] == '\r' || s[l] == '\n' {
@@ -622,7 +613,7 @@ func disp_wikiwalk(fd io.Writer, t *task.Task, note string) {
 	?*/
 }
 
-func disp_wiki(fd io.Writer, ref *task.Task, note string) {
+func disp_wiki(fd io.Writer, t *task.Task, note string) {
 	type_name := map[byte]string{
 		'a': "action",
 		'p': "project",
@@ -635,14 +626,14 @@ func disp_wiki(fd io.Writer, ref *task.Task, note string) {
 	}
 
 	panic(".... code disp_wiki")
-	type_s := ref.Type
+	type_s := t.Type
 	if _, ok := type_name[type_s]; !ok {
 		type_s = '?'
 	}
 
-	//?	tid :=  ref.Tid
-	//?	title := ref.Title
-	//?	done := ref.Is_completed()
+	//?	tid :=  t.Tid
+	//?	title := t.Title
+	//?	done := t.Is_completed()
 
 	/*?
 		print {$fd} "== " if $kind=~ /[ovm]/
@@ -664,7 +655,7 @@ func disp_wiki(fd io.Writer, ref *task.Task, note string) {
 	color.Nl(fd)
 }
 
-func disp_html(fd io.Writer, ref *task.Task, note string) {
+func disp_html(fd io.Writer, t *task.Task, note string) {
 	panic(".... code disp_html")
 	/*?
 		my(%type) = (
@@ -707,57 +698,61 @@ func disp_html(fd io.Writer, ref *task.Task, note string) {
 	?*/
 }
 
-func disp_task(fd io.Writer, ref *task.Task, note string) {
-	panic(".... code disp_task")
-	/*?
-		my($fd, $ref, $note) = @_
+func disp_task(fd io.Writer, t *task.Task, note string) {
+	kind := t.Type
 
-		my($pri, $kind $context, $project, $action)
-		$kind= $ref->get_type()
+	context := t.Context
+	if context != "" {
+		context = "@" + context
+	}
 
-		$context = $ref->get_context() || ""
-		$context = "\@$context" if $context
-
-		if ($kindeq "a") {
-			my($proj) = $ref->get_parent()
-			if ($proj) {
-				$project = $proj->get_title()
-				$project =~ s/ /_/g
-				$project = "/$project/"
-			} else {
-				$project = "//"
-			}
-		} else {
-			$project = " ".type_name($kind.":"
+	project := ""
+	if kind == 'a' {
+		proj := t.Parent()
+		project = "//"
+		if proj != nil {
+			project = "/" + strings.Replace(proj.Title, " ", "_", -1) + "/"
 		}
-		$action = $ref->get_title()
-		my($tid) = "[".$ref->get_tid()."]"
+	} else {
+		project = " " + task.Type_name(kind) + ":"
+	}
+	action := t.Title
+	tid := fmt.Sprintf("[%d]", t.Tid)
 
-		if ($ref->is_nextaction()) {
-			$pri = chr(ord("A") + $ref->get_priority() - 1)
-		} else {
-			$pri = chr(ord("c") + $ref->get_priority() - 1)
-		}
+	var pri string
+	if t.Is_nextaction() {
+		pri = string(byte((int('A') + t.Priority - 1)))
+	} else {
+		pri = string(byte((int('c') + t.Priority - 1)))
+	}
 
-		$pri = "S" if $ref->is_someday()
-		$pri = "X" if $ref->is_completed()
-		$pri = "V" if $kind=~ /[mv]/
+	switch {
 
-		$pri = "I" if $kindeq "i"
+	case t.Is_someday():
+		pri = "S"
+	case t.Is_completed():
+		pri = "X"
+	case kind == 'm' || kind == 'v':
+		pri = "V"
+	case kind == 'i':
+		pri = "I"
+	case kind == 'o':
+		pri = "R"
+	case kind == 'g':
+		pri = "Q"
+	case kind == 'p':
+		pri = "P"
+	case t.Tickledate > option.Today(0):
+		pri = "T"
+	case kind == 'r', kind == 'L', kind == 'C', kind == 'T':
+		pri = "L"
+	}
 
-		$pri = "R" if $kindeq "o"
-		$pri = "Q" if $kindeq "g"
-		$pri = "P" if $kindeq "p"
-
-		$pri = "T" if $ref->get_tickledate() gt get_today()
-		$pri = "L" if $kind=~ /[rLCT]/
-
-		my($result) = join(" ", "($pri)", $context.$project, $action, $tid)
-		$result =~ s/\s\s+/ /g
-		print $result
-		print " $note" if $note
-		nl($fd)
-	?*/
+	fmt.Printf("(%s) %s.%s %s %s", pri, context, project, action, tid)
+	if note != "" {
+		fmt.Printf(" %s", note)
+	}
+	color.Nl(fd)
 }
 
 func disp_debug(fd io.Writer, ref *task.Task, note string) {
@@ -766,7 +761,7 @@ func disp_debug(fd io.Writer, ref *task.Task, note string) {
 		my($fd, $ref, $note) = @_
 
 		my($pri, $kind $context, $project, $title)
-		$kind= $ref->get_type()
+		kind := t.Type
 
 		$context = $ref->get_context() || ""
 		$context = "\@$context" if $context

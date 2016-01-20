@@ -668,6 +668,7 @@ func DB_init(confname string) {
 
 	home := os.Getenv("HOME")
 	conf := load_config(home + "/.todo/Access.json")
+	Resources = load_config(home + "/.todo/Resource.json")
 
 	if db_debug {
 		dump_config("Access", conf)
@@ -773,24 +774,30 @@ sub G_list {
 
 	return $GTD_map->{$table}
 }
-
-sub G_renumber {
-	my($ref, $tid, $new) = @_
-
-        my(@list) = qw(items itemstatus tagmap)
-        warn "Setting TID $tid => $new\n"
-
-        G_sql("update gtd_lookup set itemId=$new where itemId=$tid")
-        G_sql("update gtd_lookup set parentId=$new where parentId=$tid")
-        G_sql("update gtd_tagmap set itemId=$new where itemId=$tid")
-
-	G_sql("update todo set todo_id = ? where todo_id = ?", $new, $tid)
-
-        for my $table (@list) {
-                G_sql("update gtd_$table set itemId=$new where itemId=$tid")
-        }
-}
 ?*/
+
+func G_renumber(t *Task, tid, new int) {
+	log.Printf("Setting TID %s => %s\n", tid, new)
+
+	G_transaction()
+	G_sql("update gtd_lookup set itemId=? where itemId=?", new, tid)
+	G_sql("update gtd_lookup set parentId=? where parentId=?", new, tid)
+
+	G_sql("update gtd_todo set todo_id = ? where todo_id = ?", new, tid)
+
+	G_sql("update gtd_items set itemId=? where itemId=?", new, tid)
+	G_sql("update gtd_itemstatus set itemId=? where itemId=?", new, tid)
+	G_sql("update gtd_tagmap set itemId=? where itemId=?", new, tid)
+	G_commit()
+}
+
+func G_transaction() {
+	panic("G_transaction")
+}
+
+func G_commit() {
+	panic("G_commit")
+}
 
 func G_val(table, query string) int {
 

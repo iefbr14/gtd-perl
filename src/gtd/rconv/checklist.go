@@ -39,9 +39,9 @@ import "gtd/task"
 
 //-- display a check list
 func Report_checklist(args []string) {
-	/*?
-	  	meta.ilter("+any", '^title', "item")
-	  //	meta.rgv()
+	meta.Filter("+any", '^title', "item")
+
+	  //	meta.Argv()
 	  	my ($p) = shift @_
 
 	  	my ($id)

@@ -40,66 +40,62 @@ import "gtd/option"
 //?my %Meta_key
 
 //-- List projects -- live, plan or someday
-func Report_projects(args []string) {
-	/*?
-		//meta.ilter("+next", '^focus', "rgpa")
-		meta.ilter("+p:next", '^focus', "simple")
+func Report_projects(args []string) int {
+	meta.Filter("+next", "^focus", "rgpa")
 
-		report_projects(1, "Projects", meta.Desc(args)(@_))
-	?*/
-}
+	//meta.Filter("+p:next", '^focus', "simple")
 
-func report_projects() { /*?
-		my($all, $head, $desc) = @_
+	display.Header("Projects", meta.Desc(args))
 
-		display.Header($head, $desc)
+	work_load := 0
+	proj_cnt := 0
 
-		my($work_load) = 0
-		my($proj_cnt) = 0
-		my($ref, $proj, %wanted, %counted, %actions)
+	wanted := map[int]*task.Task{}
+	counted := map[int]int{}
+	actions := map[int]int{}
 
-		// find all next and remember there projects
-		for my $ref (meta.atching_type('p')) {
-	//#FILTER	next if $ref->filtered()
+	// find all next and remember there projects
+	for _, ref := range meta.Matching_type('p') {
+		//#FILTER	next if ref->filtered()
 
-			my $pid = $ref->get_tid()
-			$wanted{$pid} = $ref
-			$counted{$pid} = 0
-			$actions{$pid} = 0
+		pid := ref.Tid
+		wanted[pid] = ref
+		counted[pid] = 0
+		actions[pid] = 0
 
-			for my $child ($ref->get_children()) {
-				$counted{$pid}++ unless $child->filtered()
-				$actions{$pid}++
-
-				$work_load++ unless $child->filtered()
+		for _, child := range ref.Children {
+			if !child.filtered() {
+				work_load++
+			} else {
+				counted{pid}++
 			}
+			actions{pid}++
+
 		}
+	}
 
 	//## format:
 	//## ==========================
 	//## Value Vision Role
 	//## -------------------------
 	//## 99	Goal 999 Project
-		my($cols) = columns() - 2
 
-		my($g_id) = 0
-		my($prev_goal) = 0
+	g_id := 0
+	prev_goal := 0
 
-		my($r_id) = 0
-		my($prev_role) = 0
+	r_id := 0
+	prev_role := 0
 
-		my($pid, $title, $g_ref, $r_ref)
+	//? (sort by_goal_task values %wanted)
+	for _, ref := range wanted.Sort_by_goal_task {
 
-		for my $ref (sort by_goal_task values %wanted) {
+		work, counts := summary_children(ref)
+		work_load += work
+		display.Rgpa(ref, counts)
+		// display.Task(ref, counts)
 
-			my($work, $counts) = summary_children($ref)
-			$work_load += $work
-			display_rgpa($ref, $counts)
-	//		display_task($ref, $counts)
+		proj_cnt++
 
-			++$proj_cnt
-
-		}
-		print "***** Work Load: $proj_cnt Projects, $work_load action items\n"
-	?*/
+	}
+	fmt.Print("***** Work Load: proj_cnt Projects, work_load action items\n")
 }

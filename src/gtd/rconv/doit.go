@@ -51,15 +51,15 @@ my $Limit = 2
 ?*/
 //-- doit tracks which projects/actions have had movement
 func Report_doit(args []string) int {
+	meta.Filter("+a:live", "^doitdate", "rpga")
 
 	Limit = option("Limit", 1)
 	/*?
 	$= = lines()
-	meta.ilter("+a:live", '^doitdate', "rpga")
 	my($target) = 0
 	my($action) = \&doit_list
 
-	foreach my $arg (meta.rgv(@_)) {
+	foreach my $arg (meta.Argv(args))) {
 		if ($arg =~ /^\d+$/) {
 			my(t) = meta.Find($arg)
 

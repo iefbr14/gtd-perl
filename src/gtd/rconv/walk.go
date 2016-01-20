@@ -39,6 +39,8 @@ import "gtd/task"
 
 //-- Command line walk of a hier
 func Report_walk(args []string) {
+	meta.Filter("+all", "^tid", "simple")
+
 	/*?
 		if len(args) == 0 {
 			fmt.Println("NO task specified to walk")
@@ -48,7 +50,6 @@ func Report_walk(args []string) {
 		dir := walk_down
 		action := walk_noop
 
-		meta.ilter("+all", '^tid', "simple")
 
 		for task := range args {
 			if ($task == "set") {

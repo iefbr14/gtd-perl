@@ -57,72 +57,77 @@ func Report_print(args []string) int {
 		"man":  MAN,
 	}
 
-	/*?
-		// everybody into the pool by id
-		meta.ilter("+any", '^tid', "doit")
+	// everybody into the pool by id
+	meta.Filter("+any", "^tid", "doit")
 
-		Layout := layouts[string.ToLower(gtd.Option("Layout", "text")))]
+	Layout := layouts[string.ToLower(gtd.Option("Layout", "text"))]
 
-		for ref := range meta.ick(args)) {
-			print_ref(ref)
-		}
-	?*/
+	for _, t := range meta.Pick(args) {
+		print_ref(t)
+	}
+}
+
+func bs(b book, t, f string) {
+	if b {
+		return t
+	}
+	return f
 }
 
 func print_ref(ref *Task) {
-	/*?
-	  	my($ref) = @_
 
-	  	my($tid)         = $ref->get_tid()
-	  	my($type)        = $ref->get_type()
-	  	my($typename)    = type_name($type)
-	  	my($nextaction)  = $ref->is_nextaction() ? " Next-action" : ''
-	  	my($someday)      = $ref->is_someday() ? " (someday)" :''
+	tid := t.Tid
+	kind := t.Type
+	typename := type_name(kind)
+	nextaction := bs(t.IsNextaction, " Next-action", "")
+	someday := bs(t.IsSomeday, " (someday)", "")
 
-	  	my($task)        = $ref->get_title()
-	  	my($description) = $ref->get_description()
-	  	my($note)        = $ref->get_note()
+	task := t.Title
+	description := t.Description()
+	note := t.Note()
 
-	  	my($category)    = $ref->get_category()
-	  	my($context)     = $ref->get_context()
-	  	my($timeframe)   = $ref->get_timeframe()
-	  	my($created)     = $ref->get_created()
-	  	my($doit)        = $ref->get_doit()
-	  	my($modified)    = $ref->get_modified()
-	  	my($tickledate)  = $ref->get_tickledate()
-	  	my($due)         = $ref->get_due()
-	  	my($completed)   = $ref->get_completed()
+	category := t.Category()
+	context := t.Context()
+	timeframe := t.Timeframe()
+	created := t.Created()
+	doit := t.Doit()
+	modified := t.Modified()
+	tickledate := t.Tickledate()
+	due := t.Due()
+	completed := t.Completed()
 
-	  	my($priority)    = $ref->get_priority()
-	  	my($effort)      = $ref->get_effort()
-	  	my($resource)    = $ref->get_resource()
-	  	my($depends)     = $ref->get_depends()
+	priority := t.Priority()
+	effort := t.Effort()
+	resource := t.Resource()
+	depends := t.Depends()
 
-	  	my($tags)        = $ref->disp_tags()
+	tags := ref.Disp_tags()
 
+	title(typename)
+	fmt.Printf("%s:\t%s\n\n", tid, task)
+	title("Purpose")
+	fmt.Println(description)
+	title("Outcome")
+	fmt.Println(note)
 
-	  	title($typename);   print "$tid:\t$task\n\n"
-	  	title("Purpose");   print $description, "\n"
-	  	title("Outcome");   print $note, "\n"
+	title("Actions")
 
-	  	title("Actions")
+	children = t.Children
 
-	  	my(@children) =$ref->get_children()
+	if len(children) == 0 {
+		fmt.Print("* [_] Plan and add tasks for $tid\n")
+	} else {
+		for _, cref := range children {
+			fmt.Print("* [_] ")
+			display.Task(cref)
+			br()
+		}
+	}
 
-	  	if (@children == 0) {
-	  		print "* [_] Plan and add tasks for $tid\n"
-	  	}
+	hr()
 
-	  	for my $cref (@children) {
-	  		print "* [_] "
-	  		display_task($cref)
-	  		br()
-	  	}
-
-	  	hr()
-
-	  	p
-	  	pre(<<"EOF")
+	p()
+	pre(`
 	  t,pri,s,n: $typename $tid -- pri:$priority$nextaction$someday
 	  pf("cct",       "%s %s %s", ref.category,  ref.context, ref.timeframe)
 	  tags:      $tags
@@ -132,17 +137,16 @@ func print_ref(ref *Task) {
 	  modified:  $modified
 	  tickle:    $tickledate
 	  due:       $due
-	  p("completed", ref.completed)
+	  `)
 
-	  p("effort",    ref.effort)
-	  p("resource",  ref.resource)
-	  p("depends",   ref.depends)
+	p("completed", ref.completed)
 
-	  EOF
+	p("effort", ref.effort)
+	p("resource", ref.resource)
+	p("depends", ref.depends)
 
-	  	hr()
+	hr()
 
-	  ?*/
 }
 
 func pre(text string) {

@@ -48,14 +48,15 @@ our report_debug
 
 //-- generate taskjuggler file from gtd db
 func Report_taskjuggler(args []string) {
+	meta.Filter("+all", "^focus", "none")
+
 	/*?
 		my($tid, $task, $cat, $ins, $due, $desc)
 
 		$ToOld = pdate(get_today(-7));	// don't care about done items > 2 week
 
-		meta.ilter("+all", '^focus', "none")
 		my($top) = 'o';			// default to top of everything
-		for my $criteria (meta.rgv(@_)) {
+		for my $criteria (meta.Argv(args))) {
 			if ($criteria == "all") {
 				$Someday = 1
 				next

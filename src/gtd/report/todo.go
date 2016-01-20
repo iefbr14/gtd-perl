@@ -38,7 +38,7 @@ import "gtd/option"
 import "gtd/display"
 
 //-- List high priority next actions
-func Report_todo(args []string) {
+func Report_todo(args []string) int {
 	limit := option.Int("Limit", 10)
 
 	meta.Filter("+active", "^priority", "priority")
@@ -64,4 +64,5 @@ func Report_todo(args []string) {
 			break
 		}
 	}
+	return 0
 }

@@ -110,10 +110,15 @@ func Find(task_id string) *task.Task {
 			fmt.Printf("Invalid task id: %s", task_id)
 			return nil
 		}
-		return task.Find(tid)
+		if t := task.Find(tid); t != nil {
+			return t
+		}
+
+		fmt.Printf("No such task: %s", task_id)
+		return nil
 	}
 
-	fmt.Printf("No such task: %s", task_id)
+	fmt.Printf("Invalid task id: %s", task_id)
 	return nil
 }
 

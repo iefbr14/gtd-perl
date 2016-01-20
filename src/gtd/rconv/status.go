@@ -289,7 +289,7 @@ func calc_class() {
 }
 
 func report_detail() {
-		meta.ilter("+all", '^title', "simple")
+	meta.Filter("+all", "^title", "simple")
 
 		my @Types = qw(Hier Action List Total)
 		my @Class = qw(Done Someday Action Next Future Total)

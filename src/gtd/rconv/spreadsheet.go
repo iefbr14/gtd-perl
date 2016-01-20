@@ -39,9 +39,10 @@ import "gtd/task"
 
 //-- Project Summary for a role
 func Report_spreadsheet(args []string) {
+	meta.Filter("+active", "^tid", "none")
+
 	/*?
-		meta.ilter("+active", '^tid', "none")
-		my @want = meta.rgv(@_)
+		my @want = meta.Argv(args))
 
 		if (@want == 0) {
 			my($roles) = load_roles()

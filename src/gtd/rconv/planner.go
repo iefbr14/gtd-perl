@@ -49,13 +49,14 @@ my %Alloc_tasks = ()
 
 //-- Create a planner file from gtd db
 func Report_planner(args []string) {
+	meta.Filter("+active", "^tid", "none")
+
 	/*?
 		my($criteria) = @_
 		my($tid, $pri, $task, $cat, $ins, $due, $desc)
 		my(@row)
 
-		meta.ilter("+active", '^tid', "none")
-		meta.rgv(@_)
+		meta.Argv(args))
 
 		w := meta.Walk(args)
 		w.Detail = planner_detail

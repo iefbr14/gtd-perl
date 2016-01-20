@@ -42,10 +42,11 @@ import "gtd/task"
 
 //-- take listed actions/projects
 func Report_take(args []string) {
+	meta.Filter("+all", "^tid", "none")
+
 	/*?
 		my($key, $val, $changed)
 
-		meta.ilter("+all", "^tid", "none")
 
 		my $parent = option("Current")
 		unless ($parent) {

@@ -63,39 +63,40 @@ func Report_actions(args []string) int {
 }
 
 func report_select(top_name string) {
-	  	top := 0
-	  	if top_name != "" {
-	  		top = find_in_hier(top_name)
-	  	}
+	top := 0
+	if top_name != "" {
+		top = find_in_hier(top_name)
+	}
 
-	  	// find all projects (next actions?)
-	  	for _, t := range meta.Selected() {
-	  		if !t.Is_task() {
-				continue
-			}
-				
-	  		next if top && !has_parent(t, top)
+	// find all projects (next actions?)
+	for _, t := range meta.Selected() {
+		if !t.Is_task() {
+			continue
+		}
 
-	  //#FILTER	next unless t.is_nextaction()
-	  //#FILTER	next if t.filtered()
+		if top && !has_parent(t, top) {
+			continue
+		}
 
-	  		pref := ref.Parent()
-	  		if pref != nil {
-	  			next
-	  		}
-	  		if !pref.Is_active {
-	  			next
-	  		}
+		//#FILTER	next unless t.is_nextaction()
+		//#FILTER	next if t.filtered()
 
-	  //#FILTER	next if $pref->filtered()
+		pref := ref.Parent()
+		if pref != nil {
+			next
+		}
+		if !pref.Is_active {
+			next
+		}
 
-	  		pid := pref.Tid
-	  		Active[pid] = pref
+		//#FILTER	next if $pref->filtered()
 
-	  		tid = ref.Tid()
-	  		Projects[pid][tid] = ref
-	  	}
-	  ?*/
+		pid := pref.Tid
+		Active[pid] = pref
+
+		tid = ref.Tid()
+		Projects[pid][tid] = ref
+	}
 }
 
 func report_list() {
@@ -200,31 +201,31 @@ func report_actions(head, desc string) {
 }
 
 // handle imbeded project and return first top level value as goal
-func get_goal() { /*?
-		my($pref) = @_
+func get_goal(pref *task.Task) {
+	gref = pref.Parent()
+	if gref == nil {
+		log.Printf("Parent of %s is null\n", pref.Tid)
+		return
+	}
 
-		my($gref) = $pref->get_parent()
-
-		unless ($gref) {
-			warn "Parent of ", $pref->get_tid(), " is null\n"
-			return
-		}
-
-		while ($gref->get_type() == 'p') {
-	//warn join(' ', "up:", $gref->get_tid(), $gref->get_title), "\n"
-			$gref = $gref->get_parent()
-		}
-		return $gref
-	?*/
+	for gref.Type == 'p' {
+		//warn join(' ', "up:", $gref->get_tid(), $gref->get_title), "\n"
+		gref = gref.Parent()
+	}
+	return gref
 }
 
 func find_in_hier(title string) {
+	for _, ref := range meta.Selected() {
+		if !t.Is_hier() {
+			continue
+		}
 
-	for _, ref := meta.Selected() {
-		next unless t.Is_hier()
-		next if t.Title != $title
+		if t.Title != title {
+			continue
+		}
 
-		add_children($ref)
+		add_children(ref)
 		//##BUG### should walk down from here vi get_children
 		//##BUG### rather walk up in has_parent
 		return t.get_tid()
@@ -236,15 +237,14 @@ func find_in_hier(title string) {
 func add_children(t *task.Task) {
 	//# warn "w tid: ", t.get_tid, " ", t.get_title, "\n"
 	Want[t.Tid] = true
-	for _,child := range t.Children {
+	for _, child := range t.Children {
 		add_children(child)
 	}
 }
 
 func has_parent(t *task.Task, top *task.Task) {
 
-		tid := t.Tid
-		//# warn "o tid: ", $tid, " ", t.get_title, "\n" if $Want{$tid}
-		return Want[tid]
-	?*/
+	tid := t.Tid
+	//# warn "o tid: ", $tid, " ", t.get_title, "\n" if $Want{$tid}
+	return Want[tid]
 }

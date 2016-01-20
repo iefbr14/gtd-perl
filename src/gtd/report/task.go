@@ -37,7 +37,7 @@ import "gtd/meta"
 import "gtd/display"
 
 //-- quick List by various methods
-func Report_task(args []string) {
+func Report_task(args []string) int {
 	meta.Filter("+g:live", "^title", "task") // Tasks filtered by goals
 
 	list := meta.Pick(args)
@@ -51,4 +51,5 @@ func Report_task(args []string) {
 	for _, ref := range list {
 		display.Task(ref, "")
 	}
+	return 0
 }

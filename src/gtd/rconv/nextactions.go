@@ -38,11 +38,12 @@ import "gtd/meta"
 
 //-- List next actions
 func Report_nextactions(args []string) {
+	meta.Filter("+next", "^title", "none")
+
 	/*?
 	  	my($tid, $pid, $pref, $tic, $parent, $pic, $name, $desc)
 	  	my(@row)
 
-	  	meta.ilter("+next", '^title', "none")
 	  	meta.Desc(args)(@_)
 
 	  print <<"EOF"

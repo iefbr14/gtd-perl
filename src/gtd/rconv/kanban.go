@@ -40,12 +40,12 @@ import "gtd/task"
 
 //-- report kanban of projects/actions
 func Report_kanban(args []string) {
-	/*?
-		// counts use it and it give a context
-		meta.ilter("+active", '^tid', "simple")
+	// counts use it and it give a context
+	meta.Filter("+active", "^tid", "simple")
 
+	/*?
 		my(@args)
-		foreach my $arg (meta.rgv(@_)) {
+		foreach my $arg (meta.Argv(args))) {
 			if ($arg =~ s/^\.//) {
 				kanban_bump($arg)
 				next

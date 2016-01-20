@@ -41,9 +41,13 @@ import "gtd/task"
 
 //-- dump records in edit format
 func Report_dump(args []string) {
+	meta.Filter("+any", "^hier", "dump")
+
+	for _, t := range meta.Pick(args) {
+		display.Task(t)
+	}
 	/*?
 		// everybody into the pool by id
-		meta.ilter("+any", '^tid', "dump")
 
 		my($name) = ucfirst(meta.Desc(args)(@_));	// some out
 		if ($name) {
@@ -90,7 +94,7 @@ func list_dump() { /*?
 		my($Dates) = ''
 
 		// find all records.
-		for my $ref (meta.orted("^tid")) {
+		for my $ref (meta.Sorted("^tid")) {
 			$type = $ref->get_type()
 			next if $want_type && $type != $want_type
 

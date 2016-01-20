@@ -58,6 +58,7 @@ type Task struct {
 	Percent  int
 
 	Resource string
+	hint     string // resource hint
 
 	IsNextaction bool
 	IsSomeday    bool
@@ -131,13 +132,11 @@ func (t *Task) Dirty() bool {
 // all Todo items (including Hier)
 var all_Tasks = map[int]*Task{}
 
-// lookup up a task
+// Find - map tid to task return nil if it doesn't exist
 func Find(tid int) *Task {
 	if task, ok := all_Tasks[tid]; ok {
 		return task
 	}
-	fmt.Printf("Can't find task id %d\n", tid)
-	panic("find")
 	return nil
 }
 
@@ -221,12 +220,12 @@ func (t *Task) Delete() {
 
 	// remove my children from self
 	for _, child := range t.Parents {
-		t.orphin_child(child)
+		t.Orphin_child(child)
 	}
 
 	// remove self from my parents
 	for _, parent := range t.Parents {
-		parent.orphin_child(t)
+		parent.Orphin_child(t)
 		parent.Update()
 	}
 
@@ -362,7 +361,6 @@ func (t *Task) Set_depends(v string)      { t.Set_KEY("depends", v) }
 func (t *Task) Set_description(v string)  { t.Set_KEY("description", v) }
 func (t *Task) Set_doit(v string)         { t.Set_KEY("doit", v) }
 func (t *Task) Set_due(v string)          { t.Set_KEY("due", v) }
-func (t *Task) Set_effort(v string)       { t.Set_KEY("effort", v) }
 func (t *Task) Set_state(v string)        { t.Set_KEY("state", v) }
 func (t *Task) Set_gtd_modified(v string) { t.Set_KEY("gtd_modified", v) }
 func (t *Task) Set_isSomeday(v string)    { t.Set_KEY("isSomeday", v) }
@@ -383,27 +381,32 @@ func (t *Task) Set_hint(v string)         { t.Set_KEY("_hint", v) }
 
 /*?
 sub hint_resource    {return clean_set("resource", @_); }
+?*/
 
-sub set_tid          {
-	my($ref, $new) = @_
+func (t *Task) Set_tid(new int) {
+	tid := t.Tid
 
-	my $tid = $ref->get_tid()
-
-	if (defined $Task{$new}) {
+	if _, ok := all_Tasks[new]; ok {
 		panic("Can't renumber tid $tid => $new (already exists)")
 	}
 
-	if ($ref->is_dirty()) {
+	if t.Is_dirty() {
 		// make sure the rest of the object is clean
-		$ref->update()
+		t.Update()
 	}
 
-	Hier::Db::G_renumber($ref, $tid, $new)
+	G_renumber(t, tid, new)
 
-        $Task{$new} = $Task{$tid}
-        delete $Task{$tid}
+	all_Tasks[new] = all_Tasks[tid]
+	delete(all_Tasks, tid)
 }
 
+func (t *Task) Set_effort(v int) {
+	t.Effort = v
+	t.set_dirty("effort")
+}
+
+/*?
 sub clean_set {
 	my($field, $ref, $val) = @_
 

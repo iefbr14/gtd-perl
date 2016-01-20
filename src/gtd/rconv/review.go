@@ -225,11 +225,11 @@ func get_status() { /*?
 func _report_doit() { /*?
 
 		$= = lines()
-		meta.ilter("+a:live", '^doitdate', "doit")
+		meta.Filter("+a:live", "^doitdate", "doit")
 		my($target) = 0
 		my($action) = \&doit_list
 
-		foreach my $arg (Hier::util::meta.rgv(@_)) {
+		foreach my $arg (Hier::util::meta.Argv(args))) {
 			if ($arg =~ /^\d+$/) {
 				my($ref) = meta.Find($arg)
 

@@ -38,10 +38,10 @@ import "gtd/option"
 
 //-- clean unused categories
 func Report_clean(args []string) {
+	meta.Filter("+all", "^tid", "task")
 	/*?
 		my $Yesterday = get_today(-1)
 
-		meta.ilter("+all", '^tid', "task")
 		my($done, $tickle, $type)
 
 		for my $ref (meta.elected()) {
