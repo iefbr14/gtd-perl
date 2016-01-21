@@ -98,7 +98,7 @@ func kanban_bump() { /*?
 		panic("Nothing bunped due to errors\n") if $fail
 
 		for my $ref (@list) {
-			my($new) = Hier::Resource::bump($ref)
+			my($new) = $ref->Bump()
 
 			if ($new) {
 				my($name) = Hier::Resource::state($new)

@@ -123,6 +123,17 @@ func (r *Resource_T) Effort() string {
 		r.effort = fmt.Sprintf("%dh", t.Effort)
 	}
 
+	if r.effort == "" {
+		switch t.Type {
+		default:
+			effort = "1h # action"
+		case 'p':
+			effort = "2h # Need planning"
+		case 'g':
+			effort = "8h # Need planning"
+		}
+	}
+
 	kind := t.Type
 
 	/*?

@@ -20,7 +20,8 @@ import "gtd/display"
 //?		&meta_pick
 
 var meta_Debug = false
-var meta_Filter = "+live"
+
+//var meta_Filter = "+live"
 
 // use base qw(Hier::Hier Hier::Fields Hier::Filter)
 
@@ -155,7 +156,6 @@ func Filter(filter, sort, display_mode string) {
 	display.Mode(option.Get("Format", display_mode))
 
 	option.Set("Filter", filter)
-	meta_Filter = filter
 
 }
 
@@ -248,6 +248,10 @@ func Walk(args []string) *task.Walk {
 	var top task.Tasks
 
 	for _, criteria := range Argv(args) {
+		if criteria == "all" {
+			option.Set("Filter", "+all")
+			continue
+		}
 		if task.IsTask(criteria) {
 			t := Find(criteria)
 			if t != nil {

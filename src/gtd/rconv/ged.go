@@ -113,7 +113,7 @@ func ged_detail() { /*?
 
 		my($tid) = $ref->get_tid()
 
-		my($resource) = new Hier::Resource($ref)
+		my($resource) = $ref->Project()
 
 		$name = $ref->get_title() || ''
 		$tj_pri  = task_priority($ref)

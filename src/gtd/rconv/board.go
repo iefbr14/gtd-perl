@@ -418,7 +418,7 @@ func check_task() { /*?
 
 			++$count
 
-			my($resource) = new Hier::Resource($ref)
+			my($resource) = $ref->Project()
 			$Hours_task += $resource->hours($ref)
 		}
 		return $count
@@ -441,7 +441,7 @@ func check_next() { /*?
 
 			++$count
 
-			my($resource) = new Hier::Resource($ref)
+			my($resource) = $ref->Project()
 			$Hours_next += $resource->hours($ref)
 		}
 		return $count

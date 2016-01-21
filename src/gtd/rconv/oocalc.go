@@ -186,7 +186,7 @@ func get_actions() { /*?
 
 		my(@list)
 		for my $ref (@next) {
-			my($resource) = new Hier::Resource($ref)
+			my($resource) = $ref->Project()
 			my($effort) = $resource->hours()
 			$effort = .5 unless $effort
 

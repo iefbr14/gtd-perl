@@ -649,8 +649,6 @@ my($GTD_map, $GTD_default)
 var GTD_map = map[string]map[string]string
 var Prefix := "gtd_"
 
-our $Resource;	// used by Hier::Resource
-
 */
 func DB_init(confname string) {
 	db_debug = option.Bool("Debug", false)
@@ -668,14 +666,11 @@ func DB_init(confname string) {
 
 	home := os.Getenv("HOME")
 	conf := load_config(home + "/.todo/Access.json")
-	Resources = load_config(home + "/.todo/Resource.json")
+	Projects = load_config(home + "/.todo/Resource.json")
 
 	if db_debug {
 		dump_config("Access", conf)
 	}
-
-	//?	resource := load_config(home+"/.todo/Resource.json")
-	//?	$Hier::Resource::Resource = $conf->{resource}
 
 	dbconf, ok := conf[confname]
 	if !ok {

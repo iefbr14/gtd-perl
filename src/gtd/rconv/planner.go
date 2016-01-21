@@ -90,7 +90,7 @@ func planner_detail() { /*?
 
 
 		my($indent) = indent($ref)
-		my($resource) = new Hier::Resource($ref)
+		my($resource) = $ref->Project()
 		my($user) = $resource->resource()
 
 		$name = xml($ref->get_title() || '')

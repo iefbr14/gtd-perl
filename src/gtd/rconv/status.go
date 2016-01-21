@@ -186,7 +186,7 @@ func count_task() int {
 
 			++$count
 
-			my($resource) = new Hier::Resource(ref)
+			my($resource) = $ref->Project()
 			$Hours_task += $resource->hours(ref)
 		}
 		return $count
