@@ -1,7 +1,9 @@
-package Hier::Resource;
+package Hier::Project;
 
 use strict;
 use warnings;
+
+use Carp;
 
 our $VERSION     = 1.00;
 
@@ -183,12 +185,13 @@ sub hours {
 }
 
 sub complete {
+	confess("Unused fuction resource.complete");
 }
 
 # for each action, grouped by resource, sorted by priority/hier.task-id
 # tag it as depending on the previous resource
 sub predecessor {
-
+	confess("Unused fuction resource.predecssor");
 }
 
 #==============================================================================

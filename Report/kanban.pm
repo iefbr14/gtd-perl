@@ -50,7 +50,7 @@ use Hier::Color;
 use Hier::Meta;
 use Hier::Format;
 use Hier::Option;
-use Hier::Resource;
+use Hier::Project;
 
 sub Report_kanban {	#-- report kanban of projects/actions
 	# counts use it and it give a context
@@ -109,7 +109,7 @@ sub kanban_bump {
 	die "Nothing bunped due to errors\n" if $fail;
 
 	for my $ref (@list) {
-		my($new) = Hier::Resource::bump($ref);
+		my($new) = $ref->Bump()
 
 		if ($new) {
 			my($name) = Hier::Resource::state($new);

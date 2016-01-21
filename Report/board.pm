@@ -50,7 +50,7 @@ use Hier::Meta;
 use Hier::Sort;
 use Hier::Format;
 use Hier::Option;
-use Hier::Resource;
+use Hier::Project;
 use Hier::Color;
 
 my @Class = qw(Done Someday Action Next Future Total);
@@ -422,7 +422,7 @@ sub check_task {
 
 		++$count;
 
-		my($resource) = new Hier::Resource($ref);
+		my($resource) = $ref->Project()
 		$Hours_task += $resource->hours($ref);
 	}
 	return $count;
@@ -444,7 +444,7 @@ sub check_next {
 
 		++$count;
 
-		my($resource) = new Hier::Resource($ref);
+		my($resource) = $ref->Project()
 		$Hours_next += $resource->hours($ref);
 	}
 	return $count;

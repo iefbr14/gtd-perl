@@ -47,7 +47,7 @@ BEGIN {
 
 use Hier::Util;
 use Hier::Walk;
-use Hier::Resource;
+use Hier::Project;
 use Hier::Meta;
 use Hier::Format;
 use Hier::Option;	# get_today
@@ -121,7 +121,7 @@ sub hier_detail {
 
 	my($tid) = $ref->get_tid();
 
-	my($resource) = new Hier::Resource($ref);
+	my($resource) = $ref->Project()
 	
 	$name = $ref->get_title() || '';
 	$tj_pri  = task_priority($ref);

@@ -68,7 +68,7 @@ use warnings;
 use Hier::Meta;
 use Hier::Util;
 use Hier::Walk;
-use Hier::Resource;
+use Hier::Project;
 use Hier::Option;
 
 my($Parent);
@@ -233,7 +233,7 @@ sub hier_detail {
 	my($tid) = $ref->get_tid();
 
 	my($indent) = $ref->indent();
-	my($resource) = new Hier::Resource($ref);
+	my($resource) = $ref->Project()
 	
 	$name = $ref->get_title() || '';
 	$pri  = $ref->get_priority();
@@ -336,7 +336,7 @@ sub parent_user {
 	my($pref) = $ref->get_parent();
 	return '' unless $pref;
 
-	my($resource) = new Hier::Resource($pref);
+	my($resource) = $ref->Project()
 	return $resource->resource();
 }
 

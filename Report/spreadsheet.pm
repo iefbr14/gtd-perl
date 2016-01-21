@@ -47,7 +47,7 @@ BEGIN {
 
 use Hier::Util;
 use Hier::Meta;
-use Hier::Resource;
+use Hier::Project;
 
 sub Report_spreadsheet {	#-- Project Summary for a role
 	meta_filter('+active', '^tid', 'none');
@@ -135,7 +135,7 @@ sub get_actions {
 	foreach my $ref ($pref->get_children()) {
 		next if $ref->filtered();
 
-		my($resource) = new Hier::Resource($ref);
+		my($resource) = $ref->Project()
 		my($effort) = $resource->hours();
 		$effort = .5 unless $effort;
 

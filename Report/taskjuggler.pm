@@ -47,7 +47,7 @@ BEGIN {
 
 use Hier::Util;
 use Hier::Walk;
-use Hier::Resource;
+use Hier::Project;
 use Hier::Meta;
 use Hier::Format;
 use Hier::Option;	# get_today
@@ -115,7 +115,7 @@ sub calc_est {
 	for my $ref (meta_selected()) {
 		++$task;
 
-		my($resource) = new Hier::Resource($ref);
+		my($resource) = $ref->Project()
 		$hours += $resource->hours($ref);
 	}
 	my($days) = $hours / 4;

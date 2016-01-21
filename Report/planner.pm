@@ -47,7 +47,7 @@ BEGIN {
 
 use Hier::Util;
 use Hier::Walk;
-use Hier::Resource;
+use Hier::Project;
 use Hier::Meta;
 use Hier::Format;
 use Hier::CCT;
@@ -96,7 +96,7 @@ sub hier_detail {
 
 
 	my($indent) = indent($ref);
-	my($resource) = new Hier::Resource($ref);
+	my($resource) = $ref->Project()
 	my($user) = $resource->resource();
 
 	$name = xml($ref->get_title() || '');

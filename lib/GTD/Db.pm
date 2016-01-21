@@ -711,7 +711,7 @@ my($GTD);
 my($GTD_map, $GTD_default);
 my($Prefix) = 'gtd_';
 
-our $Resource;	# used by Hier::Resource
+our $Resource;	# used by Hier::Project
 
 sub DB_init {
 	my($confname) = @_;
@@ -730,7 +730,7 @@ sub DB_init {
 	my $HOME = $ENV{'HOME'};
 	my $conf = LoadFile("$HOME/.todo/Access.yaml");
 
-	$Hier::Resource::Resource = $conf->{resource};
+	$Hier::Project::Projects = $conf->{resource};
 
 	my($dbconf) = $conf->{$confname};
 

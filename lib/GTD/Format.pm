@@ -21,7 +21,7 @@ BEGIN {
 use Hier::Util;
 use Hier::Option;
 use Hier::Color;
-use Hier::Resource;
+use Hier::Project;
 
 my $Display = \&disp_simple;
 my $Header  = undef;
@@ -343,7 +343,7 @@ sub disp_plan {
 	my($type) = type_disp($ref);
 	my($title) = $ref->get_title();
 
-	my($resource) = new Hier::Resource($ref);
+	my($resource) = $ref->Project($ref);
 	my($effort)  = $resource->effort();
 	my($user)    = $resource->resource();
 	my($why)     = $resource->hint();
