@@ -13,3 +13,8 @@ src/main
 
 pkg/
 bin/gtd-go
+
+Makefile
+blib
+MYMETA.json
+MYMETA.yml
