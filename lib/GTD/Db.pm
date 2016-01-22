@@ -100,7 +100,7 @@ sub load_meta {
 
 		delete $row->{todo_id};
 
-		foreach my $key (keys %$row) {
+		for my $key (keys %$row) {
 			cset($ref, $key  => $row->{$key});
 		}
 	}
@@ -347,7 +347,7 @@ EOF
 		$tags_ref->define($tag, ++$tag_id);
 	}
 
-	foreach my $ref (GTD::Tasks::all()) {
+	for my $ref (GTD::Tasks::all()) {
 		$ref->clean_dirty();		# everything cleanly loaded
 	}
 
@@ -511,7 +511,7 @@ sub gset_insert_parents {
 	my $table = "gtd_lookup";
 
 	G_sql("delete from $table where itemId=?", $tid) if $del;
-	foreach my $pid ($ref->parent_ids()) {
+	for my $pid ($ref->parent_ids()) {
 		G_sql("insert into $table(parentId,itemId)values(?,?)",
 			$pid, $tid);
 	}

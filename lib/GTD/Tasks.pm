@@ -288,7 +288,7 @@ sub set_tags {
 
 	$self->{_tags} = {};
 
-	foreach my $tag (@_) {
+	for my $tag (@_) {
 		$self->{_tags}{$tag}++;
 	}
 	return $self;
@@ -344,7 +344,7 @@ sub update {
 
 sub clean_up_database {
 	$Debug = 1;	# show what should have been updated.
-	foreach my $ref (GTD::Tasks::all()) {
+	for my $ref (GTD::Tasks::all()) {
 
 		next unless $ref->is_dirty();
 

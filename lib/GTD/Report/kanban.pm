@@ -57,7 +57,7 @@ sub Report_kanban {	#-- report kanban of projects/actions
 	meta_filter('+active', '^tid', 'simple');	
 
 	my(@args);
-	foreach my $arg (meta_argv(@_)) {
+	for my $arg (meta_argv(@_)) {
 		if ($arg =~ s/^\.//) {
 			kanban_bump($arg);
 			next;
@@ -139,7 +139,7 @@ sub check_hier {
 	my($count) = 0;
 
 	# find all hier records
-	foreach my $ref (meta_all()) {
+	for my $ref (meta_all()) {
 		next unless $ref->is_hier();
 		next if $ref->filtered();
 
@@ -154,7 +154,7 @@ sub check_hier {
 }
 
 sub check_roles {
-	foreach my $ref (@_) {
+	for my $ref (@_) {
 		display_rgpa($ref);
 
 		check_a_role($ref);

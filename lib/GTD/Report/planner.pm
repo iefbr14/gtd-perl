@@ -96,7 +96,7 @@ sub hier_detail {
 
 
 	my($indent) = indent($ref);
-	my($resource) = $ref->Project()
+	my($resource) = $ref->Project();
 	my($user) = $resource->resource();
 
 	$name = xml($ref->get_title() || '');
@@ -241,7 +241,7 @@ sub planner_resource() {
 
 	print "  <resource-groups/>\n";
 	print "  <resources>\n";
-	foreach my $id (sort {$a <=> $b } keys %Alloc_resource) {
+	for my $id (sort {$a <=> $b } keys %Alloc_resource) {
 		$who = $Alloc_resource{$id};
 		print qq(    <resource id="$id" name="$who" short-name="" type="1" units="0" email="" note="" std-rate="0"/>\n);
 	}
@@ -252,7 +252,7 @@ sub planner_allocations() {
 	my($who);
 
 	print "  <allocations>\n";
-	foreach my $id (sort {$a <=> $b } keys %Alloc_tasks) {
+	for my $id (sort {$a <=> $b } keys %Alloc_tasks) {
 		$who = $Alloc_tasks{$id};
 		print qq(    <allocation task-id="$id" resource-id="$who" units="100"/>\n);
 	}

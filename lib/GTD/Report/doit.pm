@@ -69,7 +69,7 @@ sub Report_doit {	#-- doit tracks which projects/actions have had movement
 	my($target) = 0;
 	my($action) = \&doit_list;
 
-	foreach my $arg (meta_argv(@_)) {
+	for my $arg (meta_argv(@_)) {
 		if ($arg =~ /^\d+$/) {
 			my($ref) = meta_find($arg);
 
@@ -204,7 +204,7 @@ sub list_all {
 
 		
 sub doit_list {
-	foreach my $ref (@_) {
+	for my $ref (@_) {
 		my($date) = $ref->get_doit() || $ref->get_created();
 		display_task($ref, "{{doit|$date}}");
 

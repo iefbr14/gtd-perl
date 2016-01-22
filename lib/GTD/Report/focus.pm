@@ -139,7 +139,7 @@ sub check_task {
 		return 1;
 	}
 
-	foreach my $ref (sort_tasks $p_ref->get_children()) {
+	for my $ref (sort_tasks $p_ref->get_children()) {
 		next unless $ref->is_nextaction();
 		next if $ref->get_completed();
 ##FILTER#	next if $ref->filtered();

@@ -233,7 +233,7 @@ sub hier_detail {
 	my($tid) = $ref->get_tid();
 
 	my($indent) = $ref->indent();
-	my($resource) = $ref->Project()
+	my($resource) = $ref->Project();
 	
 	$name = $ref->get_title() || '';
 	$pri  = $ref->get_priority();
@@ -278,7 +278,7 @@ sub hier_detail {
 	if ($user && parent_user($ref) ne $user) {
 		print {$fd} $indent, qq(  allocate $user\n);
 	}
-	foreach my $depend (split(/[ ,]/, $depends)) {
+	for my $depend (split(/[ ,]/, $depends)) {
 		my($dep_path) = dep_path($depend);
 warn "depend: $depend dep_path $dep_path\n";
 		next unless $dep_path;
@@ -336,7 +336,7 @@ sub parent_user {
 	my($pref) = $ref->get_parent();
 	return '' unless $pref;
 
-	my($resource) = $ref->Project()
+	my($resource) = $ref->Project();
 	return $resource->resource();
 }
 

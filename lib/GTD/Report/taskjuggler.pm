@@ -115,7 +115,7 @@ sub calc_est {
 	for my $ref (meta_selected()) {
 		++$task;
 
-		my($resource) = $ref->Project()
+		my($resource) = $ref->Project();
 		$hours += $resource->hours($ref);
 	}
 	my($days) = $hours / 4;
@@ -164,7 +164,7 @@ sub hier_detail {
 	print "# taskjuggler::hier_detail($tid)\n" if $Debug;
 
 	my($indent) = indent($ref);
-	my($resource) = $ref->Project()
+	my($resource) = $ref->Project();
 
 	$name = $ref->get_title() || '';
 	$tj_pri  = task_priority($ref);
@@ -211,7 +211,7 @@ sub hier_detail {
 		print {$fd} $indent, qq(   allocate $user { mandatory } # $hint\n);
 	}
 
-	foreach my $depend (split(/[ ,]/, $depends)) {
+	for my $depend (split(/[ ,]/, $depends)) {
 		my($dep_path) = dep_path($depend);
 
 		unless ($dep_path) {
@@ -397,7 +397,7 @@ sub supress {
 	my($tid) = $ref->get_tid();
 	$walk->{want}{$tid} = 0;
 
-	foreach my $child ($ref->get_children()) {
+	for my $child ($ref->get_children()) {
 		supress($walk, $child);
 	}
 }

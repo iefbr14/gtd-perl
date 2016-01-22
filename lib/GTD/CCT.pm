@@ -67,7 +67,7 @@ sub set {
 
 	unless ($val) {
 		$val = 1;
-		foreach my $table_value (values(%$cct)) {
+		for my $table_value (values(%$cct)) {
 			$val = $table_value + 1 if $table_value <= $val;
 		}
 	}

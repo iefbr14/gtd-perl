@@ -56,7 +56,7 @@ sub meta_selected {
 
 sub meta_filtered {
 	if (@Selected == 0) {
-		foreach my $ref (GTD::Tasks::all()) {
+		for my $ref (GTD::Tasks::all()) {
 			next if $ref->filtered(0);
 			push(@Selected, $ref);
 		}
@@ -90,7 +90,7 @@ sub meta_find {
 
 sub delete_hier {
 	die "###ToDo Broked, should be deleting by categories?\n";
-	foreach my $tid (@_) {
+	for my $tid (@_) {
 		my $ref = GTD::Tasks::find{$tid};
 		if (defined $ref) {
 			warn "Category $tid deleted\n";
@@ -200,7 +200,7 @@ sub meta_desc {
 sub meta_pick {
 	my(@list) = ();
 
-	foreach my $arg (meta_argv(@_)) {
+	for my $arg (meta_argv(@_)) {
 		# comma sperated list of tasks
                 while ($arg =~ s/^(\d+),(\d[\d,]*)$/$2/) {
                         my($ref) = meta_find($1);

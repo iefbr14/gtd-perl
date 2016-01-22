@@ -243,7 +243,7 @@ sub add_children {
 
 	## warn "w tid: ", $ref->get_tid, " ", $ref->get_title, "\n";
 	$Want{$ref->get_tid()} = 1;
-	foreach my $cref ($ref->get_children()) {
+	for my $cref ($ref->get_children()) {
 		add_children($cref);
 	}
 }

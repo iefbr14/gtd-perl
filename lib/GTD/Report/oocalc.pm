@@ -56,7 +56,7 @@ sub Report_oocalc {	#-- Project Summary for a role
 	new_calc();
 	
 	my($roles) = load_roles();
-	foreach my $role (sort keys %$roles) {
+	for my $role (sort keys %$roles) {
 		display_role($role, $roles->{$role});
 	}
 	save_calc();
@@ -85,7 +85,7 @@ sub display_role {
 	my(@head) = qw(Goal P-id Project T-id Next-Action Hours .);
 
 	my(@list);
-	foreach my $gref ($ref->get_children()) {
+	for my $gref ($ref->get_children()) {
 		next if $gref->filtered();
 
 		push(@list, get_projects($gref));
@@ -94,7 +94,7 @@ sub display_role {
 	new_sheet($role, scalar @list, 7);
 	save_row(1, @head);
 	my($row) = 2;
-	foreach my $line (sort {
+	for my $line (sort {
 		lc($a->[0]) cmp lc($b->[0])
 	   ||	lc($a->[2]) cmp lc($b->[2])
 	   ||	lc($a->[4]) cmp lc($b->[4])
@@ -108,7 +108,7 @@ sub get_projects {
 
 	my(@list);
 
-	foreach my $pref ($gref->get_children()) {
+	for my $pref ($gref->get_children()) {
 		next if $pref->filtered();
 
 		push(@list, get_actions($gref, $pref));
@@ -130,7 +130,7 @@ sub get_actions {
 	my(@done) = ();
 
 	# figure out which order.
-	foreach my $ref ($pref->get_children()) {
+	for my $ref ($pref->get_children()) {
 		next if $ref->filtered();
 
 		if ($ref->get_completed()) {
@@ -192,7 +192,7 @@ sub get_actions {
 
 	my(@list);
 	for my $ref (@next) {
-		my($resource) = $ref->Project()
+		my($resource) = $ref->Project();
 		my($effort) = $resource->hours();
 		$effort = .5 unless $effort;
 

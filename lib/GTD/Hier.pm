@@ -111,7 +111,7 @@ sub count_actions {
 	my(@children) = get_children(@_);
 
 	my($count) = 0;
-	foreach my $child (get_children(@_)) {
+	for my $child (get_children(@_)) {
 		++$count if $child->get_type() eq 'a';
 	}
 	return $count;

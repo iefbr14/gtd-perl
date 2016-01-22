@@ -51,7 +51,7 @@ use GTD::Meta;
 sub Report_delete {	#-- Delete listed actions/projects (will orphine items)
 	my($ref);
 
-	foreach my $tid (@_) {
+	for my $tid (@_) {
 		$ref = meta_find($tid);
 
 		unless (defined $ref) {
@@ -69,7 +69,7 @@ sub Report_delete {	#-- Delete listed actions/projects (will orphine items)
 }
 
 sub delete_hier {
-        foreach my $tid (@_) {
+        for my $tid (@_) {
                 my $ref = GTD::Tasks::find{$tid};
                 if (defined $ref) {
                         warn "Category $tid deleted\n";

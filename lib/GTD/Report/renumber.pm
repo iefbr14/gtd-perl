@@ -65,7 +65,7 @@ sub Report_renumber { #-- Renumber task Ids
 	my(@list) = meta_argv(@_);
 
 	if (@list) {
-		foreach my $pair (@list) {
+		for my $pair (@list) {
 			renumber_pair($pair);
 		}
 	} else {
@@ -274,11 +274,11 @@ sub dependent {
 	warn "Building Dep_map\n";
 		
 	my($pref, $pid, $depends);
-	foreach my $pref ( meta_all()) {
+	for my $pref ( meta_all()) {
 		$depends = $pref->get_depends();
 		$pid = $pref->get_tid();
 
-		foreach my $depend (split(/[ ,]/, $depends)) {
+		for my $depend (split(/[ ,]/, $depends)) {
 			$Dep_map{$depend} .= ','.$pid;
 		}
 	}

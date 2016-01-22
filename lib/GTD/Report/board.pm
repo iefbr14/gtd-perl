@@ -103,7 +103,7 @@ Purple: overcommited
 =cut
 
 sub check_roles {
-	foreach my $ref (@_) {
+	for my $ref (@_) {
 		check_a_role($ref);
 	}
 }
@@ -387,7 +387,7 @@ sub check_proj {
 	my($count) = 0;
 
 	# find all projects
-	foreach my $ref (meta_matching_type('p')) {
+	for my $ref (meta_matching_type('p')) {
 
 		++$count;
 	}
@@ -398,7 +398,7 @@ sub check_liveproj {
 	my($count) = 0;
 
 	# find all projects
-	foreach my $ref (meta_matching_type('p')) {
+	for my $ref (meta_matching_type('p')) {
 ###FILTER	next if $ref->filtered();
 
 		next unless project_live($ref);
@@ -413,7 +413,7 @@ sub check_task {
 	my($time) = 0;
 
 	# find all records.
-	foreach my $ref (meta_selected()) {
+	for my $ref (meta_selected()) {
 		next unless $ref->is_task();
 
 		next if $ref->filtered();
@@ -433,7 +433,7 @@ sub check_next {
 	my($time) = 0;
 
 	# find all records.
-	foreach my $ref (meta_selected()) {
+	for my $ref (meta_selected()) {
 		next unless $ref->is_task();
 
 		next if $ref->filtered();
@@ -455,7 +455,7 @@ sub check_tasklive {
 	my($time) = 0;
 
 	# find all records.
-	foreach my $ref (meta_selected()) {
+	for my $ref (meta_selected()) {
 
 		next unless $ref->is_task();
 
@@ -480,10 +480,10 @@ sub project_live {
 	}
 
 	if ($ref->is_hier()) {
-		foreach my $pref ($ref->get_parents()) {
+		for my $pref ($ref->get_parents()) {
 			$ref->get_live() |= project_live($pref);
 		}
-		foreach my $cref ($ref->get_children()) {
+		for my $cref ($ref->get_children()) {
 			$ref->get_live() |= project_live($cref);
 		}
 	

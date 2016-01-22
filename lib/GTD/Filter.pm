@@ -547,7 +547,7 @@ sub cct_wanted {
 
 sub add_filter_tags {
 	if (option('Tag')) {
-		foreach my $tag (split(',', option('Tag'))) {
+		for my $tag (split(',', option('Tag'))) {
 			$Filter_Tags{$tag}++;
 		}
 	}

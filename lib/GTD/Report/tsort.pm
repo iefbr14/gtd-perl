@@ -85,7 +85,7 @@ sub down {
 	}
 	$Depth{$id} = $level;
 
-	foreach my $pref ($ref->get_parents()) {
+	for my $pref ($ref->get_parents()) {
 		my $pid = $pref->get_tid();
 
 		if ($Depth{$pid} > $level) {
@@ -95,7 +95,7 @@ sub down {
 		print $pid, ' ', $ref->get_tid(), "\n";
 	}
 
-	foreach my $cref ($ref->get_children()) {
+	for my $cref ($ref->get_children()) {
 		down($cref, $level+1);
 	}
 }
@@ -115,7 +115,7 @@ sub dpos {
 	$Depth{$id} = $level;
 
 	my($join) = ' ';
-	foreach my $pref ($ref->get_parents()) {
+	for my $pref ($ref->get_parents()) {
 		my $pid = $pref->get_tid();
 
 		$Depth{$pid} = '0' unless defined $Depth{$pid};
@@ -128,13 +128,13 @@ sub dpos {
 	}
 	print " <$id>";
 
-	foreach my $cref ($ref->get_children()) {
+	for my $cref ($ref->get_children()) {
 		my $cid = $cref->get_tid();
 		print " $cid";
 	}
 	print "\n";
 
-	foreach my $cref ($ref->get_children()) {
+	for my $cref ($ref->get_children()) {
 		dpos($cref, $level+1);
 	}
 }
@@ -153,7 +153,7 @@ sub up {
 	}
 		
 
-	foreach my $pref ($ref->get_parents()) {
+	for my $pref ($ref->get_parents()) {
 		up($pref, $id, @_);
 
 	}

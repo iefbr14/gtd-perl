@@ -50,6 +50,7 @@ use GTD::Meta;
 use GTD::Option;
 use GTD::Format;
 use GTD::Sort;
+use GTD::Prompt;
 
 my $Mode = 'p';	# project, doit, next-actions, actions, someday
 
@@ -231,7 +232,7 @@ sub _report_doit {
 	my($target) = 0;
 	my($action) = \&doit_list;
 
-	foreach my $arg (GTD::util::meta_argv(@_)) {
+	for my $arg (GTD::util::meta_argv(@_)) {
 		if ($arg =~ /^\d+$/) {
 			my($ref) = meta_find($arg);
 
@@ -324,7 +325,7 @@ $tid,  $pri, $cat,       $doit,    $desc
 .
 	$~ = "DOIT";	# set STDOUT format name to HIER
 
-	foreach my $ref (@_) {
+	for my $ref (@_) {
 		$tid = $ref->get_tid();
 
 		$pri       = $ref->get_priority();

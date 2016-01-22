@@ -78,7 +78,7 @@ sub count_items {
 		count_item('context',   $type, $ref->get_context());
 		count_item('timeframe', $type, $ref->get_timeframe());
 
-		foreach my $tag ($ref->get_tags()) {
+		for my $tag ($ref->get_tags()) {
 			count_item('tag', $type, $tag);
 		}
 			
@@ -123,7 +123,7 @@ sub report_counts {
 		$dup = $Dups{lc($key)}++ ? '*' : ':';
 		$cnt = $Count{$cct}{$key} || 0;
 
-		foreach my $type (qw(m v o g p a)) {
+		for my $type (qw(m v o g p a)) {
 			$sk = $Sub_Count{$cct}{$key}{$type};
 
 			$sk = '' unless defined $sk;

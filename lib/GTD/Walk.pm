@@ -94,14 +94,14 @@ sub filter {
 	my($walk) = shift @_;
 
 	my($tid, $type);
-	foreach my $ref (GTD::Tasks::all()) {
+	for my $ref (GTD::Tasks::all()) {
 		$tid = $ref->get_tid;
 		$walk->{want}{$tid} = 1;
 		$walk->{want}{$tid} = 0 if $ref->filtered();
 	}
 	return;
 
-	foreach my $ref (GTD::Tasks::all()) {
+	for my $ref (GTD::Tasks::all()) {
 		$tid = $ref->get_tid();
 		$type = $ref->get_type();
 
@@ -128,7 +128,7 @@ sub _want {
 	my($walk) = shift @_;
 
 	my($pid);
-	foreach my $ref (@_) {
+	for my $ref (@_) {
 		$pid = $ref->get_tid();
 		next if $walk->{want}{$pid}++;
 
@@ -170,7 +170,7 @@ sub detail {
 
 	$walk->{detail}->($walk, $ref);
 
-	foreach my $child (sort_tasks $ref->get_children()) {
+	for my $child (sort_tasks $ref->get_children()) {
 		my $cid = $child->get_tid();
 		warn "$tid => detail($cid)\n" if $Debug;
 

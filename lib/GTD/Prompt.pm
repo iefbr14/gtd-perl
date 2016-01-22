@@ -15,6 +15,8 @@ BEGIN {
 use strict;
 use warnings;
 
+use Term::ReadLine;
+
 our $Debug = 0;
 
 my $Term;

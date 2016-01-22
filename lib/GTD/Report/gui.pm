@@ -92,7 +92,7 @@ sub init {
 	$w->configure(-background => 'cyan');
 
 	my(@reports);
-	foreach my $report (get_reports()) {
+	for my $report (get_reports()) {
 		push(@reports, $report, sub { &run_report($report) } );
 	}
 	
@@ -296,7 +296,7 @@ print "Edit: $path => $tid\n";
         );
 
 	my($val);
-	foreach my $key (sort keys %$ref) {
+	for my $key (sort keys %$ref) {
 		next if $key =~ /^_/;
 
 		$val = $ref->get_KEY($key);

@@ -121,7 +121,7 @@ sub hier_detail {
 
 	my($tid) = $ref->get_tid();
 
-	my($resource) = $ref->Project()
+	my($resource) = $ref->Project();
 	
 	$name = $ref->get_title() || '';
 	$tj_pri  = task_priority($ref);
@@ -154,7 +154,7 @@ sub hier_detail {
 
 	$name =~ s=/=.=g;
 
-	foreach my $depend (split(/[ ,]/, $depends)) {
+	for my $depend (split(/[ ,]/, $depends)) {
 		my($dep_path) = dep_path($depend);
 
 		unless ($dep_path) {
@@ -316,7 +316,7 @@ sub supress {
 	my($tid) = $ref->get_tid();
 	$planner->{want}{$tid} = 0;
 
-	foreach my $child ($ref->get_children()) {
+	for my $child ($ref->get_children()) {
 		supress($planner, $child);
 	}
 }
