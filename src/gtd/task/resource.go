@@ -126,11 +126,11 @@ func (r *Resource_T) Effort() string {
 	if r.effort == "" {
 		switch t.Type {
 		default:
-			effort = "1h # action"
+			r.effort = "1h # action"
 		case 'p':
-			effort = "2h # Need planning"
+			r.effort = "2h # Need planning"
 		case 'g':
-			effort = "8h # Need planning"
+			r.effort = "8h # Need planning"
 		}
 	}
 

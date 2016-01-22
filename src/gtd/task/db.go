@@ -666,7 +666,7 @@ func DB_init(confname string) {
 
 	home := os.Getenv("HOME")
 	conf := load_config(home + "/.todo/Access.json")
-	Projects = load_config(home + "/.todo/Resource.json")
+	Resources = load_config(home + "/.todo/Resource.json")
 
 	if db_debug {
 		dump_config("Access", conf)
