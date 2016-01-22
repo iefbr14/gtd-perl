@@ -7,7 +7,7 @@ use warnings;
 use GTD::Option;
 use GTD::Project;
 
-use base qw(GTD::Hier Hier::Fields Hier::Filter Hier::Format);
+use base qw(GTD::Hier GTD::Fields GTD::Filter GTD::Format);
 
 my %Tasks;		# all Todo items (including Hier)
 

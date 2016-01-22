@@ -31,7 +31,7 @@ use GTD::Util;
 
 our $Debug = 0;
 
-use base qw(GTD::Hier Hier::Fields Hier::Filter);
+use base qw(GTD::Hier GTD::Fields GTD::Filter);
 
 #==============================================================================
 #==== Top level filter/sort/selection

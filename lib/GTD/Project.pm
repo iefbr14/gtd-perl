@@ -7,7 +7,7 @@ use Carp;
 
 our $VERSION     = 1.00;
 
-use base qw(GTD::Hier Hier::Fields Hier::Filter);
+use base qw(GTD::Hier GTD::Fields GTD::Filter);
 
 my $Max_todo = 0; 	# Last todo id (unique for all tables)
 my %Task;		# all Todo items (including Hier)
