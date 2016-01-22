@@ -1,4 +1,4 @@
-package Hier::Report::checklist;
+package GTD::Report::checklist;
 
 =head1 NAME
 
@@ -45,9 +45,9 @@ BEGIN {
 	@EXPORT      = qw( &Report_checklist );
 }
 
-use Hier::Util;
-use Hier::Meta;
-use Hier::Format;
+use GTD::Util;
+use GTD::Meta;
+use GTD::Format;
 
 our $Debug = 0;
 

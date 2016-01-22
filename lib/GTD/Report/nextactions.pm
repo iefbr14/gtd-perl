@@ -1,4 +1,4 @@
-package Hier::Report::nextactions;
+package GTD::Report::nextactions;
 
 =head1 NAME
 
@@ -45,8 +45,8 @@ BEGIN {
 	@EXPORT      = qw(&Report_nextactions);
 }
 
-use Hier::Util;
-use Hier::Meta;
+use GTD::Util;
+use GTD::Meta;
 
 sub Report_nextactions { #-- List next actions
 	my($tid, $pid, $pref, $tic, $parent, $pic, $name, $desc);

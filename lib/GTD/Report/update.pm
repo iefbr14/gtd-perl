@@ -1,4 +1,4 @@
-package Hier::Report::update;
+package GTD::Report::update;
 
 =head1 NAME
 
@@ -45,9 +45,9 @@ BEGIN {
 	@EXPORT      = qw(&Report_update);
 }
 
-use Hier::Util;
-use Hier::Meta;
-use Hier::Option;
+use GTD::Util;
+use GTD::Meta;
+use GTD::Option;
 
 sub Report_update {	#-- Command line update of an action/project
 	my($task, $desc) = @_;

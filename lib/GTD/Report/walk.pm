@@ -1,4 +1,4 @@
-package Hier::Report::walk;
+package GTD::Report::walk;
 
 =head1 NAME
 
@@ -45,11 +45,11 @@ BEGIN {
 	@EXPORT      = qw(&Report_walk);
 }
 
-use Hier::Util;
-use Hier::Meta;
-use Hier::Option;
-use Hier::Format;
-use Hier::Sort;
+use GTD::Util;
+use GTD::Meta;
+use GTD::Option;
+use GTD::Format;
+use GTD::Sort;
 
 sub Report_walk {	#-- Command line walk of a hier
 	unless (@_) {

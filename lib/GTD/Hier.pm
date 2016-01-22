@@ -1,4 +1,4 @@
-package Hier::Hier;
+package GTD::Hier;
 
 use strict;
 use warnings;
@@ -101,7 +101,7 @@ sub children_ids {
 sub count_children {
 	my(@children) = get_children(@_);
 
-	### see Hier::Format::summray_children for counts
+	### see GTD::Format::summray_children for counts
 	### based on filters
 
 	return scalar @children;
@@ -180,7 +180,7 @@ sub set_parent_ids {
 
 	# find my new parents
 	for my $pid (@pid) {
-		my $p_ref = Hier::Tasks::find($pid);
+		my $p_ref = GTD::Tasks::find($pid);
 		unless ($p_ref) { # opps not a real parent
 			warn "No parent id: $pid\n";
 			next;
@@ -213,7 +213,7 @@ sub set_children_ids {
 
 	# find my new parents
 	for my $cid (@cid) {
-		my $c_ref = Hier::Tasks::find($cid);
+		my $c_ref = GTD::Tasks::find($cid);
 		unless ($c_ref) { # opps not a real child
 			warn "No child id: $cid\n";
 			next;

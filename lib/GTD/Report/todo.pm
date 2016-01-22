@@ -1,4 +1,4 @@
-package Hier::Report::todo;
+package GTD::Report::todo;
 
 =head1 NAME
 
@@ -45,10 +45,10 @@ BEGIN {
 	@EXPORT      = qw(&Report_todo);
 }
 
-use Hier::Util;
-use Hier::Meta;
-use Hier::Option;
-use Hier::Format;
+use GTD::Util;
+use GTD::Meta;
+use GTD::Option;
+use GTD::Format;
 
 sub Report_todo {	#-- List high priority next actions
 	my($limit) = option('Limit', 10);

@@ -1,4 +1,4 @@
-package Hier::Report::bulkedit;
+package GTD::Report::bulkedit;
 
 =head1 NAME
 
@@ -35,7 +35,7 @@ package Hier::Report::bulkedit;
 use strict;
 use warnings;
 
-use Hier::Meta;
+use GTD::Meta;
 
 #------------------------------------------------------------------------------
 sub Report_bulk { #-- Create Bulk create Projects/Actions items from a file

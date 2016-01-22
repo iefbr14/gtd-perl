@@ -1,4 +1,4 @@
-package Hier::Report::toplevel;
+package GTD::Report::toplevel;
 
 =head1 NAME
 
@@ -45,7 +45,7 @@ BEGIN {
 	@EXPORT      = qw(&Report_toplevel);
 }
 
-use Hier::Report::list;
+use GTD::Report::list;
 
 sub Report_toplevel {	#-- List Values/Visions/Roles
 	Report_list('Values');

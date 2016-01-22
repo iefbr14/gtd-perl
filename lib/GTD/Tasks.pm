@@ -1,12 +1,13 @@
-package Hier::Tasks;
+package GTD::Tasks;
 
 use strict;
 use warnings;
 
 #use Class::Struct;
-use Hier::Option;
+use GTD::Option;
+use GTD::Project;
 
-use base qw(Hier::Hier Hier::Fields Hier::Filter Hier::Format);
+use base qw(GTD::Hier Hier::Fields Hier::Filter Hier::Format);
 
 my %Tasks;		# all Todo items (including Hier)
 
@@ -72,7 +73,7 @@ sub New {
 
 	my($self) = {};
 
-	$Max_todo = Hier::Db::G_val('itemstatus', 'max(itemId)') unless $Max_todo;
+	$Max_todo = GTD::Db::G_val('itemstatus', 'max(itemId)') unless $Max_todo;
 
 	if (defined $tid) {
 		die "Task $tid exists won't create it." if defined $Tasks{$tid};
@@ -96,7 +97,7 @@ sub New {
 sub insert {
 	my($self) = @_;
 
-	Hier::Db::gtd_insert($self);
+	GTD::Db::gtd_insert($self);
 	delete $self->{_dirty};
 }
 
@@ -154,8 +155,8 @@ sub delete {
 
 
 	# commit suicide
-	Hier::Db::sac_delete($tid);
-	Hier::Db::gtd_delete($tid);	# remove from database
+	GTD::Db::sac_delete($tid);
+	GTD::Db::gtd_delete($tid);	# remove from database
 
 	###BUG### need to reflect back database changed.
 	###G_sql("update");
@@ -206,8 +207,8 @@ sub get_type         { my($self) = @_; return default($self->{type}, '?'); }
 sub get_resource     { my($self) = @_; return default($self->{resource}, ''); }
 sub get_hint         { my($self) = @_; return default($self->{_hint}, ''); }
 
-sub get_focus { return Hier::Sort::calc_focus(@_)};
-sub get_panic { return Hier::Sort::calc_panic(@_)};
+sub get_focus { return GTD::Sort::calc_focus(@_)};
+sub get_panic { return GTD::Sort::calc_panic(@_)};
 
 sub set_category     {return dset('category', @_); }
 sub set_completed    {return dset('completed', @_); }
@@ -252,7 +253,7 @@ sub set_tid          {
 		$ref->update();		
 	}
 
-	Hier::Db::G_renumber($ref, $tid, $new);
+	GTD::Db::G_renumber($ref, $tid, $new);
 
         $Tasks{$new} = $Tasks{$tid};
         delete $Tasks{$tid};
@@ -337,13 +338,13 @@ sub dset {
 sub update {
 	my($self) = @_;
 
-	Hier::Db::gtd_update($self);
+	GTD::Db::gtd_update($self);
 	delete $self->{_dirty};
 }
 
 sub clean_up_database {
 	$Debug = 1;	# show what should have been updated.
-	foreach my $ref (Hier::Tasks::all()) {
+	foreach my $ref (GTD::Tasks::all()) {
 
 		next unless $ref->is_dirty();
 
@@ -356,7 +357,7 @@ sub clean_up_database {
 
 sub reload_if_needed_database {
 	my($changed) = option('Changed');
-	my($cur) = Hier::Db::G_val('itemstatus', 'max(lastModified)');
+	my($cur) = GTD::Db::G_val('itemstatus', 'max(lastModified)');
 
 	if ($cur ne $changed) {
 		print "Database changed from $changed => $cur\n";
@@ -417,7 +418,7 @@ sub is_nextaction {
 	return 0;
 }
 
-# used by Hier::Walk to track depth of the current walk
+# used by GTD::Walk to track depth of the current walk
 sub set_level {
 	my($self, $level) = @_;
 
@@ -456,6 +457,12 @@ sub get_state {
 	}
 
 	return $state;
+}
+
+sub Project {
+	my($self) = @_; 
+
+	return new GTD::Project($self);
 }
 
 1;  # don't forget to return a true value from the file

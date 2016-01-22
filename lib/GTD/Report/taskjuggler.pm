@@ -1,4 +1,4 @@
-package Hier::Report::taskjuggler;
+package GTD::Report::taskjuggler;
 
 =head1 NAME
 
@@ -45,12 +45,12 @@ BEGIN {
 	@EXPORT      = qw(&Report_taskjuggler);
 }
 
-use Hier::Util;
-use Hier::Walk;
-use Hier::Project;
-use Hier::Meta;
-use Hier::Format;
-use Hier::Option;	# get_today
+use GTD::Util;
+use GTD::Walk;
+use GTD::Project;
+use GTD::Meta;
+use GTD::Format;
+use GTD::Option;	# get_today
 
 my $ToOld;
 my $ToFuture;
@@ -95,7 +95,7 @@ sub Report_taskjuggler {	#-- generate taskjuggler file from gtd db
 		$ToFuture = pdate(get_today(60));	
 	}
 
-	my($walk) = new Hier::Walk(
+	my($walk) = new GTD::Walk(
 		pre    => \&build_deps,
 		detail => \&hier_detail,
 		done   => \&end_detail,
@@ -164,7 +164,7 @@ sub hier_detail {
 	print "# taskjuggler::hier_detail($tid)\n" if $Debug;
 
 	my($indent) = indent($ref);
-	my($resource) = new Hier::Resource($ref);
+	my($resource) = $ref->Project()
 
 	$name = $ref->get_title() || '';
 	$tj_pri  = task_priority($ref);
@@ -304,7 +304,7 @@ sub parent_user {
 	my($pref) = $ref->get_parent();
 	return '' unless $pref;
 
-	my($resource) = new Hier::Resource($pref);
+	my($resource) = $pref->Project();
 	return $resource->resource();
 }
 
@@ -352,7 +352,7 @@ sub old_task_priority {
 sub task_priority {
 	my($ref) = @_;
 
-	my($pf) = Hier::Sort::calc_focus($ref);
+	my($pf) = GTD::Sort::calc_focus($ref);
 
 	my($tj_pri) = substr($pf.'zzzzzz', 2, 3);
 	$pf =~ s/^(..)/$1./;

@@ -1,4 +1,4 @@
-package Hier::Report::doit;
+package GTD::Report::doit;
 
 =head1 NAME
 
@@ -46,11 +46,11 @@ BEGIN {
 }
 
 
-use Hier::Util;
-use Hier::Meta;
-use Hier::Sort;
-use Hier::Option;
-use Hier::Format;
+use GTD::Util;
+use GTD::Meta;
+use GTD::Sort;
+use GTD::Option;
+use GTD::Format;
 
 my $Today = get_today(0);
 my $Later = get_today(+7);

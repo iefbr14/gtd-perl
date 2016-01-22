@@ -1,4 +1,4 @@
-package Hier::Report::orphans;
+package GTD::Report::orphans;
 
 =head1 NAME
 
@@ -45,10 +45,10 @@ BEGIN {
 	@EXPORT      = qw(&Report_orphans);
 }
 
-use Hier::Util;
-use Hier::Meta;
-use Hier::Sort;
-use Hier::Format;
+use GTD::Util;
+use GTD::Meta;
+use GTD::Sort;
+use GTD::Format;
 
 sub Report_orphans {	#-- list all items without a parent 
 	meta_filter('+any', '^title', 'todo');

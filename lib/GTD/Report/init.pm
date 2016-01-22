@@ -1,4 +1,4 @@
-package Hier::Report::init;
+package GTD::Report::init;
 
 =head1 NAME
 

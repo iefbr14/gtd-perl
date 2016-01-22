@@ -1,4 +1,4 @@
-package Hier::Report::hier;
+package GTD::Report::hier;
 
 =head1 NAME
 
@@ -45,12 +45,12 @@ BEGIN {
 	@EXPORT      = qw(&Report_hier);
 }
 
-use Hier::Util;
-use Hier::Color;
-use Hier::Walk;
-use Hier::Meta;
-use Hier::Option;
-use Hier::Format;
+use GTD::Util;
+use GTD::Color;
+use GTD::Walk;
+use GTD::Meta;
+use GTD::Option;
+use GTD::Format;
 
 my $Mask = 0;
 
@@ -83,7 +83,7 @@ sub Report_hier {	#-- Hiericial List of Values/Visions/Roles...
 	}
 
 	for my $top (@top) {
-		my($walk) = new Hier::Walk(
+		my($walk) = new GTD::Walk(
 			detail => \&hier_detail,
 			done   => \&end_detail,
 		);
@@ -105,7 +105,7 @@ sub map_depth {
 	if (!ref $ref) {
 		# is it a tid?
 		if ($ref =~ /^\d+$/) {
-			$ref = Hier::Tasks::find($ref);
+			$ref = GTD::Tasks::find($ref);
 			$type = $ref->get_type();
 		} else {
 			# use the type that was pass

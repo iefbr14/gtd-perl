@@ -1,4 +1,4 @@
-package Hier::Report::gui;
+package GTD::Report::gui;
 
 =head1 NAME
 
@@ -43,7 +43,7 @@ BEGIN {
 
 	# set the version for version checking
 	$VERSION     = 1.00;
-	@ISA         = qw(Exporter Hier::Walk);
+	@ISA         = qw(Exporter GTD::Walk);
 	@EXPORT      = qw(&Report_gui);
 }
 
@@ -52,11 +52,11 @@ use Tk;
 use Tk::Tree;
 use Tk::Text;
 
-use Hier::Util;
-use Hier::Walk;
-use Hier::Meta;
+use GTD::Util;
+use GTD::Walk;
+use GTD::Meta;
 
-use Hier::Report::reports;
+use GTD::Report::reports;
 
 my $Load_Unplanned = 1;
 my $Load_Project = 1;
@@ -162,7 +162,7 @@ sub walk_tree {
 	$tree->delete('all');
 
 	meta_filter('+all', '^tid', 'simple');
-	my($walk) = new Hier::Walk(
+	my($walk) = new GTD::Walk(
 		detail => \&hier_detail,
 		done   => \&end_detail,
 	);
@@ -318,7 +318,7 @@ sub  run_report {
 	my($report, $title) = ($1, $2);
 print "Run: $report\n";
 
-	eval "use Hier::Report::$report";
+	eval "use GTD::Report::$report";
 	if($@) {
 		print "Report compile failed: $@\n";
 		return;

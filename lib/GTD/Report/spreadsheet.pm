@@ -1,4 +1,4 @@
-package Hier::Report::spreadsheet;
+package GTD::Report::spreadsheet;
 
 =head1 NAME
 
@@ -45,9 +45,9 @@ BEGIN {
 	@EXPORT      = qw(&Report_spreadsheet);
 }
 
-use Hier::Util;
-use Hier::Meta;
-use Hier::Project;
+use GTD::Util;
+use GTD::Meta;
+use GTD::Project;
 
 sub Report_spreadsheet {	#-- Project Summary for a role
 	meta_filter('+active', '^tid', 'none');

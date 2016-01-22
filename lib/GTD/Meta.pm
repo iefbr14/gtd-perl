@@ -1,4 +1,4 @@
-package Hier::Meta;
+package GTD::Meta;
 
 use strict;
 use warnings;
@@ -21,17 +21,17 @@ BEGIN {
 	);
 }
 
-use Hier::Tasks;
-use Hier::Filter;
-use Hier::CCT;
-use Hier::Option;
-use Hier::Format;
-use Hier::Sort;
-use Hier::Util;
+use GTD::Tasks;
+use GTD::Filter;
+use GTD::CCT;
+use GTD::Option;
+use GTD::Format;
+use GTD::Sort;
+use GTD::Util;
 
 our $Debug = 0;
 
-use base qw(Hier::Hier Hier::Fields Hier::Filter);
+use base qw(GTD::Hier Hier::Fields Hier::Filter);
 
 #==============================================================================
 #==== Top level filter/sort/selection
@@ -56,7 +56,7 @@ sub meta_selected {
 
 sub meta_filtered {
 	if (@Selected == 0) {
-		foreach my $ref (Hier::Tasks::all()) {
+		foreach my $ref (GTD::Tasks::all()) {
 			next if $ref->filtered(0);
 			push(@Selected, $ref);
 		}
@@ -79,11 +79,11 @@ sub meta_matching_type {
 }
 
 sub meta_all {
-	return Hier::Tasks::all();
+	return GTD::Tasks::all();
 }
 
 sub meta_find {
-	return Hier::Tasks::find(@_);
+	return GTD::Tasks::find(@_);
 }
 
 #==============================================================================
@@ -91,7 +91,7 @@ sub meta_find {
 sub delete_hier {
 	die "###ToDo Broked, should be deleting by categories?\n";
 	foreach my $tid (@_) {
-		my $ref = Hier::Tasks::find{$tid};
+		my $ref = GTD::Tasks::find{$tid};
 		if (defined $ref) {
 			warn "Category $tid deleted\n";
 
@@ -126,7 +126,7 @@ sub meta_argv {
 
 	my($has_filters) = 0;
 
-	Hier::Filter::add_filter_tags();
+	GTD::Filter::add_filter_tags();
 	while (scalar(@_)) {
 		$_ = shift @_;
 
@@ -137,7 +137,7 @@ sub meta_argv {
 		}
 
 		if (s/^\@//) {
-			Hier::Filter::meta_find_context($_);
+			GTD::Filter::meta_find_context($_);
 			next;
 		}
 
@@ -175,7 +175,7 @@ sub meta_argv {
 		}
 
 		if (m/^[-~+]/) {		# add include/exclude
-			Hier::Filter::add_filter($_);
+			GTD::Filter::add_filter($_);
 			$has_filters = 1;
 			next;
 		}
@@ -187,9 +187,9 @@ sub meta_argv {
 	}
 
 	unless ($has_filters) {
-		Hier::Filter::add_filter($Default_filter);
+		GTD::Filter::add_filter($Default_filter);
 	}
-	Hier::Filter::apply_filters($Default_filter);
+	GTD::Filter::apply_filters($Default_filter);
 	return @ret;
 }
 
@@ -260,7 +260,7 @@ sub find_pattern {
 
 	my(@list);
 
-	for my $ref (Hier::Tasks::all()) {
+	for my $ref (GTD::Tasks::all()) {
 		my($title) = $ref->get_title();
 		if ($title =~ /$pat/i) {
 			my($tid) = $ref->get_tid();
@@ -278,7 +278,7 @@ sub find_hier {
 
 	my(@list);
 
-	for my $ref (Hier::Tasks::all()) {
+	for my $ref (GTD::Tasks::all()) {
 		next unless $ref->is_hier();
 		next unless match_type($type, $ref);
 

@@ -25,7 +25,7 @@ Perhaps a little code snippet.
 
     use GTD;
 
-    my $foo = GTD->new();
+    my $foo = GTD->run();
     ...
 
 =head1 EXPORT

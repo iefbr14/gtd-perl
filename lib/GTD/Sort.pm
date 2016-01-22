@@ -1,4 +1,4 @@
-package Hier::Sort;
+package GTD::Sort;
 
 use strict;
 use warnings;
@@ -14,7 +14,7 @@ BEGIN {
 }
 
 use Carp;
-use Hier::Option;
+use GTD::Option;
 
 our $Version = 1.0;
 

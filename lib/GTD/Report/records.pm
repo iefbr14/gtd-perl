@@ -1,4 +1,4 @@
-package Hier::Report::records;
+package GTD::Report::records;
 
 =head1 NAME
 
@@ -45,11 +45,11 @@ BEGIN {
 	@EXPORT      = qw( &Report_records );
 }
 
-use Hier::Util;
-use Hier::Meta;
-use Hier::Filter;	# task_mask_disp
-use Hier::Format;
-use Hier::Sort;
+use GTD::Util;
+use GTD::Meta;
+use GTD::Filter;	# task_mask_disp
+use GTD::Format;
+use GTD::Sort;
 
 sub Report_records {	#-- detailed list all records for a type
 	# everybody into the pool
@@ -85,7 +85,7 @@ sub list_records {
 
 		next if $want_type && $type ne $want_type;
 
-		my($flags) = $ref->Hier::Filter::task_mask_disp();
+		my($flags) = $ref->GTD::Filter::task_mask_disp();
 
 		if ($reason = $ref->filtered()) {
 			$f = "X $type $reason";

@@ -1,4 +1,4 @@
-package Hier::Report::tsort;
+package GTD::Report::tsort;
 
 =head1 NAME
 
@@ -45,10 +45,10 @@ BEGIN {
 	@EXPORT      = qw(&Report_tsort);
 }
 
-use Hier::Util;
-use Hier::Meta;
-use Hier::Option;
-use Hier::Format;
+use GTD::Util;
+use GTD::Meta;
+use GTD::Option;
+use GTD::Format;
 
 our $Debug = 0;
 my %Depth;

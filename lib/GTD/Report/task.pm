@@ -1,4 +1,4 @@
-package Hier::Report::task;
+package GTD::Report::task;
 
 =head1 NAME
 
@@ -45,10 +45,10 @@ BEGIN {
 	@EXPORT      = qw( &Report_task );
 }
 
-use Hier::Util;
-use Hier::Meta;
-use Hier::Sort;
-use Hier::Format;
+use GTD::Util;
+use GTD::Meta;
+use GTD::Sort;
+use GTD::Format;
 
 sub Report_task {	#-- quick List by various methods
 	meta_filter('+g:live', '^title', 'task');	# Tasks filtered by goals

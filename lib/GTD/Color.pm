@@ -1,4 +1,4 @@
-package Hier::Color;
+package GTD::Color;
 
 use strict;
 use warnings;
@@ -13,7 +13,7 @@ BEGIN {
 	@EXPORT      = qw(&color &print_color &color_ref &nl);
 }
 
-use Hier::Option;
+use GTD::Option;
 
 my $Type = 0;
 my $Incolor = 0;

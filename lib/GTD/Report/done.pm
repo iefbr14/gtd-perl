@@ -1,4 +1,4 @@
-package Hier::Report::done;
+package GTD::Report::done;
 
 =head1 NAME
 
@@ -45,8 +45,8 @@ BEGIN {
 	@EXPORT      = qw(&Report_done);
 }
 
-use Hier::Option;
-use Hier::Meta;
+use GTD::Option;
+use GTD::Meta;
 
 sub Report_done {	#-- Tag listed projects/actions as done
 	my($date) = get_today();

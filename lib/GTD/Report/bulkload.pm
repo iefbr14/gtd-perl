@@ -1,4 +1,4 @@
-package Hier::Report::bulkload;
+package GTD::Report::bulkload;
 
 =head1 NAME
 
@@ -68,10 +68,10 @@ BEGIN {
 use strict;
 use warnings;
 
-use Hier::Meta;
-use Hier::Option;
-use Hier::Report::edit;
-use Hier::Prompt;
+use GTD::Meta;
+use GTD::Option;
+use GTD::Report::edit;
+use GTD::Prompt;
 
 my $Parent;
 my $Child;
@@ -292,7 +292,7 @@ sub add_task {
 	$category = option('Category') || '';
 	$note     = option('Note'); 
 
-	my $ref = Hier::Tasks->New(undef);
+	my $ref = GTD::Tasks->New(undef);
 
 	$ref->set_category($category);
 	$ref->set_title($title);

@@ -1,4 +1,4 @@
-package Hier::CCT;
+package GTD::CCT;
 
 BEGIN {
         use Exporter   ();

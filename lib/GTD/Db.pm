@@ -1,4 +1,4 @@
-package Hier::Db;  # assumes Some/Module.pm
+package GTD::Db;  # assumes Some/Module.pm
 
 use strict;
 use warnings;
@@ -25,10 +25,10 @@ use Time::HiRes qw(time);
 
 use Carp;
 
-use Hier::CCT;
-use Hier::Tasks;
-use Hier::Hier;
-use Hier::Option;
+use GTD::CCT;
+use GTD::Tasks;
+use GTD::Hier;
+use GTD::Option;
 
 my $Current_ref;	# current gtd mapped item
 
@@ -95,7 +95,7 @@ sub load_meta {
 	while ($row = $sth->fetchrow_hashref) {
 		$tid = $row->{todo_id};
 
-		$ref = Hier::Tasks->New($tid);
+		$ref = GTD::Tasks->New($tid);
 		$ref->{_todo_only} = 0x01;
 
 		delete $row->{todo_id};
@@ -111,7 +111,7 @@ sub metafix {
 	my($tid, $pid, $p, $name, $only);
 
 	# Process Tasks (non-hier) items
-	for my $ref (Hier::Tasks::all()) {
+	for my $ref (GTD::Tasks::all()) {
 		$tid = $ref->get_tid();
 
 		$only = $ref->{_todo_only};
@@ -201,7 +201,7 @@ sub load_gtd {
 | description | text             | YES  | MUL | NULL    |                |
 +-------------+------------------+------+-----+---------+----------------+
 EOF
-	$Category = Hier::CCT->use('Category');
+	$Category = GTD::CCT->use('Category');
 	my($sth) = G_select('categories');
 	while ($row = $sth->fetchrow_hashref()) {
 		$Category->define($row->{category}, $row->{categoryId});
@@ -216,7 +216,7 @@ EOF
 | description | text             | YES  | MUL | NULL    |                |
 +-------------+------------------+------+-----+---------+----------------+
 EOF
-	$Context = Hier::CCT->use('Context');
+	$Context = GTD::CCT->use('Context');
 	$sth = G_select('context');
 	while ($row = $sth->fetchrow_hashref()) {
 		$Context->define($row->{name}, $row->{contextId});
@@ -232,7 +232,7 @@ EOF
 | type        | enum('vogpa')     | NO   | MUL | a       |                |
 +-------------+-------------------+------+-----+---------+----------------+
 EOF
-	$Timeframe = Hier::CCT->use('Timeframe');
+	$Timeframe = GTD::CCT->use('Timeframe');
 	$sth = G_select('timeitems');
 	while ($row = $sth->fetchrow_hashref()) {
 		$Timeframe->define($row->{timeframe}, $row->{timeframeId});
@@ -332,14 +332,14 @@ EOF
 | tagname | text             | NO   | PRI | NULL    |       |
 +---------+------------------+------+-----+---------+-------+
 EOF
-	my($tags_ref) = Hier::CCT->use('Tag');
+	my($tags_ref) = GTD::CCT->use('Tag');
 	my($tag);
 	$sth = G_select('tagmap');
 	my($tag_id) = 0;
 	while ($row = $sth->fetchrow_hashref) {
 		$tid = $row->{itemId};
 		$tag = $row->{tagname};
-		$ref = Hier::Tasks::find($tid);
+		$ref = GTD::Tasks::find($tid);
 		next unless defined $ref;
 
 		$ref->{_tags}{$tag}++;
@@ -347,7 +347,7 @@ EOF
 		$tags_ref->define($tag, ++$tag_id);
 	}
 
-	foreach my $ref (Hier::Tasks::all()) {
+	foreach my $ref (GTD::Tasks::all()) {
 		$ref->clean_dirty();		# everything cleanly loaded
 	}
 
@@ -356,8 +356,8 @@ EOF
 sub add_relationship {
 	my($pid, $tid) = @_;
 
-	my $pref = Hier::Tasks::find($pid);
-	my $tref = Hier::Tasks::find($tid);
+	my $pref = GTD::Tasks::find($pid);
+	my $tref = GTD::Tasks::find($tid);
 
 	return unless $pref and $tref;	# both must be defined
 
@@ -375,7 +375,7 @@ sub gtdmap {
 
 	# New master key
 	if ($t_key eq 'todo_id') {
-		my $ref = Hier::Tasks::find($val);
+		my $ref = GTD::Tasks::find($val);
 		if (defined $ref) {
 			$Current_ref = $ref;
 			$Current_ref->{_todo_only} |= 0x02;
@@ -385,7 +385,7 @@ sub gtdmap {
 			die "Can't create gtd_todo with todo_id=$val for table $Table\n";
 		}
 		warn "Hard Need Create $val\n";
-		$Current_ref = Hier::Tasks->New($val);
+		$Current_ref = GTD::Tasks->New($val);
 		$Current_ref->{_todo_only} = 0x03;
 		sac_create($val, {});
 		return;
@@ -711,7 +711,7 @@ my($GTD);
 my($GTD_map, $GTD_default);
 my($Prefix) = 'gtd_';
 
-our $Resource;	# used by Hier::Project
+our $Resource;	# used by GTD::Project
 
 sub DB_init {
 	my($confname) = @_;
@@ -730,7 +730,7 @@ sub DB_init {
 	my $HOME = $ENV{'HOME'};
 	my $conf = LoadFile("$HOME/.todo/Access.yaml");
 
-	$Hier::Project::Projects = $conf->{resource};
+	$GTD::Project::Projects = $conf->{resource};
 
 	my($dbconf) = $conf->{$confname};
 

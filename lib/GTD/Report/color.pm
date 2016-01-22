@@ -1,5 +1,5 @@
 
-package Hier::Report::color;
+package GTD::Report::color;
 
 =head1 NAME
 
@@ -46,8 +46,8 @@ BEGIN {
 	@EXPORT      = qw(&Report_color);
 }
 
-use Hier::Util;
-use Hier::Color;
+use GTD::Util;
+use GTD::Color;
 
 our $Debug = 1;
 

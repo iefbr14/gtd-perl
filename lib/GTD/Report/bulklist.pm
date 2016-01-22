@@ -1,4 +1,4 @@
-package Hier::Report::bulklist;  # assumes Some/Module.pm
+package GTD::Report::bulklist;  # assumes Some/Module.pm
 
 =head1 NAME
 
@@ -65,11 +65,11 @@ sub Report_bulklist { #-- Bulk List project for use in bulk load
 use strict;
 use warnings;
 
-use Hier::Meta;
-use Hier::Util;
-use Hier::Walk;
-use Hier::Project;
-use Hier::Option;
+use GTD::Meta;
+use GTD::Util;
+use GTD::Walk;
+use GTD::Project;
+use GTD::Option;
 
 my($Parent);
 my($Type);
@@ -206,7 +206,7 @@ sub _report_hier {
 
 	my($criteria) = meta_desc(@_);
 
-	my($walk) = new Hier::Walk(
+	my($walk) = new GTD::Walk(
 		detail => \&hier_detail,
 		done   => \&end_detail,
 	);
@@ -362,7 +362,7 @@ sub dep_path {
 ###############################################################################
 ### duplicate code....  clean up needed
 ###############################################################################
-use Hier::Tasks;
+use GTD::Tasks;
 
 sub _report_actions {	
 	meta_filter('+live', '^title', 'bulk');

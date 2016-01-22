@@ -1,4 +1,4 @@
-package Hier::Report::help;
+package GTD::Report::help;
 
 =head1 NAME
 
@@ -48,8 +48,8 @@ BEGIN {
 	our $OurPath = __FILE__;
 }
 
-use Hier::Meta;
-use Hier::Format;
+use GTD::Meta;
+use GTD::Format;
 
 our $OurPath;
 

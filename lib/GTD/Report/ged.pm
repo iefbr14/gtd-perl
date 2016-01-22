@@ -1,4 +1,4 @@
-package Hier::Report::ged;
+package GTD::Report::ged;
 
 =head1 NAME
 
@@ -45,12 +45,12 @@ BEGIN {
 	@EXPORT      = qw(&Report_ged);
 }
 
-use Hier::Util;
-use Hier::Walk;
-use Hier::Project;
-use Hier::Meta;
-use Hier::Format;
-use Hier::Option;	# get_today
+use GTD::Util;
+use GTD::Walk;
+use GTD::Project;
+use GTD::Meta;
+use GTD::Format;
+use GTD::Option;	# get_today
 
 my $ToOld;
 my $ToFuture;
@@ -73,7 +73,7 @@ sub Report_ged {	#-- generate a gedcom file from gtd db
 		$ToFuture = pdate(get_today(60));	
 	}
 	meta_argv(@_);
-	my($planner) = new Hier::Walk(
+	my($planner) = new GTD::Walk(
 		detail => \&hier_detail,
 		done   => \&end_detail,
 	);

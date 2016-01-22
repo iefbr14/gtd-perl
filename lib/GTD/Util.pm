@@ -1,4 +1,4 @@
-package Hier::Util;
+package GTD::Util;
 
 use strict;
 use warnings;
@@ -19,7 +19,7 @@ BEGIN {
 	);
 }
 
-use Hier::Option;
+use GTD::Option;
 
 my %Types = (
 	'Value'		=> 'm',

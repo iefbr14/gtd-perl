@@ -1,4 +1,4 @@
-package Hier::Report::kanban;
+package GTD::Report::kanban;
 
 =head1 NAME
 
@@ -45,12 +45,12 @@ BEGIN {
 	@EXPORT      = qw( &Report_kanban );
 }
 
-use Hier::Util;
-use Hier::Color;
-use Hier::Meta;
-use Hier::Format;
-use Hier::Option;
-use Hier::Project;
+use GTD::Util;
+use GTD::Color;
+use GTD::Meta;
+use GTD::Format;
+use GTD::Option;
+use GTD::Project;
 
 sub Report_kanban {	#-- report kanban of projects/actions
 	# counts use it and it give a context
@@ -109,10 +109,10 @@ sub kanban_bump {
 	die "Nothing bunped due to errors\n" if $fail;
 
 	for my $ref (@list) {
-		my($new) = $ref->Bump()
+		my($new) = $ref->Bump();
 
 		if ($new) {
-			my($name) = Hier::Resource::state($new);
+			my($name) = GTD::Project::state($new);
 
 			display_task($ref, "| now <<< $name >>>");
 		} else {

@@ -1,4 +1,4 @@
-package Hier::Filter;
+package GTD::Filter;
 
 use strict;
 use warnings;
@@ -13,8 +13,8 @@ BEGIN {
 	@EXPORT      = qw( &add_filter );
 }
 
-use Hier::Tasks;
-use Hier::Option;
+use GTD::Tasks;
+use GTD::Option;
 
 my $Filter_Category;
 my $Filter_Context;
@@ -54,7 +54,7 @@ sub filtered {
 sub tasks_matching_type {
 	my($type) = @_;
 
-	return grep { $_->get_type() eq $type } Hier::Tasks::all();
+	return grep { $_->get_type() eq $type } GTD::Tasks::all();
 }
 
 sub reset_filters {
@@ -82,7 +82,7 @@ sub apply_filters {
 	for my $ref (tasks_matching_type($Default_level)) {
 		apply_walk_down($ref);
 	}
-	for my $ref (Hier::Tasks::all()) {
+	for my $ref (GTD::Tasks::all()) {
 		apply_walk_down($ref);
 	}
 
@@ -457,9 +457,9 @@ sub proj_mask {
 
 sub meta_find_context {
 	my($cct) = @_;
-	my($Category) = Hier::CCT->use('Category');
-	my($Context) = Hier::CCT->use('Context');
-	my($Timeframe) = Hier::CCT->use('Timeframe');
+	my($Category) = GTD::CCT->use('Category');
+	my($Context) = GTD::CCT->use('Context');
+	my($Timeframe) = GTD::CCT->use('Timeframe');
 
 	# match case sensative first
 	if ($Context->get($cct)) {
@@ -477,7 +477,7 @@ sub meta_find_context {
 		$Filter_Category = $cct;
 		return;
 	}
-	for my $key (Hier::CCT::keys('Tag')) {
+	for my $key (GTD::CCT::keys('Tag')) {
 		next unless $key eq $cct;
 
 		warn "#-Set tag:            $key\n" if $Debug;
@@ -507,7 +507,7 @@ sub meta_find_context {
 		$Filter_Category = $key;
 		return;
 	}
-	for my $key (Hier::CCT::keys('Tag')) {
+	for my $key (GTD::CCT::keys('Tag')) {
 		next unless lc($key) eq lc($cct);
 
 		warn "#-Set tag:            $key\n" if $Debug;

@@ -1,4 +1,4 @@
-package Hier::Report::new;
+package GTD::Report::new;
 
 =head1 NAME
 
@@ -45,14 +45,14 @@ BEGIN {
 	@EXPORT      = qw(&Report_new);
 }
 
-use Hier::Hier;
-use Hier::Meta;
-use Hier::Tasks;
-use Hier::Util;
-use Hier::Option;
-use Hier::Prompt;
+use GTD::Hier;
+use GTD::Meta;
+use GTD::Tasks;
+use GTD::Util;
+use GTD::Option;
+use GTD::Prompt;
 
-use Hier::Report::renumber;	# qw(next_avail_task);
+use GTD::Report::renumber;	# qw(next_avail_task);
 
 my $First = '';
 my $Parent;
@@ -93,7 +93,7 @@ sub Report_new {	#-- create a new action or project
 
 	my $parent = option('Current');
 	if ($parent) {
-		$P_ref = Hier::Tasks::find($parent);
+		$P_ref = GTD::Tasks::find($parent);
 		unless ($P_ref) {
 			die "Can't use $parent no such task\n";
 		}
@@ -148,7 +148,7 @@ sub new_item {
 	$note     = option('Note') || ''; 
 
 	my($tid) = next_avail_task($type);
-	my $ref = Hier::Tasks->New($tid);
+	my $ref = GTD::Tasks->New($tid);
 
 	if ($pri > 5) {
 		$pri -= 5;
@@ -197,7 +197,7 @@ sub new_action {
 	$note     = prompt_desc("Note", option('Note')); 
 
 	my($tid) = next_avail_task('a');
-	my $ref = Hier::Tasks->New($tid);
+	my $ref = GTD::Tasks->New($tid);
 
 	if ($type eq 'n') {
 		$type = 'a';
@@ -243,7 +243,7 @@ sub new_project {
 	$note     = prompt_desc("Outcome", option('Note'));
 
 	my($tid) = next_avail_task($type);
-	my $ref = Hier::Tasks->New($tid);
+	my $ref = GTD::Tasks->New($tid);
 
 	$ref->set_type($type); 
 	$ref->set_nextaction('n');

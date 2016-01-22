@@ -1,4 +1,4 @@
-package Hier::Report::list;
+package GTD::Report::list;
 
 =head1 NAME
 
@@ -45,10 +45,10 @@ BEGIN {
 	@EXPORT      = qw(&Report_list);
 }
 
-use Hier::Util;
-use Hier::Meta;
-use Hier::Sort;
-use Hier::Format;
+use GTD::Util;
+use GTD::Meta;
+use GTD::Sort;
+use GTD::Format;
 
 sub Report_list {	#-- list titles for any filtered class (actions/projects etc)
 	meta_filter('+active', '^title', 'title');

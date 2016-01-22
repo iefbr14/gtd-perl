@@ -1,4 +1,4 @@
-package Hier::Report::oocalc;
+package GTD::Report::oocalc;
 
 =head1 NAME
 
@@ -45,9 +45,9 @@ BEGIN {
 	@EXPORT      = qw(&Report_oocalc);
 }
 
-use Hier::Util;
-use Hier::Meta;
-use Hier::Project;
+use GTD::Util;
+use GTD::Meta;
+use GTD::Project;
 
 sub Report_oocalc {	#-- Project Summary for a role
 	meta_filter('+live', '^tid', 'none');

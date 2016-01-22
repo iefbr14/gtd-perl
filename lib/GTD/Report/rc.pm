@@ -1,4 +1,4 @@
-package Hier::Report::rc;
+package GTD::Report::rc;
 
 =head1 NAME
 
@@ -59,11 +59,11 @@ use warnings;
 
 use Term::ReadLine;
 
-use Hier::Meta;
-use Hier::Option;
-use Hier::Format;
-use Hier::Sort;
-use Hier::Prompt;
+use GTD::Meta;
+use GTD::Option;
+use GTD::Format;
+use GTD::Sort;
+use GTD::Prompt;
 
 my $Parent;
 my $Child;
@@ -483,7 +483,7 @@ sub rc_find_tasks {
 
 	my(@list);
 
-	for my $ref (Hier::Tasks::all()) {
+	for my $ref (GTD::Tasks::all()) {
 		my($title) = $ref->get_title();
 		if ($title =~ /$pattern/i) {
 			display_task($ref);
@@ -577,7 +577,7 @@ sub add_task {
 	$category = option('Category') || '';
 	$note     = option('Note'); 
 
-	my $ref = Hier::Tasks->New(undef);
+	my $ref = GTD::Tasks->New(undef);
 
 	$ref->set_category($category);
 	$ref->set_title($title);
@@ -613,7 +613,7 @@ sub add_task {
 sub report {
 	my($report) = shift @_;
 
-	Hier::Tasks::clean_up_database();
+	GTD::Tasks::clean_up_database();
 
 	return unless load_report($report);
 	print "### Report $report args: @_\n" if $Debug;
@@ -628,7 +628,7 @@ sub report {
 
 	run_report($report, @_);
 	display_mode(option('Mode', 'task'));
-	Hier::Tasks::reload_if_needed_database();
+	GTD::Tasks::reload_if_needed_database();
 }
 
 sub dash_null {

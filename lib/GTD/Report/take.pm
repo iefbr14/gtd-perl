@@ -1,4 +1,4 @@
-package Hier::Report::take;
+package GTD::Report::take;
 
 =head1 NAME
 
@@ -45,11 +45,11 @@ BEGIN {
 	@EXPORT      = qw(&Report_take);
 }
 
-use Hier::Util;
-use Hier::Meta;
+use GTD::Util;
+use GTD::Meta;
 
-use Hier::Option;
-use Hier::Format;
+use GTD::Option;
+use GTD::Format;
 
 my %Ancestors;
 
@@ -117,7 +117,7 @@ sub is_ancestor {
 sub find {
 	my($tid) = @_;
 
-	return Hier::Tasks::find($tid);
+	return GTD::Tasks::find($tid);
 }
 
 1;  # don't forget to return a true value from the file

@@ -1,4 +1,4 @@
-package Hier::Report::planner;
+package GTD::Report::planner;
 
 =head1 NAME
 
@@ -45,12 +45,12 @@ BEGIN {
 	@EXPORT      = qw(&Report_planner);
 }
 
-use Hier::Util;
-use Hier::Walk;
-use Hier::Project;
-use Hier::Meta;
-use Hier::Format;
-use Hier::CCT;
+use GTD::Util;
+use GTD::Walk;
+use GTD::Project;
+use GTD::Meta;
+use GTD::Format;
+use GTD::CCT;
 
 my $Today = `date +%04Y%02m%02dT080000Z`; chomp $Today;
 
@@ -67,7 +67,7 @@ sub Report_planner {	#-- Create a planner file from gtd db
 
 	meta_filter('+active', '^tid', 'none');
 	meta_argv(@_);
-	my($planner) = new Hier::Walk(
+	my($planner) = new GTD::Walk(
 		detail => \&hier_detail,
 		done   => \&end_detail,
 	);
@@ -143,7 +143,7 @@ sub hier_detail {
 		my($context) = $ref->get_context();
 		my($cid);
 		if ($context) {
-			my($cref) = Hier::CCT->use('Context');
+			my($cref) = GTD::CCT->use('Context');
 			$cid = $cref->get($context);
 			$Alloc_resource{$cid} = $context;
 		} else {

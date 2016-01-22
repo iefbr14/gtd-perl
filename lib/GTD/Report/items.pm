@@ -1,4 +1,4 @@
-package Hier::Report::items;
+package GTD::Report::items;
 
 =head1 NAME
 
@@ -45,11 +45,11 @@ BEGIN {
 	@EXPORT      = qw(&Report_items);
 }
 
-use Hier::Util;
-use Hier::Meta;
-use Hier::Format;
-use Hier::Option;
-use Hier::Sort;
+use GTD::Util;
+use GTD::Meta;
+use GTD::Format;
+use GTD::Option;
+use GTD::Sort;
 
 sub Report_items {	#-- list titles for any filtered class (actions/projects etc)
 	# everybody into the pool by name

@@ -1,4 +1,4 @@
-package Hier::Report::review;
+package GTD::Report::review;
 
 =head1 NAME
 
@@ -45,11 +45,11 @@ BEGIN {
 	@EXPORT      = qw(&Report_review);
 }
 
-use Hier::Util;
-use Hier::Meta;
-use Hier::Option;
-use Hier::Format;
-use Hier::Sort;
+use GTD::Util;
+use GTD::Meta;
+use GTD::Option;
+use GTD::Format;
+use GTD::Sort;
 
 my $Mode = 'p';	# project, doit, next-actions, actions, someday
 
@@ -231,7 +231,7 @@ sub _report_doit {
 	my($target) = 0;
 	my($action) = \&doit_list;
 
-	foreach my $arg (Hier::util::meta_argv(@_)) {
+	foreach my $arg (GTD::util::meta_argv(@_)) {
 		if ($arg =~ /^\d+$/) {
 			my($ref) = meta_find($arg);
 

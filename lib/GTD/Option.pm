@@ -1,4 +1,4 @@
-package Hier::Option;
+package GTD::Option;
 
 BEGIN {
 	use Exporter   ();
@@ -116,7 +116,7 @@ sub debug {
 
 	if ($what =~ /^[A-Z]/) {
 		no strict 'refs';
-		my($var) = "Hier::${what}::Debug";
+		my($var) = "GTD::${what}::Debug";
 		$$var = 1;
 
 #		if ($@) {
@@ -142,11 +142,11 @@ sub debug {
 		load_report($what);
 
 		no strict 'refs';
-		my($var) = "Hier::Report::${what}::Debug";
+		my($var) = "GTD::Report::${what}::Debug";
 		$$var = 1;
-#		eval "Hier::Report::$what::Debug = 1";
+#		eval "GTD::Report::$what::Debug = 1";
 #		if ($@) {
-#			warn "Debug Hier::Report::$what failed\n";
+#			warn "Debug GTD::Report::$what failed\n";
 #			return;
 #		}
 	}	
@@ -161,7 +161,7 @@ sub load_report {
 		return;
 	}
 
-	eval "use Hier::Report::$report";
+	eval "use GTD::Report::$report";
 	if ($@) {
 		my($error) = "Report compile: $@\n";
 		if ($error =~ /Can't locate Hier.Report.$report/) {

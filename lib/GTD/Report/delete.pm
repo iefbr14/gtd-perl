@@ -1,4 +1,4 @@
-package Hier::Report::delete;
+package GTD::Report::delete;
 
 =head1 NAME
 
@@ -46,7 +46,7 @@ BEGIN {
 }
 
 
-use Hier::Meta;
+use GTD::Meta;
 
 sub Report_delete {	#-- Delete listed actions/projects (will orphine items)
 	my($ref);
@@ -70,7 +70,7 @@ sub Report_delete {	#-- Delete listed actions/projects (will orphine items)
 
 sub delete_hier {
         foreach my $tid (@_) {
-                my $ref = Hier::Tasks::find{$tid};
+                my $ref = GTD::Tasks::find{$tid};
                 if (defined $ref) {
                         warn "Category $tid deleted\n";
 

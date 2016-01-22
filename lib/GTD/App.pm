@@ -1,3 +1,9 @@
+package GTD::App;
+
+use strict;
+use warnings;
+
+use Getopt::Std;
 
 use GTD::Util;
 use GTD::Db;

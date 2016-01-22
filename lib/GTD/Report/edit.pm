@@ -1,4 +1,4 @@
-package Hier::Report::edit;
+package GTD::Report::edit;
 
 =head1 NAME
 
@@ -45,11 +45,11 @@ BEGIN {
 	@EXPORT      = qw(&Report_edit);
 }
 
-use Hier::Util;
-use Hier::Meta;
+use GTD::Util;
+use GTD::Meta;
 
-use Hier::Option;
-use Hier::Format;
+use GTD::Option;
+use GTD::Format;
 
 sub Report_edit {	#-- Edit listed actions/projects
 	my($key, $val, $changed);

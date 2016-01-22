@@ -1,4 +1,4 @@
-package Hier::Report::cct;
+package GTD::Report::cct;
 
 =head1 NAME
 
@@ -45,12 +45,12 @@ BEGIN {
 	@EXPORT      = qw(&Report_cct);
 }
 
-use Hier::Util;
-use Hier::Format;
-use Hier::Meta;
-use Hier::Color;
+use GTD::Util;
+use GTD::Format;
+use GTD::Meta;
+use GTD::Color;
 
-use Hier::CCT;		# DIRECT access to interals (Bleck)
+use GTD::CCT;		# DIRECT access to interals (Bleck)
 
 my %Count;
 my %Sub_Count;
@@ -112,7 +112,7 @@ sub report_counts {
 
 	my($id, $dup, $cnt, $sk);
 
-	my($cct_ref) = Hier::CCT->use($cct);
+	my($cct_ref) = GTD::CCT->use($cct);
 	print_color('BOLD');
 	print "Val  Vis  Role Goal Proj Action Total Id: $header Name";
 	nl();

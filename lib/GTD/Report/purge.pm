@@ -1,4 +1,4 @@
-package Hier::Report::purge;
+package GTD::Report::purge;
 
 =head1 NAME
 
@@ -45,16 +45,16 @@ BEGIN {
 	@EXPORT      = qw(&Report_purge);
 }
 
-use Hier::Util;
-use Hier::Walk;
-use Hier::Meta;
+use GTD::Util;
+use GTD::Walk;
+use GTD::Meta;
 
 sub Report_purge {	#-- interactive purge completed work
 	meta_filter('+dead', '^tid', 'simple');
 
 	my($criteria) = meta_desc(@_);
 
-	my($walk) = new Hier::Walk(
+	my($walk) = new GTD::Walk(
 		done   => \&end_detail,
 	);
 

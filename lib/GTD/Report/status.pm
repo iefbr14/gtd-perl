@@ -1,4 +1,4 @@
-package Hier::Report::status;
+package GTD::Report::status;
 
 =head1 NAME
 
@@ -47,11 +47,11 @@ BEGIN {
 
 my @Class = qw(Done Someday Action Next Future Total);
 
-use Hier::Util;		# %Types and typemap
-use Hier::Meta;
-use Hier::Option;
-use Hier::Project;
-use Hier::Report::renumber;
+use GTD::Util;		# %Types and typemap
+use GTD::Meta;
+use GTD::Option;
+use GTD::Project;
+use GTD::Report::renumber;
 
 my $Hours_proj = 0;
 my $Hours_task = 0;
@@ -140,7 +140,7 @@ sub count_proj {
 
 		++$count;
 
-		my($resource) = $ref->Project()
+		my($resource) = $ref->Project();
 		my($hours) = $resource->hours($ref);
 		if ($hours == 0) {
 			if ($ref->get_children()) {
@@ -184,7 +184,7 @@ sub count_task {
 
 		++$count;
 
-		my($resource) = $ref->Project()
+		my($resource) = $ref->Project();
 		$Hours_task += $resource->hours($ref);
 	}
 	return $count;
@@ -206,7 +206,7 @@ sub count_next {
 
 		++$count;
 
-		my($resource) = new Hier::Resource($ref);
+		my($resource) = $ref->Project();
 		$Hours_next += $resource->hours($ref);
 	}
 	return $count;

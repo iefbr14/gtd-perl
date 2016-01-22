@@ -1,4 +1,4 @@
-package Hier::Report::projects;
+package GTD::Report::projects;
 
 =head1 NAME
 
@@ -45,11 +45,11 @@ BEGIN {
 	@EXPORT      = qw(&Report_projects);
 }
 
-use Hier::Util;
-use Hier::Meta;
-use Hier::Sort;
-use Hier::Option;
-use Hier::Format;
+use GTD::Util;
+use GTD::Meta;
+use GTD::Sort;
+use GTD::Option;
+use GTD::Format;
 
 my %Meta_key;
 

@@ -1,4 +1,4 @@
-package Hier::Report::print;
+package GTD::Report::print;
 
 =head1 NAME
 
@@ -47,11 +47,11 @@ BEGIN {
 	@EXPORT      = qw( &Report_print );
 }
 
-use Hier::Util;
-use Hier::Tasks;
-use Hier::Meta;
-use Hier::Format;
-use Hier::Option;
+use GTD::Util;
+use GTD::Tasks;
+use GTD::Meta;
+use GTD::Format;
+use GTD::Option;
 
 my $Layout = 'Text';
 

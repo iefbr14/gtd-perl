@@ -1,4 +1,4 @@
-package Hier::Report::focus;
+package GTD::Report::focus;
 
 =head1 NAME
 
@@ -45,10 +45,10 @@ BEGIN {
 	@EXPORT      = qw(&Report_focus);
 }
 
-use Hier::Meta;
-use Hier::Sort;
-use Hier::Format;
-use Hier::Option;
+use GTD::Meta;
+use GTD::Sort;
+use GTD::Format;
+use GTD::Option;
 
 my %Meta_key;
 
@@ -111,7 +111,7 @@ sub check_task {
 		for my $dep (split(',', $deps)) {
 			printf "Deps %d on %s\n", $id, $deps if $Debug;
 
-			my($d_ref) = Hier::Tasks::find($dep);
+			my($d_ref) = GTD::Tasks::find($dep);
 			unless ($d_ref) {
 				print "Info: task $id depends on missing task $dep\n";
 				next;

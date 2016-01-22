@@ -1,4 +1,4 @@
-package Hier::Report::clean;
+package GTD::Report::clean;
 
 =head1 NAME
 
@@ -45,8 +45,8 @@ BEGIN {
 	@EXPORT      = qw(&Report_clean);
 }
 
-use Hier::Meta;
-use Hier::Option;
+use GTD::Meta;
+use GTD::Option;
 
 sub Report_clean {	#-- clean unused categories
 	my $Yesterday = get_today(-1);

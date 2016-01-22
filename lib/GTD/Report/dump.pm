@@ -1,4 +1,4 @@
-package Hier::Report::dump;
+package GTD::Report::dump;
 
 =head1 NAME
 
@@ -45,9 +45,9 @@ BEGIN {
 	@EXPORT      = qw( &Report_dump &dump_ordered_ref );
 }
 
-use Hier::Util;
-use Hier::Meta;
-use Hier::Format;
+use GTD::Util;
+use GTD::Meta;
+use GTD::Format;
 
 
 sub Report_dump {	#-- dump records in edit format

@@ -1,4 +1,4 @@
-package Hier::Report::noop;
+package GTD::Report::noop;
 
 =head1 NAME
 
@@ -45,10 +45,10 @@ BEGIN {
 	@EXPORT      = qw(&Report_noop);
 }
 
-use Hier::Util;
-use Hier::Walk;
-use Hier::Meta;
-use Hier::Option;
+use GTD::Util;
+use GTD::Walk;
+use GTD::Meta;
+use GTD::Option;
 
 our $Debug = 0;
 
@@ -59,7 +59,7 @@ sub Report_noop {	#-- No Operation
 
 	my($list) = meta_pick(@_);
 
-	my($walk) = new Hier::Walk();
+	my($walk) = new GTD::Walk();
 
 	$walk->filter();
 

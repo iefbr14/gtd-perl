@@ -1,4 +1,4 @@
-package Hier::Report::url;
+package GTD::Report::url;
 
 =head1 NAME
 
@@ -45,10 +45,10 @@ BEGIN {
 	@EXPORT      = qw( &Report_url );
 }
 
-use Hier::Util;
-use Hier::Meta;
-use Hier::Sort;
-use Hier::Format;
+use GTD::Util;
+use GTD::Meta;
+use GTD::Sort;
+use GTD::Format;
 
 our($Debug) = 0;
 

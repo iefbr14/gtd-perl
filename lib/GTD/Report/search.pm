@@ -1,4 +1,4 @@
-package Hier::Report::search;
+package GTD::Report::search;
 
 =head1 NAME
 
@@ -45,9 +45,9 @@ BEGIN {
 	@EXPORT      = qw(&Report_search);
 }
 
-use Hier::Util;
-use Hier::Format;
-use Hier::Meta;
+use GTD::Util;
+use GTD::Format;
+use GTD::Meta;
 
 sub Report_search {	#-- Search for items
 	my($found) = 0;

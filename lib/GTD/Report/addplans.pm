@@ -1,4 +1,4 @@
-package Hier::Report::addplans;
+package GTD::Report::addplans;
 
 =head1 NAME
 
@@ -45,12 +45,12 @@ BEGIN {
 	@EXPORT      = qw(&Report_addplans);
 }
 
-use Hier::Util;
-use Hier::Meta;
-use Hier::Sort;
-use Hier::Format;
-use Hier::Option;
-use Hier::Color;
+use GTD::Util;
+use GTD::Meta;
+use GTD::Sort;
+use GTD::Format;
+use GTD::Option;
+use GTD::Color;
 
 our $Debug = 0;
 

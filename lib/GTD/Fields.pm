@@ -1,4 +1,4 @@
-package Hier::Fields;
+package GTD::Fields;
 
 use strict;
 use warnings;

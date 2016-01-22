@@ -1,16 +1,16 @@
-package Hier::Walk;
+package GTD::Walk;
 
 use strict;
 use warnings;
 
 use Carp;
 
-use Hier::Util;
-use Hier::Tasks;
-use Hier::Option;
-use Hier::Sort;
-use Hier::Meta;
-use Hier::Format;
+use GTD::Util;
+use GTD::Tasks;
+use GTD::Option;
+use GTD::Sort;
+use GTD::Meta;
+use GTD::Format;
 
 BEGIN {
 	use Exporter   ();
@@ -94,14 +94,14 @@ sub filter {
 	my($walk) = shift @_;
 
 	my($tid, $type);
-	foreach my $ref (Hier::Tasks::all()) {
+	foreach my $ref (GTD::Tasks::all()) {
 		$tid = $ref->get_tid;
 		$walk->{want}{$tid} = 1;
 		$walk->{want}{$tid} = 0 if $ref->filtered();
 	}
 	return;
 
-	foreach my $ref (Hier::Tasks::all()) {
+	foreach my $ref (GTD::Tasks::all()) {
 		$tid = $ref->get_tid();
 		$type = $ref->get_type();
 
@@ -187,7 +187,7 @@ sub show_detail {
 	my($ref) = @_;
 
 	my $tid = $ref->get_tid();
-	warn "### Hier::Walk::show_detail($tid)\n" if $Debug;
+	warn "### GTD::Walk::show_detail($tid)\n" if $Debug;
 }
 
 sub end_detail {
@@ -196,7 +196,7 @@ sub end_detail {
 	my($ref) = @_;
 
 	my $tid = $ref->get_tid();
-	warn "### Hier::Walk::end_detail($tid)\n" if $Debug;
+	warn "### GTD::Walk::end_detail($tid)\n" if $Debug;
 }
 
 1; #<============================================================

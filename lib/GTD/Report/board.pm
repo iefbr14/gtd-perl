@@ -1,4 +1,4 @@
-package Hier::Report::board;
+package GTD::Report::board;
 
 =head1 NAME
 
@@ -45,13 +45,13 @@ BEGIN {
 	@EXPORT      = qw( &Report_board );
 }
 
-use Hier::Util;
-use Hier::Meta;
-use Hier::Sort;
-use Hier::Format;
-use Hier::Option;
-use Hier::Project;
-use Hier::Color;
+use GTD::Util;
+use GTD::Meta;
+use GTD::Sort;
+use GTD::Format;
+use GTD::Option;
+use GTD::Project;
+use GTD::Color;
 
 my @Class = qw(Done Someday Action Next Future Total);
 
@@ -422,8 +422,8 @@ sub check_task {
 
 		++$count;
 
-		my($resource) = $ref->Project()
-		$Hours_task += $resource->hours($ref);
+		my($resource) = $ref->Project();
+		$Hours_task += $resource->hours();
 	}
 	return $count;
 }
@@ -444,8 +444,8 @@ sub check_next {
 
 		++$count;
 
-		my($resource) = $ref->Project()
-		$Hours_next += $resource->hours($ref);
+		my($resource) = $ref->Project();
+		$Hours_next += $resource->hours();
 	}
 	return $count;
 }

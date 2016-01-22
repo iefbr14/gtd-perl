@@ -1,4 +1,4 @@
-package Hier::Report::actions;
+package GTD::Report::actions;
 
 =head1 NAME
 
@@ -45,11 +45,11 @@ BEGIN {
 	@EXPORT      = qw(&Report_actions report_actions);
 }
 
-use Hier::Util;
-use Hier::Meta;
-use Hier::Option;
-use Hier::Sort;
-use Hier::Format;
+use GTD::Util;
+use GTD::Meta;
+use GTD::Option;
+use GTD::Sort;
+use GTD::Format;
 
 my $Projects;
 my %Active;

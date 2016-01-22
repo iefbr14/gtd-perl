@@ -1,4 +1,4 @@
-package Hier::Report::fixcct;
+package GTD::Report::fixcct;
 
 =head1 NAME
 
@@ -45,13 +45,13 @@ BEGIN {
 	@EXPORT      = qw(&Report_fixcct);
 }
 
-use Hier::Meta;
+use GTD::Meta;
 
 sub Report_fixcct {	#-- Fix Categories/Contexts/Time Frames
 	my($new_id, $id);
 
 	report_header("Categories");
-	my($Category) = Hier::CCT->use('Category');
+	my($Category) = GTD::CCT->use('Category');
 	for my $key (sort $Category->keys()) {
 		$id = $Category->get($key);
 
@@ -61,7 +61,7 @@ sub Report_fixcct {	#-- Fix Categories/Contexts/Time Frames
 		sql_fix_cct('category', $id, $new_id, $key);
 	}
 	report_header("Contexts");
-	my($Context) = Hier::CCT->use('Context');
+	my($Context) = GTD::CCT->use('Context');
 	for my $key (sort $Context->keys()) {
 		$id = $Context->get($key);
 
@@ -72,7 +72,7 @@ sub Report_fixcct {	#-- Fix Categories/Contexts/Time Frames
 	}
 	print "\n";
 	report_header("Time Frames");
-	my($Timeframe) = Hier::CCT->use('Timeframe');
+	my($Timeframe) = GTD::CCT->use('Timeframe');
 	for my $key (sort $Timeframe->keys()) {
 		$id = $Timeframe->get($key) || '';
 

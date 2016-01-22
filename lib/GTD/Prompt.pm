@@ -1,4 +1,4 @@
-package Hier::Prompt;
+package GTD::Prompt;
 
 BEGIN {
 	use Exporter   ();

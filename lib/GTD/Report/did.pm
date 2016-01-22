@@ -1,4 +1,4 @@
-package Hier::Report::did;
+package GTD::Report::did;
 
 =head1 NAME
 
@@ -45,8 +45,8 @@ BEGIN {
 	@EXPORT      = qw(&Report_did);
 }
 
-use Hier::Option;
-use Hier::Meta;
+use GTD::Option;
+use GTD::Meta;
 
 sub Report_did {	#-- update listed projects/actions doit date to today
 	for my $ref (meta_pick(@_)) {

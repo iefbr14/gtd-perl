@@ -1,4 +1,4 @@
-package Hier::Format;
+package GTD::Format;
 
 use strict;
 use warnings;
@@ -18,10 +18,10 @@ BEGIN {
 	);
 }
 
-use Hier::Util;
-use Hier::Option;
-use Hier::Color;
-use Hier::Project;
+use GTD::Util;
+use GTD::Option;
+use GTD::Color;
+use GTD::Project;
 
 my $Display = \&disp_simple;
 my $Header  = undef;

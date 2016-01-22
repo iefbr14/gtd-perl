@@ -1,4 +1,4 @@
-package Hier::Report::renumber;
+package GTD::Report::renumber;
 
 =head1 NAME
 
@@ -45,8 +45,8 @@ BEGIN {
 	@EXPORT      = qw(&Report_renumber &next_avail_task);
 }
 
-use Hier::Meta;
-use Hier::Tasks;
+use GTD::Meta;
+use GTD::Tasks;
 
 my %Dep_info = (
   'a' => [ \&is_action,   2000, 9999, 'Actions' ],
@@ -166,7 +166,7 @@ sub next_avail_task {
 	die "***BUG*** next_avail_task: Unknown type '$type'\n" unless $test;
 
 	for (my $tid=$min; $tid <= $max; ++$tid) {
-		next if Hier::Tasks::find($tid);
+		next if GTD::Tasks::find($tid);
 
 		return $tid;
 	}
@@ -181,7 +181,7 @@ sub renumb {
 	print "Processing $who range: $min $max\n";
 	my(%inuse, $tid, @try);
 
-	for my $ref (Hier::Tasks::all()) {
+	for my $ref (GTD::Tasks::all()) {
 		$tid = $ref->get_tid();
 
 		if ($min <= $tid && $tid <= $max) {

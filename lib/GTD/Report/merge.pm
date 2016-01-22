@@ -1,4 +1,4 @@
-package Hier::Report::merge;
+package GTD::Report::merge;
 
 =head1 NAME
 
@@ -45,7 +45,7 @@ BEGIN {
 	@EXPORT      = qw(&Report_merge);
 }
 
-use Hier::Meta;
+use GTD::Meta;
 
 sub Report_merge { #-- Merge Projects (first list is receiver)
 	for my $slave_id (@_) {

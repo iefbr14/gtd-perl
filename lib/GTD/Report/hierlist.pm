@@ -1,4 +1,4 @@
-package Hier::Report::hierlist;
+package GTD::Report::hierlist;
 
 =head1 NAME
 
@@ -45,8 +45,8 @@ BEGIN {
 	@EXPORT      = qw(&Report_hierlist);
 }
 
-use Hier::Util;
-use Hier::Meta;
+use GTD::Util;
+use GTD::Meta;
 
 sub Report_hierlist {	#-- List all top level item (Project and above)
 	my($tid, $pid, $pref, $cnt, $parent, $cat, $name, $desc);
