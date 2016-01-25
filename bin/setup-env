@@ -2,3 +2,6 @@ export PERL5LIB=`pwd`/lib
 export GOPATH=`pwd`
 
 export PATH=`pwd`/bin:$PATH
+
+export GO15VENDOREXPERIMENT=1
+
