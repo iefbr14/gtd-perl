@@ -407,6 +407,7 @@ sub task_mask {
 			$hint = Z_LATE	if $due lt $Today;
 			$hint = Z_DUE	if $due ge $Today and $due le $Soon;
 		}
+		$mask |= $hint;
 	}
 
 	$ref->{_mask} = $mask;
