@@ -51,7 +51,7 @@ print "Edit: $path => $tid\n";
         );
 
 	my($val);
-	foreach my $key (sort keys %$ref) {
+	for my $key (sort keys %$ref) {
 		next if $key =~ /^_/;
 
 		$val = $ref->{$key};

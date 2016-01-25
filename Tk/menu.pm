@@ -77,7 +77,7 @@ sub init {
 		]
 	);
 	$width = 10;
-	foreach $file (@files) {
+	for my $file (@files) {
 		$file =~ s=/*$==;
 
 		$width = length($file) if $width < length($file);
@@ -111,7 +111,7 @@ sub rescan {
 	while ($l->size()) {
 		$l->delete(0);
 	}
-	foreach $file (<n[0-9][0-9]>) {
+	for my $file (<n[0-9][0-9]>) {
 		$l->insert("end", show_dir($pkg, $file, $file));
 	}
 }
