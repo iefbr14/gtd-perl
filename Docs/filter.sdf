@@ -30,11 +30,11 @@ wait	waiting on
 tickle	has a tickle on
 late	has a due date that has passed
 due	has a due date in the near (default 7 days) future
-done:	has a completed date (actions|projects)
+done	has a completed date (actions|projects)
 
 slow
 idea
-plan	hier items without children (default projets)
+plan	hier items without children 
 !endblock
 
 >---------------------------------------------------------------------------
@@ -69,32 +69,73 @@ plan	hier items without children (default projets)
 
 !block table; style="grid"; groups
 Function        __Filter  Level
+actions		.+a:next
 actions         +next    a
 addplans        +live    p
+board		+active
 bulklist        +live
+cct		+all
+checklist	+any
+clean		+all
+doit		.+a:live
 doit            +live    a
 dump            +any     
+edit		+all
 focus           +next    
 fook            +live
-gui             +all
-hierlist        +live
+ged		^all
+gui		+all
+hier		.+active
 hier            +live   
+hierlist        +live
+hierlist	.+p:live
 items           +any
+kanban		+active
+list		.+active
 list            +live   
+new		+all
 nextactions     +next   
 noop            +live   
 oocalc          +live   
+orphans		+any
+planner		.+active
 planner         +live   
+print		+any
 projects        +next   p
+projects	.+p:next
 purge           +dead   
+records		.+active
 records         +live   
+renumber	.+any
+review		.+active
+review		.+a:live
 review          +live   
 review          +live   a       # when doit
+review		.+wait
 search          +all    
+search		+all
+spreadsheet	.+active
 spreadsheet     +live   
+status		.+active
+status		.+all
 status          +live   
+take		.+all
+task		.+g:live
+taskjuggler	.+all
 taskjuggler     +live   
 tasks           +live   g
+todo		.+active
 todo            +live   
-walk            +live   
+url		.+g:live
+walk		+all
 !endblock
+
+
+active
+all
+any
+dead
+live
+next
+wait
+cct
