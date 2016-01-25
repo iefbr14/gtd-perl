@@ -96,7 +96,7 @@ func Report_edit(args []string) int {
 		line := scanner.Text()
 
 		// skip blank and comment lines
-		if task.EmptyLine(line) {
+		if task.Is_comment(line) {
 			continue
 		}
 

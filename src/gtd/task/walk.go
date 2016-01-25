@@ -1,6 +1,8 @@
 package task
 
 import "log"
+import "io"
+import "os"
 
 //?  @EXPORT      = qw(&walk &detail)
 
@@ -11,13 +13,15 @@ type Walk struct {
 	Detail func(*Walk, *Task)
 	Done   func(*Walk, *Task)
 
-	seen map[*Task]bool
-	want map[*Task]bool
+	Seen map[*Task]bool
+	Want map[*Task]bool
 
 	Depth int
 	Level int
 
 	Top Tasks
+
+	Fd io.Writer
 }
 
 // task.NewWalk creates a new toplevel walk structure
@@ -30,16 +34,18 @@ func NewWalk() *Walk {
 
 	w.Depth = Type_depth('p')
 
-	w.seen = make(map[*Task]bool)
-	w.want = make(map[*Task]bool)
+	w.Seen = make(map[*Task]bool)
+	w.Want = make(map[*Task]bool)
 
 	w.Level = 1
+
+	w.Fd = os.Stdout
 	return &w
 }
 
 func (w *Walk) Walk() {
 	// clear the seen map for pre
-	w.seen = map[*Task]bool{}
+	w.Seen = map[*Task]bool{}
 
 	log.Printf("Walk %v", w.Top)
 	for _, t := range w.Top.Sort() {
@@ -48,7 +54,7 @@ func (w *Walk) Walk() {
 	}
 
 	// clear the seen map for detail
-	w.seen = map[*Task]bool{}
+	w.Seen = map[*Task]bool{}
 
 	for _, t := range w.Top.Sort() {
 		if t.Filtered() {
@@ -60,7 +66,7 @@ func (w *Walk) Walk() {
 	}
 
 	// clear the seen map to free memory
-	w.seen = map[*Task]bool{}
+	w.Seen = map[*Task]bool{}
 }
 
 func (w *Walk) Set_depth(kind byte) {
@@ -118,10 +124,10 @@ sub _want {
 ?*/
 
 func walk_pre(w *Walk, t *Task) {
-	if w.seen[t] {
+	if w.Seen[t] {
 		return
 	}
-	w.seen[t] = true
+	w.Seen[t] = true
 
 	if t.Is_list() {
 		return
@@ -148,10 +154,10 @@ func walk_detail(w *Walk, t *Task) {
 			kind, tid, level, depth)
 	}
 
-	if w.seen[t] {
+	if w.Seen[t] {
 		return
 	}
-	w.seen[t] = true
+	w.Seen[t] = true
 
 	if t.Is_list() {
 		return

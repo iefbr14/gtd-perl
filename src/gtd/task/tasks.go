@@ -89,19 +89,6 @@ func (t *Task) String() string {
 	return fmt.Sprintf("%c:%d", t.Type, t.Tid)
 }
 
-func (t *Task) Level() int {
-	if t.level == 0 {
-		p := t.Parent()
-		if p == nil {
-			t.level = 1
-			return t.level
-		}
-		t.level = p.Level() + 1
-		return t.level
-	}
-	return t.level
-}
-
 func init() {
 	Done = make(chan *Task)
 
@@ -605,27 +592,25 @@ func (t *Task) Is_nextaction() bool {
 	return t.IsNextaction
 }
 
-/*?
 // used by Hier::Walk to track depth of the current walk
-sub set_level {
-	my($self, $level) = @_
-
-	panic("set_level missing level value") unless defined $level
-
-	// now remember our level
-	$self->{_level} = $level
+func (t *Task) Set_level(level int) {
+	t.level = level
 }
 
-sub level {
-	my($self) = @_
-
-	my($level) = $self->{_level}
-
-	// we have alread defined it, return it.
-	return $level if defined $level
-	panic("level not set correctly?")
+func (t *Task) Level() int {
+	if t.level == 0 {
+		p := t.Parent()
+		if p == nil {
+			t.level = 1
+			return t.level
+		}
+		t.level = p.Level() + 1
+		return t.level
+	}
+	return t.level
 }
 
+/*?
 sub get_state {
 	my($self) = @_
 

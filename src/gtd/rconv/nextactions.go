@@ -57,7 +57,7 @@ func Report_nextactions(args []string) {
 	  .
 	  	$~ = "HIER";	// set STDOUT format name to HIER
 
-	  	for my $ref (meta.ick("actions")) {
+	  	for my $ref (meta.Pick("actions")) {
 	  		$tid = $ref->get_tid()
 	  //#FILTER	next unless $ref->is_nextaction()
 	  //#FILTER	next if $ref->filtered()

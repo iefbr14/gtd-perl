@@ -156,7 +156,7 @@ func Filter(filter, sort, display_mode string) {
 	display.Mode(option.Get("Format", display_mode))
 
 	option.Set("Filter", filter)
-
+	Default_filter = filter
 }
 
 func Argv(args []string) []string {
@@ -164,8 +164,8 @@ func Argv(args []string) []string {
 
 	ret := make([]string, 0, len(args))
 
+	has_filters := false
 	/*?
-	  	has_filters := false
 
 	  	local($_)
 
@@ -219,7 +219,7 @@ func Argv(args []string) []string {
 
 	  		if (m/^[-~+]/) {		// add include/exclude
 	  			Hier::Filter::add_filter($_)
-	  			$has_filters = 1
+	  			has_filters = true
 	  			next
 	  		}
 	  //		if ($Title) {
@@ -229,11 +229,12 @@ func Argv(args []string) []string {
 	  		push(@ret, $_)
 	  	}
 
-	  	unless ($has_filters) {
-	  		Hier::Filter::add_filter($Default_filter)
-	  	}
-	  	Hier::Filter::apply_filters($Default_filter)
 	  ?*/
+
+	if !has_filters {
+		task.Add_filter(Default_filter)
+	}
+	task.Apply_filters()
 
 	return ret
 }

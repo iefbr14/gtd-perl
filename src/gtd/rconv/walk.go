@@ -97,7 +97,7 @@ func Report_walk(args []string) {
 				panic("Unknown command: $task\n")
 			}
 
-			my $ref = meta.Find($task)
+			t := meta.Find($task)
 			unless (defined $ref) {
 				panic("Task $task not found to walk\n")
 				//return

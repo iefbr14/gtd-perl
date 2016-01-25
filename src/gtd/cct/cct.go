@@ -1,6 +1,7 @@
 package cct
 
 import "log"
+import "strings"
 
 var cct_debug bool = false
 
@@ -67,7 +68,20 @@ func (cct *CCT) Name(id int) string {
 }
 
 func (cct *CCT) Id(name string) int {
-	return cct.id[name]
+	if v, ok := cct.id[name]; ok {
+		return v
+	}
+	return 0
+}
+
+func (cct *CCT) Match(name string) int {
+	if v, ok := cct.id[name]; ok {
+		return v
+	}
+	if v, ok := cct.id[strings.ToLower(name)]; ok {
+		return v
+	}
+	return 0
 }
 
 /*?

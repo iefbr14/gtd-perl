@@ -199,20 +199,20 @@ func Report_bulkload(args []string) {
 func find_hier() { /*?
 		my($type, $goal) = @_
 
-		for my $ref (meta.ier()) {
+		for my $ref (meta.Hier()) {
 			next unless $ref->get_type() == $type
 			next unless $ref->get_title() == $goal
 
 			return $ref->get_tid()
 		}
-		for my $ref (meta.ier()) {
+		for my $ref (meta.Hier()) {
 			next unless $ref->get_type() == $type
 			next unless lc($ref->get_title()) == lc($goal)
 
 			return $ref->get_tid()
 		}
 
-		for my $ref (meta.ier()) {
+		for my $ref (meta.Hier()) {
 			next unless $ref->get_title() == $goal
 
 			my($type) = $ref->get_type()

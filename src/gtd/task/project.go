@@ -2,7 +2,7 @@ package task
 
 import "fmt"
 
-type Resource_T struct {
+type Project_T struct {
 	task   *Task
 	name   string
 	why    string
@@ -13,9 +13,9 @@ type Resource_T struct {
 
 var Resources map[string]map[string]string
 
-// task.NewResource create a new resource
-func (t *Task) NewResource() *Resource_T {
-	r := new(Resource_T)
+// task.Project creates access to Project level meta data
+func (t *Task) Project() *Project_T {
+	r := new(Project_T)
 	r.task = t
 
 	return r
@@ -23,7 +23,7 @@ func (t *Task) NewResource() *Resource_T {
 
 // resource.Resource looks up a task's resource which can be
 //  inharited from its parent
-func (r Resource_T) Resource() string {
+func (r Project_T) Resource() string {
 	resource := r.name
 	if resource != "" {
 		return resource
@@ -96,7 +96,7 @@ func calc_resource(t *Task) (string, string) {
 }
 
 // resource.Hint returns where the resource name comes from
-func (r Resource_T) Hint() string {
+func (r Project_T) Hint() string {
 	if r.why == "" {
 		r.Effort() // force effort calcuation
 	}
@@ -104,7 +104,7 @@ func (r Resource_T) Hint() string {
 }
 
 // resource.How  returns the effort and how it was calculated
-func (r *Resource_T) How() string {
+func (r *Project_T) How() string {
 	effort := r.Effort()
 	if r.how != "" {
 		effort += " # " + r.how
@@ -113,7 +113,7 @@ func (r *Resource_T) How() string {
 }
 
 // resource.Effort returns the effort in human scaled form
-func (r *Resource_T) Effort() string {
+func (r *Project_T) Effort() string {
 	if r.effort != "" {
 		return r.effort
 	}
@@ -185,22 +185,23 @@ func (r *Resource_T) Effort() string {
 	return r.effort
 }
 
-func (r Resource_T) hours() int {
+func (r Project_T) Hours() int {
 	t := r.task
 
+	effort := t.Effort
 	/*
-		effort) = $self->effort()
-		return 0 unless $effort
+		if effort == 0 {
+			return 0
+		}
 
-		if ($effort =~ m/^([.\d]+)h.*$/) {
-			return $1
-		}
-		if ($effort =~ m/^([.\d]+)d.*$/) {
-			return $1 * 4
-		}
-		return $effort
+			if ($effort =~ m/^([.\d]+)h.*$/) {
+				return $1
+			}
+			if ($effort =~ m/^([.\d]+)d.*$/) {
+				return $1 * 4
+			}
 	*/
-	return t.Effort
+	return effort
 }
 
 func complete() {

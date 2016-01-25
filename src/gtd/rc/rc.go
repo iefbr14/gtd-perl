@@ -126,7 +126,7 @@ func rc(line string) {
 	}()
 
 	//## skip blank lines, comments
-	if task.EmptyLine(line) {
+	if task.Is_comment(line) {
 		return
 	}
 

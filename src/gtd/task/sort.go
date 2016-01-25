@@ -291,7 +291,7 @@ func item_focus(t *Task) string {
 	return val
 }
 
-func calc_focus(t *Task) string {
+func Calc_focus(t *Task) string {
 	if t == nil {
 		return ""
 	}
@@ -303,14 +303,14 @@ func calc_focus(t *Task) string {
 
 	pri := item_focus(t)
 
-	val := calc_focus(t.Parent()) + pri
+	val := Calc_focus(t.Parent()) + pri
 	sort_cache_map[tid] = val
 
 	return val
 }
 
 func by_focus(a, b *Task) bool {
-	return calc_focus(a) < calc_focus(b)
+	return Calc_focus(a) < Calc_focus(b)
 }
 
 // next   norm  some  done

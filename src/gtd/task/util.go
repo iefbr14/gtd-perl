@@ -122,8 +122,8 @@ func Join(args ...string) string {
 	return string(bs)
 }
 
-// task.EmptyLine return true if it is a blank or comment line
-func EmptyLine(s string) bool {
+// task.Is_comment return true if it is a blank or comment line
+func Is_comment(s string) bool {
 	for _, c := range s {
 		// line starts with blanks
 		if c == ' ' || c == '\t' {

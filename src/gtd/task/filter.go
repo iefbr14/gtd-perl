@@ -1,92 +1,112 @@
 // +build ignore
 package task
 
-//?	@EXPORT      = qw( &add_filter );
+import "strings"
+import "fmt"
+import "log"
 
-/*?
-my $Filter_Category;
-my $Filter_Context;
-my $Filter_Timeframe;
-my %Filter_Tags;
+import "gtd/option"
+import "gtd/cct"
 
-my $Today = get_today();
-my $Soon  = get_today(+7);
+//?	@EXPORT      = qw( &add_filter )
 
-my @Filters;	// types of actions to include
-our $filter_debug = 0;
+var Filter_Category string
+var Filter_Context string
+var Filter_Timeframe string
+var Filter_Tags map[string]bool
 
-my $Default_level = 'm';
+var Today = option.Today(0)
+var Soon = option.Today(+7)
 
+var filter_debug bool = false
 
-sub filtered_reason {
-	my($ref) = @_;
-
-	return $ref->{_filtered} || "-filtered";
+type FILTER_t struct {
+	ffunc func(*Task, string) string
+	name  string
+	dir   string
+	arg   string
 }
-?*/
 
-func(t *Task) Filtered() bool {
+var Filters []FILTER_t // types of actions to include
+
+var Default_level byte = 'm'
+
+func filtered_reason(t *Task) string {
+	if t.filtered == "" {
+		return "-filtered"
+	}
+	return t.filtered
+}
+
+func (t *Task) Filtered() bool {
 	if t.filtered == "" || t.filtered[:0] == "-" {
 		return false
 	}
-	return true;
+	return true
+}
+
+func tasks_matching_type(kind byte) Tasks {
+	all := All()
+	list := make(Tasks, 0, len(all))
+
+	for _, t := range all {
+		if t.Type == kind {
+			list = append(list, t)
+		}
+	}
+	return list
 }
 
 /*?
-sub tasks_matching_type {
-	my($kind) = @_;
-
-	return grep { $_->get_type() eq $kind } Hier::Tasks::all();
+func reset_filters(arg string) {
+	filter := arg
 }
+?*/
 
-sub reset_filters {
-	my($filter) = @_;
-}
-
-sub apply_filters {
-	//$filter_debug = option("Debug");
+func Apply_filters() {
+	fdebug("Apply_filters\n")
+	//$filter_debug = option("Debug")
 
 	// learn about actions
-	for my $ref (tasks_matching_type('a')) {
-		task_mask($ref);
+	for _, t := range tasks_matching_type('a') {
+		task_mask(t)
 	}
 
 	// learn about projects
-	for my $ref (tasks_matching_type('p')) {
-		proj_mask($ref);
+	for _, t := range tasks_matching_type('p') {
+		proj_mask(t)
 	}
 
 	// walk down
 	//      kill children
 	// then on the way back up
 	//      back fill hier with wanted items
-	print "Default level $Default_level\n" if $filter_debug;
-	for my $ref (tasks_matching_type($Default_level)) {
-		apply_walk_down($ref);
+	fdebug("Default level %c\n", Default_level)
+
+	for _, t := range tasks_matching_type(Default_level) {
+		apply_walk_down(t)
 	}
-	for my $ref (Hier::Tasks::all()) {
-		apply_walk_down($ref);
+	for _, t := range All() {
+		apply_walk_down(t)
 	}
 
-	my($have_cct_filters) 
-	    = $Filter_Category 
-	   || $Filter_Context
-	   || $Filter_Timeframe
-	   || %Filter_Tags;
+	have_cct_filters := Filter_Category != "" ||
+		Filter_Context != "" ||
+		Filter_Timeframe != "" ||
+		len(Filter_Tags) != 0
 
-	if ($have_cct_filters) {
-		for my $ref (tasks_matching_type('m')) {
-			apply_cct_filters($ref);
+	if have_cct_filters {
+		for _, t := range tasks_matching_type('m') {
+			apply_cct_filters(t)
 		}
 	}
 }
 
-sub apply_walk_down {
-	my($ref) = @_;
+func apply_walk_down(t *Task) {
 
-	apply_ref_filters($ref);
-	for my $child ($ref->get_children()) {
-		apply_walk_down($child);
+	apply_ref_filters(t)
+	for _, child := range t.Children {
+		apply_walk_down(child)
 	}
 }
 
@@ -96,54 +116,52 @@ sub apply_walk_down {
 //       if one of our child is wanted we are still wanted.
 //          else commit suicide taking our children with us.
 //
-sub apply_cct_filters {
-	my($ref) = @_;
+func apply_cct_filters(t *Task) string {
 
 	// not wanted
-	return 0 unless defined $ref->{_filtered};
-	if ($ref->{_filtered} =~ /^-/) {
-		return 0;
+	if t.filtered == "" {
+		return ""
 	}
-	my($reason) = cct_wanted($ref);
-	if ($reason) {
-		if ($filter_debug) {
-			warn "#=CCT($reason) ", $ref->get_tid(),
-				": ", $ref->get_title(), "\n";
-		}
+	if t.filtered[0] == '-' {
+		return ""
+	}
+
+	reason := cct_wanted(t)
+	if reason != "" {
+		fdebug("#=CCT(reason) %d: %s\n", t.Tid, t.Title)
 		// we are the reason to live!
-		return $reason;
+		return reason
 	}
 
-	my ($wanted) = 0;	// we are only wanted if our children are wanted
-	for my $child ($ref->get_children()) {
-		$reason = apply_cct_filters($child);
-		if ($reason) {
-			$wanted ||= $reason;
-			if ($filter_debug) {
-				warn "#+CCT($reason) ", $ref->get_tid(),
-					": ", $ref->get_title(), "\n";
+	wanted := "" // we are only wanted if our children are wanted
+	for _, child := range t.Children {
+		reason = apply_cct_filters(child)
+		if reason != "" {
+			if wanted == "" {
+				wanted = reason
 			}
+			fdebug("#+CCT(reason) %d: %s\n", t.Tid, t.Title)
 		}
 	}
-	return $wanted if $wanted;
-	kill_children($ref);
+	if wanted == "" {
+		return wanted
+	}
+	kill_children(t)
+	return ""
 }
 
-sub kill_children {
-	my($ref) = @_;
+func kill_children(t *Task) {
+	t.filtered = "-cct"
+	fdebug("#-CCT %d: %s\n", t.Tid, t.Title)
 
-	$ref->{_filtered} = "-cct";
-	if ($filter_debug) {
-		warn "#-CCT ", $ref->get_tid(),
-			": ", $ref->get_title(), "\n";
-	}
-	for my $child ($ref->get_children()) {
-		next if $child->{_filtered} && $child->{_filtered} =~ m/^-/;
+	for _, child := range t.Children {
+		if len(child.filtered) > 0 && child.filtered[0] == '-' {
+			continue
+		}
 
-		kill_children($child);
+		kill_children(child)
 	}
 }
-
 
 //##======================================================================
 //##
@@ -159,7 +177,6 @@ sub kill_children {
 
 // created:        2009-05-23			create/modified
 // modified:       2009-05-23 16:02:04
-
 
 // priority:       1				order/priority
 // doit:           0000-00-00 00:00:00
@@ -184,354 +201,381 @@ sub kill_children {
 //
 // task filters:
 //
-use constant {
-	A_MASK		=> 0x0000_00FF,	// action bits
-	Z_MASK		=> 0x0000_0F00,	// timeframe hints
-	T_MASK		=> 0x0000_F000,	// task type mask
-	P_MASK		=> 0x00FF_0000,	// Parent mask
+const (
+	A_MASK = 0x000000FF // action bits
+	Z_MASK = 0x00000F00 // timeframe hints
+	T_MASK = 0x0000F000 // task type mask
+	P_MASK = 0x00FF0000 // Parent mask
 
+	// done/next/current/later
+	A_DONE   = 0x01
+	A_NEXT   = 0x02
+	A_ACTION = 0x04
+	//		= 0x08
+	A_WAITING = 0x10
+	A_SOMEDAY = 0x20
+	A_TICKLE  = 0x40
+	//_HIER		= 0x80
 
-// done/next/current/later
-	A_DONE		=> 0x01,
-	A_NEXT		=> 0x02,
-	A_ACTION	=> 0x04,
-	//		=> 0x08,
-	A_WAITING	=> 0x10,
-	A_SOMEDAY	=> 0x20,
-	A_TICKLE	=> 0x40,
-	//_HIER		=> 0x80,
+	// timeframe hints
+	Z_LATE = 0x0100 // priority == 1
+	// or Due < today
 
-// timeframe hints
-	Z_LATE		=> 0x0100,	// priority == 1
-					// or Due < today
+	Z_DUE = 0x0200 // priority == 2
+	// or Due < week
 
-	Z_DUE           => 0x0200,	// priority == 2
-					// or Due < week
+	Z_SLOW = 0x0300 // priority == 4
+	Z_IDEA = 0x0400 // priority == 5
 
-	Z_SLOW		=> 0x0300,	// priority == 4
-	Z_IDEA		=> 0x0400,	// priority == 5
+	// composite (from A_)
+	T_ISNEXT = 0x1000
+	T_ACTIVE = 0x2000
+	T_FUTURE = 0x3000
+	T_DONE   = 0x4000
 
-// composite (from A_)
-	T_NEXT		=> 0x1000,
-	T_ACTIVE	=> 0x2000,
-	T_FUTURE	=> 0x3000,
-	T_DONE		=> 0x4000,
+	// project known
+	P_FUTURE = 0x0400000 // is only in future
+	P_DONE   = 0x0800000 // is complete tagged as done
 
-// project known
-	P_FUTURE	=> 0x040_0000,	// is only in future
-	P_DONE		=> 0x080_0000,	// is complete tagged as done
+	G_LIVE   = 0x20000000 // has live items
+	G_FUTURE = 0x40000000 // has future items
+	G_DONE   = 0x80000000 // has done items
+)
 
-	G_LIVE  	=> 0x2000_0000,	// has live items
-	G_FUTURE	=> 0x4000_0000,	// has future items
-	G_DONE		=> 0x8000_0000,	// has done items
+func Add_filter(rule string) {
 
-};
+	fdebug("#-Parse filter: %s\n", rule)
 
-sub add_filter {
-	my($rule) = @_;
-
-	warn "#-Parse filter: $rule\n" if $filter_debug;
-
-	if ($rule eq "~~") {
-		warn "#-Filters reset\n" if $filter_debug;
-		@Filters = ();
-		return;
+	if rule == "~~" {
+		fdebug("#-Filters reset\n")
+		Filters = []FILTER_t{}
+		return
 	}
 
-	if ($rule =~ s/^~//) {	// tilde
-		task_filter($rule, '!", "');
-		return;
+	if rule[0] == '~' { // tilde
+		task_filter(rule[:1], "!", "")
+		return
 	}
 
-	if ($rule =~ s/^\-//) {	// dash
-		task_filter($rule, '-", "');
-		return;
+	if rule[0] == '-' { // dash
+		task_filter(rule[:1], "-", "")
+		return
 	}
-	if ($rule =~ s/^\+=//) {
-		task_filter($rule, '", "=');
-		return;
-	}
-
-	if ($rule =~ s/^\+>//) {
-		task_filter($rule, '", ">');
-		return;
-	}
-	if ($rule =~ s/^\+<//) {
-		task_filter($rule, '", "<');
-		return;
-	}
-	if ($rule =~ s/^\+!//) {
-		task_filter($rule, '!", "');
-		return;
+	if rule[0:2] == "+=" {
+		task_filter(rule[:2], "", "=")
+		return
 	}
 
-	if ($rule =~ s/^\+//) {
-		task_filter($rule, '", "');
-		return;
+	if rule[0:2] == "+>" {
+		task_filter(rule[:2], "", ">")
+		return
+	}
+	if rule[0:2] == "+<" {
+		task_filter(rule[:2], "", "<")
+		return
+	}
+	if rule[0:2] == "+!" {
+		task_filter(rule[:2], "!", "")
+		return
 	}
 
-	warn "Unknown filter request: $rule\n";
+	if rule[0] == '+' {
+		task_filter(rule[:1], "", "")
+		return
+	}
+
+	fmt.Printf("Unknown filter request: %s\n", rule)
 }
 
-sub dispflags {
-	my($flags) = @_;
+func dispflags(flags uint) string {
 
-	return "fook" unless defined $flags;
+	if flags == 0 {
+		return "fook"
+	}
 
-	my($z) = '.';
-	my($t) = '.';
+	z := "."
+	t := "."
 
-	//         654321
-	my($a) = "------";
+	//    654321
+	a := "------"
 	//              Dn swt odsi
+	/*?
+		substr($a, -1, 1) = 'x' if $flags & A_DONE
+		substr($a, -2, 1) = 'w' if $flags & A_WAITING
+		substr($a, -3, 1) = 's' if $flags & A_SOMEDAY
+		substr($a, -4, 1) = 't' if $flags & A_TICKLE
+		substr($a, -5, 1) = 'a' if $flags & A_ACTION
+		substr($a, -6, 1) = 'n' if $flags & A_NEXT
 
-	substr($a, -1, 1) = 'x' if $flags & A_DONE;
-	substr($a, -2, 1) = 'w' if $flags & A_WAITING;
-	substr($a, -3, 1) = 's' if $flags & A_SOMEDAY;
-	substr($a, -4, 1) = 't' if $flags & A_TICKLE;
-	substr($a, -5, 1) = 'a' if $flags & A_ACTION;
-	substr($a, -6, 1) = 'n' if $flags & A_NEXT;
+		$t = 'x' if ($flags & T_MASK) == T_DONE
+		$t = 'f' if ($flags & T_MASK) == T_FUTURE
+		$t = 'a' if ($flags & T_MASK) == T_ACTIVE
+		$t = 'n' if ($flags & T_MASK) == T_ISNEXT
 
-	$t = 'x' if ($flags & T_MASK) == T_DONE;
-	$t = 'f' if ($flags & T_MASK) == T_FUTURE;
-	$t = 'a' if ($flags & T_MASK) == T_ACTIVE;
-	$t = 'n' if ($flags & T_MASK) == T_NEXT;
+		$z = 'l' if ($flags & Z_MASK) == Z_LATE
+		$z = 'd' if ($flags & Z_MASK) == Z_DUE
+		$z = 's' if ($flags & Z_MASK) == Z_SLOW
+		$z = 'i' if ($flags & Z_MASK) == Z_IDEA
 
-	$z = 'l' if ($flags & Z_MASK) == Z_LATE;
-	$z = 'd' if ($flags & Z_MASK) == Z_DUE;
-	$z = 's' if ($flags & Z_MASK) == Z_SLOW;
-	$z = 'i' if ($flags & Z_MASK) == Z_IDEA;
+		p := "--"
 
-	my($p) = "--";
+		substr($p,  0, 1) = 'F' if $flags & P_FUTURE
+		substr($p,  1, 1) = 'X' if $flags & P_DONE
 
-	substr($p,  0, 1) = 'F' if $flags & P_FUTURE;
-	substr($p,  1, 1) = 'X' if $flags & P_DONE;
-
-	my($g) = "---";
-	substr($g,  0, 1) = 'l' if $flags & G_LIVE;
-	substr($g,  1, 1) = 'f' if $flags & G_FUTURE;
-	substr($g,  2, 1) = 'x' if $flags & G_DONE;
-
-	return "$g.$p|$z.$t|$a";
-	return "$g.$p|$z.$t|$a";
+		g := copy("---")
+		g[0] = 'l' if $flags & G_LIVE
+		g[1] = 'f' if $flags & G_FUTURE
+		g[2] = 'x' if $flags & G_DONE
+	return fmt.Sprintf("%s.%s|%s.%s|%s", g, p, z, t, a)
+	?*/
+	return "fook-fook-fook" + z + a + t
 }
 
-sub task_filter {
-	my($name, $dir, $will) = @_;
+func task_filter(name string, dir string, will string) {
 
-	my($func, $walk, $arg) = map_filter_name($name);
-	unless ($func) {
-		warn "Warn unknown filter: $name\n";
-		return;
+	ffunc, walk, arg := map_filter_name(name)
+	if ffunc == nil {
+		fdebug("Warn unknown filter: %s\n", name)
+		return
 	}
 
-	warn "#-Filter $name: [$will,$walk,$dir] $arg\n" if $filter_debug;
-	$walk = $will if $will;
-	$walk = $dir unless $walk;
-	$walk = '+' unless $walk;
+	fdebug("#-Filter %s: [%s,%s,%s] %s\n", name, will, walk, dir, arg)
+	if will != "" {
+		walk = will
+	}
+	if walk == "" {
+		walk = dir
+	}
+	if walk == "" {
+		walk = "+"
+	}
 
-	my($filter) = {
-		func => $func,
-		name => $name,
-		dir  => $walk,
-		arg  => $arg,
-	};
+	f := FILTER_t{
+		ffunc: ffunc,
+		name:  name,
+		dir:   walk,
+		arg:   arg,
+	}
 
-	push(@Filters, $filter);
+	Filters = append(Filters, f)
 }
 
-sub task_mask {
-	my($ref) = @_;
+func task_mask(t *Task) uint {
 
-	return $ref->{_mask} if defined $ref->{_mask};
-
-	my($mask) = 0x0000;
-
-	my($done) = $ref->is_completed();
-	my($due)  = $ref->get_due();
-	my($kind  = $ref->get_type();
-
-	$mask |= A_DONE		if $done;  # step on next/somday/tickle
-	$mask |= A_SOMEDAY	if $ref->get_isSomeday() eq 'y';
-	$mask |= A_TICKLE	if $ref->get_tickledate() gt $Today;
-	$mask |= A_WAITING	if $kind eq 'w';
-	$mask |= A_NEXT	 	if $ref->get_nextaction() eq 'y';
-
-	if ($kind eq 'a') {
-		$mask |= A_ACTION;
-	}
-	$ref->{_mask} = $mask;
-
-	if ($mask & A_DONE) {
-		$mask |= T_DONE;
-		give_children($ref, P_DONE);
-
-	} elsif ($mask & A_SOMEDAY || $mask & A_TICKLE || $mask & A_WAITING) {
-		$mask |= T_FUTURE;
-		give_children($ref, P_FUTURE);
-
-	} elsif ($mask & A_NEXT) {
-		$mask |= T_NEXT;
-	} else {
-		$mask |= T_ACTIVE;
+	if t.mask != 0 {
+		return t.mask
 	}
 
-	unless ($done) {
-		my($pri) = $ref->get_priority();
-		my($hint) = 0;
+	var mask uint = 0
 
-		$hint = Z_LATE	if $pri == 1;
-		$hint = Z_DUE	if $pri == 2;
-		$hint = Z_SLOW	if $pri == 4;
-		$hint = Z_IDEA	if $pri >= 5;
+	done := t.Is_completed()
+	due := t.Due
+	kind := t.Type
 
-		if ($due) {
-			$hint = Z_LATE	if $due lt $Today;
-			$hint = Z_DUE	if $due ge $Today and $due le $Soon;
+	if done { // step on next/somday/tickle
+		mask |= A_DONE
+	}
+	if t.IsSomeday {
+		mask |= A_SOMEDAY
+	}
+	if t.Tickledate > Today {
+		mask |= A_TICKLE
+	}
+	if kind == 'w' {
+		mask |= A_WAITING
+	}
+	if t.IsNextaction {
+		mask |= A_NEXT
+	}
+
+	if kind == 'a' {
+		mask |= A_ACTION
+	}
+	t.mask = mask
+
+	switch {
+	case mask&A_DONE != 0:
+		mask |= T_DONE
+		give_children(t, P_DONE)
+
+	case mask&(A_SOMEDAY|A_TICKLE|A_WAITING) != 0:
+		mask |= T_FUTURE
+		give_children(t, P_FUTURE)
+
+	case mask&A_NEXT != 0:
+		mask |= T_ISNEXT
+	default:
+		mask |= T_ACTIVE
+	}
+
+	if !done {
+		pri := t.Priority
+		var hint uint = 0
+
+		switch pri {
+		case 1:
+			hint = Z_LATE
+		case 2:
+			hint = Z_DUE
+		case 4:
+			hint = Z_SLOW
+		case 5:
+			hint = Z_IDEA
 		}
+
+		if due != "" {
+			if due < Today {
+				hint = Z_LATE
+			}
+			if due > Today && due < Soon {
+				hint = Z_DUE
+			}
+		}
+		mask |= hint
 	}
 
-	$ref->{_mask} = $mask;
-	return $mask;
+	t.mask = mask
+	return mask
 }
 
-sub give_children {
-	my($ref, $mask) = @_;
+func give_children(t *Task, mask uint) {
 
-	for my $pref ($ref->get_children()) {
-		$pref->{_mask} = task_mask($pref) | $mask;
-		give_children($pref, $mask);
+	for _, pref := range t.Children {
+		pref.mask = task_mask(pref) | mask
+		give_children(pref, mask)
 	}
 }
 
-sub give_parent {
-	my($ref, $mask) = @_;
+func give_parent(t *Task, mask uint) {
 
-	for my $pref ($ref->get_parents()) {
-		$pref->{_mask} = task_mask($pref) | $mask;
-		give_parent($pref, $mask);
+	for _, pref := range t.Parents {
+		pref.mask = task_mask(pref) | mask
+		give_parent(pref, mask)
 	}
 }
 
-sub task_mask_disp {
-	my($ref) = @_;
+func task_mask_disp(t *Task) string {
 
-	return dispflags(task_mask($ref));
+	return dispflags(task_mask(t))
 }
 
-sub proj_mask {
-	my($ref) = @_;
+func proj_mask(t *Task) {
 
-	my($mask) = task_mask($ref);
+	//?	mask := task_mask(t)
 
-	return if $mask & T_DONE;	// project tagged as done
-	return if $mask & T_FUTURE;	// project yet to start
-		
+	/*?
+		return if mask & T_DONE;	// project tagged as done
+		return if mask & T_FUTURE;	// project yet to start
+	?*/
+
 	//##BUG### propigate done upward
 	// check if all children are done
-//	for my $cref ($ref->get_children()) {
-//		next if task_mask($cref) & T_DONE;
-//
-//		return;
-//	}
-//	return 1;
+	//	for _, cref := range t.Children {
+	//		next if task_mask($cref) & T_DONE
+	//
+	//		return
+	//	}
+	//	return 1
 }
 
-sub meta_find_context {
-	my($cct) = @_;
-	my($Category) = Hier::CCT->use("Category");
-	my($Context) = Hier::CCT->use("Context");
-	my($Timeframe) = Hier::CCT->use("Timeframe");
+func meta_find_context(cct_name string) {
+	category := cct.Use("Category")
+	context := cct.Use("Context")
+	timeframe := cct.Use("Timeframe")
 
 	// match case sensative first
-	if ($Context->get($cct)) {
-		warn "#-Set space context:  $cct\n" if $filter_debug;
-		$Filter_Context = $cct;
-		return;
+	if context.Id(cct_name) != 0 {
+		fdebug("#-Set space context:  %s\n", cct_name)
+		Filter_Context = cct_name
+		return
 	}
-	if (defined $Timeframe->get($cct)) {
-		warn "#-Set time context:   $cct\n" if $filter_debug;
-		$Filter_Timeframe = $cct;
-		return;
+	if timeframe.Id(cct_name) != 0 {
+		fdebug("#-Set time context:   %s\n", cct_name)
+		Filter_Timeframe = cct_name
+		return
 	}
-	if (defined $Category->get($cct)) {
-		warn "#-Set category:       $cct\n" if $filter_debug;
-		$Filter_Category = $cct;
-		return;
+	if category.Id(cct_name) != 0 {
+		fdebug("#-Set category:       %s\n", cct_name)
+		Filter_Category = cct_name
+		return
 	}
-	for my $key (Hier::CCT::keys("Tag")) {
-		next unless $key eq $cct;
+	/*
+		for _, key (Hier::CCT::keys("Tag")) {
+			next unless key == $cct
 
-		warn "#-Set tag:            $key\n" if $filter_debug;
-		$Filter_Tags{$key}++;
-		return;
-	}
+			warn "#-Set tag:            $key\n" if $filter_debug
+			$Filter_Tags{key}++
+			return
+		}
+	*/
 
 	// match case insensative next
-	for my $key ($Context->keys()) {
-		next unless lc($key) eq lc($cct);
-
-		warn "#-Set space context:  $key\n" if $filter_debug;
-		$Filter_Context = $key;
-		return;
+	if v := context.Match(cct_name); v != 0 {
+		Filter_Context = context.Name(v)
+		fdebug("#-Set space context=  %s\n", Filter_Context)
+		return
 	}
-	for my $key ($Timeframe->keys()) {
-		next unless lc($key) eq lc($cct);
-
-		warn "#-Set time context:   $key\n" if $filter_debug;
-		$Filter_Timeframe = $key;
-		return;
+	if v := timeframe.Match(cct_name); v != 0 {
+		Filter_Timeframe = timeframe.Name(v)
+		fdebug("#-Set time context=   %s\n", Filter_Timeframe)
+		return
 	}
-	for my $key ($Category->keys()) {
-		next unless lc($key) eq lc($cct);
-
-		warn "#-Set category:       $key\n" if $filter_debug;
-		$Filter_Category = $key;
-		return;
-	}
-	for my $key (Hier::CCT::keys("Tag")) {
-		next unless lc($key) eq lc($cct);
-
-		warn "#-Set tag:            $key\n" if $filter_debug;
-		$Filter_Tags{$key}++;
-		return;
+	if v := category.Match(cct_name); v != 0 {
+		Filter_Category = category.Name(v)
+		fdebug("#-Set category=       %s\n", Filter_Category)
+		return
 	}
 
-	warn "Defaulted category: $cct\n";
-	$Filter_Category = $cct;
+	/*
+		for _, key (Hier::CCT::keys("Tag")) {
+			next unless lc(key) == lc(cct)
+
+			fdebug("#-Set tag:            %s\n", key)
+			$Filter_Tags{key}++
+			return
+		}
+	*/
+	fmt.Printf("Unknown cct name %s\n", cct_name)
 }
 
-sub cct_wanted {
-	my ($ref) = @_;
+func cct_wanted(t *Task) string {
 
-	if (%Filter_Tags) {
-		for my $tag ($ref->get_tags()) {
-			return "tag $tag" if exists $Filter_Tags{$tag}
-			                  &&        $Filter_Tags{$tag};
+	if len(Filter_Tags) > 0 {
+		for _, tag := range t.Tags {
+			if _, ok := Filter_Tags[tag]; ok {
+				return "tag " + tag
+			}
 		}
 	}
 
-	if ($ref->get_type() eq 'p' or $ref->is_task()) {
-		if ($Filter_Context) {
-			return "context $Filter_Context" if $ref->get_context() eq $Filter_Context;
+	if t.Type == 'p' || t.Is_task() {
+		if Filter_Context != "" {
+			if t.Context == Filter_Context {
+				return "context $Filter_Context"
+			}
 		}
 	}
-	if ($Filter_Timeframe) {
-		return "timeframe $Filter_Timeframe" if $ref->get_timeframe() eq $Filter_Timeframe;
+	if Filter_Timeframe != "" {
+		if t.Timeframe == Filter_Timeframe {
+			return "timeframe $Filter_Timeframe"
+		}
 	}
-	if ($Filter_Category) {
-		return "category $Filter_Category" if $ref->get_category() eq $Filter_Category;
+	if Filter_Category != "" {
+		if t.Category == Filter_Category {
+			return "category $Filter_Category"
+		}
 	}
 
-
-	return '';
+	return ""
 }
 
-sub add_filter_tags {
-	if (option("Tag")) {
-		foreach my $tag (split(',", option("Tag'))) {
-			$Filter_Tags{$tag}++;
-		}
+func add_filter_tags() {
+	tags := option.Get("Tag", "")
+	if tags == "" {
+		return
+	}
+	for _, tag := range strings.Split(tags, ",") {
+		Filter_Tags[tag] = true
 	}
 }
 
@@ -540,364 +584,453 @@ sub add_filter_tags {
 //******************************************************************************
 //******************************************************************************
 //******************************************************************************
-sub map_filter_name {
-	my($word, $dir) = @_;
-
-	if ($word =~ s/^([a-z])://) {
-		$Default_level = $1;
-	}
-
-	return (\&filter_any, '=", "*')	if $word =~ /^any/i;
-	return (\&filter_any, '=", "=')	if $word =~ /^all/i;
-	return (\&filter_any, '=", "l')	if $word =~ /^list/i;
-	return (\&filter_any, '=", "h')	if $word =~ /^hier/i;
-	return (\&filter_any, '=", "t')	if $word =~ /^task/i;
-
-
-	return (\&filter_done, '>','')	if $word =~ /^done/i;
-	return (\&filter_some, '>','')	if $word =~ /^some/i;
-	return (\&filter_some, '>','')	if $word =~ /^maybe/i;
-
-	return (\&filter_task, '<','')	if $word =~ /^action/i;
-//	return (\&filter_next, '<','')	if $word =~ /^pure_next/i;
-// we need to re-thing this live-next vs next
-
-	return (\&filter_next, "><",'')	if $word =~ /^next/i;
-	return (\&filter_active, "><",'')	if $word =~ /^active/i;
-	return (\&filter_live, "><",'')	if $word =~ /^live/i;
-	return (\&filter_dead, "><",'')	if $word =~ /^dead/i;
-	return (\&filter_idle, "><",'')	if $word =~ /^idle/i;
-
-	return (\&filter_wait, '<','')	if $word =~ /^wait/i;
-	return (\&filter_wait, '<','')	if $word =~ /^tickle/i;
-	return (\&filter_late, '<','')	if $word =~ /^late/i;
-	return (\&filter_due,  '<','')	if $word =~ /^due/i;
-
-	return (\&filter_slow, '<','')	if $word =~ /^slow/i;
-	return (\&filter_idea, '<','')	if $word =~ /^idea/i;
-
-
-	return 0;
-}
-
-sub apply_ref_filters {
-	my($ref) = @_;
-
-	my($reason) = $ref->{_filtered};
-
-	return $reason if $reason;
-
-	for my $filter (@Filters) {
-		my($func) = $filter->{func};
-		my($dir)  = $filter->{dir};
-		my($arg)  = $filter->{arg};
-
-		$reason = &$func($ref, $arg);
-
-		if ($filter_debug) {
-			my($tid) = $ref->get_tid();
-			my($title) = $ref->get_title();
-			my($name) = $filter->{name};
-			warn "#?Filter($name): $reason apply $dir for $tid: $title\n"; 
+func map_filter_name(word string) (func(*Task, string) string, string, string) {
+	/*?
+		if ($word =~ s/^([a-z])://) {
+			Default_level = $1
 		}
 
-		next if substr($reason, 0, 1) eq '?';
+	?*/
+	switch strings.ToLower(word) {
+	case "any":
+		return filter_any, "=", "*"
 
-		if ($dir eq '=') {
-			$ref->{_filtered} = $reason;
-			return;
+	case "all":
+		return filter_any, "=", "="
+
+	case "list":
+		return filter_any, "=", "l"
+
+	case "hier":
+		return filter_any, "=", "h"
+
+	case "task":
+		return filter_any, "=", "t"
+
+	case "done":
+		return filter_done, ">", ""
+
+	case "some":
+		return filter_some, ">", ""
+
+	case "maybe":
+		return filter_some, ">", ""
+
+	case "action":
+		return filter_task, "<", ""
+
+		//	case "pure_next":
+		return filter_next, "<", ""
+
+		// we need to re-thing this live-next vs next
+
+	case "next":
+		return filter_next, "><", ""
+
+	case "active":
+		return filter_active, "><", ""
+
+	case "live":
+		return filter_live, "><", ""
+
+	case "dead":
+		return filter_dead, "><", ""
+		/*?
+		case "idle":
+			return filter_idle, "><", ""
+		?*/
+	case "wait":
+		return filter_wait, "<", ""
+
+	case "tickle":
+		return filter_wait, "<", ""
+
+	case "late":
+		return filter_late, "<", ""
+
+	case "due":
+		return filter_due, "<", ""
+
+	case "slow":
+		return filter_slow, "<", ""
+
+	case "idea":
+		return filter_idea, "<", ""
+	}
+
+	return nil, "", ""
+}
+
+func apply_ref_filters(t *Task) string {
+
+	reason := t.filtered
+
+	if reason != "" {
+		return reason
+	}
+
+	for _, filter := range Filters {
+		ffunc := filter.ffunc
+		dir := filter.dir
+
+		reason = ffunc(t, filter.arg)
+
+		fdebug("#?Filter(%s): reason apply %s for %d: %s\n",
+			filter.name, dir, t.Tid, t.Title)
+
+		if reason[0] == '?' {
+			continue
 		}
 
-		if ($dir eq '!') {
-			$reason =~ tr/+-/-+/;
-			$ref->{_filtered} = $reason;
-			return;
+		if dir == "=" {
+			t.filtered = reason
+			return reason
 		}
 
-		if ($dir eq '<') {
-			filter_walk_up($ref, $reason);
-		} elsif ($dir eq '>') {
-			filter_walk_down($ref, $reason);
-		} elsif ($dir eq "<>") {
-			filter_walk_up_down($ref, $reason);
-		} elsif ($dir eq "><") {
-			filter_walk_down_up($ref, $reason);
+		// swap meaning of reason
+		if dir == "!" {
+			if reason[0] == '+' {
+				t.filtered = "-" + reason[:1]
+			} else {
+				t.filtered = "+" + reason[:1]
+			}
+			return t.filtered
 		}
-		return;
-	}
-}
 
-sub filter_walk_up {
-	my($ref, $reason) = @_;
-
-	my($mask) = $ref->{_filtered};
-
-	return if $mask;	// already decided.
-
-	$ref->{_filtered} = $reason;
-	for my $pref ($ref->get_parents()) {
-		filter_walk_up($pref, $reason.'<');
-	}
-}
-
-sub filter_walk_up_down {
-	my($ref, $reason) = @_;
-
-	my($mask) = $ref->{_filtered};
-
-	return if $mask;	// already decided.
-
-	if ($reason =~ /^\+/) {
-		for my $pref ($ref->get_parents()) {
-			filter_walk_up($pref, $reason.'<');
+		switch dir {
+		case "<":
+			filter_walk_up(t, reason)
+		case ">":
+			filter_walk_down(t, reason)
+		case "<>":
+			filter_walk_up_down(t, reason)
+		case "><":
+			filter_walk_down_up(t, reason)
 		}
 	}
-	$ref->{_filtered} = $reason;
-	for my $pref ($ref->get_children()) {
-		filter_walk_down($pref, $reason.'>');
+	return ""
+}
+
+func filter_walk_up(t *Task, reason string) {
+
+	mask := t.filtered
+
+	if mask != "" {
+		return // already decided.
+	}
+
+	t.filtered = reason
+	for _, pref := range t.Parents {
+		filter_walk_up(pref, reason+"<")
 	}
 }
 
-sub filter_walk_down {
-	my($ref, $reason) = @_;
+func filter_walk_up_down(t *Task, reason string) {
 
-	my($mask) = $ref->{_filtered};
+	mask := t.filtered
 
-	return if $mask;	// already decided.
-
-	$ref->{_filtered} = $reason;
-	for my $pref ($ref->get_children()) {
-		filter_walk_down($pref, $reason.'>');
+	if mask != "" {
+		return // already decided.
 	}
-}
-sub filter_walk_down_up {
-	my($ref, $reason) = @_;
 
-	my($mask) = $ref->{_filtered};
-
-	return if $mask;	// already decided.
-
-	for my $pref ($ref->get_children()) {
-		filter_walk_down($pref, $reason.'>');
+	if reason[0] == '+' {
+		for _, pref := range t.Parents {
+			filter_walk_up(pref, reason+"<")
+		}
 	}
-	$ref->{_filtered} = $reason;
-
-	return if $reason =~ /^-/;
-
-	for my $pref ($ref->get_parents()) {
-		filter_walk_up($pref, $reason.'<');
+	t.filtered = reason
+	for _, pref := range t.Children {
+		filter_walk_down(pref, reason+">")
 	}
 }
 
-// return + if wanted
-// return - if unwanted
-// return ? if unknown
+func filter_walk_down(t *Task, reason string) {
 
-sub filter_any {
-	my($ref, $arg) = @_;
+	mask := t.filtered
 
-	my($kind) = $ref->get_type();
-
-	if ($arg eq '*') {
-		return "+any=".$kind;
+	if mask != "" {
+		return // already decided.
 	}
-	if ($arg eq '=') {
-		return "+any=".$kind unless ref.Is_list();
+
+	t.filtered = reason
+	for _, pref := range t.Children {
+		filter_walk_down(pref, reason+">")
 	}
-	return "+any=$kind" if $arg eq 't' && ref.Is_task();
-	return "+any=$kind" if $arg eq 'h' && ref.Is_hier();
-	return "+any=$kind" if $arg eq 'l' && ref.Is_list();
-
-	return '?';
 }
+func filter_walk_down_up(t *Task, reason string) {
 
-sub filter_task {
-	my($ref, $arg) = @_;
+	mask := t.filtered
 
-	return '?' unless $ref->is_task();
-	return "+task";
-}
-
-sub filter_done {
-	my($ref, $arg) = @_;
-
-	return "+done" if $ref->is_completed();
-	return '?';
-}
-
-
-sub filter_pure_next {
-	my($ref, $arg) = @_;
-
-	return '?' unless $ref->is_task();
-	return "+next" if $ref->get_nextaction() eq 'y';
-	return '?';
-}
-
-
-sub filter_tickle {
-	my($ref, $arg) = @_;
-
-	return "+tickle" if $ref->get_tickle();
-	return '?';
-}
-
-sub filter_wait {
-	my($ref, $arg) = @_;
-
-	my($kind) = $ref->get_type();
-	return "+wait" if $kind eq 'w';
-	return '?';
-}
-
-
-sub filter_late {
-	my($ref, $arg) = @_;
-
-	my($due)  = $ref->get_due();
-	return '?' unless $due;
-
-	if ($due le $Today) {
-		return "+late".$due;
+	if mask != "" {
+		return // already decided.
 	}
-	return '?';
-}
 
-
-sub filter_due {
-	my($ref, $arg) = @_;
-
-	my($due)  = $ref->get_due();
-	return '?' unless $due;
-
-	if ($due ge $Today and $due le $Soon) {
-		return "+due".$due;
+	for _, pref := range t.Children {
+		filter_walk_down(pref, reason+">")
 	}
-	return '?';
+	t.filtered = reason
+
+	if reason[0] == '-' {
+		return
+	}
+
+	for _, pref := range t.Parents {
+		filter_walk_up(pref, reason+"<")
+	}
 }
 
+// filter routines:
 
-sub filter_slow {
-	my($ref, $arg) = @_;
+// if wanted { return "+..." }
+// if unwanted { return "-..." }
+// if unknown { return "?..." }
 
-	my($pri) = $ref->get_priority();
-	return "+slow" if $pri == 4;
-	return '?';
+func filter_any(t *Task, arg string) string {
+	result := fmt.Sprintf("+any=%c", t.Type)
+
+	if arg == "*" {
+		return result
+	}
+	if arg == "=" {
+		if !t.Is_list() {
+			return result
+		}
+	}
+	if arg == "t" && t.Is_task() {
+		return result
+	}
+	if arg == "h" && t.Is_hier() {
+		return result
+	}
+	if arg == "l" && t.Is_list() {
+		return result
+	}
+
+	return "?"
 }
 
+func filter_task(t *Task, arg string) string {
 
-sub filter_idea {
-	my($ref, $arg) = @_;
-
-	my($pri) = $ref->get_priority();
-	return "+idea" if $pri == 5;
-	return '?';
+	if !t.Is_task() {
+		return "?"
+	}
+	return "+task"
 }
 
+func filter_done(t *Task, arg string) string {
 
-sub filter_some {
-	my($ref, $arg) = @_;
-
-	my($mask) = task_mask($ref);
-	return "+some" if ($mask & T_MASK) == T_FUTURE;
-	return '?';
+	if t.Is_completed() {
+		return "+done"
+	}
+	return "?"
 }
 
-sub filter_next {
-	my($ref, $arg) = @_;
+func filter_pure_next(t *Task, arg string) string {
 
-	my($mask) = task_mask($ref);
+	if !t.Is_task() {
+		return "?"
+	}
+	if t.IsNextaction {
+		return "+next"
+	}
+	return "?"
+}
 
-	if ($ref->is_task()) {
-		return "+live=n" if ($mask & T_MASK) == T_NEXT;
+func filter_tickle(t *Task, arg string) string {
+
+	if t.Tickledate != "" {
+		return "+tickle"
+	}
+	return "?"
+}
+
+func filter_wait(t *Task, arg string) string {
+
+	kind := t.Type
+	if kind == 'w' {
+		return "+wait"
+	}
+	return "?"
+}
+
+func filter_late(t *Task, arg string) string {
+
+	due := t.Due
+	if due == "" {
+		return "?"
+	}
+
+	if due <= Today {
+		return "+late:" + due
+	}
+	return "?"
+}
+
+func filter_due(t *Task, arg string) string {
+
+	due := t.Due
+	if due == "" {
+		return "?"
+	}
+
+	if due >= Today && due <= Soon {
+		return "+due:" + due
+	}
+	return "?"
+}
+
+func filter_slow(t *Task, arg string) string {
+
+	pri := t.Priority
+	if pri == 4 {
+		return "+slow"
+	}
+	return "?"
+}
+
+func filter_idea(t *Task, arg string) string {
+
+	pri := t.Priority
+	if pri == 5 {
+		return "+idea"
+	}
+	return "?"
+}
+
+func filter_some(t *Task, arg string) string {
+
+	mask := task_mask(t)
+	if (mask & T_MASK) == T_FUTURE {
+		return "+some"
+	}
+	return "?"
+}
+
+func filter_next(t *Task, arg string) string {
+
+	mask := task_mask(t)
+
+	if t.Is_task() {
+		if (mask & T_MASK) == T_ISNEXT {
+			return "+live=n"
+		}
 	} else {
-		return filter_live($ref, $arg);
+		return filter_live(t, arg)
 	}
 
-	return '?';
+	return "?"
 }
 
-sub filter_active {
-	my($ref, $arg) = @_;
+func filter_active(t *Task, arg string) string {
 
-	
-//	return '?' unless $ref->is_task();
-
-	my($mask) = task_mask($ref);
-
-	return "-act=d" if ($mask & A_MASK) == A_DONE;
-	return "-act=s" if ($mask & A_MASK) == A_SOMEDAY;
-	return "-act=t" if ($mask & A_MASK) == A_TICKLE;
-	return "-act=w" if ($mask & A_MASK) == A_WAITING;
-
-	if ($ref->is_task()) {
-		return "+act=n" if ($mask & T_MASK) == T_NEXT;
-		return "+act=a" if ($mask & T_MASK) == T_ACTIVE;
+	if !t.Is_task() {
+		return "?"
 	}
 
-	return '?';
-}
+	mask := task_mask(t)
 
-sub filter_live {
-	my($ref, $arg) = @_;
-
-	
-//	return '?' unless $ref->is_task();
-
-	my($mask) = task_mask($ref);
-
-	return "-live=d" if ($mask & A_MASK) == A_DONE;
-
-	if ($ref->is_task()) {
-		return "+live=n" if ($mask & T_MASK) == T_NEXT;
-		return "+live=a" if ($mask & T_MASK) == T_ACTIVE;
-		return "+live=f" if ($mask & T_MASK) == T_FUTURE;
+	if (mask & A_MASK) == A_DONE {
+		return "-act=d"
+	}
+	if (mask & A_MASK) == A_SOMEDAY {
+		return "-act=s"
+	}
+	if (mask & A_MASK) == A_TICKLE {
+		return "-act=t"
+	}
+	if (mask & A_MASK) == A_WAITING {
+		return "-act=w"
 	}
 
-	return '?';
-}
-
-
-sub filter_dead {
-	my($ref, $arg) = @_;
-
-	return '?' unless $ref->is_task();
-
-	my($mask) = task_mask($ref);
-	return "+dead=d" if ($mask & T_MASK) == T_DONE;
-	return '?';
-}
-
-sub filter_category {
-	my($ref, $arg) = @_;
-
-	my($category) = $ref->get_category() || '';
-	return "+category=$arg" if lc($category) eq lc($arg);
-	return '?';
-}
-
-sub filter_context {
-	my($ref, $arg) = @_;
-
-	my($context) = $ref->get_context() || '';
-	return "+context=$arg" if lc($context) eq lc($arg);
-	return '?';
-}
-
-sub filter_timeframe {
-	my($ref, $arg) = @_;
-
-	my($timeframe) = $ref->get_timeframe() || '';
-	return "+timeframe=$arg" if lc($timeframe) eq lc($arg);
-	return '?';
-}
-
-sub filter_tags {
-	my($ref, $arg) = @_;
-
-	for my $tag ($ref->get_tags()) {
-		return "+tag=$tag" if lc($arg) eq lc($tag);
+	if t.Is_task() {
+		if (mask & T_MASK) == T_ISNEXT {
+			return "+act=n"
+		}
+		if (mask & T_MASK) == T_ACTIVE {
+			return "+act=a"
+		}
 	}
-	return '?';
+
+	return "?"
 }
-*/
+
+func filter_live(t *Task, arg string) string {
+
+	if !t.Is_task() {
+		return "?"
+	}
+
+	mask := task_mask(t)
+
+	if (mask & A_MASK) == A_DONE {
+		return "-live=d"
+	}
+
+	if t.Is_task() {
+		if (mask & T_MASK) == T_ISNEXT {
+			return "+live=n"
+		}
+		if (mask & T_MASK) == T_ACTIVE {
+			return "+live=a"
+		}
+		if (mask & T_MASK) == T_FUTURE {
+			return "+live=f"
+		}
+	}
+
+	return "?"
+}
+
+func filter_dead(t *Task, arg string) string {
+
+	if !t.Is_task() {
+		return "?"
+	}
+
+	mask := task_mask(t)
+	if (mask & T_MASK) == T_DONE {
+		return "+dead=d"
+	}
+	return "?"
+}
+
+func filter_category(t *Task, arg string) string {
+
+	if t.Category == arg {
+		return "+category=$arg"
+	}
+	return "?"
+}
+
+func filter_context(t *Task, arg string) string {
+
+	if t.Context == arg {
+		return "+context=$arg"
+	}
+	return "?"
+}
+
+func filter_timeframe(t *Task, arg string) string {
+
+	if t.Timeframe == arg {
+		return "+timeframe=$arg"
+	}
+	return "?"
+}
+
+func filter_tags(t *Task, arg string) string {
+
+	for _, tag := range t.Tags {
+		if arg == tag {
+			return "+tag=$tag"
+		}
+	}
+	return "?"
+}
+
+func fdebug(f string, v ...interface{}) {
+	//return
+	fmt.Print("!!!!")
+	fmt.Printf(f, v...)
+	log.Printf(f, v...)
+}

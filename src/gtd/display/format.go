@@ -318,7 +318,7 @@ func disp_summary(fd io.Writer, t *task.Task, note string) {
 }
 
 func disp_plan(fd io.Writer, t *task.Task, note string) {
-	r := t.NewResource()
+	r := t.Project()
 	user := r.Resource()
 	why := r.Hint()
 
