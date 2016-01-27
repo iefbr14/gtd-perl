@@ -143,7 +143,7 @@ func cct_report_counts(header string, counts cct_count_T) {
 
 	cct_ref := cct.Use(counts.name)
 	color.Print("BOLD")
-	fmt.Print("Val  Vis  Role Goal Proj Action Total Id: header Name")
+	fmt.Printf("Val  Vis  Role Goal Proj Action Total Id: %s Name", header)
 	display.Nl()
 
 	dups := map[string]int{}
@@ -163,7 +163,7 @@ func cct_report_counts(header string, counts cct_count_T) {
 
 		lc_key := strings.ToLower(key)
 		dup := ':'
-		if _, ok := dups[lc_key]; !ok {
+		if _, ok := dups[lc_key]; ok {
 			dups[lc_key]++
 			dup = '*'
 		}
