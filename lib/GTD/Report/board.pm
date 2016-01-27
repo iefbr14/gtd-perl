@@ -71,7 +71,7 @@ sub Report_board {	#-- report board of projects/actions
 	my(@list) = meta_pick(@_);
 
 	if (@list == 0) {
-		@list = meta_pick('roles');
+		@list = meta_pick('role');
 	}
 
 	$Lines = lines();
@@ -80,8 +80,9 @@ sub Report_board {	#-- report board of projects/actions
 
 	### printf "Columns: %s split %s\n", columns(), $Cols;
 
-	check_roles(@list);
-
+	for my $ref (@list) {
+		check_a_role($ref);
+	}
 }
 
 =head
@@ -102,11 +103,6 @@ Purple: overcommited
 
 =cut
 
-sub check_roles {
-	for my $ref (@_) {
-		check_a_role($ref);
-	}
-}
 
 sub check_a_role {
 	my($role_ref) = @_;
@@ -239,7 +235,7 @@ sub col {
 }
 
 sub check_group {
-	my($ref, $state, $want, $how, $var) = @_;
+	my($ref, $state, $want, $how, $board) = @_;
 
 	return unless $state eq $want;
 
@@ -273,14 +269,14 @@ sub check_group {
 		$color = color('BROWN');
 	}
 
-	save_item($color, $ref, $var);
+	save_item($color, $ref, $board);
 	if ($state eq 'd') {
-		grab_child($ref, $var);
+		grab_child($ref, $board);
 	}
 }
 
 sub save_item {
-	my($color, $ref, $var) = @_;
+	my($color, $ref, $board) = @_;
 
 	my($tid) = $ref->get_tid();
 	my($title) = $ref->get_title();
@@ -292,18 +288,18 @@ sub save_item {
 		sprintf("%5d %-${Cols}.${Cols}s", $tid, $title) .
 		color();
 
-	push(@{$var}, $result);
+	push(@{$board}, $result);
 }
 
 sub grab_child {
-	my($pref, $var) = @_;
+	my($pref, $board) = @_;
 
 	for my $child ($pref->get_children()) {
 		next if $child->get_completed();
 		next if $child->is_someday();
 		next unless $child->is_nextaction();
 
-		save_item(color('LIME'), $child, $var);
+		save_item(color('LIME'), $child, $board);
 		return;
 	}
 }
