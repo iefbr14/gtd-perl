@@ -11,13 +11,14 @@ BEGIN {
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw(
-		&tasks_by_type
+		&meta_filter
 		&meta_matching_type
-		&meta_selected &meta_sorted
+		&meta_selected 
 		&meta_find &meta_all
-		&meta_filter &meta_desc &meta_argv
+		&meta_desc &meta_argv
 		&meta_reset_filters
 		&meta_pick
+		&meta_walk
 	);
 }
 
@@ -39,43 +40,33 @@ use base qw(GTD::Hier GTD::Fields GTD::Filter);
 my @Selected;
 my $Default_filter = '';
 
-sub hier {
-	return grep { $_->is_hier() } selected();
-}
+#sub hier {
+#	return grep { $_->is_hier() } selected();
+#}
 
 sub meta_reset_filters {
 	@Selected = ();		# nothing is selected/sorted.
 }
 
 sub meta_selected {
-	if (@Selected == 0) {
-		@Selected = meta_filtered();
-	}
-	return @Selected;
-}
-
-sub meta_filtered {
-	if (@Selected == 0) {
-		for my $ref (GTD::Tasks::all()) {
-			next if $ref->filtered(0);
-			push(@Selected, $ref);
-		}
+	if (@Selected >= 0) {
+		return @Selected;
 	}
 
-	return @Selected;
-}
-
-sub meta_sorted {
-	if (@Selected == 0) {
-		@Selected = sort_tasks(meta_filtered());
+	for my $ref (GTD::Tasks::all()) {
+		next if $ref->filtered();
+		push(@Selected, $ref);
 	}
+
+	@Selected = sort_tasks(@Selected);
+
 	return @Selected;
 }
 
 sub meta_matching_type {
 	my($type) = @_;
 
-	return grep { $_->get_type() eq $type } meta_sorted();
+	return grep { $_->get_type() eq $type } meta_selected();
 }
 
 sub meta_all {

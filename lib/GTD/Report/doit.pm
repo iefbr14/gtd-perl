@@ -187,7 +187,7 @@ sub list_all {
 	my($action) = @_;
 	my(@list);
 
-	for my $ref (meta_sorted()) {
+	for my $ref (meta_selected()) {
 		next unless $ref->is_task();
 ##FILTER	next if $ref->filtered();
 

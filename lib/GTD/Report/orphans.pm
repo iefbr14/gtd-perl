@@ -57,7 +57,7 @@ sub Report_orphans {	#-- list all items without a parent
 	
 	report_header('Orphans', @_);
 
-	for my $ref (meta_sorted()) {
+	for my $ref (meta_selected()) {
 		next if $ref->get_type eq 'm';	# Values never have parents
 		next if $ref->get_parent();	# Has a parent
 

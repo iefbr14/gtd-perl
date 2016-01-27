@@ -66,7 +66,7 @@ $tid, $pid,$cnt,$cat,     $parent,     $name,      $desc
 .
 	$~ = "HIER";	# set STDOUT format name to HIER
 
-	for my $ref (meta_sorted()) {
+	for my $ref (meta_selected()) {
 		$tid = $ref->get_tid();
 
 ##FILTER	next if $ref->filtered();

@@ -36,12 +36,12 @@ sub filtered_reason {
 }
 
 sub filtered {
-	my ($ref, $display_reason) = @_;
+	my ($ref) = @_;
 
 	my($reason) = filtered_reason($ref);
 
 	if (substr($reason,0,1) eq '-') {
-		if ($display_reason) {
+		if ($Debug) {
 			my($tid) = $ref->get_tid();
 			my($title) = $ref->get_title();
 			print "X: $reason ($tid: $title)\n";

@@ -69,7 +69,7 @@ sub Report_search {	#-- Search for items
 #	print "No items requested\n";
 
 	for my $name (split(/,/, $_[0])) {
-		for my $ref (meta_sorted()) {
+		for my $ref (meta_selected()) {
 			next unless match_desc($ref, $name);
 			
 			display_task($ref);

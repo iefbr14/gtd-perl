@@ -99,7 +99,7 @@ sub reload {
 sub mode_doit {
 	my(@list);
 
-	for my $ref (meta_sorted()) {
+	for my $ref (meta_selected()) {
 		lookat($ref);
 	}
 }
