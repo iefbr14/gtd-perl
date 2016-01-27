@@ -6,6 +6,8 @@ import "os"
 
 //?  @EXPORT      = qw(&walk &detail)
 
+import "gtd/option"
+
 var walk_Debug bool
 var _ = option.DebugVar("walk", &walk_Debug)
 
