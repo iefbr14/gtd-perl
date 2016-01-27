@@ -112,7 +112,7 @@ sub report_counts {
 
 	my($id, $dup, $cnt, $sk);
 
-	my($cct_ref) = GTD::CCT->use($cct);
+	my($cct_ref) = GTD::CCT->Use($cct);
 	print_color('BOLD');
 	print "Val  Vis  Role Goal Proj Action Total Id: $header Name";
 	nl();

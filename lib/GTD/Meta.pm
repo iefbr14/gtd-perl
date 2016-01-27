@@ -49,7 +49,7 @@ sub meta_reset_filters {
 }
 
 sub meta_selected {
-	if (@Selected >= 0) {
+	if (@Selected > 0) {
 		return @Selected;
 	}
 

@@ -201,7 +201,7 @@ sub load_gtd {
 | description | text             | YES  | MUL | NULL    |                |
 +-------------+------------------+------+-----+---------+----------------+
 EOF
-	$Category = GTD::CCT->use('Category');
+	$Category = GTD::CCT->Use('Category');
 	my($sth) = G_select('categories');
 	while ($row = $sth->fetchrow_hashref()) {
 		$Category->define($row->{category}, $row->{categoryId});
@@ -216,7 +216,7 @@ EOF
 | description | text             | YES  | MUL | NULL    |                |
 +-------------+------------------+------+-----+---------+----------------+
 EOF
-	$Context = GTD::CCT->use('Context');
+	$Context = GTD::CCT->Use('Context');
 	$sth = G_select('context');
 	while ($row = $sth->fetchrow_hashref()) {
 		$Context->define($row->{name}, $row->{contextId});
@@ -232,7 +232,7 @@ EOF
 | type        | enum('vogpa')     | NO   | MUL | a       |                |
 +-------------+-------------------+------+-----+---------+----------------+
 EOF
-	$Timeframe = GTD::CCT->use('Timeframe');
+	$Timeframe = GTD::CCT->Use('Timeframe');
 	$sth = G_select('timeitems');
 	while ($row = $sth->fetchrow_hashref()) {
 		$Timeframe->define($row->{timeframe}, $row->{timeframeId});
@@ -332,7 +332,7 @@ EOF
 | tagname | text             | NO   | PRI | NULL    |       |
 +---------+------------------+------+-----+---------+-------+
 EOF
-	my($tags_ref) = GTD::CCT->use('Tag');
+	my($tags_ref) = GTD::CCT->Use('Tag');
 	my($tag);
 	$sth = G_select('tagmap');
 	my($tag_id) = 0;

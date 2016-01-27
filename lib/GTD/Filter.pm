@@ -458,9 +458,9 @@ sub proj_mask {
 
 sub meta_find_context {
 	my($cct) = @_;
-	my($Category) = GTD::CCT->use('Category');
-	my($Context) = GTD::CCT->use('Context');
-	my($Timeframe) = GTD::CCT->use('Timeframe');
+	my($Category) = GTD::CCT->Use('Category');
+	my($Context) = GTD::CCT->Use('Context');
+	my($Timeframe) = GTD::CCT->Use('Timeframe');
 
 	# match case sensative first
 	if ($Context->get($cct)) {

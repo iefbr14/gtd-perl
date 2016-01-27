@@ -46,7 +46,7 @@ sub _table {
 	die "Unknown CCT table name $mapname\n";
 }
 
-sub use {
+sub Use {
 	my($class, $mapname) = @_;
 
 	my $cct = _table($mapname);

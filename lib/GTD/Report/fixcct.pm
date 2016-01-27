@@ -51,7 +51,7 @@ sub Report_fixcct {	#-- Fix Categories/Contexts/Time Frames
 	my($new_id, $id);
 
 	report_header("Categories");
-	my($Category) = GTD::CCT->use('Category');
+	my($Category) = GTD::CCT->Use('Category');
 	for my $key (sort $Category->keys()) {
 		$id = $Category->get($key);
 
@@ -61,7 +61,7 @@ sub Report_fixcct {	#-- Fix Categories/Contexts/Time Frames
 		sql_fix_cct('category', $id, $new_id, $key);
 	}
 	report_header("Contexts");
-	my($Context) = GTD::CCT->use('Context');
+	my($Context) = GTD::CCT->Use('Context');
 	for my $key (sort $Context->keys()) {
 		$id = $Context->get($key);
 
@@ -72,7 +72,7 @@ sub Report_fixcct {	#-- Fix Categories/Contexts/Time Frames
 	}
 	print "\n";
 	report_header("Time Frames");
-	my($Timeframe) = GTD::CCT->use('Timeframe');
+	my($Timeframe) = GTD::CCT->Use('Timeframe');
 	for my $key (sort $Timeframe->keys()) {
 		$id = $Timeframe->get($key) || '';
 

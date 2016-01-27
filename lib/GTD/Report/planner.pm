@@ -143,7 +143,7 @@ sub hier_detail {
 		my($context) = $ref->get_context();
 		my($cid);
 		if ($context) {
-			my($cref) = GTD::CCT->use('Context');
+			my($cref) = GTD::CCT->Use('Context');
 			$cid = $cref->get($context);
 			$Alloc_resource{$cid} = $context;
 		} else {
