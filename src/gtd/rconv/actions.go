@@ -100,21 +100,21 @@ func report_select(top_name string) {
 }
 
 func report_list() {
-	/*?
 
-	  	my($tid, $pid, $pref, $ref)
+	  	//? my($tid, $pid, $pref, $ref)
 
-	  	my($limit) = option("Limit", 20)
+	  	limit := option.Int("Limit", 20)
 
 	  //## format:
 	  //## goal  proj_id  project action_id action hours
-	  	my($cols) = columns() - 2
-	  	my($gid, $gref)
-	  	my($rid, $rref)
+	  	cols := display.Columns() - 2
+	  	//my($gid, $gref)
+	  	//my($rid, $rref)
 
-	  	my($last_goal) = 0
-	  	my($last_proj) = 0
-	  	for my $pref (sort_tasks values %Active) {
+	  	last_goal := 0
+	  	last_proj := 0
+
+	  	for _, pref (sort_tasks values %Active) {
 	  //#FILTER	next if $pref->filtered()
 
 	  		$pid = $pref->get_tid()

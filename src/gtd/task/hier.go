@@ -189,41 +189,44 @@ func (self *Task) set_parent_ids(val string) {
 	}
 }
 
-/*?
-sub set_children_ids {
-        my($self, $val) = @_
+func (t *Task) set_children_ids(val string) {
+	cid_list := strings.Split(val, ",")
 
-	my(@cid) = split(',', $val);	// parent ids
-	my(%cid);			// parent ids => parent ref
+	cid_map := make(map[int]*Task)
 
 	// find my new parents
-	for my $cid (@cid) {
-		my $c_ref = Hier::Tasks::find($cid)
-		unless ($c_ref) { # opps not a real child
-			warn "No child id: $cid\n"
-			next
+	for _, task_id := range cid_list {
+		cid, err := strconv.Atoi(task_id)
+		if err != nil {
+			log.Printf("Invalid child id: %d\n", cid)
+			continue
 		}
 
-		$cid{$cid} = $c_ref
+		c_ref := Find(cid)
+		if c_ref == nil { // opps not a real child
+			log.Printf("No child id: %d\n", cid)
+			continue
+		}
+
+		cid_map[cid] = c_ref
 	}
 
 	// keep child if already have that one, it otherwise disown it.
-	for my $ref (rel_vals(child => $self)) {
-		my $cid = $ref->get_tid()
-		if (defined $cid{$cid}) {
-			delete $cid{$cid};	// keeping this one.
+	for _, ref := range t.Children {
+		cid := ref.Tid
+
+		if _, ok := cid_map[cid]; ok {
+			delete(cid_map, cid) // keeping this one.
 		} else {
 			// disown parent
-			self.Orphin_child(ref)
+			t.Orphin_child(ref)
 		}
 	}
 	// for my new children add self as their parent
-	for my $cref (values %cid) {
-		add_child($self, $cref)
+	for _, cref := range cid_map {
+		t.Add_child(cref)
 	}
 }
-
-?*/
 
 // check to see if some thas has the dep task as a decendent
 func (parent *Task) Has_decendent(dep *Task) bool {

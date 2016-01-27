@@ -51,31 +51,31 @@ func Report_update(args []string) {
 		my $val
 
 		if ($val = option("Category")) {
-			$ref->set_category($val)
+			t.Set_category($val)
 		}
 
 		if ($val = option("Context")) {
-			$ref->set_context($val)
+			t.Set_context($val)
 		}
 
 		if ($val = option("Timeframe")) {
-			$ref->set_timeframe($val)
+			t.Set_timeframe($val)
 		}
 
 		if ($val = option("Note")) {
-			$ref->set_note($val)
+			t.Set_note($val)
 		}
 
 		if ($val = option("Priority")) {
-			$ref->set_priority($val)
+			t.Set_priority($val)
 		}
 
 		if ($val = option("Complete")) {
-			$ref->set_priority($val)
+			t.Set_priority($val)
 		}
 
 		if ($val = option("Description")) {
-			$ref->set_description($val)
+			t.Set_description($val)
 		}
 
 		$ref->update()

@@ -46,14 +46,14 @@ func Report_spreadsheet(args []string) {
 
 		if (@want == 0) {
 			my($roles) = load_roles()
-			foreach my $role (sort keys %$roles) {
+			for my $role (sort keys %$roles) {
 				display_role($role, $roles->{$role})
 			}
 			return
 		}
 
 		my($roles) = load_roles()
-		foreach my $role (@want) {
+		for my $role (@want) {
 			if (defined $roles->{$role}) {
 				display_role($role, $roles->{$role})
 			} else {
@@ -69,11 +69,11 @@ func load_roles() { /*?
 		my(%roles)
 
 		// find all next and remember there projects
-		for my $ref (meta.atching_type('o')) {
+		for my $ref (meta.Matching_type('o')) {
 	//#FILTER	next if $ref->filtered()
 
-			my $pid = $ref->get_tid()
-			my $role = $ref->get_title()
+			my $pid = t.Tid()
+			my $role = t.Title()
 			$role =~ s= .*==
 			$role = ucfirst($role)
 			$roles{$role} = $ref
@@ -88,13 +88,13 @@ func display_role() { /*?
 		print "\fGoal:$role\tProj-id\tProject\tItem-id\tNext-Action\tHours\tTotal-$role\n"
 
 		my(@list)
-		foreach my $gref ($ref->get_children()) {
+		for my $gref (t.Children()) {
 			next if $gref->filtered()
 
 			push(@list, get_projects($gref))
 		}
 
-		foreach my $line (sort {
+		for my $line (sort {
 			$a->[0] cmp $b->[0]
 		   ||	$a->[2] cmp $b->[2]
 		   ||	$a->[4] cmp $b->[4]
@@ -109,7 +109,7 @@ func get_projects() { /*?
 
 		my(@list)
 
-		foreach my $pref ($gref->get_children()) {
+		for my $pref ($gref->get_children()) {
 			next if $pref->filtered()
 
 			push(@list, get_actions($gref, $pref))
@@ -126,7 +126,7 @@ func get_actions() { /*?
 		my($total) = 0
 		my($pid, $ptitle)
 		my($tid, $title, $hours)
-		foreach my $ref ($pref->get_children()) {
+		for my $ref ($pref->get_children()) {
 			next if $ref->filtered()
 
 			my($resource) = $ref->Project()
@@ -137,8 +137,8 @@ func get_actions() { /*?
 				$pid = $pref->get_tid()
 				$ptitle = $pref->get_title()
 
-				$tid = $ref->get_tid()
-				$title = $ref->get_title()
+				$tid = t.Tid()
+				$title = t.Title()
 				$hours = $effort
 			}
 			$total += $effort

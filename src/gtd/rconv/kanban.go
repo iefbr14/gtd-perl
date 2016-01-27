@@ -43,19 +43,18 @@ func Report_kanban(args []string) {
 	// counts use it and it give a context
 	meta.Filter("+active", "^tid", "simple")
 
-	/*?
-		my(@args)
-		foreach my $arg (meta.Argv(args))) {
-			if ($arg =~ s/^\.//) {
-				kanban_bump($arg)
-				next
+		for _, arg := range meta.Argv(args) {
+			if (arg[0] == '.') {
+				kanban_bump(arg)
+				continue
 			}
-
+			/*?
 			if ($arg =~ m/^(\d+)=(.)$/) {
 				kanban_state($1, $2)
 				next
 			}
-			push(@args, $arg)
+			*/
+			args = append(args, arg)
 		}
 
 		// done if we had args but all were processed
@@ -63,20 +62,17 @@ func Report_kanban(args []string) {
 			return
 		}
 
-		my(@list) = meta.ick(@args)
+		list := meta.Pick(args)
 
-		if (@list == 0) {
-			@list = meta.ick("roles")
+		if (len(list) == 0) {
+			list := meta.Pick("roles")
 		}
-		check_roles(@list)
-
-	?*/
+		check_roles(list)
 }
 
-func kanban_bump() { /*?
-		my(@arg) = @_
+func kanban_bump(arg string) {
 
-		my($fail) = 0
+		fail := 0
 		my(@list)
 		while (@arg) {
 			my($arg) = shift @arg
@@ -105,7 +101,7 @@ func kanban_bump() { /*?
 
 				display_task($ref, "| now <<< $name >>>")
 			} else {
-				my($state) = $ref->get_state()
+				my($state) = t.State()
 
 				display_task($ref, "|<<< unknown state $state")
 			}
@@ -113,48 +109,44 @@ func kanban_bump() { /*?
 	?*/
 }
 
-func kanban_state() { /*?
-		my($tid, $state) = @_
+func kanban_state(task_id string, state string) { 
 
-		my($ref) = meta.Find($tid)
+		ref := meta.Find(task_id)
 
-		unless (defined $ref) {
-			panic("Task $tid doesn't exits\n")
+		if ref == nil {
+			return
 		}
 
-		$ref->set_state($state)
-	?*/
+		ref.Set_state(state)
 }
 
-func check_hier() { /*?
+func check_hier() { 
 		my($count) = 0
 
 		// find all hier records
-		foreach my $ref (meta.ll()) {
+		for my $ref (meta.All()) {
 			next unless $ref->is_hier()
 			next if $ref->filtered()
 
-			if ($ref->get_state() == 'z') {
-				if ($ref->get_completed == '') {
+			if (t.State() == 'z') {
+				if (t.Completed == '') {
 					print "To tag as done:\n" if $count == 0
 					display_task($ref, "(tag as done)")
 					++$count
 				}
 			}
 		}
-	?*/
 }
 
-func check_roles() { /*?
-		foreach my $ref (@_) {
+func check_roles() { 
+		for my $ref (@_) {
 			display_rgpa($ref)
 
 			check_a_role($ref)
 		}
-	?*/
 }
 
-func check_a_role() { /*?
+func check_a_role() {
 		my($role_ref) = @_
 
 		my(@anal)
@@ -167,7 +159,7 @@ func check_a_role() { /*?
 		$| = 1
 		for my $gref ($role_ref->get_children()) {
 			for my $ref ($gref->get_children()) {
-				my $state = $ref->get_state()
+				my $state = t.State()
 
 				unless ($state =~ m/[-abcdfitrwz]/) {
 					display_task($ref, "Unknown state $state")
@@ -219,27 +211,24 @@ func check_a_role() { /*?
 			print_color("PURPLE")
 			print "W: "; display_task($wiki, "(update wiki)")
 		}
-	?*/
 }
 
-func check_state() { /*?
+func check_state() {
 		my($ref, $state, $want, $var) = @_
 
 		return unless $state == $want
 
 		push(@{$var}, $ref)
-	?*/
 }
 
-func check_title() { /*?
-		my($pref) = @_
+func check_title(pref *task.Task) {
 
-		my($title) = $pref->get_title()
+		title = pref.Title
 
-		if ($title =~ /\[\[.*\]\]/) {
+
+		if title != task.WikiTitle(title) {
 			return
 		}
 
-		display_task($pref, "\t| !!! no wiki title")
-	?*/
+		display.Task(pref, "\t| !!! no wiki title")
 }

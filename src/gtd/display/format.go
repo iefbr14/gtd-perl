@@ -29,7 +29,7 @@ func Header(note string) {
 sub report_Header {
 	my($title) = option("Title") || ""
 	if (@_) {
-		my($desc) = join(" ", @_) || ""
+		my($desc) = task.Join(" ", @_) || ""
 
 		if ($title and $desc) {
 			$title .= " -- " . $desc
@@ -365,36 +365,28 @@ func bulk_display(tag, text string) {
 }
 
 func disp_print(fd io.Writer, ref *task.Task, note string) {
-	panic(".... code display_print")
-	/*?
-		my $val
-		for my $key (@Order) {
-			next if $key =~ /^_/
-			if ($key eq ".") {
-				print $fd "\n"
-				next
-			}
-
-			$val = $ref->get_KEY($key)
-			if (defined $val) {
-				chomp $val
-
-				next if $val eq ""
-
-				$val =~ s/\r//gm;	// all returns
-				$val =~ s/^/\t\t/gm;	// tab at start of line(s)
-				$val =~ s/^\t// if length($key) >= 7
-				print $fd "$key:$val\n"
-			} else {
-				print $fd "#$key:\n"
-			}
+	for _, key := range Order {
+		if key == "." {
+			fmt.Fprint(fd, "\n")
+			continue
 		}
-		//##BUG### handle missing keys from @Ordered
-		print $fd "Tags:\t", $ref->disp_tags(),"\n"
-		print $fd "Parents:\t", $ref->disp_parents(),"\n"
-		print $fd "Children:\t", $ref->disp_children(),"\n"
-		print $fd "=-=\n"
-	?*/
+
+		val := Chomp(ref.Get_KEY(key))
+
+		if val == "" {
+			continue
+		}
+
+		//	$val =~ s/\r//gm;	// all returns
+		//	$val =~ s/^/\t\t/gm;	// tab at start of line(s)
+		//	$val =~ s/^\t// if length($key) >= 7
+		fmt.Fprintf(fd, "%s:%s\n", key, val)
+	}
+	//##BUG### handle missing keys from @Ordered
+	fmt.Fprint(fd, "Tags:\t", ref.Disp_tags(), "\n")
+	fmt.Fprint(fd, "Parents:\t", ref.Disp_parents(), "\n")
+	fmt.Fprint(fd, "Children:\t", ref.Disp_children(), "\n")
+	fmt.Fprint(fd, "=-=\n")
 	color.Nl(fd)
 }
 
@@ -416,7 +408,7 @@ func disp_dump(fd io.Writer, t *task.Task, note string) {
 
 	for _, key := range Order {
 		if key == "." {
-			fmt.Print("\n")
+			fmt.Fprint(fd, "\n")
 			continue
 		}
 
@@ -424,10 +416,21 @@ func disp_dump(fd io.Writer, t *task.Task, note string) {
 
 		//	val =~ s/\r//gm;	// all returns
 		if len(key) >= 7 {
-			fmt.Fprintf(fd, "%s:\t%s\n", key, val)
+			fmt.Fprintf(fd, "%s:\t", key)
 		} else {
-			fmt.Fprintf(fd, "%s:\t\t%s\n", key, val)
+			fmt.Fprintf(fd, "%s:\t\t", key)
 		}
+		for _, c := range val {
+			if c == '\n' {
+				fmt.Fprint(fd, "\n\t\t")
+				//fd.WriteString("\t\t\n")
+				continue
+			}
+			fmt.Fprintf(fd, "%c", c) //***BUG*** there has to be a better way
+			//fd.WriteRune(fd, c)
+		}
+		fmt.Fprint(fd, "\n")
+
 	}
 	//##BUG### handle missing keys from @Ordered
 	fmt.Fprintf(fd, "Tags:\t%s\n", t.Disp_tags())
@@ -435,6 +438,7 @@ func disp_dump(fd io.Writer, t *task.Task, note string) {
 	fmt.Fprintf(fd, "Children:\t%s\n", t.Disp_children())
 	fmt.Fprint(fd, "=-=\n")
 }
+
 func Dump(fd io.Writer, t *task.Task) {
 	disp_dump(fd, t, "")
 }
@@ -444,7 +448,7 @@ func disp_raw(fd io.Writer, t *task.Task, note string) {
 		fmt.Printf("# %s\n", note)
 	}
 
-	fmt.Fprintf(fd, "%V\n", t)
+	fmt.Fprintf(fd, "%#v\n", t)
 	/*?
 		for key, val := t.Fields {
 			if key[:1] = "_" {
@@ -622,36 +626,54 @@ func disp_wiki(fd io.Writer, t *task.Task, note string) {
 		'v': "vision",
 		'm': "value",
 		'w': "action",
-		'?': "fook",
 	}
 
-	panic(".... code disp_wiki")
-	type_s := t.Type
-	if _, ok := type_name[type_s]; !ok {
-		type_s = '?'
+	kind := t.Type
+	kind_name, ok := type_name[kind]
+	if !ok {
+		kind_name = "fook"
 	}
+
+	done := t.Is_completed()
 
 	//?	tid :=  t.Tid
 	//?	title := t.Title
 	//?	done := t.Is_completed()
 
-	/*?
-		print {$fd} "== " if $kind=~ /[ovm]/
-		print {$fd} "=== " if $kindeq "g"
-		print {$fd} "**" if $kindeq "a"
-		print {$fd} "**(wait)" if $kindeq "w"
-		print {$fd} "*" if $kindeq "p"
+	switch kind {
+	case 'o', 'v', 'm':
+		fmt.Print(fd, "== ")
+	case 'g':
+		fmt.Print(fd, "=== ")
+	case 'a':
+		fmt.Print(fd, "**")
+	case 'w':
+		fmt.Print(fd, "** (wait)")
+	case 'p':
+		fmt.Print(fd, "*")
+	}
 
-		print {$fd} "<del>" if $done
-		print {$fd} "{{".$kind$type},"|$tid|$title"."}}"
-		print {$fd} "</del>" if $done
+	if done {
+		fmt.Print(fd, "<del>")
+	}
 
-		print {$fd} " -- $note" if $note
+	fmt.Fprintf(fd, "{{%d|%s|%s}}", kind_name, t.Tid, t.Title)
 
-		print {$fd} " ===" if $kindeq "g"
-		print {$fd} " ==" if $kind=~ /[ovm]/
+	if done {
+		fmt.Print(fd, "</del>")
+	}
 
-	?*/
+	if t.Note != "" {
+		fmt.Print(fd, " -- %s", note)
+	}
+
+	switch kind {
+	case 'g':
+		fmt.Print(fd, " ===")
+	case 'o', 'v', 'm':
+		fmt.Print(fd, " ==")
+
+	}
 	color.Nl(fd)
 }
 
@@ -755,42 +777,37 @@ func disp_task(fd io.Writer, t *task.Task, note string) {
 	color.Nl(fd)
 }
 
-func disp_debug(fd io.Writer, ref *task.Task, note string) {
-	panic(".... code disp_debug")
-	/*?
-		my($fd, $ref, $note) = @_
+func disp_debug(fd io.Writer, t *task.Task, note string) {
 
-		my($pri, $kind $context, $project, $title)
-		kind := t.Type
+	//my($pri, $kind $context, $project, $title)
 
-		$context = $ref->get_context() || ""
-		$context = "\@$context" if $context
+	pri := fmt.Sprintf("%c.[%d].%d", t.Type, t.Tid, t.Priority)
 
-		$title = $ref->get_title()
+	//? pri += "." . ref->get_panic()
+	//? pri += "." . ref->get_focus()
 
-		$pri = $kind
-		$pri .= "." . $ref->get_priority()
-		$pri .= "." . $ref->get_panic()
-		$pri .= "." . $ref->get_focus()
-		$pri .= "." .  "[".$ref->get_tid()."]"
+	if t.Is_nextaction() {
+		pri += "N"
+	}
+	if t.Is_someday() {
+		pri += "S"
+	}
+	if t.Is_completed() {
+		pri += "X"
+	}
 
-		$pri .= "N" if $ref->is_nextaction()
-		$pri .= "S" if $ref->is_someday()
-		$pri .= "X" if $ref->is_completed()
-
-		if ($ref->get_tickledate()) {
-			if ($ref->get_tickledate() gt get_today()) {
-				$pri .= "T"
-			} else {
-				$pri .= "t"
-			}
+	if t.Tickledate != "" {
+		if t.Tickledate > option.Today(0) {
+			pri += "T"
+		} else {
+			pri += "t"
 		}
-		$pri =~ s/\.$//
+	}
+	//? pri =~ s/\.$//
 
-		my($result) = join(" ", $pri, $context, $title)
-		$result =~ s/\s\s+/ /g
-		print $result
-	?*/
+	result := task.Join(pri, t.Context, t.Title)
+	// $result =~ s/\s\s+/ /g
+	fmt.Fprint(fd, result)
 	color.Nl(fd)
 }
 
@@ -1044,6 +1061,10 @@ func Type(t *task.Task) string {
 
 func Nl() {
 	color.Nl(Display_fd)
+}
+
+func Text(text string) {
+	fmt.Fprint(Display_fd, text)
 }
 
 //==============================================================================

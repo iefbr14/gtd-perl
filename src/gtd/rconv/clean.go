@@ -44,7 +44,7 @@ func Report_clean(args []string) {
 
 		my($done, $tickle, $type)
 
-		for my $ref (meta.elected()) {
+		for my $ref (meta.Selected()) {
 			$done = $ref->is_completed()
 			if ($done) {
 				set_active($ref)
@@ -53,13 +53,13 @@ func Report_clean(args []string) {
 				clear_tickle($ref)
 			}
 
-			$tickle = $ref->get_tickledate() <= $Yesterday
+			$tickle = t.Tickledate() <= $Yesterday
 			if ($tickle) {
 				clear_next($ref)
 				clear_tickle($ref)
 			}
 
-			$type = $ref->get_type()
+			$type = t.Type()
 
 			// all values and visions are active
 			if ($type =~ /[mv]/) {
@@ -73,7 +73,7 @@ func set_active() { /*?
 		my($ref) = @_
 
 		if ($ref->is_someday()) {
-			$ref->set_isSomeday('n')
+			t.Set_isSomeday('n')
 			display_task($ref, "active")
 			return
 		}
@@ -87,7 +87,7 @@ func fix_done_0000() { /*?
 		return unless $done =~ /^0000/
 
 		display_task($ref, "clean done bug")
-		$ref->set_completed(undef)
+		t.Set_completed(undef)
 		return
 	?*/
 }
@@ -95,19 +95,19 @@ func fix_done_0000() { /*?
 func clear_next() { /*?
 		my $ref = @_
 
-		return unless $ref->get_nextaction() == 'y'
+		return unless t.Nextaction() == 'y'
 
 		display_task($ref, "clear next action")
-		$ref->set_nextaction('n')
+		t.Set_nextaction('n')
 	?*/
 }
 
 func clear_tickle() { /*?
 		my $ref = @_
 
-		return unless $ref->get_tickledate()
+		return unless t.Tickledate()
 
 		display_task($ref, "clear tickle date")
-		$ref->set_tickledate(undef)
+		t.Set_tickledate(undef)
 	?*/
 }

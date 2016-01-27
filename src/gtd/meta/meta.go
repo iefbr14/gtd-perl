@@ -1,6 +1,7 @@
 package meta
 
 import "fmt"
+import "log"
 import "regexp"
 import "sort"
 import "strconv"
@@ -20,6 +21,7 @@ import "gtd/display"
 //?		&meta_pick
 
 var meta_Debug = false
+var _ = option.DebugVar("meta", &meta_Debug)
 
 //var meta_Filter = "+live"
 
@@ -43,18 +45,12 @@ func Reset_filters() {
 	meta_Selected = task.Tasks{}
 }
 
-// meta.Selected returns the set of selected tasks
+// meta.Selected returns the set of filtered/sorted tasks
 func Selected() task.Tasks {
 	if len(meta_Selected) > 0 {
 		return meta_Selected
 	}
 
-	meta_Selected = Filtered()
-	return meta_Selected
-}
-
-// meta.Filtered returns the set of filtered tasks
-func Filtered() task.Tasks {
 	all := task.All()
 	selected := make(task.Tasks, 0, len(all))
 
@@ -65,14 +61,10 @@ func Filtered() task.Tasks {
 		selected = append(selected, t)
 	}
 
-	return selected
-}
+	meta_Selected = selected
+	sort.Sort(meta_Selected)
 
-// meta.Sorted returns the set of selected tasks sorted
-func Sorted() task.Tasks {
-	list := Selected()
-	sort.Sort(list)
-	return list
+	return meta_Selected
 }
 
 func Sort(list task.Tasks) task.Tasks {
@@ -105,7 +97,7 @@ func Find(task_id string) *task.Task {
 	if re_is_task_colon.MatchString(task_id) {
 		task_id = task_id[:len(task_id)-1]
 	}
-	if task.IsTask(task_id) {
+	if task.MatchId(task_id) {
 		tid, err := strconv.Atoi(task_id)
 		if err != nil {
 			fmt.Printf("Invalid task id: %s", task_id)
@@ -150,7 +142,7 @@ sub delete_hier {
 // meta.Filter is used by reports to sets the
 //     default task filter, sort order, and display mode
 func Filter(filter, sort, display_mode string) {
-	fmt.Printf("... meta.Filter: %s, %s, %s\n", filter, sort, display_mode)
+	mdebug("meta.Filter: %s, %s, %s\n", filter, sort, display_mode)
 
 	task.Sort_mode(option.Get("Sort", sort))
 	display.Mode(option.Get("Format", display_mode))
@@ -160,76 +152,74 @@ func Filter(filter, sort, display_mode string) {
 }
 
 func Argv(args []string) []string {
-	return args
 
 	ret := make([]string, 0, len(args))
 
 	has_filters := false
-	/*?
 
-	  	local($_)
+	for len(args) > 0 {
+		// $_ = shift @_
+		arg := args[0]
+		args = args[1:]
 
-	  	Hier::Filter::add_filter_tags()
-	  	while (scalar(@_)) {
-	  		$_ = shift @_
+		//? Hier::Filter::add_filter_tags()
 
-	  		next unless defined $_;	 # option("Current") may be undef
+		//next unless defined $_;	 # option("Current") may be undef
 
-	  		if ($_ eq "!.") {
-	  			painc("Stopped.\n")
-	  		}
+		if arg == "!." {
+			panic("Stopped.\n")
+		}
 
-	  		if (s/^\@//) {
-	  			Hier::Filter::meta_find_context($_)
-	  			next
-	  		}
+		if arg[0] == '@' {
+			task.Set_filter_context(arg[1:])
+			continue
+		}
 
-	  		if (s/^(\d+:)$/$1/ or m/^\d+$/) {
-	  			push(@ret, $_);		// tid
-	  			next
-	  		}
+		if task.MatchId(arg) {
+			ret = append(ret, arg)
+			continue
+		}
 
-	  		if (s=^\/==) {				// pattern match
-	  			push(@ret, find_pattern($_))
-	  			next
-	  		}
+		if arg[0] == '/' { // pattern match
+			ret = append(ret, find_pattern(arg[1:])...)
+			continue
+		}
 
-	  		if (s|^=\/||) {				// pattern match
-	  			push(@ret, find_pattern($_))
-	  			next
-	  		}
+		if arg[0:1] == "=/" { // pattern match
+			ret = append(ret, find_pattern(arg[2:])...)
+			continue
+		}
 
+		/*?
+			if (s=^\*==) {
+				my($type) = lc(substr($_, 0, 1))
+				$type = type_name($_)
+				print "Type ========($type)=:  $_\n"
+				set_option(Type => $type)
+				next
+			}
+			if (s/^([A-Z])://) {
+				my($type) = lc($1)
+		  //			set_option(Type => $type)
+		  //
+		  //			print "Type: Title =====:  $type: $_\n"
+		  //			set_option(Title -> $_)
+					push(@ret, find_hier($type, $_))
+					next
+				}
 
-	  		if (s=^\*==) {
-	  			my($type) = lc(substr($_, 0, 1))
-	  			$type = type_name($_)
-	  			print "Type ========($type)=:  $_\n"
-	  			set_option(Type => $type)
-	  			next
-	  		}
-	  		if (s/^([A-Z])://) {
-	  			my($type) = lc($1)
-	  //			set_option(Type => $type)
-	  //
-	  //			print "Type: Title =====:  $type: $_\n"
-	  //			set_option(Title -> $_)
-	  			push(@ret, find_hier($type, $_))
-	  			next
-	  		}
-
-	  		if (m/^[-~+]/) {		// add include/exclude
-	  			Hier::Filter::add_filter($_)
-	  			has_filters = true
-	  			next
-	  		}
-	  //		if ($Title) {
-	  //			print "Desc:  ", join(' ', $_, @_), "\n"
-	  //			return join(' ', $_, @_)
-	  //		}
-	  		push(@ret, $_)
-	  	}
-
-	  ?*/
+				if (m/^[-~+]/) {		// add include/exclude
+					Hier::Filter::add_filter($_)
+					has_filters = true
+					next
+				}
+			  //		if ($Title) {
+			  //			print "Desc:  ", join(' ', $_, @_), "\n"
+			  //			return join(' ', $_, @_)
+			  //		}
+			  ?*/
+		ret = append(ret, arg)
+	}
 
 	if !has_filters {
 		task.Add_filter(Default_filter)
@@ -253,7 +243,7 @@ func Walk(args []string) *task.Walk {
 			option.Set("Filter", "+all")
 			continue
 		}
-		if task.IsTask(criteria) {
+		if task.MatchId(criteria) {
 			t := Find(criteria)
 			if t != nil {
 				if t.Type == 'm' {
@@ -327,7 +317,7 @@ func Pick(args []string) task.Tasks {
 
 		// task all by itself
 		//? if ($arg=~ s/^(\d+):$/$1/ or $arg =~ m/^\d+$/) {
-		if task.IsTask(arg) {
+		if task.MatchId(arg) {
 			t := Find(arg)
 			if t == nil {
 				panic("Task " + arg + " doesn't exits\n")
@@ -378,28 +368,36 @@ func Pick(args []string) task.Tasks {
 		list = Current()
 	}
 
-	//***debug*** log.Printf("meta.Pick: %v\n", list)
+	mdebug("meta.Pick: %v\n", list)
+	return list
+}
+
+func find_pattern(pat string) []string {
+	l := len(pat) - 1
+	if pat[l] == '/' { // remove trailing /
+		pat = pat[:l]
+	}
+
+	list := []string{}
+
+	re, err := regexp.Compile("(?i)" + pat)
+	if err != nil {
+		fmt.Printf("Invalid pattern for search %s\n", pat)
+		return list
+	}
+
+	for _, t := range task.All() {
+		if re.MatchString(t.Title) {
+			s := strconv.Itoa(t.Tid)
+			list = append(list, s)
+
+			//warn "Added($tid): /$pat/ =~ $title\n" if $Debug
+		}
+	}
 	return list
 }
 
 /*?
-sub find_pattern {
-	my($pat) = @_
-
-	$pat =~ s=/$==;	// remove trailing /
-
-	my(@list)
-
-	for my $ref (Hier::Tasks::all()) {
-		my($title) = $ref->get_title()
-		if ($title =~ /$pat/i) {
-			my($tid) = $ref->get_tid()
-			push(@list, $tid)
-			warn "Added($tid): /$pat/ =~ $title\n" if $Debug
-		}
-	}
-	return @list
-}
 
 sub find_hier {
 	my($type, $pat) = @_
@@ -453,4 +451,11 @@ func Current() task.Tasks {
 // meta.Set_current set the current task to the list passed
 func Set_current(list task.Tasks) {
 	meta_Current = list
+}
+
+func mdebug(f string, v ...interface{}) {
+	if !meta_Debug {
+		return
+	}
+	log.Printf(f, v...)
 }

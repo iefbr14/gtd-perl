@@ -46,12 +46,12 @@ my %Depth
 //-- write out hier as as set of nodes
 func Report_tsort(args []string) {
 	/*?
-	  	for my $ref (meta.atching_type('a')) {
+	  	for my $ref (meta.Matching_type('a')) {
 	  		up($ref)
 	  	}
 
 	  	if (@_ == 0) {
-	  		for my $ref (meta.atching_type('m')) {
+	  		for my $ref (meta.Matching_type('m')) {
 	  			dpos($ref, 1)
 	  		}
 	  		return
@@ -70,7 +70,7 @@ func Report_tsort(args []string) {
 func down() { /*?
 		my($ref, $level) = @_
 
-		my $id = $ref->get_tid()
+		my $id = t.Tid()
 
 		if ($Depth{$id} && $level != $Depth{$id}) {
 			warn "Recurson: $id at $level (was $Depth{$id})\n"
@@ -78,17 +78,17 @@ func down() { /*?
 		}
 		$Depth{$id} = $level
 
-		foreach my $pref ($ref->get_parents()) {
+		for my $pref (t.Parents()) {
 			my $pid = $pref->get_tid()
 
 			if ($Depth{$pid} > $level) {
 				warn "Depth: $id at $level (pid $pid > $Depth{$pid})\n"
 			}
 
-			print $pid, ' ', $ref->get_tid(), "\n"
+			print $pid, ' ', t.Tid(), "\n"
 		}
 
-		foreach my $cref ($ref->get_children()) {
+		for my $cref (t.Children()) {
 			down($cref, $level+1)
 		}
 	?*/
@@ -97,8 +97,8 @@ func down() { /*?
 func dpos() { /*?
 		my($ref, $level) = @_
 
-		my $id = $ref->get_tid()
-		my $type = $ref->get_type()
+		my $id = t.Tid()
+		my $type = t.Type()
 
 		print "$id\t$type $level:\t"
 
@@ -109,7 +109,7 @@ func dpos() { /*?
 		$Depth{$id} = $level
 
 		my($join) = ' '
-		foreach my $pref ($ref->get_parents()) {
+		for my $pref (t.Parents()) {
 			my $pid = $pref->get_tid()
 
 			$Depth{$pid} = '0' unless defined $Depth{$pid}
@@ -122,13 +122,13 @@ func dpos() { /*?
 		}
 		print " <$id>"
 
-		foreach my $cref ($ref->get_children()) {
+		for my $cref (t.Children()) {
 			my $cid = $cref->get_tid()
 			print " $cid"
 		}
 		print "\n"
 
-		foreach my $cref ($ref->get_children()) {
+		for my $cref (t.Children()) {
 			dpos($cref, $level+1)
 		}
 	?*/
@@ -137,7 +137,7 @@ func dpos() { /*?
 func up() { /*?
 		my($ref) = shift @_
 
-		my $id = $ref->get_tid()
+		my $id = t.Tid()
 
 		print "up: $id @_\n" if report_debug
 
@@ -148,7 +148,7 @@ func up() { /*?
 		}
 
 
-		foreach my $pref ($ref->get_parents()) {
+		for my $pref (t.Parents()) {
 			up($pref, $id, @_)
 
 		}

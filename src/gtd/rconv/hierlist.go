@@ -38,11 +38,11 @@ import "gtd/meta"
 
 //-- List all top level item (Project and above)
 func Report_hierlist(args []string) {
+	meta.Filter("+p:live", "^title", "simple")
 	/*?
 	  	my($tid, $pid, $pref, $cnt, $parent, $cat, $name, $desc)
 	  	my(@row)
 
-	  	meta.Filter("+p:live", "^title", "simple")
 	  	meta.Desc(args)(@_)
 
 	  print <<"EOF"
@@ -56,18 +56,18 @@ func Report_hierlist(args []string) {
 	  .
 	  	$~ = "HIER";	// set STDOUT format name to HIER
 
-	  	for my $ref (meta.orted("^title")) {
-	  		$tid = $ref->get_tid()
+	  	for my $ref (meta.Selected()) {
+	  		$tid = t.Tid()
 
 	  //#FILTER	next if $ref->filtered()
 
 	  		$cnt = $ref->count_children() || ''
 
-	  		$cat = $ref->get_category() || ''
-	  		$name = $ref->get_title() || ''
-	  		$desc = $ref->get_description() || ''
+	  		$cat = t.Category() || ''
+	  		$name = t.Title() || ''
+	  		$desc = t.Description() || ''
 
-	  		$pref = $ref->get_parent()
+	  		$pref = t.Parent()
 	  		if (defined $pref) {
 	  			$parent = $pref->get_title()
 	  			$pid = $pref->get_tid()

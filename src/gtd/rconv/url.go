@@ -104,8 +104,8 @@ func guess_remote() { /*?
 
 func find_url(t *task.Task) {
 	/*?
-		my($line) = $ref->get_title()
-		my($gtd_id) = $ref->get_tid()
+		my($line) = t.Title()
+		my($gtd_id) = t.Tid()
 
 		my @gtds = ( $gtd_id )
 		my @urls = $line =~ /\[\[([\/:\w\s._\&\(\)]+)\]\]/g

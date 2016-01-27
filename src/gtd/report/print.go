@@ -33,11 +33,13 @@ NAME:
 
 */
 
-import (
-	"fmt"
-	"gtd"
-	"text/template"
-)
+import "fmt"
+import "strings"
+
+import "gtd/meta"
+import "gtd/option"
+import "gtd/task"
+import "gtd/display"
 
 const (
 	TEXT = iota
@@ -46,7 +48,7 @@ const (
 	MAN
 )
 
-var Layout = Text
+var Layout int = TEXT
 
 //-- display records in dump format based on format type
 func Report_print(args []string) int {
@@ -60,97 +62,78 @@ func Report_print(args []string) int {
 	// everybody into the pool by id
 	meta.Filter("+any", "^tid", "doit")
 
-	Layout := layouts[string.ToLower(gtd.Option("Layout", "text"))]
+	Layout = layouts[strings.ToLower(option.Get("Layout", "text"))]
 
 	for _, t := range meta.Pick(args) {
 		print_ref(t)
 	}
+	return 0
 }
 
-func bs(b book, t, f string) {
+func b2s(b bool, t, f string) string {
 	if b {
 		return t
 	}
 	return f
 }
 
-func print_ref(ref *Task) {
+func print_ref(t *task.Task) {
 
 	tid := t.Tid
 	kind := t.Type
-	typename := type_name(kind)
-	nextaction := bs(t.IsNextaction, " Next-action", "")
-	someday := bs(t.IsSomeday, " (someday)", "")
-
-	task := t.Title
-	description := t.Description()
-	note := t.Note()
-
-	category := t.Category()
-	context := t.Context()
-	timeframe := t.Timeframe()
-	created := t.Created()
-	doit := t.Doit()
-	modified := t.Modified()
-	tickledate := t.Tickledate()
-	due := t.Due()
-	completed := t.Completed()
-
-	priority := t.Priority()
-	effort := t.Effort()
-	resource := t.Resource()
-	depends := t.Depends()
-
-	tags := ref.Disp_tags()
+	typename := task.Type_name(kind)
+	nextaction := b2s(t.IsNextaction, " Next-action", "")
+	someday := b2s(t.IsSomeday, " (someday)", "")
 
 	title(typename)
-	fmt.Printf("%s:\t%s\n\n", tid, task)
+	fmt.Printf("%d:\t%s\n\n", t.Tid, t.Title)
 	title("Purpose")
-	fmt.Println(description)
+	fmt.Println(t.Description)
 	title("Outcome")
-	fmt.Println(note)
+	fmt.Println(t.Note)
 
 	title("Actions")
 
-	children = t.Children
+	children := t.Children
 
 	if len(children) == 0 {
-		fmt.Print("* [_] Plan and add tasks for $tid\n")
+		fmt.Printf("* [_] Plan and add tasks for %d\n", tid)
 	} else {
 		for _, cref := range children {
 			fmt.Print("* [_] ")
-			display.Task(cref)
+			display.Task(cref, "")
 			br()
 		}
 	}
 
 	hr()
 
-	p()
-	pre(`
-	  t,pri,s,n: $typename $tid -- pri:$priority$nextaction$someday
-	  pf("cct",       "%s %s %s", ref.category,  ref.context, ref.timeframe)
-	  tags:      $tags
+	fmt.Printf("priority   %d -- %s%s\n",
+		t.Priority, nextaction, someday)
 
-	  created:   $created
-	  doit:      $doit
-	  modified:  $modified
-	  tickle:    $tickledate
-	  due:       $due
-	  `)
+	fmt.Printf("cct        %s / %s / %s\n", t.Category, t.Context, t.Timeframe)
+	fmt.Printf("tags       %s\n", t.Disp_tags())
 
-	p("completed", ref.completed)
+	p("doit", t.Doit)
+	p("modified", t.Modified)
+	p("tickle", t.Tickledate)
+	p("due", t.Due)
 
-	p("effort", ref.effort)
-	p("resource", ref.resource)
-	p("depends", ref.depends)
+	r := t.Project()
+	p("effort", r.Effort())
+	p("resource", r.Resource())
+	p("depends", t.Depends)
 
 	hr()
 
 }
 
+func p(key, val string) {
+	fmt.Printf("%-10s %s\n", key, val)
+}
+
 func pre(text string) {
-	string.TrimSpace(text)
+	strings.TrimSpace(text)
 
 	switch Layout {
 	case TEXT:
@@ -176,21 +159,21 @@ func br() {
 	}
 }
 
-func hr(text string) {
+func hr() {
 	switch Layout {
 	case TEXT:
-		fmt.printl(strings.Repeat("-", 78))
+		fmt.Println(strings.Repeat("-", 78))
 	case WIKI:
-		fmt.printl("------------------------------")
+		fmt.Println("------------------------------")
 	case HTML:
-		fmt.printl("<hr>")
+		fmt.Println("<hr>")
 	case MAN:
-		fmt.printl("\\l'6i")
+		fmt.Println("\\l'6i")
 	}
 }
 
 func para(text string) {
-	string.TrimSpace(text)
+	strings.TrimSpace(text)
 
 	switch Layout {
 	case TEXT:
@@ -205,7 +188,7 @@ func para(text string) {
 }
 
 func title(text string) {
-	string.TrimSpace(text)
+	strings.TrimSpace(text)
 
 	switch Layout {
 	case TEXT:

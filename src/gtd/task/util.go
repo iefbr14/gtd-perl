@@ -40,21 +40,29 @@ func init() {
 
 // task.Type_val maps things like role/goal to types r or g
 func Type_val(val string) byte {
-	id := val[0]
-	if _, ok := type_name_map[id]; ok {
-		return id
+	// special case for single letter, just use it if it is a valid type.
+	if len(val) == 1 {
+		id := val[0]
+		if _, ok := type_name_map[id]; ok {
+			return id
+		}
+		return 0
 	}
 
 	type_name := strings.Title(val)
-	fmt.Printf("#=== Type_val(%s) => %s\n", val, type_name)
+	// fmt.Printf("#=== Type_val(%s) => %s\n", val, type_name)
 
 	if id, ok := Types[type_name]; ok {
 		return id
 	}
-	type_name += "s"
 
-	if id, ok := Types[type_name]; ok {
-		return id
+	l := len(type_name) - 1
+	if type_name[l] == 's' {
+		type_name = type_name[:l]
+
+		if id, ok := Types[type_name]; ok {
+			return id
+		}
 	}
 	return 0
 }

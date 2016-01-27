@@ -45,8 +45,8 @@ my($List) = 0; ###BUG### should be an option
 
 //-- Review all projects with actions
 func Report_review(args []string) {
+	meta.Filter("+active", "^doitdate", "simple")
 	/*?
-		meta.ilter("+active", '^doitdate', "simple")
 		my $desc = meta.Desc(args)(@_)
 
 		$Mode = 'p'
@@ -60,8 +60,8 @@ func Report_review(args []string) {
 			$Mode = 'p'
 		} elsif (lc($desc) == "waiting") {
 			$Mode = 'w'
-			warn "Fooked, meta.ilter reset report/sort"
-			meta.ilter("+wait", '^doitdate', "simple")
+			warn "Fooked, meta.Filter reset report/sort"
+			meta.Filter("+wait", '^doitdate', "simple")
 		} else {
 			$desc = "= $desc ="
 		}
@@ -92,7 +92,7 @@ func reload() { /*?
 func mode_doit() { /*?
 		my(@list)
 
-		for my $ref (meta.orted("^doitdate")) {
+		for my $ref (meta.Selected()) {
 			lookat($ref)
 		}
 	?*/
@@ -105,7 +105,7 @@ func lookat() { /*?
 		next if $ref->filtered()
 		next if $ref->is_later()
 
-		my $pref = $ref->get_parent()
+		my $pref = t.Parent()
 		next unless defined $pref
 		next if $pref->filtered()
 
@@ -163,7 +163,7 @@ func get_status() { /*?
 		//##BUG### ^C need to be handled in Prompt
 		//##BUG### ^D eof need to propigate up nicely
 
-	    foreach $_ (split(';', $_)) {
+	    for $_ (split(';', $_)) {
 		if (/^h/ or /^\?/) {
 			doit_help()
 			return
@@ -229,7 +229,7 @@ func _report_doit() { /*?
 		my($target) = 0
 		my($action) = \&doit_list
 
-		foreach my $arg (Hier::util::meta.Argv(args))) {
+		for my $arg (Hier::util::meta.Argv(args))) {
 			if ($arg =~ /^\d+$/) {
 				my($ref) = meta.Find($arg)
 
@@ -253,21 +253,21 @@ func _report_doit() { /*?
 func doit_later() { /*?
 		my($ref, $delay) = @_
 
-		$ref->set_doit(get_today($delay))
+		t.Set_doit(get_today($delay))
 		$ref->update()
 	?*/
 }
 func doit_next() { /*?
 		my($ref) = @_
 
-		$ref->set_doit(get_today(0))
+		t.Set_doit(get_today(0))
 		$ref->update()
 	?*/
 }
 func doit_done() { /*?
 		my($ref) = @_
 
-		$ref->set_completed(get_today(0))
+		t.Set_completed(get_today(0))
 		$ref->update()
 	?*/
 }
@@ -275,8 +275,8 @@ func doit_done() { /*?
 func doit_someday() { /*?
 		my($ref) = @_
 
-		$ref->set_isSomeday('y')
-		$ref->set_doit(get_today(+7))
+		t.Set_isSomeday('y')
+		t.Set_doit(get_today(+7))
 		$ref->update()
 	?*/
 }
@@ -284,8 +284,8 @@ func doit_someday() { /*?
 func doit_now() { /*?
 		my($ref) = @_
 
-		$ref->set_isSomeday('n')
-		$ref->set_doit(get_today(0))
+		t.Set_isSomeday('n')
+		t.Set_doit(get_today(0))
 		$ref->update()
 	?*/
 }
@@ -300,13 +300,13 @@ func doit_delete() { /*?
 func doit_priority() { /*?
 		my($ref, $priority) = @_
 
-		if ($ref->get_priority() == $priority) {
-			print $ref->get_tid() . ": " . $ref->get_description() .
+		if (t.Priority() == $priority) {
+			print t.Tid() . ": " . $ref->get_description() .
 				" already at priority $priority\n"
 			return
 		}
 
-		$ref->set_priority($priority)
+		t.Set_priority($priority)
 		$ref->update()
 	?*/
 }
@@ -331,22 +331,22 @@ func doit_list() { /*?
 	.
 		$~ = "DOIT";	// set STDOUT format name to HIER
 
-		foreach my $ref (@_) {
-			$tid = $ref->get_tid()
+		for my $ref (@_) {
+			$tid = t.Tid()
 
-			$pri       = $ref->get_priority()
+			$pri       = t.Priority()
 
-			$task      = $ref->get_title() || $ref->get_context() || ''
-			$cat       = $ref->get_category() || ''
-			$created   = $ref->get_created()
-			$modified  = $ref->get_modified() || $created
-			$doit      = $ref->get_doit() || ''
-			$desc      = $ref->get_description()
-			$note      = $ref->get_note()
+			$task      = t.Title() || $ref->get_context() || ''
+			$cat       = t.Category() || ''
+			$created   = t.Created()
+			$modified  = t.Modified() || $created
+			$doit      = t.Doit() || ''
+			$desc      = t.Description()
+			$note      = t.Note()
 
 			my($pid, $pref, $pname, $pdesc)
 
-			$pref     = $ref->get_parent()
+			$pref     = t.Parent()
 			next unless defined $pref
 
 			$pid      = $pref->get_tid()

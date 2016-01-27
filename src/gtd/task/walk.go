@@ -7,6 +7,7 @@ import "os"
 //?  @EXPORT      = qw(&walk &detail)
 
 var walk_Debug bool
+var _ = option.DebugVar("walk", &walk_Debug)
 
 type Walk struct {
 	Pre    func(*Walk, *Task)

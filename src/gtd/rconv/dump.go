@@ -46,7 +46,6 @@ func Report_dump(args []string) {
 	for _, t := range meta.Pick(args) {
 		display.Task(t)
 	}
-	/*?
 		// everybody into the pool by id
 
 		my($name) = ucfirst(meta.Desc(args)(@_));	// some out
@@ -95,7 +94,7 @@ func list_dump() { /*?
 
 		// find all records.
 		for my $ref (meta.Sorted("^tid")) {
-			$type = $ref->get_type()
+			$type = t.Type()
 			next if $want_type && $type != $want_type
 
 	//#FILTER	next if $ref->filtered()

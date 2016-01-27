@@ -68,9 +68,9 @@ func list_records() { /*?
 		my($Dates) = ''
 
 		// find all records.
-		for my $ref (sort_tasks meta.ll()) {
-			$tid  = $ref->get_tid()
-			$type = $ref->get_type()
+		for my $ref (sort_tasks meta.All()) {
+			$tid  = t.Tid()
+			$type = t.Type()
 
 			next if $want_type && $type != $want_type
 
@@ -86,20 +86,20 @@ func list_records() { /*?
 
 			printf ("%-15s %6d %s ", $f, $tid, $flags)
 
-			print "\t", $ref->get_title(), "\n"
+			print "\t", t.Title(), "\n"
 		}
 	?*/
 }
 
 func disp() { /*?
 		my($ref) = @_
-		my($tid) = $ref->get_tid()
+		my($tid) = t.Tid()
 
 		my($key) = action_disp($ref)
 
-		my $pri = $ref->get_priority()
-		my $type = uc($ref->get_type())
+		my $pri = t.Priority()
+		my $type = uc(t.Type())
 
-		return "$type:$tid $key <$pri> $ref->get_title()"
+		return "$type:$tid $key <$pri> t.Title()"
 	?*/
 }

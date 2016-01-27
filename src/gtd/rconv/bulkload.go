@@ -69,7 +69,6 @@ our report_debug = 0
 
 //-- Create Projects/Actions items from a file
 func Report_bulkload(args []string) {
-	/*?
 	  	my($pid)
 
 	  	my($action) = \&add_nothing
@@ -193,38 +192,36 @@ func Report_bulkload(args []string) {
 	  		$desc .= "\n" . $_
 	  	}
 	  	&$action($parents, $desc)
-	  ?*/
 }
 
-func find_hier() { /*?
+func find_hier() {
 		my($type, $goal) = @_
 
 		for my $ref (meta.Hier()) {
-			next unless $ref->get_type() == $type
-			next unless $ref->get_title() == $goal
+			next unless t.Type() == $type
+			next unless t.Title() == $goal
 
-			return $ref->get_tid()
+			return t.Tid()
 		}
 		for my $ref (meta.Hier()) {
-			next unless $ref->get_type() == $type
-			next unless lc($ref->get_title()) == lc($goal)
+			next unless t.Type() == $type
+			next unless lc(t.Title()) == lc($goal)
 
-			return $ref->get_tid()
+			return t.Tid()
 		}
 
 		for my $ref (meta.Hier()) {
-			next unless $ref->get_title() == $goal
+			next unless t.Title() == $goal
 
-			my($type) = $ref->get_type()
-			my($tid) = $ref->get_tid()
+			my($type) = t.Type()
+			my($tid) = t.Tid()
 			warn "Found: something close($type) $tid: $goal\n"
 			return $tid
 		}
 		panic("Can"t find a hier item for "$goal' let alone a $type.\n")
-	?*/
 }
 
-func add_nothing() { /*?
+func add_nothing() { 
 		my($parents, $desc) = @_
 
 		// do nothing
@@ -233,10 +230,9 @@ func add_nothing() { /*?
 		if ($desc) {
 			print "Lost description\n" if $desc
 		}
-	?*/
 }
 
-func add_goal() { /*?
+func add_goal() { 
 		my($parents, $desc) = @_
 		my($tid)
 
@@ -247,10 +243,9 @@ func add_goal() { /*?
 		$tid = add_task('g', $desc)
 
 		$parents->{'g'} = $tid
-	?*/
 }
 
-func add_project() { /*?
+func add_project() { 
 		my($parents, $desc) = @_
 		my($tid)
 
@@ -261,10 +256,9 @@ func add_project() { /*?
 		$tid = add_task('p', $desc)
 
 		$parents->{'p'} = $tid
-	?*/
 }
 
-func add_action() { /*?
+func add_action() { 
 		my($parents, $desc) = @_
 		my($tid)
 
@@ -272,10 +266,9 @@ func add_action() { /*?
 		$Parent = $parents->{'p'}
 
 		$tid = add_task('a', $desc)
-	?*/
 }
 
-func add_task() { /*?
+func add_task() { 
 		my($type, $desc) = @_
 
 		my($pri, $title, $category, $note, $line)
@@ -289,34 +282,33 @@ func add_task() { /*?
 
 		my $ref = Hier::Tasks->new(undef)
 
-		$ref->set_category($category)
-		$ref->set_title($title)
-		$ref->set_description($desc)
-		$ref->set_note($note)
+		t.Set_category($category)
+		t.Set_title($title)
+		t.Set_description($desc)
+		t.Set_note($note)
 
-		$ref->set_type($type)
+		t.Set_type($type)
 
 		if ($pri > 5) {
 			$pri -= 5
-			$ref->set_isSomeday('y')
+			t.Set_isSomeday('y')
 		}
-		$ref->set_nextaction('y') if $pri < 3
-		$ref->set_priority($pri)
+		t.Set_nextaction('y') if $pri < 3
+		t.Set_priority($pri)
 
 		print "Parent: $Parent\n"
 
-		$Child = $ref->get_tid()
+		$Child = t.Tid()
 
-		$ref->set_parent_ids($Parent)
+		t.Set_parent_ids($Parent)
 
-		print "Created ($type): ", $ref->get_tid(), "\n"
+		print "Created ($type): ", t.Tid(), "\n"
 
 		for my $key (keys %$Info) {
-			$ref->set_KEY($key, $Info->{$key})
+			t.Set_KEY($key, $Info->{$key})
 		}
 		$Info = {}
 
 		$ref->insert()
-		return $ref->get_tid()
-	?*/
+		return t.Tid()
 }

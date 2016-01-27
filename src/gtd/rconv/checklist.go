@@ -68,13 +68,13 @@ func find_list() { /*?
 		my($Dates) = ''
 
 		// find all records.
-		for my $ref (meta.ll()) {
-			$tid = $ref->get_tid()
-			$type = $ref->get_type()
+		for my $ref (meta.All()) {
+			$tid = t.Tid()
+			$type = t.Type()
 
 			next unless $type =~ /[LC]/
 
-			return $tid if $ref->get_title() =~ /\Q$list_name\E/i
+			return $tid if t.Title() =~ /\Q$list_name\E/i
 		}
 		return
 	?*/
@@ -103,10 +103,10 @@ func list_records() { /*?
 func disp_list() { /*?
 		my ($record_type, $owner) = @_
 
-		for my $ref (meta.atching_type($record_type)) {
-			my $tid = $ref->get_tid()
-			my $pid = $ref->get_parent()->get_tid()
-			my $title = $ref->get_title()
+		for my $ref (meta.Matching_type($record_type)) {
+			my $tid = t.Tid()
+			my $pid = t.Parent()->get_tid()
+			my $title = t.Title()
 
 			print "pid: $pid tid: $tid => $title\n" if report_debug
 
@@ -125,14 +125,14 @@ func disp_list() { /*?
 func disp() { /*?
 		my($ref) = @_
 
-		my($tid) = $ref->get_tid()
+		my($tid) = t.Tid()
 
 		my($key) = action_disp($ref)
 
-		my $pri = $ref->get_priority()
-		my $type = uc($ref->get_type())
+		my $pri = t.Priority()
+		my $type = uc(t.Type())
 
-		return "$type:$tid $key <$pri> $ref->get_title()"
+		return "$type:$tid $key <$pri> t.Title()"
 	?*/
 }
 

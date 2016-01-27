@@ -207,7 +207,7 @@ func rc(line string) {
 		return
 	}
 
-	if task.IsTask(cmd) {
+	if task.MatchId(cmd) {
 		load_task(cmd)
 		return
 	}
@@ -368,7 +368,7 @@ func rc_header(args ...string) {
 
 func rc_sort(args ...string) {
 	if len(args) == 0 {
-		fmt.Print("Sort: %s\n", Sort_mode)
+		fmt.Printf("Sort: %s\n", Sort_mode)
 		return
 	}
 	mode := args[0]
@@ -411,12 +411,12 @@ func load_task_ref(why string, t *task.Task) {
 
 	Parents[kind] = Pref
 
-	Prompt = fmt.Sprintf("%d> ")
+	Prompt = fmt.Sprintf("%d> ", t.Tid)
 	// rb.SetPrompt(Prompt)
 	meta.Set_current(task.Tasks{Pref})
 	//	option.Set("Current", Pid)
 
-	fmt.Printf("%s(%c): %s - %s\n", why, kind, Pid, title)
+	fmt.Printf("%s(%c): %d - %s\n", why, kind, Pid, title)
 }
 
 //==============================================================================

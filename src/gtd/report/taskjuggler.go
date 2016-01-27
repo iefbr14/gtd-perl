@@ -51,6 +51,9 @@ var tj_Someday bool = false
 
 var Dep_list = map[int]string{}
 
+var report_Debug bool
+var _ = option.DebugVar("report", &report_Debug)
+
 //-- generate taskjuggler file from gtd db
 func Report_taskjuggler(args []string) int {
 	meta.Filter("+active", "^focus", "none")
@@ -189,7 +192,7 @@ func juggler_detail(w *task.Walk, t *task.Task) {
 	fmt.Fprintf(fd, "%stask %c_%d \"%s\" {\n", indent, kind, tid, name)
 
 	if indent == "" {
-		fmt.Fprintf(fd, "%s    start %s\n", option.Today(0))
+		fmt.Fprintf(fd, "%s    start %s\n", indent, option.Today(0))
 		fmt.Fprintf(fd, "%s    allocate %s { mandatory } # %s\n",
 			indent, user, hint)
 	} else {
@@ -428,6 +431,8 @@ func get_dep_path(task_id string) string {
 }
 
 func rdebug(f string, v ...interface{}) {
-	return
+	if !report_Debug {
+		return
+	}
 	fmt.Printf(f, v...)
 }

@@ -238,7 +238,7 @@ func pick_color_fg(t *task.Task) string {
 		return "GREEN"
 	case 4:
 		return "BLACK"
-	default:
+	case 5:
 		return "CYAN"
 	}
 

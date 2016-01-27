@@ -46,7 +46,7 @@ func Report_oocalc(args []string) {
 		new_calc()
 
 		my($roles) = load_roles()
-		foreach my $role (sort keys %$roles) {
+		for my $role (sort keys %$roles) {
 			display_role($role, $roles->{$role})
 		}
 		save_calc()
@@ -59,11 +59,11 @@ func load_roles() { /*?
 		my(%roles)
 
 		// find all next and remember there projects
-		for my $ref (meta.atching_type('o')) {
+		for my $ref (meta.Matching_type('o')) {
 	//#FILTER	next if $ref->filtered()
 
-			my $pid = $ref->get_tid()
-			my $role = $ref->get_title()
+			my $pid = t.Tid()
+			my $role = t.Title()
 			$role =~ s= .*==
 			$role = ucfirst($role)
 			$roles{$role} = $ref
@@ -77,7 +77,7 @@ func display_role() { /*?
 		my(@head) = qw(Goal P-id Project T-id Next-Action Hours .)
 
 		my(@list)
-		foreach my $gref ($ref->get_children()) {
+		for my $gref (t.Children()) {
 			next if $gref->filtered()
 
 			push(@list, get_projects($gref))
@@ -86,7 +86,7 @@ func display_role() { /*?
 		new_sheet($role, scalar @list, 7)
 		save_row(1, @head)
 		my($row) = 2
-		foreach my $line (sort {
+		for my $line (sort {
 			lc($a->[0]) cmp lc($b->[0])
 		   ||	lc($a->[2]) cmp lc($b->[2])
 		   ||	lc($a->[4]) cmp lc($b->[4])
@@ -101,7 +101,7 @@ func get_projects() { /*?
 
 		my(@list)
 
-		foreach my $pref ($gref->get_children()) {
+		for my $pref ($gref->get_children()) {
 			next if $pref->filtered()
 
 			push(@list, get_actions($gref, $pref))
@@ -124,10 +124,10 @@ func get_actions() { /*?
 		my(@done) = ()
 
 		// figure out which order.
-		foreach my $ref ($pref->get_children()) {
+		for my $ref ($pref->get_children()) {
 			next if $ref->filtered()
 
-			if ($ref->get_completed()) {
+			if (t.Completed()) {
 				push(@done, $ref)
 				next
 			}
@@ -190,8 +190,8 @@ func get_actions() { /*?
 			my($effort) = $resource->hours()
 			$effort = .5 unless $effort
 
-			$tid = $ref->get_tid()
-			$title = $ref->get_title()
+			$tid = t.Tid()
+			$title = t.Title()
 			$hours = $effort
 			$pri = join(':', pnum($gref), pnum($pref), pnum($ref))
 
@@ -205,11 +205,11 @@ func get_actions() { /*?
 func pnum() { /*?
 		my($ref) = @_
 
-		return 9 if $ref->get_completed()
+		return 9 if t.Completed()
 
 		return 7 if $ref->is_someday()
 
-		return $ref->get_priority()
+		return t.Priority()
 	?*/
 }
 

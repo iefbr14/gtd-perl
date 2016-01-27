@@ -36,47 +36,46 @@ NAME:
 import "gtd/task"
 import "gtd/meta"
 
+import "gtd/perl"
+
 //-- List next actions
 func Report_nextactions(args []string) {
 	meta.Filter("+next", "^title", "none")
 
-	/*?
-	  	my($tid, $pid, $pref, $tic, $parent, $pic, $name, $desc)
-	  	my(@row)
+	//?my($tid, $pid, $pref, $tic, $parent, $pic, $name, $desc)
+	//?my(@row)
 
-	  	meta.Desc(args)(@_)
+	fmt.Print(`
+-Par [-] Parent           -Tid [-] Next Action
+==== === ================ ==== === ============================================
+`)
 
-	  print <<"EOF"
-	  -Par [-] Parent           -Tid [-] Next Action
-	  ==== === ================ ==== === ============================================
-	  EOF
+	perl.Format("HIER", `
+@>>> @<< @<<<<<<<<<<<<<<< @>>> @<< @<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+$pid, $pic, $parent,      $tid, $tic, $name,
+`)
 
-	  format HIER   =
-	  @>>> @<< @<<<<<<<<<<<<<<< @>>> @<< @<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-	  $pid, $pic, $parent,      $tid, $tic, $name,
-	  .
-	  	$~ = "HIER";	// set STDOUT format name to HIER
+	for _, ref := range meta.Pick("actions") {
+		tid := t.Tid
+		//#FILTER	next unless $ref->is_nextaction()
+		//#FILTER	next if $ref->filtered()
 
-	  	for my $ref (meta.Pick("actions")) {
-	  		$tid = $ref->get_tid()
-	  //#FILTER	next unless $ref->is_nextaction()
-	  //#FILTER	next if $ref->filtered()
+		name := t.Title()
+		tic = action_disp(ref)
 
-	  		$name = $ref->get_title() || ''
-	  		$tic = action_disp($ref)
+		pref = t.Parent()
+		//next unless $pref->is_nextaction()
+		var pid int
+		var parent string
+		if pref != nil {
+			parent = pref.Title
+			pid = pref.Tid
+		} else {
+			parent = "-orphined-"
+			pid = "--"
+		}
+		pic = task.Type_disp(pref)
 
-	  		$pref = $ref->get_parent()
-	  //next unless $pref->is_nextaction()
-	  		if (defined $pref) {
-	  			$parent = $pref->get_title()
-	  			$pid = $pref->get_tid()
-	  		} else {
-	  			$parent = "-orphined-"
-	  			$pid = "--"
-	  		}
-	  		$pic = type_disp($pref)
-
-	  		write
-	  	}
-	  ?*/
+		write
+	}
 }

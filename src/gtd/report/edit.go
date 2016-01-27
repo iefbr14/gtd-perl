@@ -72,24 +72,33 @@ func Report_edit(args []string) int {
 	}
 	err = ofd.Close()
 	if err != nil {
-		log.Fatal("I/O error on %s: %s", tmpfile, err)
+		log.Printf("I/O error on %s: %s", tmpfile, err)
 		return 2
 	}
 
-	if err := exec.Command("vi", tmpfile).Run(); err != nil {
+	cmd := exec.Command("vi", tmpfile)
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	log.Printf("Staring vi %s", tmpfile)
+	if err := cmd.Run(); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
+	log.Printf("Ok      vi %s", tmpfile)
 
 	ifd, err := os.Open(tmpfile)
 	if err != nil {
-		log.Fatal("Can't reopen %s: %s", tmpfile, err)
+		log.Printf("Can't reopen %s: %s", tmpfile, err)
 		return 2
 	}
 
 	re_keyv := regexp.MustCompile(`^(\w+):\t\t?(.*)\s*$`)
 	re_word := regexp.MustCompile(`(\w+)$`)
 	re_plus := regexp.MustCompile(`^\t\t?(.*)`)
+
+	var lastkey = ""
 
 	scanner := bufio.NewScanner(ifd)
 	for scanner.Scan() {
@@ -107,31 +116,37 @@ func Report_edit(args []string) int {
 		}
 
 		// (m/^(\w+):\t\t?(.*)\s*$/)
-		r := re_keyv.FindString(line)
-		fmt.Printf("k %v", r)
+		r := re_keyv.FindStringSubmatch(line)
 
 		if len(r) > 0 {
-			//key, val := r[0], r[1]
-			//change_map[key] = val
-			continue
-		}
-
-		// (m/^(\w+)$/)
-		r = re_word.FindString(line)
-		fmt.Printf("w %v", r)
-		if len(r) > 0 {
-			//key := r[0]
-			//change_map[key] = nil
+			// fmt.Printf("k %v\n", r)
+			key, val := r[1], r[2]
+			change_map[key] = &val
+			lastkey = key
 			continue
 		}
 
 		// (s/^\t+//)
-		r = re_plus.FindString(line)
-		fmt.Printf("t %v", r)
+		r = re_plus.FindStringSubmatch(line)
 		if len(r) > 0 {
-			//change_map[key] += "\n" + r[0]
+			if lastkey == "" {
+				continue
+			}
+			// fmt.Printf("t %v\n", r)
+			val := *(change_map[lastkey]) + "\n" + r[1]
+			change_map[lastkey] = &val
 			continue
 		}
+
+		// (m/^(\w+)$/)
+		r = re_word.FindStringSubmatch(line)
+		if len(r) > 0 {
+			fmt.Printf("w %v\n", r)
+			key := r[1]
+			change_map[key] = nil
+			continue
+		}
+
 		panic("Can't parse: $_\n")
 	}
 
@@ -145,33 +160,24 @@ func Report_edit(args []string) int {
 		save(change_map)
 	}
 
-	os.Remove(tmpfile)
+	//	os.Remove(tmpfile)
 	return 0
 }
 
 func save(change_map map[string]*string) {
-	tid := change_map["todo_id"]
+	tid := *change_map["todo_id"]
+	title := *change_map["title"]
 
-	t := meta.Find(*tid)
+	t := meta.Find(tid)
 
-	changed := fmt.Sprintf("Saving %d - %s ...\n", tid, change_map["task"])
+	changed := fmt.Sprintf("Saving %s - %s ...\n", tid, title)
 
 	u := 0
 
 	for key, newval := range change_map {
 		val := t.Get_KEY(key)
 
-		// Specal values from disp_ordered_dump
-		switch key {
-		case "Tags":
-			val = t.Disp_tags()
-		case "Parents":
-			val = t.Disp_parents()
-		case "Children":
-			val = t.Disp_children()
-		}
-
-		if val != "" && newval != nil {
+		if newval != nil {
 			if val == *newval {
 				continue
 			}
@@ -181,34 +187,16 @@ func save(change_map map[string]*string) {
 			changed += key + ": $val -> $newval\n"
 			continue
 		}
-		if newval != nil { // val must be undefined
-			u++
-			t.Set_KEY(key, *newval)
-
-			changed += key + ": set to " + *newval + "\n"
-			continue
-		}
-		if val != "" { // newval must be undefined
-			u++
-			t.Set_KEY(key, "")
-
-			changed += "$key: removed val $val\n"
-			continue
-		}
-		// both undefined, don't care
 	}
 
 	if u == 0 {
-		fmt.Printf("Item $tid unchanged\n")
+		fmt.Printf("Item %s unchanged\n", tid)
 		return
 	}
 
-	fmt.Print(changed)
-	fmt.Print("Not UPDATED!!!\n")
-	return
 	t.Update()
 
 	//***BUG*** check no extra keys returned?
-	fmt.Print("Saved\n")
+	fmt.Printf("Saved %s\n", tid)
 	return
 }

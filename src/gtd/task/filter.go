@@ -1,4 +1,3 @@
-// +build ignore
 package task
 
 import "strings"
@@ -9,6 +8,8 @@ import "gtd/option"
 import "gtd/cct"
 
 //?	@EXPORT      = qw( &add_filter )
+var filter_Debug bool
+var _ = option.DebugVar("filter", &filter_Debug)
 
 var Filter_Category string
 var Filter_Context string
@@ -56,12 +57,6 @@ func tasks_matching_type(kind byte) Tasks {
 	}
 	return list
 }
-
-/*?
-func reset_filters(arg string) {
-	filter := arg
-}
-?*/
 
 func Apply_filters() {
 	fdebug("Apply_filters\n")
@@ -478,7 +473,7 @@ func proj_mask(t *Task) {
 	//	return 1
 }
 
-func meta_find_context(cct_name string) {
+func Set_filter_context(cct_name string) {
 	category := cct.Use("Category")
 	context := cct.Use("Context")
 	timeframe := cct.Use("Timeframe")
@@ -620,9 +615,9 @@ func map_filter_name(word string) (func(*Task, string) string, string, string) {
 		return filter_task, "<", ""
 
 		//	case "pure_next":
-		return filter_next, "<", ""
+		// return filter_next, "<", ""
 
-		// we need to re-thing this live-next vs next
+		// we need to re-think this live-next vs next
 
 	case "next":
 		return filter_next, "><", ""
@@ -1029,8 +1024,8 @@ func filter_tags(t *Task, arg string) string {
 }
 
 func fdebug(f string, v ...interface{}) {
-	//return
-	fmt.Print("!!!!")
-	fmt.Printf(f, v...)
+	if !filter_Debug {
+		return
+	}
 	log.Printf(f, v...)
 }

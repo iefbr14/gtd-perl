@@ -65,7 +65,7 @@ func list_items() { /*?	//-- List projects with waiting-fors
 		task.Header($typename)
 
 	        my($tid, $title, $desc, @list)
-	        for my $ref (meta.atching_type($type)) {
+	        for my $ref (meta.Matching_type($type)) {
 	//#FILTER	next if $ref->filtered()
 
 	                push(@list, $ref)

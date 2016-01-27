@@ -10,6 +10,8 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
+	"strings"
 	"time"
 
 	//? use YAML::Syck qw(LoadFile)
@@ -29,6 +31,8 @@ var MetaFix bool = false
 var Prefix string = "gtd_"
 
 var db_Table string = ""
+
+var Last_Modified string = ""
 
 // gtd_categories     |
 // gtd_context        |
@@ -261,6 +265,9 @@ func db_load_itemstatus() {
 		t.Context = context.Name(contextId)
 		t.Timeframe = timeframe.Name(timeframeId)
 
+		if lastModified.String > Last_Modified {
+			Last_Modified = lastModified.String
+		}
 	}
 
 	G_done(rows)
@@ -362,7 +369,7 @@ func db_load_todo() {
 	var (
 		todo_id  int
 		priority int
-		state    byte
+		state    string
 		doit     sql.NullString //time.Time
 		effort   int
 		resource sql.NullString
@@ -388,7 +395,7 @@ func db_load_todo() {
 
 		t.Tid = todo_id
 		t.Priority = priority
-		t.State = state
+		t.State = state[0]
 		t.Doit = doit.String
 		t.Effort = effort
 		t.Resource = resource.String
@@ -398,64 +405,6 @@ func db_load_todo() {
 	G_done(rows)
 
 }
-
-//
-// create-initial set value. (nothing dirty at this point)
-//
-/*?
-sub cset {
-	my($ref, $key, $val) = @_
-
-	// no value defined, skip update/creation of field
-	return unless defined $val
-
-	my($key_type) = $Key_type{$key} & 0x0F
-	unless ($key_type) {
-		warn "Unknown key: $key\n"
-		$Key_type{$key} = 1
-
-		$ref->{$key} = $val
-		return
-	}
-	// never seen value, just set it
-	unless (defined $ref->{$key}) {
-		$ref->{$key} = $val
-		return
-	}
-
-	// keep youngest (smaller value)
-	if ($key_type == 2) {
-		return if $val eq ''; # no new value
-
-		my($current_value) = $ref->{$key}
-
-		// handle we don't have enough detail
-                if (length($current_value) eq 8 or length($val) == 8) {
-			return if (substr($current_value,0,8) eq substr($val,0,8))
-		}
-
-		if ($current_value eq '' || $val lt $current_value) {
-			$ref->{$key} = $val
-		}
-		return
-	}
-
-	// keep oldest (bigger value)
-	if ($key_type == 3) {
-		return if $val eq ''; # no new value
-
-		my($current_value) = $ref->{$key}
-
-		if ($current_value eq '' || $val gt $current_value) {
-			$ref->{$key} = $val
-		}
-		return
-	}
-
-	// keep value last seen value
-	$ref->{$key} = $val
-}
-*/
 
 func gtd_insert(t *Task) {
 	gtd_fix_maps(t)
@@ -485,155 +434,146 @@ func gset_insert_parents(t *Task, del bool) {
 	}
 }
 
-func gset_insert(ref *Task, table string) {
+func gset_insert(t *Task, table string) {
+	key_map := G_list(table) // no prefix table name
 	table = G_table(table)
 
-	panic("... code gset_insert")
-	/*?
-		my $qmark = ''
-		my $sql
-		my @keys = ()
-		my @vals = ()
+	qmark := ""
+	sql := ""
 
-		my ($key, $fld, $val)
+	var keys []string
+	var vals []string
 
-		my $map = G_list($table)
-		for my $key (keys %$map) {
-			$fld = $map->{$key}
+	for _, key := range key_map {
+		fld := key_map[key]
 
-			next unless defined $ref->{$key}
-			next unless $ref->{$key}
+		// next unless defined $t->{$key}
+		// next unless $t->{$key}
 
-			push(@keys, $fld)
-			push(@vals, $ref->{$key})
+		keys = append(keys, fld)
+		vals = append(vals, t.Get_KEY(key))
 
-			$qmark .= ",?"
-		}
+		qmark += ",?"
+	}
 
-		$qmark =~ s/^,//
-		$sql = "insert into $table(" . join(',', @keys) . ") values($qmark)"
+	qmark = qmark[1:] // s=^,==
 
-		G_sql($sql, @vals)
-	?*/
+	sql = "insert into " + table + "(" + strings.Join(keys, ",") +
+		") values(" + qmark + ")"
+
+	G_sql(sql, vals)
 }
 
 func gtd_update(t *Task) {
+	log.Printf("Update: %v\n", t)
 	gtd_fix_maps(t)
 
-	panic("... Code gtd_update")
+	gset_update(t, "itemstatus")
+	gset_update(t, "items")
 
-	//?	gset_update(t, "itemstatus")
-	//?	gset_update(t, "items")
+	gset_update(t, "todo")
 
-	//?	gset_update(t, "todo")
-
-	//?	gset_insert_parents(t, true)
+	gset_insert_parents(t, true)
 }
 
-func gtd_fix_maps(ref *Task) {
-
+func gtd_fix_maps(t *Task) {
 	today := time.Now()
-	if ref.Created == "" {
-		ref.Created = today.Format("2006-02-03")
+	if t.Created == "" {
+		t.Created = today.Format("2006-02-03")
+		t.dirty["created"] = true
 	}
-	ref.Modified = today.Format("2006-02-03 15:04:05")
+	t.Modified = today.Format("2006-02-03 15:04:05")
+	t.dirty["modified"] = true
 
-	panic("... Code gtd_fix_maps")
-	//***BUG***	ref.fix_map("category",  '_gtd_category',  $Category)
-	//***BUG***	ref.fix_map("context",   '_gtd_context',   $Context)
-	//***BUG***	ref.fix_map("timeframe", '_gtd_timeframe', $Timeframe)
+	fix_map(t, t.Category, "Category")
+	fix_map(t, t.Context, "Context")
+	fix_map(t, t.Timeframe, "Timeframe")
 
-	//	_fix_map($ref, "tags", 'timeframeId', \%Timeframes)
+	//	_fix_map($t, "tags", 'timeframeId', \%Timeframes)
 }
 
-/*?
-sub _fix_map {
-	my($ref, $kind $index, $master) = @_
+func fix_map(t *Task, val string, cct_name string) {
 
-	return unless $ref->is_dirty($kind
-
-	my($val_id) = 0
-	my($val) = $ref->{$kind
-	if (!defined $val) {
-			//# timeframe never set
-			return
+	if !t.dirty[cct_name] {
+		return
 	}
 
-	if ($val ne '') {
-		$val_id = $master->get($val)
-		if (!defined $val_id) {
-			warn "unmapped $kind $val"
+	val_id := 0
+
+	if val != "" {
+		c := cct.Use(cct_name)
+		val_id = c.Id(val)
+
+		if val_id == 0 {
+			log.Printf("unmapped %s: %s\n", cct_name, val)
 			//##BUG### we need to create it?
 			return
 		}
 	}
+	/*
+		if (defined $t->{$index}) {
+			return if $t->{$index} == $val_id
+		}
+		$t->{$index} = $val_id
 
-	if (defined $ref->{$index}) {
-		return if $ref->{$index} == $val_id
-	}
-	$ref->{$index} = $val_id
-
-	$ref->set_dirty($index)
+		$t->set_dirty($index)
+	*/
 }
-?*/
 
-func gset_update(ref *Task, table string) {
-	panic("... code gset_update")
-	/*?
-	  	my $qmark = ''
-	  	my $sql
-	  	my @keys = ()
-	  	my @vals = ()
+func gset_update(t *Task, table string) {
+	key_map := G_list(table) // no prefix table name
+	table = G_table(table)
 
-	  	my ($fld, $val)
+	qmark := ""
+	sql := ""
 
-	  	my $map = G_list($table)
-	  	for my $key (keys %$map) {
-	  		next unless $ref->get_dirty($key);	// don't update clean fields
+	var keys []string
+	var vals []string
 
-	  		if db_debug {
-	  			warn "Mapping: $key => $map->{$key}\n"
-	  		}
-	  		$fld = $map->{$key}
+	for _, key := range key_map {
+		fld := key_map[key]
+		if !t.dirty[key] {
+			continue
+		}
 
-	  		next unless defined $ref->{$key}
-	  //		next unless $ref->{$key}
+		if db_debug {
+			log.Printf("Mapping: %s => %s\n", key, fld)
+		}
+		// next unless defined $t->{$key}
+		// next unless $t->{$key}
 
-	  		push(@keys, $fld)
-	  		push(@vals, $ref->{$key})
+		keys = append(keys, fld)
+		vals = append(vals, t.Get_KEY(key))
 
-	  		$qmark .= ",?"
-	  	}
+		qmark += ",?"
+	}
 
-	  	return unless @keys;	// nothing changed
+	if len(keys) == 0 {
+		return // nothing changed
+	}
 
+	qmark = qmark[1:] // s=^,==
 
-	  	$qmark =~ s/^,//
-	  	$sql = "update $table set " . join("=?, ", @keys) .
-	  	                          "=? where itemId=?"
-	  	push(@vals, $ref->{todo_id})
+	sql = "update " + table + " set " + strings.Join(keys, "=?, ") +
+		"=? where itemId=?"
 
-	  	G_sql($sql, @vals)
-	  ?*/
+	vals = append(vals, strconv.Itoa(t.Tid))
+
+	G_sql(sql, vals)
 }
 
 func gtd_delete(tid int) {
-	panic("... code sac_delete")
-
-	//?	gset_delete(tid, "itemId", "itemstatus")
-	//?	gset_delete(tid, "itemId", "items")
-	//?	gset_delete(tid, "itemId", "lookup")
-	//?	gset_delete(tid, "todo_id", "todo")
+	gset_delete(tid, "itemId", "itemstatus")
+	gset_delete(tid, "itemId", "items")
+	gset_delete(tid, "itemId", "lookup")
+	gset_delete(tid, "todo_id", "todo")
 }
 
-func gset_delete(tid int, table string) {
+func gset_delete(tid int, table string, column string) {
 	table = G_table(table)
 
-	sql := fmt.Sprintf("delete from %s where itemId = ?", table)
+	sql := fmt.Sprintf("delete from %s where %s = ?", table, column)
 	G_sql(sql, tid)
-}
-
-func join([]string) {
 }
 
 //#############################################################################
@@ -653,7 +593,7 @@ var Prefix := "gtd_"
 func DB_init(confname string) {
 	db_debug = option.Bool("Debug", false)
 
-	MetaFix = option.Bool("MetaFix", false)
+	MetaFix = option.Bool("MetaFix", true)
 
 	if confname != "" {
 		if db_debug {
@@ -709,12 +649,10 @@ func DB_init(confname string) {
 
 	err = db.Ping()
 	if err != nil {
-		log.Fatal("Can't connect to %s: %s", url, err)
+		log.Printf("!!! Can't connect to %s: %s\n", url, err)
+		log.Fatal("!!! no database connect\n")
 	}
 	db_GTD = db
-
-	fmt.Printf("... code DB_init lastModified\n")
-	//?	option("Changed", G_val('itemstatus', 'max(lastModified)'))
 
 	//?warn "Start ".localtime()."\n"
 	db_load_gtd()
@@ -727,29 +665,25 @@ func G_table(table string) string {
 	return Prefix + table
 }
 
-func G_sql(sql string, args ...interface{}) {
-	panic("... code G_sql")
-	/*?
-		my($sql) = shift @_
+func G_sql(sql string, args ...interface{}) error {
 
-		warn "gtd-sql: $sql: @_\n" if $Debug
+	if !MetaFix {
+		log.Printf("skipped G_sql: %s %v\n", sql, args)
+		return nil
+	}
 
-		unless ($MetaFix) {
-			warn "Skipped: $sql\n"
-			return
-		}
+	log.Printf("gtd-sql: %s\n\t\t%v\n", sql, args)
 
-		my($rv)
-		eval {
-			$rv = $db_GTD->do($sql, undef, @_)
-			warn "-> $rv\n" if $Debug
-		}; if ($@ or !defined $rv) {
-			print "Failed sql: $sql ($rv)\n"
-			print "..........: $@"
-		}
+	//X count := len(args)
+	result, err := db_GTD.Exec(sql, args...)
 
-		return $rv
-	?*/
+	if err == nil {
+		log.Printf("gtd-sql got: %v\n", result)
+	} else {
+		log.Printf("gtd-sql failed: %v -- %v\n", result, err)
+	}
+
+	return err
 }
 
 func G_select(table string, fields string) *sql.Rows {
@@ -763,16 +697,84 @@ func G_select(table string, fields string) *sql.Rows {
 	return rows
 }
 
-/*?
-sub G_list {
-	my($table) = @_
+func G_list(table string) map[string]string {
 
+	switch table {
+	case "itemstatus":
+		return map[string]string{
+			"created":   "dateCreated",
+			"modified":  "lastModified",
+			"completed": "dateCompleted",
+			"type":      "type",
+			//"category": "categoryId",
+			"issomeday": "isSomeday",
+			//".": "contextId",
+			//".": "timeframeId",
+			"due":        "deadline",
+			"tickle":     "tickledate",
+			"nextaction": "nextaction",
+		}
+	case "items":
+		return map[string]string{
+			"title":       "title",
+			"description": "description",
+			"note":        "desiredOutcome",
+			//"title":   "title",
+		}
+	case "todo":
+		return map[string]string{
+			"category": "category",
+			"priority": "priority",
+			"state":    "state",
+			"doit":     "doit",
+			"effort":   "effort",
+			"resource": "resource",
+			"depends":  "depends",
+			"percent":  "percent",
+		}
+	}
+	log.Printf("!!!! bad G_list(%s) map", table)
+	panic("!!!!bad G_list")
+
+	/*?
 	return $GTD_map->{$table}
+	rows, _ := db.Query("SELECT * FROM _user;")
+
+	columns, _ := rows.Columns()
+	count := len(columns)
+	values := make([]interface{}, count)
+	valuePtrs := make([]interface{}, count)
+
+	for rows.Next() {
+
+		for i, _ := range columns {
+			valuePtrs[i] = &values[i]
+		}
+
+		rows.Scan(valuePtrs...)
+
+		for i, col := range columns {
+
+			var v interface{}
+
+			val := values[i]
+
+			b, ok := val.([]byte)
+
+			if ok {
+				v = string(b)
+			} else {
+				v = val
+			}
+
+			fmt.Println(col, v)
+		}
+	}
+	?*/
 }
-?*/
 
 func G_renumber(t *Task, tid, new int) {
-	log.Printf("Setting TID %s => %s\n", tid, new)
+	log.Printf("Setting TID %d => %d\n", tid, new)
 
 	G_transaction()
 	G_sql("update gtd_lookup set itemId=? where itemId=?", new, tid)
@@ -795,12 +797,12 @@ func G_commit() {
 }
 
 func G_val(table, query string) int {
-
 	table = G_table(table)
 	sql := fmt.Sprintf("select %s from %s", query, table)
-	return len(sql)
-	/*?
+	log.Printf("G_val sql: %s", sql)
 
+	panic(".... Migrate max(itemId) and max(lastModified)")
+	/*?
 		my($sth) = $db_GTD->prepare($sql)
 		my($rv) = $sth->execute()
 		if ($rv < 0) {
@@ -813,7 +815,6 @@ func G_val(table, query string) int {
 		}
 		return $changed
 	?*/
-	return 0
 }
 
 func G_done(rows *sql.Rows) {
@@ -821,7 +822,7 @@ func G_done(rows *sql.Rows) {
 
 	err := rows.Err()
 	if err != nil {
-		log.Fatal("I/O error %s on table %s", err, db_Table)
+		log.Printf("I/O error %s on table %s", err, db_Table)
 	}
 }
 
@@ -833,7 +834,7 @@ type Dict map[string]map[string]string
 func load_config(file string) Dict {
 	fd, err := os.Open(file)
 	if err != nil {
-		log.Printf("Can't open %s: %s", fd, err)
+		log.Printf("Can't open %s: %s", file, err)
 		return nil
 	}
 

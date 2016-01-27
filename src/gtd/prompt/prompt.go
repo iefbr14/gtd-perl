@@ -1,76 +1,75 @@
-// +build ignore
 package gtd
 
-BEGIN {
-	use Exporter   ();
-	our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
+import "fmt"
 
-	// set the version for version checking
-	$VERSION     = 1.00;
-	@ISA         = qw(Exporter);
-	@EXPORT      = qw(
-		prompt
-	);
-}
+import "github.com/chzyer/readline"
 
-use strict;
-use warnings;
+import "gtd/task"
 
-our $Debug = 0;
+var prompt_Debug bool
 
-my $Term;
+var Term *readline.Instance
 
-my $Mode = 0;	// 0 - unknown
-		// 1 - file input
-		// 2 - term input
+var Mode int // 0 - unknown
+// 1 - file input
+// 2 - term input
 
-sub prompt {
-	my($prompt, $ignore_comments) = @_;
+func Prompt(prompt string, ignore_comments bool) (string, error) {
+	init_mode()
+	if Mode == 2 {
+		Term.SetPrompt(prompt)
+	}
 
-	init_mode();
+	for {
+		var line string
+		var err error
 
-	for (;;) {
-		if ($Mode == 1) {
-			$_ = <STDIN>;
+		switch Mode {
+		case 1:
+		//	$_ = <STDIN>;
 
-			return unless defined $_;
+		//	return unless defined $_;
 
-			chomp $_;
-		} else {
-			$_ = $Term->readline($prompt.' ');
+		//	chomp $_;
+		case 2:
+			line, err = Term.Readline()
+			if err != nil { // io.EOF
+				fmt.Print(":quit # eof\n")
+				return "", err
+			}
+		}
+		//$_ = $Term->readline($prompt.' ');
 
-			unless (defined $_) {
-				print ":quit # eof\n";
-				return;
+		//? print "Prompt($prompt) read: $_\n" if $Debug;
+
+		if ignore_comments {
+			if task.Is_comment(line) {
+				continue
 			}
 		}
 
-		print "Prompt($prompt) read: $_\n" if $Debug;
-
-		if ($ignore_comments) {
-			next if /^\s*#/;
-			next if /^\s*$/;
+		if Mode == 1 {
+			fmt.Printf("%s\t%s\n", prompt, line)
+			//		} else {
+			//		$term->addhistory($_);
 		}
-
-		if ($Mode == 1) {
-			print "$prompt\t$_\n";
-		} else {
-	//		$term->addhistory($_);
-		}
-		return $_;
+		return line, nil
 	}
 }
 
-sub init_mode {
-	return if $Mode;
+func init_mode() {
+	if Mode > 0 {
+		return
+	}
 
-	if (-t STDIN) {
-		$Mode = 2;
-		$Term = Term::ReadLine->new("gtd");
+	if Mode == 0 { //if (-t STDIN)
+		Mode = 2
+		//Term = Term::ReadLine->new("gtd");
+		Term, err := readline.New("> ")
+		if err != nil {
+			panic(err)
+		}
 	} else {
-		$Mode = 1;
+		Mode = 1
 	}
 }
-
-
-1; # <=============================================================

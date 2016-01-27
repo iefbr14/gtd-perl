@@ -7,6 +7,11 @@ import (
 	"strings"
 )
 
+import "gtd/option"
+
+var task_Debug = false
+var _ = option.DebugVar("task", &task_Debug)
+
 // Done is used to signal shutdown.  Channel will close at exit
 var Done chan *Task // task that need saving are written here
 var Max_todo int    // Last todo id (unique for all tables)
@@ -138,7 +143,8 @@ func All() Tasks {
 
 func New(tid int) *Task {
 	if tid > 0 && all_Tasks[tid] != nil {
-		log.Fatal("Task %d exists won't create it.", tid)
+		log.Printf("Task %d exists won't create it.", tid)
+		return nil
 	}
 	var t Task
 
@@ -272,8 +278,6 @@ func (t *Task) Get_KEY(key string) string {
 		return t.Created
 	case "modified":
 		return t.Modified
-	case "completed":
-		return t.Completed
 
 	case "doit":
 		return t.Doit
@@ -281,6 +285,8 @@ func (t *Task) Get_KEY(key string) string {
 		return t.Tickledate
 	case "due":
 		return t.Due
+	case "completed":
+		return t.Completed
 
 	case "recur":
 		return t.Recur
@@ -292,6 +298,9 @@ func (t *Task) Get_KEY(key string) string {
 	case "priority":
 		return fmt.Sprintf("%d", t.Priority)
 	case "state":
+		if t.State == 0 {
+			return "-"
+		}
 		return fmt.Sprintf("%c", t.State)
 	case "effort":
 		return fmt.Sprintf("%d", t.Effort)
@@ -299,6 +308,15 @@ func (t *Task) Get_KEY(key string) string {
 		return fmt.Sprintf("%d", t.Percent)
 	case "depends":
 		return t.Depends
+
+	case "parents", "Parents":
+		return t.Disp_parents()
+
+	case "children", "Children":
+		return t.Disp_children()
+
+	case "tags", "Tags":
+		return t.Disp_tags()
 
 	default:
 		panic("Unknown key: " + key)
@@ -357,7 +375,6 @@ func (t *Task) Set_mask(v string)         { t.Set_KEY("mask", v) }
 func (t *Task) Set_modified(v string)     { t.Set_KEY("modified", v) }
 func (t *Task) Set_nextaction(v string)   { t.Set_KEY("nextaction", v) }
 func (t *Task) Set_note(v string)         { t.Set_KEY("note", v) }
-func (t *Task) Set_priority(v string)     { t.Set_KEY("priority", v) }
 func (t *Task) Set_title(v string)        { t.Set_KEY("task", v) }
 func (t *Task) Set_tickledate(v string)   { t.Set_KEY("tickledate", v) }
 func (t *Task) Set_timeframe(v string)    { t.Set_KEY("timeframe", v) }
@@ -365,6 +382,11 @@ func (t *Task) Set_todo_only(v string)    { t.Set_KEY("_todo_only", v) }
 func (t *Task) Set_type(v string)         { t.Set_KEY("type", v) }
 func (t *Task) Set_resource(v string)     { t.Set_KEY("resource", v) }
 func (t *Task) Set_hint(v string)         { t.Set_KEY("_hint", v) }
+
+func (t *Task) Set_priority(v int) {
+	t.Priority = v
+	t.dirty["priority"] = true
+}
 
 /*?
 sub hint_resource    {return clean_set("resource", @_); }
@@ -449,47 +471,67 @@ func (t *Task) Set_KEY(key string, val string) {
 		panic("set_KEY(tid) not allowd")
 	case "type":
 		t.Type = val[0]
-	case "title":
-		t.Title = val
-	case "parents":
-		t.set_parent_ids(val)
 
-	case "modified":
-		t.Modified = val
-	case "created":
-		t.Created = val
-	case "completed":
-		t.Completed = val
-	case "category":
-		t.Category = val
-		panic(".... code category update")
-
-	case "issomeday":
-		t.IsSomeday, err = strconv.ParseBool(val)
-	case "context":
-		t.Context = val
-		panic(".... code context update")
-	case "timeframe":
-		t.Timeframe = val
-		panic(".... code timeframe update")
-	case "due":
-		t.Due = val
-	case "doit":
-		t.Doit = val
 	case "nextaction":
 		t.IsNextaction, err = strconv.ParseBool(val)
+	case "issomeday":
+		t.IsSomeday, err = strconv.ParseBool(val)
+
+	case "title":
+		t.Title = val
+	case "purpose", "description", "desc":
+		t.Description = val
+	case "outcome", "note", "result":
+		t.Note = val
+
+	case "category":
+		t.Category = val
+	case "context":
+		t.Context = val
+	case "timeframe":
+		t.Timeframe = val
+
+	case "created":
+		t.Created = val
+	case "modified":
+		t.Modified = val
+
+	case "doit":
+		t.Doit = val
 	case "tickledate":
 		t.Tickledate = val
+	case "due":
+		t.Due = val
+	case "completed":
+		t.Completed = val
 
-	case "Parents":
-		log.Printf(".... code set_KEY parents")
-		//? t.Set_parent_ids(val)
+	case "recur":
+		t.Recur = val
+	case "recurdesc":
+		t.Rdesc = val
+
+	case "resource":
+		t.Resource = val
+	case "priority":
+		t.Priority, err = strconv.Atoi(val)
+	case "state":
+		t.State = val[0]
+
+	case "effort":
+		t.Effort, err = strconv.Atoi(val)
+	case "percent":
+		t.Percent, err = strconv.Atoi(val)
+	case "depends":
+		t.Depends = val
+
+	case "parents", "Parents":
+		t.set_parent_ids(val)
 		return
-	case "Children":
+	case "children", "Children":
 		log.Printf(".... code set_KEY children")
 		//? t.Set_children_ids(val)
 		return
-	case "Tags":
+	case "tags", "Tags":
 		//##BUG### tag setting not done yet
 		log.Printf(".... code set_KEY tags")
 
@@ -504,9 +546,13 @@ func (t *Task) Set_KEY(key string, val string) {
 	t.set_dirty(key)
 }
 
-func (self *Task) Update() {
-	gtd_update(self)
-	self.dirty = nil
+func (t *Task) Update() {
+	if t.dirty == nil {
+		return
+	}
+
+	gtd_update(t)
+	t.dirty = nil
 }
 
 func clean_up_database() {
@@ -518,7 +564,7 @@ func clean_up_database() {
 			continue
 		}
 
-		fmt.Printf("Dirty: %s\n", tid)
+		fmt.Printf("Dirty: %d\n", tid)
 		ref.Update()
 	}
 }

@@ -356,8 +356,15 @@ func lc_title(t *Task) string {
 	}
 
 	// lower case it.
-	title := strings.ToLower(t.Title)
+	title := StripWiki(strings.ToLower(t.Title))
 
+	// fmt.Printf("lc_title: %s\n    =>  : %s\n", t.Title, title);
+
+	sort_title_map[tid] = title
+	return title
+}
+
+func StripWiki(title string) string {
 	// strip bracket in [[wiki-ref]] => wiki-ref
 	re := regexp.MustCompile(`\[\[`)
 	title = re.ReplaceAllLiteralString(title, "")
@@ -365,8 +372,5 @@ func lc_title(t *Task) string {
 	re = regexp.MustCompile(`\]\]`)
 	title = re.ReplaceAllLiteralString(title, "")
 
-	// fmt.Printf("lc_title: %s\n    =>  : %s\n", t.Title, title);
-
-	sort_title_map[tid] = title
 	return title
 }

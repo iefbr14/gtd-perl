@@ -56,7 +56,7 @@ func Report_focus(args []string) int {
 	} else {
 		list = meta.Pick(args)
 
-		if task.IsTask(args[0]) {
+		if task.MatchId(args[0]) {
 			t := list[0]
 
 			title := fmt.Sprintf("%d: %s", t.Tid, t.Title)
@@ -97,7 +97,7 @@ func check_task(t *task.Task) bool {
 
 			d_ref := meta.Find(dep)
 			if d_ref == nil {
-				fmt.Printf("Info: task %d depends on missing task %d\n", id, dep)
+				fmt.Printf("Info: task %d depends on missing task %s\n", id, dep)
 				continue
 			}
 

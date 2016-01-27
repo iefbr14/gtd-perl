@@ -46,7 +46,7 @@ func Report_orphans(args []string) {
 
 	display.Header("Orphans -- " + strings.Join(args, " "))
 
-	for _, ref := range meta.Sorted() {
+	for _, ref := range meta.Selected() {
 
 		// Values never have parents
 		if ref.Type == 'm' {

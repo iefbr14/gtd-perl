@@ -38,10 +38,9 @@ import "gtd/option"
 import "gtd/task"
 import "gtd/prompt"
 
-/*?
-my $First = ''
-my $Parent
-my $P_ref
+new_First = ''
+new_Parent
+new_P_ref
 
 //##BUG### ^c in new kills report rc
 
@@ -68,7 +67,6 @@ my $P_ref
 //-- create a new action or project
 func Report_new(args []string) {
 	meta.Filter("+all", "^tid", "none")
-	/*?
 
 		my($want) = ''
 
@@ -92,7 +90,7 @@ func Report_new(args []string) {
 				$want =~ tr{mvogpawi}
 					   {vogpaXXX}
 			//##BUG### in mapping sub-type prompmote actions to projects?
-			panic("Won"t create sub-actions of actions") if $want == "X'
+			panic("Won't create sub-actions of actions") if $want == 'X'
 			}
 		}
 
@@ -114,19 +112,17 @@ func Report_new(args []string) {
 		} else {
 			new_action($want)
 		}
-	?*/
 }
 
-func is_type_hier() { /*?
+func is_type_hier() {
 		my($type) = @_
 
 		return 1 if $type =~ /^[mvogp]/
 		return 0
-	?*/
 }
 
 // command line version, no prompting
-func new_item() { /*?
+func new_item() { 
 		my($type, $title) = @_
 
 		my($pri, $task, $category, $note, $desc, $line)
@@ -143,35 +139,34 @@ func new_item() { /*?
 
 		if ($pri > 5) {
 			$pri -= 5
-			$ref->set_isSomeday('y')
+			t.Set_isSomeday('y')
 		} else {
-			$ref->set_isSomeday('n')
+			t.Set_isSomeday('n')
 		}
 		if ($type == 'n') {
 			$type = 'a'
-			$ref->set_nextaction('y')
+			t.Set_nextaction('y')
 		} else {
-			$ref->set_nextaction('n')
+			t.Set_nextaction('n')
 		}
-		$ref->set_type($type)
+		t.Set_type($type)
 
-		$ref->set_priority($pri)
+		t.Set_priority($pri)
 
-		$ref->set_category($category)
-		$ref->set_title($task)
-		$ref->set_description($desc)
-		$ref->set_note($note)
+		t.Set_category($category)
+		t.Set_title($task)
+		t.Set_description($desc)
+		t.Set_note($note)
 
 
-		$ref->set_parent_ids($Parent) if $Parent
+		t.Set_parent_ids($Parent) if $Parent
 		$ref->insert()
 
-		print "Created: ", $ref->get_tid(), "\n"
-	?*/
+		print "Created: ", t.Tid(), "\n"
 }
 
 // detailed task
-func new_action() { /*?
+func new_action() { 
 		my($type) = @_
 
 		my($title, $pri, $category, $desc, $note, $line)
@@ -192,32 +187,31 @@ func new_action() { /*?
 
 		if ($type == 'n') {
 			$type = 'a'
-			$ref->set_nextaction('y')
+			t.Set_nextaction('y')
 		} else {
-			$ref->set_nextaction('n')
+			t.Set_nextaction('n')
 		}
-		$ref->set_type($type); # action/inbox/wait
+		t.Set_type($type); # action/inbox/wait
 
 		if ($pri > 5) {
 			$pri -= 5
-			$ref->set_isSomeday('y')
+			t.Set_isSomeday('y')
 		} else {
-			$ref->set_isSomeday('n')
+			t.Set_isSomeday('n')
 		}
-		$ref->set_priority($pri)
-		$ref->set_category($category)
-		$ref->set_title($title)
-		$ref->set_description($desc)
-		$ref->set_note($note)
+		t.Set_priority($pri)
+		t.Set_category($category)
+		t.Set_title($title)
+		t.Set_description($desc)
+		t.Set_note($note)
 
-		$ref->set_parent_ids($Parent) if $Parent
+		t.Set_parent_ids($Parent) if $Parent
 		$ref->insert()
 
-		print "Created: ", $ref->get_tid(), "\n"
-	?*/
+		print "Created: ", t.Tid(), "\n"
 }
 
-func new_project() { /*?
+func new_project() { 
 		my($type) = @_
 
 		my($pri, $category, $title, $desc, $note)
@@ -236,32 +230,30 @@ func new_project() { /*?
 		my($tid) = next_avail_task($type)
 		my $ref = Hier::Tasks->new($tid)
 
-		$ref->set_type($type)
-		$ref->set_nextaction('n')
-		$ref->set_isSomeday('n')
+		t.Set_type($type)
+		t.Set_nextaction('n')
+		t.Set_isSomeday('n')
 
-		$ref->set_priority($pri)
-		$ref->set_category($category)
-		$ref->set_title($title)
-		$ref->set_description($desc)
-		$ref->set_note($note)
+		t.Set_priority($pri)
+		t.Set_category($category)
+		t.Set_title($title)
+		t.Set_description($desc)
+		t.Set_note($note)
 
-		$ref->set_parent_ids($Parent) if $Parent
+		t.Set_parent_ids($Parent) if $Parent
 		$ref->insert()
 
-		print "Created: ", $ref->get_tid(), "\n"
-	?*/
+		print "Created: ", t.Tid(), "\n"
 }
 
-func first() { /*?
+func first() { 
 		my($text) = @_
 		$First = "$text\n" .
 		 "  enter ^D to stop, entry not added\n" .
 		 "  use '.' to stop adding notes.\n"
-	?*/
 }
 
-func prompt_desc() { /*?
+func prompt_desc() { 
 		my($prompt, $default) = @_
 
 		return $default if $default
@@ -276,10 +268,9 @@ func prompt_desc() { /*?
 		}
 		chomp $text
 		return $text
-	?*/
 }
 
-func input() { /*?
+func input() { 
 		my($prompt, $default) = @_
 
 		return $default if defined $default && $default != ''
@@ -296,5 +287,4 @@ func input() { /*?
 
 
 		return prompt($prompt, '#')
-	?*/
 }

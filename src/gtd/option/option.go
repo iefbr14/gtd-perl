@@ -226,6 +226,8 @@ func Filter(key, f, desc string) {
 //==============================================================================
 // Debug
 //------------------------------------------------------------------------------
+var option_Debug_name = map[string]*bool{}
+
 func Debug(what string) {
 	if option_Debug {
 		log.Printf("### Debug: %s\n", what)
@@ -244,6 +246,12 @@ func Debug(what string) {
 	//		print "Debug of $what on\n";
 	//		return;
 	//	}
+	if v, ok := option_Debug_name[what]; ok {
+		*v = true
+
+		fmt.Printf("Debug of %s on\n", what)
+		return
+	}
 
 	if what == "option" {
 		option_Debug = true
@@ -274,6 +282,12 @@ func Debug(what string) {
 	//			return;
 	//		}
 	//	}
+}
+
+func DebugVar(name string, notify *bool) *bool {
+	option_Debug_name[name] = notify
+
+	return notify
 }
 
 //==============================================================================

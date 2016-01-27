@@ -196,7 +196,7 @@ func renumb(kind byte) {
 		panic(fmt.Sprintf("***BUG*** renumb: Unknown type %c", kind))
 	}
 
-	fmt.Printf("Processing %c range %d %d\n", r.who, r.min, r.max)
+	fmt.Printf("Processing %s range %d %d\n", r.who, r.min, r.max)
 
 	test := r.test
 	inuse := map[int]bool{}
@@ -238,10 +238,10 @@ TASK:
 			min++
 			continue TASK
 		}
-		fmt.Printf("Out of slots for %d\n", r.who)
+		fmt.Printf("Out of slots for %s\n", r.who)
 		return
 	}
-	fmt.Printf("Completed %d\n", r.who)
+	fmt.Printf("Completed %s\n", r.who)
 }
 
 func renumber_a_task(task_id string) {
@@ -260,7 +260,7 @@ func renumber_a_task(task_id string) {
 	new := next_avail_task(kind)
 
 	if t.Tid < new {
-		fmt.Printf("First slot %d > task %d tid (skipped)\n", new, task_id)
+		fmt.Printf("First slot %d > task %s tid (skipped)\n", new, task_id)
 		return
 	}
 
@@ -279,7 +279,7 @@ func renumber_task_id(task_id, new_id string) {
 	if dependent(t) {
 		panic("Can't renumber task $task_id (has depedencies)\n")
 	}
-	fmt.Printf("%s => %d\n", task_id, new_id)
+	fmt.Printf("%s => %s\n", task_id, new_id)
 	new, _ := strconv.Atoi(new_id)
 	renumber_task(t.Tid, new)
 }

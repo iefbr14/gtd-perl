@@ -53,7 +53,7 @@ func Report_todo(args []string) int {
 	display.Header(title)
 
 	count := 0
-	for _, t := range meta.Sorted() {
+	for _, t := range meta.Selected() {
 		if !t.Is_task() { // only actions
 			continue
 		}

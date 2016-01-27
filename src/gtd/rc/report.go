@@ -9,10 +9,12 @@ func Load_report(report_name string) func([]string) int {
 
 		"addplans": report.Report_addplans,
 		// next to work on goes here.
+		"board":       report.Report_board,
 		"cct":         report.Report_cct,
 		"color":       report.Report_color,
 		"delete":      report.Report_delete,
 		"did":         report.Report_did,
+		"doit":        report.Report_doit,
 		"done":        report.Report_done,
 		"edit":        report.Report_edit,
 		"help":        report.Report_help,
@@ -20,7 +22,9 @@ func Load_report(report_name string) func([]string) int {
 		"list":        report.Report_list,
 		"hier":        report.Report_hier,
 		"noop":        report.Report_noop,
+		"print":       report.Report_print,
 		"renumber":    report.Report_renumber,
+		"status":      report.Report_status,
 		"task":        report.Report_task,
 		"taskjuggler": report.Report_taskjuggler,
 		"todo":        report.Report_todo,

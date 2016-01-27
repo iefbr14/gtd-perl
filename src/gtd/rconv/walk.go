@@ -116,31 +116,31 @@ func set() { /*?
 		my $val
 
 		if ($val = option("Category")) {
-			$ref->set_category($val)
+			t.Set_category($val)
 		}
 
 		if ($val = option("Context")) {
-			$ref->set_context($val)
+			t.Set_context($val)
 		}
 
 		if ($val = option("Timeframe")) {
-			$ref->set_timeframe($val)
+			t.Set_timeframe($val)
 		}
 
 		if ($val = option("Note")) {
-			$ref->set_note($val)
+			t.Set_note($val)
 		}
 
 		if ($val = option("Priority")) {
-			$ref->set_priority($val)
+			t.Set_priority($val)
 		}
 
 		if ($val = option("Complete")) {
-			$ref->set_priority($val)
+			t.Set_priority($val)
 		}
 
 		if ($val = option("Task")) {
-			$ref->set_description($val)
+			t.Set_description($val)
 		}
 
 		$ref->update()
@@ -150,7 +150,7 @@ func set() { /*?
 func walk_down(ref *Task, action func(*task.Task)) { /*?
 		display.Task(ref)
 
-		foreach my $cref (sort_tasks $ref->get_children()) {
+		for my $cref (sort_tasks t.Children()) {
 			down($cref, $action)
 		}
 
@@ -161,7 +161,7 @@ func walk_down(ref *Task, action func(*task.Task)) { /*?
 func walk_up(ref *Task, action func(*task.Task)) { /*?
 		my($ref, $action) = @_
 
-		foreach my $cref (sort_tasks $ref->get_parents()) {
+		for my $cref (sort_tasks t.Parents()) {
 			up($cref, $action)
 		}
 		display.Task(ref)
@@ -178,7 +178,7 @@ func walk_noop(ref *Task) { /*?
 func walk_someday(ref *Task) { /*?
 		my($ref) = @_
 
-		$ref->set_isSomeday('y')
+		t.Set_isSomeday('y')
 	?*/
 }
 

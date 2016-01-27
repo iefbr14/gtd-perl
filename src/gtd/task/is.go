@@ -20,8 +20,8 @@ func IsKeyValue(word string) (string, string) {
 	return "", ""
 }
 
-// task.IsTask check to see if it is a valid task
-func IsTask(word string) bool {
+// task.MatchId check to see if it is a valid task
+func MatchId(word string) bool {
 	return re_is_task.MatchString(word)
 }
 

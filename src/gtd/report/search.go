@@ -55,7 +55,7 @@ func Report_search(args []string) int {
 			continue
 		}
 
-		for _, ref := range meta.Sorted() {
+		for _, ref := range meta.Selected() {
 			if match_desc(ref, re) {
 				display.Task(ref, "")
 				found = 1

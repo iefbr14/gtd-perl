@@ -1,4 +1,4 @@
-default: build run
+default: build 
 
 build:
 	go build main.go
@@ -6,3 +6,7 @@ build:
 run:
 	./main search gtd-perl
 	./main hier
+
+board:
+	./main kanban
+	./main board 22

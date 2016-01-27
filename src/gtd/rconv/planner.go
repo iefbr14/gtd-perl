@@ -86,22 +86,22 @@ func planner_detail() { /*?
 		my($sid, $name, $cnt, $desc, $pri, $type, $note)
 		my($per, $work, $start, $end, $done, $due, $ws)
 
-		my($tid) = $ref->get_tid()
+		my($tid) = t.Tid()
 
 
 		my($indent) = indent($ref)
 		my($resource) = $ref->Project()
 		my($user) = $resource->resource()
 
-		$name = xml($ref->get_title() || '')
-		$pri  = $ref->get_priority()
-		$desc = xml(display.Summary($ref->get_description(), '', 1))
-		$note = xml(display.Summary($ref->get_note(), '', 1))
-		$type = $ref->get_type() || ''
-		$per  = $ref->get_completed() ? 100 : 0
-		$due  = $ref->get_due() || $Today
-		$done = pdate($ref->get_completed())
-		$start = pdate($ref->get_created())
+		$name = xml(t.Title() || '')
+		$pri  = t.Priority()
+		$desc = xml(display.Summary(t.Description(), '', 1))
+		$note = xml(display.Summary(t.Note(), '', 1))
+		$type = t.Type() || ''
+		$per  = t.Completed() ? 100 : 0
+		$due  = t.Due() || $Today
+		$done = pdate(t.Completed())
+		$start = pdate(t.Created())
 
 	//	if ($done && $done lt "2010-") {
 	//		$planner->{want}{$tid} = 0
@@ -134,7 +134,7 @@ func planner_detail() { /*?
 			$Pred{$user} = $tid
 
 
-			my($context) = $ref->get_context()
+			my($context) = t.Context()
 			my($cid)
 			if ($context) {
 				my($cref) = Hier::CCT->use("Context")
@@ -151,7 +151,7 @@ func planner_detail() { /*?
 func planner_end() { /*?
 		my($planner, $ref) = @_
 
-		my($tid) = $ref->get_tid()
+		my($tid) = t.Tid()
 		return if $planner->{want}{$tid} == 0
 
 		my($fd) = $planner->{fd}
@@ -241,7 +241,7 @@ func planner_resource() { /*?
 
 		print "  <resource-groups/>\n"
 		print "  <resources>\n"
-		foreach my $id (sort {$a <=> $b } keys %Alloc_resource) {
+		for my $id (sort {$a <=> $b } keys %Alloc_resource) {
 			$who = $Alloc_resource{$id}
 			print qq(    <resource id="$id" name="$who" short-name="" type="1" units="0" email="" note="" std-rate="0"/>\n)
 		}
@@ -253,7 +253,7 @@ func planner_allocations() { /*?
 		my($who)
 
 		print "  <allocations>\n"
-		foreach my $id (sort {$a <=> $b } keys %Alloc_tasks) {
+		for my $id (sort {$a <=> $b } keys %Alloc_tasks) {
 			$who = $Alloc_tasks{$id}
 			print qq(    <allocation task-id="$id" resource-id="$who" units="100"/>\n)
 		}

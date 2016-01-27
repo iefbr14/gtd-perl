@@ -111,23 +111,23 @@ func ged_detail() { /*?
 		my($birth, $moded)
 		my($tj_pri)
 
-		my($tid) = $ref->get_tid()
+		my($tid) = t.Tid()
 
 		my($resource) = $ref->Project()
 
-		$name = $ref->get_title() || ''
+		$name = t.Title() || ''
 		$tj_pri  = task_priority($ref)
-		$desc = display.Summary($ref->get_description(), '', 1)
-		$note = display.Summary($ref->get_note(), '', 1)
-		$type = $ref->get_type() || ''
-		$per  = $ref->get_completed() ? 100 : 0
-		$due  = pdate($ref->get_due())
-		$done = pdate($ref->get_completed())
-		$start = pdate($ref->get_tickledate())
-		$birth = pdate($ref->get_created())
-		$moded = pdate($ref->get_modified())
-		$doit = pdate($ref->get_doit())
-		$depends = $ref->get_depends()
+		$desc = display.Summary(t.Description(), '', 1)
+		$note = display.Summary(t.Note(), '', 1)
+		$type = t.Type() || ''
+		$per  = t.Completed() ? 100 : 0
+		$due  = pdate(t.Due())
+		$done = pdate(t.Completed())
+		$start = pdate(t.Tickledate())
+		$birth = pdate(t.Created())
+		$moded = pdate(t.Modified())
+		$doit = pdate(t.Doit())
+		$depends = t.Depends()
 
 		$user = $resource->resource()
 
@@ -146,7 +146,7 @@ func ged_detail() { /*?
 
 		$name =~ s=/=.=g
 
-		foreach my $depend (split(/[ ,]/, $depends)) {
+		for my $depend (split(/[ ,]/, $depends)) {
 			my($dep_path) = dep_path($depend)
 
 			unless ($dep_path) {
@@ -212,7 +212,7 @@ func ged_detail() { /*?
 		print {$fd} "    1 DATE", ged_date($done),"\n"
 	   }
 
-	    for my $pref ($ref->get_parents()) {
+	    for my $pref (t.Parents()) {
 		next if $pref->filtered()
 
 		print {$fd} "  1 FAMC ".id('F',$pref)."\n"
@@ -250,7 +250,7 @@ func end_detail() { /*?
 func get_active_children() { /*?
 		my($ref) = @_
 
-		my(@children) = $ref->get_children()
+		my(@children) = t.Children()
 		my(@active)
 
 		for my $child (@children) {
@@ -265,7 +265,7 @@ func get_active_children() { /*?
 func id() { /*?
 		my($t, $ref) = @_
 
-		my($tid) = $ref->get_tid()
+		my($tid) = t.Tid()
 
 		return sprintf "\@%s%04d\@", uc($t), $tid
 	?*/
@@ -288,20 +288,20 @@ func dep_path() { /*?
 		my($ref) = meta.Find($tid)
 		return unless $ref
 
-		my($task) = $ref->get_title($ref)
-		my($path) = $ref->get_type() . '_' . $tid
+		my($task) = t.Title($ref)
+		my($path) = t.Type() . '_' . $tid
 		my($pref)
 
-		if ($ref->get_completed()) {
+		if (t.Completed()) {
 			return "# depends on $tid ($task) is done"
 		}
 
 		for (;;) {
-			$ref = $ref->get_parent()
+			$ref = t.Parent()
 			last unless $ref
 
-			$path = $ref->get_type() . '_" . $ref->get_tid() . ".' . $path
-			last if $ref->get_type() == 'o'
+			$path = t.Type() . '_" . $ref->get_tid() . ".' . $path
+			last if t.Type() == 'o'
 		}
 		return $path . " # $task"
 	?*/
@@ -310,10 +310,10 @@ func dep_path() { /*?
 func supress() { /*?
 		my($planner, $ref) = @_
 
-		my($tid) = $ref->get_tid()
+		my($tid) = t.Tid()
 		$planner->{want}{$tid} = 0
 
-		foreach my $child ($ref->get_children()) {
+		for my $child (t.Children()) {
 			supress($planner, $child)
 		}
 	?*/
@@ -322,11 +322,11 @@ func supress() { /*?
 func old_task_priority() { /*?
 		my($ref) = @_
 
-		my($pri) = $ref->get_priority()
+		my($pri) = t.Priority()
 
 		return '' unless $pri
 
-		my($type) = $ref->get_type()
+		my($type) = t.Type()
 		return '" if $type == "o'
 		return '" if $type == "g'
 		return '" if $type == "p'
@@ -336,15 +336,15 @@ func old_task_priority() { /*?
 		my($prival) = ''
 
 		for (;;) {
-			$pri = $ref->get_priority()
+			$pri = t.Priority()
 			$pri += 4 if $ref->is_someday()
 			$prival = $pri . $prival
 
-			last if $ref->get_type() == 'g'
+			last if t.Type() == 'g'
 
-			$ref = $ref->get_parent()
+			$ref = t.Parent()
 			last unless $ref
-			last if $ref->get_type() == 'g'
+			last if t.Type() == 'g'
 		}
 
 		return '' if $prival =~ /^4+$/;	 # all defaults
@@ -363,13 +363,13 @@ func old_task_priority() { /*?
 func task_priority() { /*?
 		my($ref) = @_
 
-		my($pri) = $ref->get_priority()
+		my($pri) = t.Priority()
 		$pri += 4 if $ref->is_someday()
 
 		return '' unless $pri
 		return '' if $pri == 4
 
-		my($type) = $ref->get_type()
+		my($type) = t.Type()
 	//	return '" if $type == "o'
 	//	return '" if $type == "g'
 	//	return '" if $type == "p'
