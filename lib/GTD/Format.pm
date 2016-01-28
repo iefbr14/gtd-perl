@@ -111,19 +111,17 @@ sub display_mode {
 
 		'print'    => \&disp_print,
 
-		'dump'     => \&disp_ordered_dump,
-		'odump'    => \&disp_ordered_dump,
-
-		'udump'    => \&disp_unordered_dump,
+		'dump'     => \&disp_dump,
+		'raw'      => \&disp_raw,
 
 		'debug'    => \&disp_debug,
 	);
 
 	my(%report) = (
 		'none'     => 'none',
+		'tid'      => 'none',
 		'list'     => 'none',	# same as title but no headers
 
-		'tid'      => 'report',
 		'title'    => 'report',
 		'item'     => 'report',
 		'simple'   => 'report',
@@ -423,7 +421,7 @@ sub disp_print {
 	nl($fd);
 }
 
-sub disp_ordered_dump {
+sub disp_dump {
 	my($fd, $ref) = @_;
 
 	my $val;
@@ -453,7 +451,7 @@ sub disp_ordered_dump {
 	nl($fd);
 }
 
-sub disp_unordered_dump {
+sub disp_raw {
 	my($fd, $ref) = @_;
 
 	my $val;
@@ -478,47 +476,6 @@ sub disp_unordered_dump {
 	nl($fd);
 }
 
-my($Hier_stack) = { 'o' => 0, 'g' => 0, 'p' => 0 };
-
-sub display_hier {
-	my($ref, $note) = @_;
-
-	my($cols) = columns() - 2;
-
-	my $tid = $ref->get_tid();
-	my $type = $ref->get_type();
-	my $title = $ref->get_title();
-
-	if ($type eq 'o') {
-		if ($Hier_stack->{o}) {
-			print '#'.("=" x $cols), "\n";
-		}
-		$Hier_stack = { 'o' => $tid, 'g' => 0, 'p' => 0 };
-		$note ||= '';
-		print " [*** Role $tid: $title ***] $note\n";
-		return;
-	}
-
-	if ($type eq 'g') {
-		if ($Hier_stack->{g} ne $tid) {
-			display_hier($ref->get_parent());
-			if ($Hier_stack->{g}) {
-				print '#', "-" x $cols, "\n";
-			}
-			$Hier_stack->{g} = $tid;
-			$Hier_stack->{p} = 0;
-		}
-	}
-
-	if ($type eq 'p') {
-		if ($Hier_stack->{p} ne $tid) {
-			display_hier($ref->get_parent());
-			$Hier_stack->{p} = $tid;
-		}
-	}
-
-	display_task($ref, $note);
-}
 
 my($Prev_goal) = 0;
 my($Prev_role) = 0;
