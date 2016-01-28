@@ -19,6 +19,7 @@ func Load_report(report_name string) func([]string) int {
 		"edit":        report.Report_edit,
 		"help":        report.Report_help,
 		"focus":       report.Report_focus,
+		"kanban":      report.Report_kanban,
 		"list":        report.Report_list,
 		"hier":        report.Report_hier,
 		"noop":        report.Report_noop,

@@ -366,7 +366,6 @@ func (t *Task) Set_depends(v string)      { t.Set_KEY("depends", v) }
 func (t *Task) Set_description(v string)  { t.Set_KEY("description", v) }
 func (t *Task) Set_doit(v string)         { t.Set_KEY("doit", v) }
 func (t *Task) Set_due(v string)          { t.Set_KEY("due", v) }
-func (t *Task) Set_state(v string)        { t.Set_KEY("state", v) }
 func (t *Task) Set_gtd_modified(v string) { t.Set_KEY("gtd_modified", v) }
 func (t *Task) Set_isSomeday(v string)    { t.Set_KEY("isSomeday", v) }
 func (t *Task) Set_later(v string)        { t.Set_KEY("later", v) }
@@ -382,6 +381,11 @@ func (t *Task) Set_todo_only(v string)    { t.Set_KEY("_todo_only", v) }
 func (t *Task) Set_type(v string)         { t.Set_KEY("type", v) }
 func (t *Task) Set_resource(v string)     { t.Set_KEY("resource", v) }
 func (t *Task) Set_hint(v string)         { t.Set_KEY("_hint", v) }
+
+func (t *Task) Set_state(v byte) {
+	t.State = v
+	t.dirty["state"] = true
+}
 
 func (t *Task) Set_priority(v int) {
 	t.Priority = v
