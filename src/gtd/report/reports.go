@@ -37,6 +37,40 @@ import "fmt"
 
 import "gtd/display"
 
+var Report_cmd_map = map[string]func([]string) int{
+	// place holders
+	"rc":      Report_noop,
+	"gui":     Report_noop,
+	"web":     Report_noop,
+	"reports": Report_noop,
+
+	"addplans":    Report_addplans,
+	"board":       Report_board,
+	"cct":         Report_cct,
+	"color":       Report_color,
+	"delete":      Report_delete,
+	"did":         Report_did,
+	"doit":        Report_doit,
+	"done":        Report_done,
+	"edit":        Report_edit,
+	"focus":       Report_focus,
+	"help":        Report_help,
+	"hier":        Report_hier,
+	"kanban":      Report_kanban,
+	"list":        Report_list,
+	"new":         Report_new,
+	"noop":        Report_noop,
+	"orphans":     Report_orphans,
+	"print":       Report_print,
+	"renumber":    Report_renumber,
+	"search":      Report_search,
+	"status":      Report_status,
+	"taskjuggler": Report_taskjuggler,
+	"task":        Report_task,
+	"todo":        Report_todo,
+	"walk":        Report_walk,
+}
+
 type Reports struct {
 	name string
 	desc string
@@ -77,11 +111,11 @@ var report_list = []Reports{
 	},
 	{
 		"color",
-		"Detailed list of projects with (next) actions",
+		"Test CLI color palette",
 	},
 	{
 		"delete",
-		"Delete listed actions/projects (will orphine items)",
+		"Delete listed actions/projects (will orphan items)",
 	},
 	{
 		"did",
@@ -254,7 +288,11 @@ func Report_reports(args []string) int {
 	display.Header("Reports")
 
 	for _, v := range report_list {
-		display.Text(fmt.Sprintf("%-12s -- %s\n", v.name, v.desc))
+		if _, ok := Report_cmd_map[v.name]; ok {
+			display.Text(fmt.Sprintf("%-12s -- %s\n", v.name, v.desc))
+		} else {
+			display.Text(fmt.Sprintf("%-12s !! %s (:-)\n", v.name, v.desc))
+		}
 	}
 	return 0
 }

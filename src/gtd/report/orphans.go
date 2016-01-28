@@ -39,12 +39,14 @@ import "gtd/meta"
 import "gtd/display"
 
 //-- list all items without a parent
-func Report_orphans(args []string) {
+func Report_orphans(args []string) int {
 	meta.Filter("+any", "^title", "todo")
 
 	_ = meta.Pick(args)
 
 	display.Header("Orphans -- " + strings.Join(args, " "))
+
+	count := 0
 
 	for _, ref := range meta.Selected() {
 
@@ -59,5 +61,10 @@ func Report_orphans(args []string) {
 		}
 
 		display.Task(ref, "")
+		count++
 	}
+	if count > 0 {
+		return 1
+	}
+	return 0
 }

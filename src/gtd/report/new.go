@@ -118,9 +118,9 @@ func Report_new(args []string) int {
 	}
 
 	if want == 'a' || want == 'w' {
-		new_action(want)
+		New_action(want, "")
 	} else {
-		new_project(want)
+		New_project(want, "")
 	}
 	return 0
 }
@@ -172,13 +172,13 @@ func new_item(kind byte, title_parm string) {
 }
 
 // detailed task
-func new_action(kind byte) {
+func New_action(kind byte, title_dflt string) {
 
 	type_name := task.Type_name(kind)
 
 	first("Enter " + type_name + ": Task, Desc, Category, Notes...")
 
-	title := input("Title", option.Get("Title", ""))
+	title := input("Title", option.Get("Title", title_dflt))
 	//pri := input("Priority", option.Get("Priority", "4"))
 	pri := 4
 	desc := prompt_desc("Desc", "")
@@ -217,14 +217,14 @@ func new_action(kind byte) {
 	fmt.Printf("Created: %d\n", t.Tid)
 }
 
-func new_project(kind byte) {
+func New_project(kind byte, title_dflt string) {
 
 	kind_name := task.Type_name(kind)
 
 	first("Enter " + kind_name + ": Category, Title, Description, Outcome...")
 
 	category := input("Category", option.Get("Category", ""))
-	title := input("Title", option.Get("Title", ""))
+	title := input("Title", option.Get("Title", title_dflt))
 	//pri := option.Get("Priority", "4")
 	pri := 4
 

@@ -133,8 +133,7 @@ func Mode(mode string) {
 		"print": disp_print,
 
 		"dump": disp_dump,
-
-		"raw": disp_raw,
+		"raw":  disp_raw,
 
 		"debug": disp_debug,
 	}
@@ -142,8 +141,8 @@ func Mode(mode string) {
 	header_alias_map := map[string]string{
 		"none": "none",
 		"list": "none", // same as title but no headers
+		"tid":  "none",
 
-		"tid":     "report",
 		"title":   "report",
 		"item":    "report",
 		"simple":  "report",
@@ -241,9 +240,11 @@ func Summary_children(t *task.Task) (int, string) {
 
 //==============================================================================
 
+// header_none displays no headers
 func header_none(fd io.Writer, title string) {
 }
 
+// header_report displays a simple banner report
 func header_report(fd io.Writer, title string) {
 	cols := Columns() - 2
 
@@ -255,11 +256,13 @@ func header_report(fd io.Writer, title string) {
 	color.Nl(fd)
 }
 
+// header_wiki displays the title as a wiki title
 func header_wiki(fd io.Writer, title string) {
 	fmt.Fprintf(fd, "== %s ==", title)
 	color.Nl(fd)
 }
 
+// header_html displays the title in html format
 func header_html(fd io.Writer, title string) {
 	fmt.Fprintf(fd, "<h1>%s</h1>", title)
 	color.Nl(fd)
@@ -449,72 +452,7 @@ func disp_raw(fd io.Writer, t *task.Task, note string) {
 	}
 
 	fmt.Fprintf(fd, "%#v\n", t)
-	/*?
-		for key, val := t.Fields {
-			if key[:1] = "_" {
-				continue
-			}
-
-			if (defined $val) {
-				chomp $val
-				$val =~ s/\r//gm;	// all returns
-				$val =~ s/^/\t\t/gm;	// tab at start of line(s)
-				$val =~ s/^\t// if length($key) >= 7
-				print $fd "$key:$val\n"
-			} else {
-				print $fd "#$key:\n"
-			}
-		}
-		print $fd "Tags:\t", $t->disp_tags(),"\n"
-		print $fd "Parents:\t", $t->disp_parents(),"\n"
-		print $fd "Children:\t", $t->disp_children(),"\n"
-		print $fd "=-=\n"
-	?*/
 	color.Nl(fd)
-}
-
-//? my($Hier_stack) = { "o" => 0, "g" => 0, "p" => 0 }
-
-func display_hier(t *task.Task, note string) {
-	panic(".... code display_hier")
-	/*?
-
-		my($cols) = columns() - 2
-
-		my $tid = $t->get_tid()
-		my $kind= $ref->get_type()
-		my $title = $ref->get_title()
-
-		if ($kindeq "o") {
-			if ($Hier_stack->{o}) {
-				print "#".("=" x $cols), "\n"
-			}
-			$Hier_stack = { "o" => $tid, "g" => 0, "p" => 0 }
-			$note ||= ""
-			print " [*** Role $tid: $title ***] $note\n"
-			return
-		}
-
-		if ($kindeq "g") {
-			if ($Hier_stack->{g} ne $tid) {
-				display_hier($ref->get_parent())
-				if ($Hier_stack->{g}) {
-					print "#", "-" x $cols, "\n"
-				}
-				$Hier_stack->{g} = $tid
-				$Hier_stack->{p} = 0
-			}
-		}
-
-		if ($kindeq "p") {
-			if ($Hier_stack->{p} ne $tid) {
-				display_hier($ref->get_parent())
-				$Hier_stack->{p} = $tid
-			}
-		}
-
-		display_task($ref, $note)
-	?*/
 }
 
 var Prev_goal int

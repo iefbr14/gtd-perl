@@ -5,6 +5,8 @@ import "fmt"
 import "os"
 import "path"
 
+//import "strings"
+
 import "gtd/rc"
 import "gtd/option"
 import "gtd/task"
@@ -130,11 +132,12 @@ func main() {
 	cmd := path.Base(os.Args[0])
 
 	if new {
+		//title := strings.Join(args, " ")
 		if cmd == "hier" {
-			// os.Exit(report.New_project(args))
+			//os.Exit(report.New_project('p', title))
 			//? report("new", append("project", args...))
 		} else {
-			// os.Exit(report.New_action(args))
+			//os.Exit(report.New_action('a', title))
 			//? report("new", append("action", args...))
 		}
 	}

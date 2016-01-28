@@ -48,7 +48,7 @@ BEGIN {
 
 use GTD::Meta;
 
-sub Report_delete {	#-- Delete listed actions/projects (will orphine items)
+sub Report_delete {	#-- Delete listed actions/projects (will orphan items)
 	my($ref);
 
 	for my $tid (@_) {

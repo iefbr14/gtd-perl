@@ -664,7 +664,7 @@ func Do_report(cmd string, args []string) {
 
 	//	Cmds->{report} = \&"Report_report"
 
-	Run_report(cmd, args)
+	rfunc(args)
 
 	display.Mode(option.Get("Mode", "task"))
 	//Hier::Tasks::reload_if_needed_database()

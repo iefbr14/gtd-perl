@@ -51,7 +51,7 @@ use GTD::Color;
 
 our $Debug = 1;
 
-sub Report_color {	#-- Detailed list of projects with (next) actions
+sub Report_color {	#-- Test CLI color palette
 
 	my(@bg) = qw(WHITE BK  RED  GREEN YELLOW  BLUE PURPLE  CYAN );
 	my(@fg) = qw(
