@@ -529,7 +529,7 @@ func (t *Task) Set_KEY(key string, val string) {
 		t.Depends = val
 
 	case "parents", "Parents":
-		t.set_parent_ids(val)
+		t.Set_parent_ids(val)
 		return
 	case "children", "Children":
 		log.Printf(".... code set_KEY children")

@@ -49,6 +49,13 @@ func (parent *Task) Orphin_child(child *Task) {
 	child.set_dirty("parents")
 }
 
+func (child *Task) Add_parent(parent *Task) {
+	parent.Children = rel_add(parent.Children, child)
+	child.Parents = rel_add(child.Parents, parent)
+
+	parent.set_dirty("parents")
+}
+
 //------------------------------------------------------------------------------
 // access routines but they don't change anything.
 
@@ -153,7 +160,7 @@ sub has_parent_id {
 //------------------------------------------------------------------------------
 // set_parent_ids is used by dset in Tasks.pm
 //
-func (self *Task) set_parent_ids(val string) {
+func (self *Task) Set_parent_ids(val string) {
 	pids := strings.Split(val, ",")
 
 	var pid_map map[int]*Task

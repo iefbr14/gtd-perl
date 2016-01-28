@@ -1,4 +1,4 @@
-package gtd
+package prompt
 
 import "fmt"
 
@@ -65,7 +65,8 @@ func init_mode() {
 	if Mode == 0 { //if (-t STDIN)
 		Mode = 2
 		//Term = Term::ReadLine->new("gtd");
-		Term, err := readline.New("> ")
+		var err error
+		Term, err = readline.New("> ")
 		if err != nil {
 			panic(err)
 		}
