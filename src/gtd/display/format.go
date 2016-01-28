@@ -642,36 +642,36 @@ func disp_wiki(fd io.Writer, t *task.Task, note string) {
 
 	switch kind {
 	case 'o', 'v', 'm':
-		fmt.Print(fd, "== ")
+		fmt.Fprint(fd, "== ")
 	case 'g':
-		fmt.Print(fd, "=== ")
+		fmt.Fprint(fd, "=== ")
 	case 'a':
-		fmt.Print(fd, "**")
+		fmt.Fprint(fd, "**")
 	case 'w':
-		fmt.Print(fd, "** (wait)")
+		fmt.Fprint(fd, "** (wait)")
 	case 'p':
-		fmt.Print(fd, "*")
+		fmt.Fprint(fd, "*")
 	}
 
 	if done {
-		fmt.Print(fd, "<del>")
+		fmt.Fprint(fd, "<del>")
 	}
 
-	fmt.Fprintf(fd, "{{%d|%s|%s}}", kind_name, t.Tid, t.Title)
+	fmt.Fprintf(fd, "{{%s|%d|%s}}", kind_name, t.Tid, t.Title)
 
 	if done {
-		fmt.Print(fd, "</del>")
+		fmt.Fprint(fd, "</del>")
 	}
 
-	if t.Note != "" {
-		fmt.Print(fd, " -- %s", note)
+	if note != "" {
+		fmt.Fprintf(fd, " -- %s", note)
 	}
 
 	switch kind {
 	case 'g':
-		fmt.Print(fd, " ===")
+		fmt.Fprint(fd, " ===")
 	case 'o', 'v', 'm':
-		fmt.Print(fd, " ==")
+		fmt.Fprint(fd, " ==")
 
 	}
 	color.Nl(fd)

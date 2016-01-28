@@ -25,11 +25,13 @@ func Load_report(report_name string) func([]string) int {
 		"noop":        report.Report_noop,
 		"print":       report.Report_print,
 		"renumber":    report.Report_renumber,
+		"reports":     report.Report_reports,
 		"status":      report.Report_status,
 		"task":        report.Report_task,
 		"taskjuggler": report.Report_taskjuggler,
 		"todo":        report.Report_todo,
 		"search":      report.Report_search,
+		"walk":        report.Report_walk,
 	}
 
 	// load_report -- return 1 if it compile correctly
