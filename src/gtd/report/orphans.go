@@ -50,8 +50,8 @@ func Report_orphans(args []string) int {
 
 	for _, ref := range meta.Selected() {
 
-		// Values never have parents
-		if ref.Type == 'm' {
+		// Values, Lists, and Checklists  never have parents
+		if ref.Type == 'm' || ref.Type == 'L' || ref.Type == 'C' {
 			continue
 		}
 
