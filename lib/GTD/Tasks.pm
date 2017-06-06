@@ -142,20 +142,19 @@ sub delete {
 	delete $Tasks{$tid};
 
 	# remove my children from self
-	for my $child ($self->get_parents) {
+	for my $child ($self->get_children()) {
 		$self->orphin_child($child);
 	}
 	$self->update();
 
 	# remove self from my parents
-	for my $parent ($self->get_parents) {
+	for my $parent ($self->get_parents()) {
 		$parent->orphin_child($self);
 		$parent->update();
 	}
 
 
 	# commit suicide
-	GTD::Db::sac_delete($tid);
 	GTD::Db::gtd_delete($tid);	# remove from database
 
 	###BUG### need to reflect back database changed.

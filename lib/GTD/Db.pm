@@ -23,7 +23,7 @@ use Data::Dumper;
 
 use Time::HiRes qw(time);
 
-use Carp;
+use Carp qw(cluck);
 
 use GTD::CCT;
 use GTD::Tasks;
@@ -647,19 +647,17 @@ sub gset_update {
 sub gtd_delete {
 	my($tid) = @_;
 
-	gset_delete($tid, 'itemstatus');
-	gset_delete($tid, 'items');
-	gset_delete($tid, 'lookup');
-	gset_delete($tid, 'todo');
-
-	sac_delete($tid);
+	gset_delete($tid, "itemId", 'itemstatus');
+	gset_delete($tid, "itemId", 'items');
+	gset_delete($tid, "itemId", 'lookup');
+	gset_delete($tid, "todo_id", 'todo');
 }
 
 sub gset_delete {
-	my($tid, $table) = @_;
+	my($tid, $field,  $table) = @_;
 
 	$table = G_table($table);
-	my($sql) = "delete from $table where itemId = ?";
+	my($sql) = "delete from $table where $field = ?";
 	G_sql($sql, $tid);
 }
 
@@ -693,13 +691,6 @@ sub sac_create {
 		G_sql($sql, $ref->{$fld}, $tid);
 	}
 }
-
-sub sac_delete {
-	my($tid) = @_;
-
-	G_sql("delete from gtd_todo where todo_id = ?", $tid);
-}
-
 
 ##############################################################################
 ##############################################################################
@@ -798,7 +789,7 @@ sub G_sql {
 	my($rv);
 	eval {
 		$rv = $GTD->do($sql, undef, @_);
-		warn "-> $rv\n" if $Debug;
+		cluck "-> $rv\n" if $Debug;
 	}; if ($@ or !defined $rv) {
 		print "Failed sql: $sql ($rv)\n";
 		print "..........: $@";

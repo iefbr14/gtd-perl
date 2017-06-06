@@ -212,7 +212,7 @@ func (t *Task) Delete() {
 	delete(all_Tasks, tid)
 
 	// remove my children from self
-	for _, child := range t.Parents {
+	for _, child := range t.Children {
 		t.Orphin_child(child)
 	}
 
