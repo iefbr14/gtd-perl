@@ -32,7 +32,7 @@ my $Default_level = 'm';
 sub filtered_reason {
 	my($ref) = @_;
 
-	return $ref->{_filtered} || '-filtered';
+	return $ref->{_filtered} || '';
 }
 
 sub filtered {

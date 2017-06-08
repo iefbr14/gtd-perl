@@ -32,18 +32,15 @@ var Filters []FILTER_t // types of actions to include
 
 var Default_level byte = 'm'
 
-func filtered_reason(t *Task) string {
-	if t.filtered == "" {
-		return "-filtered"
-	}
+func Filtered_reason(t *Task) string {
 	return t.filtered
 }
 
 func (t *Task) Filtered() bool {
-	if t.filtered == "" || t.filtered[:0] == "-" {
-		return false
+	if t.filtered[:0] == "-" {
+		return true
 	}
-	return true
+	return false
 }
 
 func tasks_matching_type(kind byte) Tasks {
