@@ -14,7 +14,6 @@ import "gtd/option"
 //?		&report_header &summary_children &format_summary
 //?		&display_mode &display_fd_task &display_task
 //?		&display_rgpa &display_hier
-//?		&disp_ordered_dump
 
 var format_Header func(io.Writer, string) = header_none
 var format_Display func(io.Writer, *task.Task, string) = disp_simple

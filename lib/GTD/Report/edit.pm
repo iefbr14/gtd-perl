@@ -66,7 +66,7 @@ sub Report_edit {	#-- Edit listed actions/projects
 	umask(0077);
 	open(my $ofd, '>', "/tmp/todo.$$") or die;
 	for my $ref (@list) {
-		disp_ordered_dump($ofd, $ref);
+		disp_dump($ofd, $ref);
 	}
 	close($ofd);
    
@@ -117,7 +117,7 @@ sub save {
 	for my $key (sort keys %$changed) {
 		$val = $ref->get_KEY($key);
 
-		# Specal values from disp_ordered_dump
+		# Specal values from disp_dump
 		$val = $ref->disp_tags() if $key eq 'Tags';
 		$val = $ref->disp_parents() if $key eq 'Parents';
 		$val = $ref->disp_children() if $key eq 'Children';

@@ -14,7 +14,7 @@ BEGIN {
 		&report_header &summary_children &display_summary
 		&display_mode &display_fd_task &display_task
 		&display_rgpa &display_hier
-		&disp_ordered_dump
+		&disp_dump
 	);
 }
 
@@ -535,6 +535,7 @@ sub disp_wikiwalk {
 	my($fd, $ref, $note) = @_;
 
 	my(%type) = (
+		'i' => 'inbox',
 		'a' => 'action',
 		'p' => 'project',
 		'g' => 'goal',
@@ -569,6 +570,7 @@ sub disp_wiki {
 	my($fd, $ref, $note) = @_;
 
 	my(%type) = (
+		'i' => 'inbox',
 		'a' => 'action',
 		'p' => 'project',
 		'g' => 'goal',
