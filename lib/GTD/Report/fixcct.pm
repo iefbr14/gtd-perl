@@ -45,7 +45,12 @@ BEGIN {
 	@EXPORT      = qw(&Report_fixcct);
 }
 
+use GTD::Util;
 use GTD::Meta;
+use GTD::Option;
+use GTD::Sort;
+use GTD::Format;
+
 
 sub Report_fixcct {	#-- Fix Categories/Contexts/Time Frames
 	my($new_id, $id);
