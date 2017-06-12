@@ -9,12 +9,12 @@ User/
 Programmer/
 
 src/vendor
-src/main
 
 pkg/
-bin/gtd-go
 
-Makefile
+./Makefile
 blib
 MYMETA.json
 MYMETA.yml
+
+gtd-go

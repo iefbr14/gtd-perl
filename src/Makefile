@@ -1,12 +1,21 @@
 default: build 
 
 build:
-	go build main.go
+	go build -o gtd-go gtd.go
 
 run:
-	./main search gtd-perl
-	./main hier
+	./gtd-go search gtd-perl
+	./gtd-go hier
+
+install:
+	cp gtd-go ../bin/gtd-go
+
+#------------------------------------------------------------------------------
+test:
+	./gtd-go hier
+	./gtd-go todo
 
 board:
-	./main kanban
-	./main board 22
+	./gtd-go kanban
+	./gtd-go board 22
+

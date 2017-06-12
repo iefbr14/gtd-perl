@@ -106,37 +106,24 @@ sub run {
 	add_filter('+future') if $Opt{a};
 	add_filter('+done')   if $Opt{A};
 
-	#my $Done     = $Opt{d} || 0;
-	#my $Delete   = $Opt{D} || 0;
-
-
 	DB_init($Zname);
 
-	if ($Opt{n}) {
-		if ($0 =~ /hier$/) {
-			report('new','project', @ARGV);
+	my($cmd) = $0;
+	$cmd =~ s=.*/==;	# strip any path
+
+	# the test here should be a "valid" command
+	if ($cmd =~ /^g/) {
+		# cmd is gtd or g, so run it's args
+		if (@ARGV == 0) {
+			report('rc');
 		} else {
-			report('new','action', @ARGV);
+			report(@ARGV);
 		}
+	} else {
+		# cmd was symlinked so run by name
+		report($cmd, @ARGV);
 	}
 
-	if ($0 =~ /doit$/) {
-		report('doit', @ARGV);
-		exit 0;
-	}
-
-	if ($0 =~ /hier$/) {
-		report('hier', @ARGV);
-		exit 0;
-	}
-
-
-	if (@ARGV && $ARGV[0] =~ /^\w/) {
-		report(@ARGV);
-		exit 0;
-	}
-
-	report('todo', @ARGV);
 	exit 0;
 }
 

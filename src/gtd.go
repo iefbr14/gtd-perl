@@ -87,9 +87,6 @@ func main() {
 
 	// db_load_defaults($Zname);
 
-	var new bool
-	flag.BoolVar(&new, "n", false, "New item")
-
 	option.Flag("MetaFix", "u")
 
 	option.Flag("Title", "s")
@@ -131,39 +128,19 @@ func main() {
 	args := flag.Args()
 	cmd := path.Base(os.Args[0])
 
-	if new {
-		//title := strings.Join(args, " ")
-		if cmd == "hier" {
-			//os.Exit(report.New_project('p', title))
-			//? report("new", append("project", args...))
+	// the test here should be a "valid" command
+	if cmd[0] == 'g' {
+		// cmd is gtd or g, so run it's args
+		if len(args) == 0 {
+			report("rc", args)
 		} else {
-			//os.Exit(report.New_action('a', title))
-			//? report("new", append("action", args...))
+			report(args[0], args[1:])
 		}
+	} else {
+		// cmd was symlinked so run by name
+		report(cmd, args)
 	}
 
-	if cmd == "doit" {
-		report("doit", args)
-		return
-	}
-
-	if cmd == "hier" {
-		//? report.Report_hier(args)
-		report("hier", args)
-		return
-	}
-
-	if len(args) > 0 && task.IsWord(args[0]) {
-		report(args[0], args[1:])
-		return
-	}
-
-	if len(args) > 0 {
-		report("gtd", args)
-		return
-	}
-
-	report("rc", []string{})
 	return
 }
 
