@@ -62,6 +62,7 @@ var Report_cmd_map = map[string]func([]string) int{
 	"noop":        Report_noop,
 	"orphans":     Report_orphans,
 	"print":       Report_print,
+	"projects":    Report_projects,
 	"renumber":    Report_renumber,
 	"search":      Report_search,
 	"status":      Report_status,
