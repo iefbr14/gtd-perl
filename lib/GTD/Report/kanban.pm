@@ -42,7 +42,7 @@ BEGIN {
 	# set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
-	@EXPORT      = qw( &Report_kanban );
+	@EXPORT      = qw( &Report_kanban kanban_Bump kanban_state );
 }
 
 use GTD::Util;
@@ -58,13 +58,13 @@ sub Report_kanban {	#-- report kanban of projects/actions
 
 	my(@args);
 	for my $arg (meta_argv(@_)) {
-		if ($arg =~ s/^\.//) {
-			kanban_bump($arg);
+		if ($arg =~ s/^\.\s*//) {
+			kanban_Bump($arg);
 			next;
 		}
 
 		if ($arg =~ m/^(\d+)=(.)$/) {
-			kanban_state($1, $2);
+			kanban_State($1, $2);
 			next;
 		}
 		push(@args, $arg);

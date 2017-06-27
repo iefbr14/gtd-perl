@@ -57,7 +57,8 @@ my(@Urls);
 my($Host);
 
 sub Report_url {	#-- open browser window for wiki and gtd
-	meta_filter('+g:live', '^title', 'task');	# Tasks filtered by goals
+	# Tasks filtered by goals
+	meta_filter('+g:live', '^title', 'task');
 
 	my($title) = join(' ', @_);
 
@@ -136,7 +137,7 @@ sub find_url {
 		for my $id (@gtds) {
 			next if $Seen{$id}++;
 
-			push(@Urls, "$base/todo/r617/itemReport.php?itemId=$id");
+			push(@Urls, "$base/todo/php/itemReport.php?itemId=$id");
 		}
 	}
 

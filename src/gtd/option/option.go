@@ -103,7 +103,7 @@ func Get(key string, deflt string) string {
 	if deflt != "" {
 		options[key] = deflt
 	}
-	return deflt
+	return options[key]
 }
 
 func Bool(key string, deflt bool) bool {

@@ -72,8 +72,8 @@ sub Report_status {	#-- report status of projects/actions
 
 	my $hier = count_hier();
 	my $proj = count_proj();
-	my $task = count_task();
-	my $next = count_next();
+
+	my ($task,$next) = count_task();
 
 #	print "Options:\n";
 #	for my $option (qw(pri debug db title report)) {
@@ -171,62 +171,26 @@ sub count_liveproj {
 }
 
 sub count_task {
-	my($count) = 0;
-	my($time) = 0;
+	my($count_next) = 0;
+	my($count_action) = 0;
 
 	# find all records.
 	for my $ref (meta_selected()) {
 		next unless $ref->is_task();
 
-		next if $ref->filtered();
-
 		next unless project_live($ref);
-
-		++$count;
 
 		my($resource) = $ref->Project();
-		$Hours_task += $resource->hours($ref);
+
+		if ($ref->is_nextaction()) {
+			$count_next++;
+			$Hours_next += $resource->hours($ref);
+		} else {
+			++$count_action;
+			$Hours_task += $resource->hours($ref);
+		}
 	}
-	return $count;
-}
-
-sub count_next {
-	my($count) = 0;
-	my($time) = 0;
-
-	# find all records.
-	for my $ref (meta_selected()) {
-		next unless $ref->is_task();
-
-		next if $ref->filtered();
-
-		next unless project_live($ref);
-
-		next unless $ref->is_nextaction();
-
-		++$count;
-
-		my($resource) = $ref->Project();
-		$Hours_next += $resource->hours($ref);
-	}
-	return $count;
-}
-
-sub count_tasklive {
-	my($count) = 0;
-	my($time) = 0;
-
-	# find all records.
-	for my $ref (meta_selected()) {
-
-		next unless $ref->is_task();
-
-		next if $ref->filtered();
-		next unless project_live($ref);
-
-		++$count;
-	}
-	return $count;
+	return $count_next, $count_action;
 }
 
 sub project_live {

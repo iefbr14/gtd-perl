@@ -43,6 +43,10 @@ func (t *Task) Filtered() bool {
 	return false
 }
 
+func Filter_reset(deflt string) {
+	Filters = []FILTER_t{}
+}
+
 func tasks_matching_type(kind byte) Tasks {
 	all := All()
 	list := make(Tasks, 0, len(all))
@@ -240,7 +244,7 @@ func Add_filter(rule string) {
 
 	if rule == "~~" {
 		fdebug("#-Filters reset\n")
-		Filters = []FILTER_t{}
+		Reset("")
 		return
 	}
 

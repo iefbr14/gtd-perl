@@ -155,8 +155,6 @@ func Argv(args []string) []string {
 
 	ret := make([]string, 0, len(args))
 
-	has_filters := false
-
 	for len(args) > 0 {
 		// $_ = shift @_
 		arg := args[0]
@@ -190,40 +188,38 @@ func Argv(args []string) []string {
 			continue
 		}
 
-		/*?
-			if (s=^\*==) {
-				my($type) = lc(substr($_, 0, 1))
-				$type = type_name($_)
-				print "Type ========($type)=:  $_\n"
-				set_option(Type => $type)
-				next
-			}
-			if (s/^([A-Z])://) {
-				my($type) = lc($1)
-		  //			set_option(Type => $type)
-		  //
-		  //			print "Type: Title =====:  $type: $_\n"
-		  //			set_option(Title -> $_)
-					push(@ret, find_hier($type, $_))
-					next
-				}
+		//	if (s=^\*==) {
+		//		my($type) = lc(substr($_, 0, 1))
+		//		$type = type_name($_)
+		//		print "Type ========($type)=:  $_\n"
+		//		set_option(Type => $type)
+		//		next
+		//	}
 
-				if (m/^[-~+]/) {		// add include/exclude
-					Hier::Filter::add_filter($_)
-					has_filters = true
-					next
-				}
-			  //		if ($Title) {
-			  //			print "Desc:  ", join(' ', $_, @_), "\n"
-			  //			return join(' ', $_, @_)
-			  //		}
-			  ?*/
+		//	if (s/^([A-Z])://) {
+		//		my($type) = lc($1)
+		//			set_option(Type => $type)
+		//
+		//			print "Type: Title =====:  $type: $_\n"
+		//			set_option(Title -> $_)
+		//				push(@ret, find_hier($type, $_))
+		//	next
+		//		}
+
+		// add include/exclude
+		if arg[0] == '-' || arg[0] == '+' {
+			task.Set_filter(arg)
+			next
+		}
+
+		//	if ($Title) {
+		//		print "Desc:  ", join(' ', $_, @_), "\n"
+		//		return join(' ', $_, @_)
+		//	}
+
 		ret = append(ret, arg)
 	}
 
-	if !has_filters {
-		task.Add_filter(Default_filter)
-	}
 	task.Apply_filters()
 
 	return ret

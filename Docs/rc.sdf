@@ -1,0 +1,38 @@
+
+H1: Overview
+
+The rc (run command) interactive system allows gtd to load the gtd database and operate on
+it interactivly.
+
+
+H1: Commands
+
+                 -- blank lines are ignored
+ # txt           -- comment lines are ignored
+ ! cmd           -- run a OS command 
+ clear [cmd]     -- clear screen then rc the rest of the line
+ gtd [cmd]       -- gtd word ignored.
+  
+ debug [option]  -- turn on debugging for option
+  
+ option
+
+ filter          -- set default filter
+ format          -- set default format
+ sort            -- set default sort
+
+H1: Filter
+
+!include "filter.sdf"
+
+H1: Sort
+
+!include "sort.sdf"
+
+H1: Report
+
+!include "report.sdf"
+
+H1: Notes
+
+!include "local.sdf"

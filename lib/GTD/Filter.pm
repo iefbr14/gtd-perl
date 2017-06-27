@@ -10,24 +10,23 @@ BEGIN {
 	# set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
-	@EXPORT      = qw( &add_filter );
+	@EXPORT      = qw( &filter_Add &add_filter );
 }
 
 use GTD::Tasks;
 use GTD::Option;
 
-my $Filter_Category;
-my $Filter_Context;
-my $Filter_Timeframe;
-my %Filter_Tags;
+my @CCT_Filters = ();	# [ field, value, result-if-matched ]
 
 my $Today = get_today();
 my $Soon  = get_today(+7);
 
-my @Filters;	# types of actions to include
-our $Debug = 0;
+my @Global_Filters;	# [ level, function, arg ] 
+my @Rule_Filters;	# [ level, function, arg ] 
+our $Debug = 1;
 
 my $Default_level = 'm';
+my $Default_filter = '+a:live';
 
 sub filtered_reason {
 	my($ref) = @_;
@@ -44,7 +43,7 @@ sub filtered {
 		if ($Debug) {
 			my($tid) = $ref->get_tid();
 			my($title) = $ref->get_title();
-			print "X: $reason ($tid: $title)\n";
+#			print "X: $reason ($tid: $title)\n";
 		}
 		return $reason;
 	}
@@ -59,10 +58,20 @@ sub tasks_matching_type {
 
 sub reset_filters {
 	my($filter) = @_;
+
+	for my $ref (GTD::Tasks::all()) {
+		$ref->{_filtered} = '';
+	}
+	@Global_Filters = ();
+	@Rule_Filters = ();
+	@CCT_Filters = ();
+
+	$Default_filter = '+a:live';
 }
 
 sub apply_filters {
 	#$Debug = option('Debug');
+
 
 	# learn about actions
 	for my $ref (tasks_matching_type('a')) {
@@ -74,38 +83,93 @@ sub apply_filters {
 		proj_mask($ref);
 	}
 
+#	if (scalar(@Global_Filters)) {
+#		# apply all Rule filters
+#
+#		for my $ref (GTD::Tasks::any)) {
+#			my($cct) = ....
+#			for my $filter (@Rule_Filters) {
+#				my($func) = $filter->{func};
+#
+#				my($reason) = &$func($ref, $arg);
+#			}
+#			
+#			$ref->{_filtered} = $reason;
+#		}
+#		return;
+#	}
+
+	# apply default filter
+	if (scalar(@Rule_Filters) == 0) {
+		filter_Add($Default_filter);
+	}
+
+	# apply all Rule filters
+	for my $filter (@Rule_Filters) {
+		my($type) = $filter->{type};
+		my($func) = $filter->{func};
+		my($arg)  = $filter->{arg};
+
+		for my $ref (tasks_matching_type($type)) {
+			next if $ref->{_filtered};
+
+			my($reason) = &$func($ref, $arg);
+
+			$ref->{_filtered} = $reason;
+		}
+	}
+
 	# walk down
 	#      kill children
 	# then on the way back up
 	#      back fill hier with wanted items
-	print "Default level $Default_level\n" if $Debug;
-	for my $ref (tasks_matching_type($Default_level)) {
-		apply_walk_down($ref);
-	}
-	for my $ref (GTD::Tasks::all()) {
-		apply_walk_down($ref);
+
+	for my $ref (tasks_matching_type('m')) {
+		apply_walk_down($ref, '');
 	}
 
+<<<<<<< Updated upstream
 	my($have_cct_filters)
 	    = $Filter_Category
 	   || $Filter_Context
 	   || $Filter_Timeframe
 	   || %Filter_Tags;
-
-	if ($have_cct_filters) {
-		for my $ref (tasks_matching_type('m')) {
-			apply_cct_filters($ref);
-		}
-	}
+=======
 }
 
 sub apply_walk_down {
-	my($ref) = @_;
+	my($ref, $reason) = @_;
 
-	apply_ref_filters($ref);
-	for my $child ($ref->get_children()) {
-		apply_walk_down($child);
+	if ($ref->{_filtered}) {
+		$reason = $ref->{_filtered};
+>>>>>>> Stashed changes
+
+	} else {
+		# check for cct and use that if it exists
+		my ($cct) = apply_cct_filters($ref);
+
+		if ($cct) {
+			$reason = "$cct $reason";
+		}
+
 	}
+
+	my(@children) = $ref->get_children();
+
+	my($has_wanted) = 0;
+
+	for my $child (@children) {
+		my($child_reason) = apply_walk_down($child, $reason);
+
+		++$has_wanted if $child_reason =~ /^\+/;
+	}
+
+	if ($has_wanted == 0) {
+		$ref->{_filtered} ||= '-children';
+	} else {
+		$ref->{_filtered} ||= $reason || '+children';
+	}
+	return $ref->{_filtered};
 }
 
 #
@@ -117,51 +181,55 @@ sub apply_walk_down {
 sub apply_cct_filters {
 	my($ref) = @_;
 
-	# not wanted
-	return 0 unless defined $ref->{_filtered};
-	if ($ref->{_filtered} =~ /^-/) {
-		return 0;
-	}
-	my($reason) = cct_wanted($ref);
-	if ($reason) {
+	return '' unless @CCT_Filters;
+
+	for my $filter (@CCT_Filters) {
+		my($field, $value, $result) = @$filter;
+
+		
+		my($match) = cct_match($ref, $field, $value);
+
+		return '' unless $match;
+
 		if ($Debug) {
-			warn "#=CCT($reason) ", $ref->get_tid(),
+			warn "#=CCT($match) $field, $value $result",
+				$ref->get_tid(),
 				": ", $ref->get_title(), "\n";
 		}
-		# we are the reason to live!
-		return $reason;
+
+		return $result;
+	}
+	return '';
+}
+
+sub cct_match {
+	my ($ref, $field, $value) = @_;
+
+	# wild card match any
+	if ($value eq '*') {
+		return '*';
 	}
 
-	my ($wanted) = 0;	# we are only wanted if our children are wanted
-	for my $child ($ref->get_children()) {
-		$reason = apply_cct_filters($child);
-		if ($reason) {
-			$wanted ||= $reason;
-			if ($Debug) {
-				warn "#+CCT($reason) ", $ref->get_tid(),
-					": ", $ref->get_title(), "\n";
-			}
+	if ($field eq 'tag') {
+		for my $tag ($ref->get_tags()) {
+			return $tag if $tag eq $value;
 		}
 	}
-	return $wanted if $wanted;
-	kill_children($ref);
-}
 
-sub kill_children {
-	my($ref) = @_;
-
-	$ref->{_filtered} = '-cct';
-	if ($Debug) {
-		warn "#-CCT ", $ref->get_tid(),
-			": ", $ref->get_title(), "\n";
+	if ($field eq "context") {
+		return "context" if $ref->get_context() eq $value;
 	}
-	for my $child ($ref->get_children()) {
-		next if $child->{_filtered} && $child->{_filtered} =~ m/^-/;
 
-		kill_children($child);
+	if ($field eq "timeframe") {
+		return "timeframe" if $ref->get_timeframe() eq $value;
 	}
-}
 
+	if ($field eq "category") {
+		return "category" if $ref->get_category() eq $value;
+	}
+
+	return '';
+}
 
 ###======================================================================
 ###
@@ -245,19 +313,21 @@ use constant {
 
 };
 
-sub add_filter {
+sub add_filter { return filer_Add(@_) }
+
+sub filter_Add {
 	my($rule) = @_;
 
 	warn "#-Parse filter: $rule\n" if $Debug;
 
 	if ($rule eq '~~') {
 		warn "#-Filters reset\n" if $Debug;
-		@Filters = ();
+		reset_filters();
 		return;
 	}
 
 	if ($rule =~ s/^~//) {	# tilde
-		task_filter($rule, '!', '');
+		task_filter($rule, '-', '');
 		return;
 	}
 
@@ -337,25 +407,23 @@ sub dispflags {
 sub task_filter {
 	my($name, $dir, $will) = @_;
 
-	my($func, $walk, $arg) = map_filter_name($name);
-	unless ($func) {
+	my($func, $arg) = map_filter_name($name);
+	unless (defined $func) {
 		warn "Warn unknown filter: $name\n";
 		return;
 	}
 
-	warn "#-Filter $name: [$will,$walk,$dir] $arg\n" if $Debug;
-	$walk = $will if $will;
-	$walk = $dir unless $walk;
-	$walk = '+' unless $walk;
+	warn "#-Filter $name: $arg\n" if $Debug;
 
 	my($filter) = {
 		func => $func,
 		name => $name,
-		dir  => $walk,
-		arg  => $arg,
+		type  => $arg,
+		will => $will,
+		dir => $dir,
 	};
 
-	push(@Filters, $filter);
+	push(@Rule_Filters, $filter);
 }
 
 sub task_mask {
@@ -423,15 +491,6 @@ sub give_children {
 	}
 }
 
-sub give_parent {
-	my($ref, $mask) = @_;
-
-	for my $pref ($ref->get_parents()) {
-		$pref->{_mask} = task_mask($pref) | $mask;
-		give_parent($pref, $mask);
-	}
-}
-
 sub task_mask_disp {
 	my($ref) = @_;
 
@@ -456,103 +515,88 @@ sub proj_mask {
 #	return 1;
 }
 
-sub meta_find_context {
-	my($cct) = @_;
+sub Add_cct {
+	my($value, $reason) = @_;
+
+	print "Add_cct($value, $reason)\n" if $Debug;
+
+	if ($value eq '*') {
+		warn "#-Set *:              $reason\n" if $Debug;
+		push(@CCT_Filters, [ '*', '*', $reason ]);
+		return;
+	}
+		
+
 	my($Category) = GTD::CCT->Use('Category');
 	my($Context) = GTD::CCT->Use('Context');
 	my($Timeframe) = GTD::CCT->Use('Timeframe');
 
 	# match case sensative first
-	if ($Context->get($cct)) {
-		warn "#-Set space context:  $cct\n" if $Debug;
-		$Filter_Context = $cct;
+	if (defined $Category->get($value)) {
+		warn "#-Set category:       $reason $value\n" if $Debug;
+		push(@CCT_Filters, [ 'category', $value, $reason ]);
 		return;
 	}
-	if (defined $Timeframe->get($cct)) {
-		warn "#-Set time context:   $cct\n" if $Debug;
-		$Filter_Timeframe = $cct;
+
+	if ($Context->get($value)) {
+		warn "#-Set space context:  $reason $value\n" if $Debug;
+		push(@CCT_Filters, [ 'context', $value, $reason ]);
 		return;
 	}
-	if (defined $Category->get($cct)) {
-		warn "#-Set category:       $cct\n" if $Debug;
-		$Filter_Category = $cct;
+
+	if (defined $Timeframe->get($value)) {
+		warn "#-Set time context:   $reason $value\n" if $Debug;
+		push(@CCT_Filters, [ 'timeframe', $value, $reason ]);
 		return;
 	}
+
 	for my $key (GTD::CCT::keys('Tag')) {
-		next unless $key eq $cct;
+		next unless $key eq $value;
 
 		warn "#-Set tag:            $key\n" if $Debug;
-		$Filter_Tags{$key}++;
+		push(@CCT_Filters, [ 'tag', $value, $reason ]);
 		return;
 	}
 
+	#--------------------------------
 	# match case insensative next
+	#--------------------------------
+
 	for my $key ($Context->keys()) {
-		next unless lc($key) eq lc($cct);
+		next unless lc($key) eq lc($value);
 
 		warn "#-Set space context:  $key\n" if $Debug;
-		$Filter_Context = $key;
+		push(@CCT_Filters, [ 'context', $value, $reason ]);
 		return;
 	}
-	for my $key ($Timeframe->keys()) {
-		next unless lc($key) eq lc($cct);
 
-		warn "#-Set time context:   $key\n" if $Debug;
-		$Filter_Timeframe = $key;
-		return;
-	}
 	for my $key ($Category->keys()) {
-		next unless lc($key) eq lc($cct);
+		next unless lc($key) eq lc($value);
 
 		warn "#-Set category:       $key\n" if $Debug;
-		$Filter_Category = $key;
+		push(@CCT_Filters, [ 'context', $value, $reason ]);
 		return;
 	}
+
+	for my $key ($Timeframe->keys()) {
+		next unless lc($key) eq lc($value);
+
+		warn "#-Set time context:   $key\n" if $Debug;
+		push(@CCT_Filters, [ 'timeframe', $value, $reason ]);
+		return;
+	}
+
 	for my $key (GTD::CCT::keys('Tag')) {
-		next unless lc($key) eq lc($cct);
+		next unless lc($key) eq lc($value);
 
 		warn "#-Set tag:            $key\n" if $Debug;
-		$Filter_Tags{$key}++;
+		push(@CCT_Filters, [ 'tag', $value, $reason ]);
 		return;
 	}
 
-	warn "Defaulted category: $cct\n";
-	$Filter_Category = $cct;
+	warn "Unknown cct: $reason $value (ignored)\n";
 }
 
-sub cct_wanted {
-	my ($ref) = @_;
-
-	if (%Filter_Tags) {
-		for my $tag ($ref->get_tags()) {
-			return "tag $tag" if exists $Filter_Tags{$tag}
-			                  &&        $Filter_Tags{$tag};
-		}
-	}
-
-	if ($ref->get_type() eq 'p' or $ref->is_task()) {
-		if ($Filter_Context) {
-			return "context $Filter_Context" if $ref->get_context() eq $Filter_Context;
-		}
-	}
-	if ($Filter_Timeframe) {
-		return "timeframe $Filter_Timeframe" if $ref->get_timeframe() eq $Filter_Timeframe;
-	}
-	if ($Filter_Category) {
-		return "category $Filter_Category" if $ref->get_category() eq $Filter_Category;
-	}
-
-
-	return '';
-}
-
-sub add_filter_tags {
-	if (option('Tag')) {
-		for my $tag (split(',', option('Tag'))) {
-			$Filter_Tags{$tag}++;
-		}
-	}
-}
 
 #******************************************************************************
 #******************************************************************************
@@ -562,7 +606,9 @@ sub add_filter_tags {
 sub map_filter_name {
 	my($word, $dir) = @_;
 
+	my($level) = 'a';
 	if ($word =~ s/^([a-z])://) {
+<<<<<<< Updated upstream
 		$Default_level = $1;
 	}
 
@@ -643,69 +689,41 @@ sub apply_ref_filters {
 			filter_walk_down_up($ref, $reason);
 		}
 		return;
+=======
+		$level = $1;
+>>>>>>> Stashed changes
 	}
-}
 
-sub filter_walk_up {
-	my($ref, $reason) = @_;
+	return (\&filter_any, '*')	if $word =~ /^any/i;
+	return (\&filter_any, '=')	if $word =~ /^all/i;
+	return (\&filter_any, 'l')	if $word =~ /^list/i;
+	return (\&filter_any, 'h')	if $word =~ /^hier/i;
+	return (\&filter_any, 't')	if $word =~ /^task/i;
 
-	my($mask) = $ref->{_filtered};
 
-	return if $mask;	# already decided.
+	return (\&filter_done, $level)	if $word =~ /^done/i;
+	return (\&filter_some, $level)	if $word =~ /^some/i;
+	return (\&filter_some, $level)	if $word =~ /^maybe/i;
 
-	$ref->{_filtered} = $reason;
-	for my $pref ($ref->get_parents()) {
-		filter_walk_up($pref, $reason.'<');
-	}
-}
+	return (\&filter_task, $level)	if $word =~ /^action/i;
+#	return (\&filter_next, $level)	if $word =~ /^pure_next/i;
+# we need to re-think this live-next vs next
 
-sub filter_walk_up_down {
-	my($ref, $reason) = @_;
+	return (\&filter_next, $level)	if $word =~ /^next/i;
+	return (\&filter_active, $level)	if $word =~ /^active/i;
+	return (\&filter_live, $level)	if $word =~ /^live/i;
+	return (\&filter_dead, $level)	if $word =~ /^dead/i;
+	return (\&filter_idle, $level)	if $word =~ /^idle/i;
 
-	my($mask) = $ref->{_filtered};
+	return (\&filter_wait, $level)	if $word =~ /^wait/i;
+	return (\&filter_wait, $level)	if $word =~ /^tickle/i;
+	return (\&filter_late, $level)	if $word =~ /^late/i;
+	return (\&filter_due,  $level)	if $word =~ /^due/i;
 
-	return if $mask;	# already decided.
+	return (\&filter_slow, $level)	if $word =~ /^slow/i;
+	return (\&filter_idea, $level)	if $word =~ /^idea/i;
 
-	if ($reason =~ /^\+/) {
-		for my $pref ($ref->get_parents()) {
-			filter_walk_up($pref, $reason.'<');
-		}
-	}
-	$ref->{_filtered} = $reason;
-	for my $pref ($ref->get_children()) {
-		filter_walk_down($pref, $reason.'>');
-	}
-}
-
-sub filter_walk_down {
-	my($ref, $reason) = @_;
-
-	my($mask) = $ref->{_filtered};
-
-	return if $mask;	# already decided.
-
-	$ref->{_filtered} = $reason;
-	for my $pref ($ref->get_children()) {
-		filter_walk_down($pref, $reason.'>');
-	}
-}
-sub filter_walk_down_up {
-	my($ref, $reason) = @_;
-
-	my($mask) = $ref->{_filtered};
-
-	return if $mask;	# already decided.
-
-	for my $pref ($ref->get_children()) {
-		filter_walk_down($pref, $reason.'>');
-	}
-	$ref->{_filtered} = $reason;
-
-	return if $reason =~ /^-/;
-
-	for my $pref ($ref->get_parents()) {
-		filter_walk_up($pref, $reason.'<');
-	}
+	return ();
 }
 
 # return + if wanted
@@ -727,13 +745,13 @@ sub filter_any {
 	return "+any=$type" if $arg eq 'h' && $ref->is_hier();
 	return "+any=$type" if $arg eq 'l' && $ref->is_list();
 
-	return '?';
+	return '';
 }
 
 sub filter_task {
 	my($ref, $arg) = @_;
 
-	return '?' unless $ref->is_task();
+	return '' unless $ref->is_task();
 	return '+task';
 }
 
@@ -741,16 +759,16 @@ sub filter_done {
 	my($ref, $arg) = @_;
 
 	return '+done' if $ref->is_completed();
-	return '?';
+	return '';
 }
 
 
 sub filter_pure_next {
 	my($ref, $arg) = @_;
 
-	return '?' unless $ref->is_task();
+	return '' unless $ref->is_task();
 	return '+next' if $ref->get_nextaction() eq 'y';
-	return '?';
+	return '';
 }
 
 
@@ -758,7 +776,7 @@ sub filter_tickle {
 	my($ref, $arg) = @_;
 
 	return '+tickle' if $ref->get_tickle();
-	return '?';
+	return '';
 }
 
 sub filter_wait {
@@ -766,7 +784,7 @@ sub filter_wait {
 
 	my($type) = $ref->get_type();
 	return '+wait' if $type eq 'w';
-	return '?';
+	return '';
 }
 
 
@@ -774,12 +792,12 @@ sub filter_late {
 	my($ref, $arg) = @_;
 
 	my($due)  = $ref->get_due();
-	return '?' unless $due;
+	return '' unless $due;
 
 	if ($due le $Today) {
 		return '+late'.$due;
 	}
-	return '?';
+	return '';
 }
 
 
@@ -787,12 +805,12 @@ sub filter_due {
 	my($ref, $arg) = @_;
 
 	my($due)  = $ref->get_due();
-	return '?' unless $due;
+	return '' unless $due;
 
 	if ($due ge $Today and $due le $Soon) {
 		return '+due'.$due;
 	}
-	return '?';
+	return '';
 }
 
 
@@ -801,7 +819,7 @@ sub filter_slow {
 
 	my($pri) = $ref->get_priority();
 	return '+slow' if $pri == 4;
-	return '?';
+	return '';
 }
 
 
@@ -810,7 +828,7 @@ sub filter_idea {
 
 	my($pri) = $ref->get_priority();
 	return '+idea' if $pri == 5;
-	return '?';
+	return '';
 }
 
 
@@ -819,7 +837,7 @@ sub filter_some {
 
 	my($mask) = task_mask($ref);
 	return '+some' if ($mask & T_MASK) == T_FUTURE;
-	return '?';
+	return '';
 }
 
 sub filter_next {
@@ -833,14 +851,19 @@ sub filter_next {
 		return filter_live($ref, $arg);
 	}
 
-	return '?';
+	return '';
 }
 
 sub filter_active {
 	my($ref, $arg) = @_;
 
+<<<<<<< Updated upstream
 
 #	return '?' unless $ref->is_task();
+=======
+	
+#	return '' unless $ref->is_task();
+>>>>>>> Stashed changes
 
 	my($mask) = task_mask($ref);
 
@@ -854,14 +877,18 @@ sub filter_active {
 		return '+act=a' if ($mask & T_MASK) == T_ACTIVE;
 	}
 
-	return '?';
+	return '';
 }
 
 sub filter_live {
 	my($ref, $arg) = @_;
 
+<<<<<<< Updated upstream
 
 #	return '?' unless $ref->is_task();
+=======
+#	return '' unless $ref->is_task();
+>>>>>>> Stashed changes
 
 	my($mask) = task_mask($ref);
 
@@ -873,51 +900,18 @@ sub filter_live {
 		return '+live=f' if ($mask & T_MASK) == T_FUTURE;
 	}
 
-	return '?';
+	return '';
 }
 
 
 sub filter_dead {
 	my($ref, $arg) = @_;
 
-	return '?' unless $ref->is_task();
+	return '' unless $ref->is_task();
 
 	my($mask) = task_mask($ref);
 	return '+dead=d' if ($mask & T_MASK) == T_DONE;
-	return '?';
-}
-
-sub filter_category {
-	my($ref, $arg) = @_;
-
-	my($category) = $ref->get_category() || '';
-	return "+category=$arg" if lc($category) eq lc($arg);
-	return '?';
-}
-
-sub filter_context {
-	my($ref, $arg) = @_;
-
-	my($context) = $ref->get_context() || '';
-	return "+context=$arg" if lc($context) eq lc($arg);
-	return '?';
-}
-
-sub filter_timeframe {
-	my($ref, $arg) = @_;
-
-	my($timeframe) = $ref->get_timeframe() || '';
-	return "+timeframe=$arg" if lc($timeframe) eq lc($arg);
-	return '?';
-}
-
-sub filter_tags {
-	my($ref, $arg) = @_;
-
-	for my $tag ($ref->get_tags()) {
-		return "+tag=$tag" if lc($arg) eq lc($tag);
-	}
-	return '?';
+	return '';
 }
 
 1;

@@ -1,4 +1,4 @@
-package GTD::Report::task;
+package GTD::Report::bump;
 
 =head1 NAME
 
@@ -42,29 +42,24 @@ BEGIN {
 	# set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
-	@EXPORT      = qw( &Report_task );
+	@EXPORT      = qw( &Report_bump );
 }
 
-use GTD::Util;
 use GTD::Meta;
-use GTD::Sort;
-use GTD::Format;
+use GTD::Report::kanban;
 
-sub Report_task {	#-- quick List by various methods
-	# Tasks filtered by goals
-	meta_filter('+g:live', '^title', 'task');
+sub Report_bump {	#-- report kanban of projects/actions
+	# counts use it and it give a context
+	meta_filter('+active', '^tid', 'simple');
 
-	my($title) = join(' ', @_);
-
-	my(@list) = meta_pick(@_);
-	if (@list == 0) {
-		meta_pick('actions');
-	}
-	report_header('Tasks', $title);
-
-	for my $ref (sort_tasks @list) {
-		display_task($ref);
+	my(@args);
+	for my $arg (meta_argv(@_)) {
+		if ($arg =~ m/^(\d+)=(.)$/) {
+			kanban_State($1, $2);
+			next;
+		}
+		kanban_Bump($arg);
 	}
 }
 
-1;  # don't forget to return a true value from the file
+1;

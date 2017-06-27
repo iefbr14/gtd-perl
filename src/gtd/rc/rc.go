@@ -44,7 +44,6 @@ none
 Started life as a copy of the bulkload but tuned for more interactive processing
 
 */
-
 import "os"
 import "os/exec"
 import "fmt"
@@ -80,6 +79,8 @@ var Pid int = 0     // current Parrent task
 var Pref *task.Task // current Parrent task reference
 
 var Parents = map[byte]*task.Task{} // parents we know about
+
+var cmd_debug = 1
 
 var rc_cmds_map = map[string]func(...string){
 	"help": rc_help,
@@ -119,12 +120,12 @@ func Report_rc(args []string) int {
 }
 
 func rc(line string) {
-	defer func() {
-		if r := recover(); r != nil {
-			fmt.Printf("Recovered from: %v\n", line)
-		}
-	}()
-
+	/*	defer func() {
+			if r := recover(); r != nil {
+				fmt.Printf("Recovered from: %v (%v)\n", line, r)
+			}
+		}()
+		/*	*/
 	//## skip blank lines, comments
 	if task.Is_comment(line) {
 		return
@@ -146,22 +147,25 @@ func rc(line string) {
 
 	//##   .tid  =>  kanban .tid
 	if line[0] == '.' {
-		args := strings.Split(line, " \t")
+		args := strings.Split(line[1:], " \t")
 		Do_report("kanban", args)
 		return
 	}
 
 	//##   /key  =>  search  key
 	if line[0] == '/' {
-		rc_find_tasks(line)
+		rc_find_tasks(line[1:])
 		return
 	}
 
 	//##   !cmd  =>  shell out for cmd
 	if line[0] == '!' {
-		if err := exec.Command(line[1:]).Run(); err != nil {
+		shell := exec.Command("sh", "-c", line[1:])
+		shell.Stdin = os.Stdin
+		shell.Stdout = os.Stdout
+		shell.Stderr = os.Stderr
+		if err := shell.Run(); err != nil {
 			fmt.Println(err)
-			os.Exit(1)
 		}
 		return
 	}
@@ -174,21 +178,36 @@ func rc(line string) {
 		return
 	}
 
-	args := strings.SplitN(line, " \t:", 2)
+	args := strings.Split(line, " \t:")
 	cmd := args[0]
+	args = args[1:]
 
 	if cmd == "clear" {
 		fmt.Print("\x1b[H\x1b[2J")
 
-		args = strings.SplitN(args[1], " \t", 2)
+		if len(args) <= 0 {
+			return
+		}
+
 		cmd = args[0]
+		args = args[1:]
 		//# continue as if gtd or clear  wasn't said
+		if len(cmd) == 0 {
+			return
+		}
 	}
 
 	if cmd == "set" || cmd == "gtd" {
 		args = strings.SplitN(args[1], " \t", 2)
 		cmd = args[0]
 		//# continue as if set wasn't said
+		if len(cmd) == 0 {
+			fmt.Printf("#! %s requires and arguement\n", cmd)
+			return
+		}
+
+		fmt.Printf("#! %s not implemented\n", cmd)
+		return
 	}
 
 	if cmd == "debug" {
@@ -202,19 +221,18 @@ func rc(line string) {
 		return
 	}
 
-	if rc, ok := rc_cmds_map[cmd]; ok {
-		rc(args[1])
-		return
-	}
-
 	if task.MatchId(cmd) {
 		load_task(cmd)
 		return
 	}
 
+	if run_builtin, ok := rc_cmds_map[cmd]; ok {
+		run_builtin(args...)
+		return
+	}
+
 	rc_save()
-	args = strings.Split(args[1], " \t")
-	Do_report(args[0], args[1:])
+	Do_report(cmd, args)
 }
 
 func rc_set_key(args ...string) {
@@ -314,9 +332,9 @@ func rc_filter(args ...string) {
 
 	option.Set("Filter", dash_null(mode))
 	if mode == "-" {
-		//? meta.Reset_filters("+live")
+		filter.Reset("")
 	} else {
-		//? meta.Reset_filters(mode)
+		filter.Reset(mode)
 	}
 
 	Filter = mode

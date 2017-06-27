@@ -16,7 +16,6 @@ BEGIN {
 		&meta_selected
 		&meta_find &meta_all
 		&meta_desc &meta_argv
-		&meta_reset_filters
 		&meta_pick
 		&meta_walk
 	);
@@ -38,23 +37,15 @@ use base qw(GTD::Hier GTD::Fields GTD::Filter);
 #==== Top level filter/sort/selection
 #==============================================================================
 my @Selected;
-my $Default_filter = '';
 
 #sub hier {
 #	return grep { $_->is_hier() } selected();
 #}
 
-sub meta_reset_filters {
-	@Selected = ();		# nothing is selected/sorted.
-}
-
 sub meta_selected {
-	if (@Selected > 0) {
-		return @Selected;
-	}
-
 	for my $ref (GTD::Tasks::all()) {
 		next if $ref->filtered();
+
 		push(@Selected, $ref);
 	}
 
@@ -106,8 +97,8 @@ sub meta_filter {
 	sort_mode(option('Sort', $sort)) if $sort;
 	display_mode(option('Format', $display)) if $display;
 
-	option('Filter', $filter);
-	$Default_filter = $filter;
+	@Selected = ();
+	GTD::Filter::reset_filters($filter);
 }
 
 sub meta_argv {
@@ -115,9 +106,8 @@ sub meta_argv {
 
 	my(@ret);
 
-	my($has_filters) = 0;
+	my($add_neg) = 0;
 
-	GTD::Filter::add_filter_tags();
 	while (scalar(@_)) {
 		$_ = shift @_;
 
@@ -128,7 +118,12 @@ sub meta_argv {
 		}
 
 		if (s/^\@//) {
-			GTD::Filter::meta_find_context($_);
+			if (s/^[\!\-\~]//) {
+				GTD::Filter::Add_cct($_, "-cct $_");
+			} else {
+				GTD::Filter::Add_cct($_, "+cct $_");
+				$add_neg = 1;
+			}
 			next;
 		}
 
@@ -166,8 +161,7 @@ sub meta_argv {
 		}
 
 		if (m/^[-~+]/) {		# add include/exclude
-			GTD::Filter::add_filter($_);
-			$has_filters = 1;
+			filter_Add($_);
 			next;
 		}
 #		if ($Title) {
@@ -177,10 +171,11 @@ sub meta_argv {
 		push(@ret, $_);
 	}
 
-	unless ($has_filters) {
-		GTD::Filter::add_filter($Default_filter);
+	if ($add_neg) {
+		GTD::Filter::Add_cct('*', "-*");
 	}
-	GTD::Filter::apply_filters($Default_filter);
+
+	GTD::Filter::apply_filters();
 	return @ret;
 }
 

@@ -9,7 +9,7 @@ is looked at for filtering.
 Default Level:
 	project|actions (depends on report)
 
-H2: Filters:
+H2: Class Filters:
 
 !block table
 Type    Meaning
@@ -19,7 +19,12 @@ all	any non "list" type
 list	any "list" type
 hier	any "value/vision/role/goal/project"
 task	any "action"
+!endblock
 
+
+H2: Action Filters:
+
+!block table
 live	
 
 next	types that have is_nextAtion tagged (default actions)

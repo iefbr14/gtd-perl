@@ -153,8 +153,10 @@ sub detail {
 	return if $ref->is_list();
 
 	if ($walk->{want}{$tid} == 0) {
+		return unless $Debug;
 		# we are global filtered
-		warn "< detail($tid) filtered\n" if $Debug;
+		my $reason = $ref->filtered();
+		warn "< detail($tid) filtered $reason\n";
 		return;
 	}
 

@@ -134,21 +134,6 @@ sub rc {
 		### continue this is redundent
 	}
 
-	if ($line =~ s/^set\s+//) {
-		## continue as if set wasn't said
-	}
-
-	if ($line =~ s/^debug\s*//) {
-		if ($line) {
-			debug($line);
-			return;
-		}
-
-		$Debug = 1;
-		print "Debug rc on\n";
-		return;
-	}
-
 	if ($line =~ s/^\?//) {
 		rc_help($line);
 		return;
@@ -178,7 +163,33 @@ sub rc {
 		return;
 	}
 
-	my($cmd, @args) = split(/[\s;]+/, $line);
+	if ($line =~ s/^(\d+):$/$1/) {
+		load_task($line);
+		return;
+	}
+
+	my($cmd, @args) = split(' ', $_);
+
+	if ($line =~ s/^debug\s*//) {
+		if ($line) {
+			debug($line);
+			return;
+		}
+
+		$Debug = 1;
+		print "Debug rc on\n";
+		return;
+	}
+
+	if ($line =~ s/^option\s*//) {
+		if ($line) {
+			option($line);
+			return;
+		}
+
+		print "#! Option needs an arguement\n";
+		return;
+	}
 
 	if (defined $Cmds->{$cmd}) {
 		my($func) = $Cmds->{$cmd};
@@ -186,8 +197,6 @@ sub rc {
 		&$func(@args);
 		return;
 	}
-
-	return load_task($cmd) if $cmd =~ /^\d+$/;
 
 	rc_save();
 	report($cmd, @args);
@@ -284,7 +293,7 @@ sub rc_filter {
 	print "Filter $Filter => $mode\n";
 
 	set_option('Filter', dash_null($mode));
-	meta_reset_filters($mode eq '-' ? '+live' : $mode);
+	filter_Reset($mode eq '-' ? '' : $mode);
 
 	$Filter = $mode;
 }

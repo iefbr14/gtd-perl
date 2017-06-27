@@ -240,6 +240,10 @@ walk         -- Command line walk of a hier
 `,
 	}
 
+	if len(args) == 0 {
+		args = []string{"help"}
+	}
+
 	done := false
 	for _, help := range args {
 		if help == "help" {
