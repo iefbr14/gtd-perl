@@ -13,7 +13,7 @@ BEGIN {
 	@EXPORT      = qw(
 		&meta_filter
 		&meta_matching_type
-		&meta_selected 
+		&meta_selected
 		&meta_find &meta_all
 		&meta_desc &meta_argv
 		&meta_reset_filters

@@ -75,7 +75,7 @@ sub Report_taskjuggler {	#-- generate taskjuggler file from gtd db
 		if ($criteria =~ /^\d+$/) {
 			$top = $criteria;
 			next;
-		} 
+		}
 		my($type) = type_val($criteria);
 		if ($type) {
 			$type = 'p' if $type eq 's';
@@ -88,11 +88,11 @@ sub Report_taskjuggler {	#-- generate taskjuggler file from gtd db
 	if ($Someday) {
 		meta_filter('+all', '^focus', 'none');
 		# 5 year plan everything plan
-		$ToFuture = pdate(get_today(5*365));	
+		$ToFuture = pdate(get_today(5*365));
 	} else {
 		meta_filter('+active', '^focus', 'none');
 		# don't care about start more > 3 months
-		$ToFuture = pdate(get_today(60));	
+		$ToFuture = pdate(get_today(60));
 	}
 
 	my($walk) = new GTD::Walk(
@@ -128,7 +128,7 @@ sub calc_est {
 
 sub tj_header {
 	my $est = calc_est();
-	my $projection = pdate(get_today($est));	
+	my $projection = pdate(get_today($est));
 print <<"EOF";
 project GTD "Get Things Done" "1.0" $ToOld - $projection {
   # Hide the clock time. Only show the date.
@@ -237,7 +237,7 @@ sub hier_detail {
 		print {$fd} $indent, qq(   effort $effort\n) if $effort;
 	}
 	print {$fd} $indent, qq(   priority $tj_pri\n) if $tj_pri;
-	
+
 	print {$fd} $indent, qq(   start $start\n) if $start && $we eq '';
 	print {$fd} $indent, qq(   maxend  $we\n)   if $we && $we gt $ToOld;
 	print {$fd} $indent, qq(   complete  100\n)   if $done;
@@ -436,7 +436,7 @@ sub calc_depends {
 	if ($Dep_list{$pid}) {
 		$path = $Dep_list{$pid} . '.' . $path;
 		$Dep_list{$tid} = $path;
-		
+
 		return;
 	}
 }

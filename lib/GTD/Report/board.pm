@@ -119,7 +119,7 @@ sub check_a_role {
 	while (@list) {
 		my($ref) = shift @list;
 		next if $Seen{$ref}++;
-	
+
 		my($type) = $ref->get_type();
 
 		if ($type =~ /[mvog]/) {
@@ -140,7 +140,7 @@ sub check_a_role {
 
 
 		check_group($ref, $state, 'd', 2, \@d_devel);	# Do
-		check_group($ref, $state, 'i', 2, \@d_devel);	# Ick 
+		check_group($ref, $state, 'i', 2, \@d_devel);	# Ick
 		#------------------------------------------
 		check_group($ref, $state, 'c', 2, \@b_devel);
 
@@ -155,7 +155,7 @@ sub check_a_role {
 		check_group($ref, $state, 'z', 4, \@b_done);
 	}
 
-	
+
 	my($dash) = '-' x ($Cols+6);
 	my(@c_anal)  = ( @d_anal,  $dash, @b_anal);
 	my(@c_devel) = ( @d_devel, $dash, @b_devel);
@@ -284,7 +284,7 @@ sub save_item {
 	$title =~ s/\[\[//g;
 	$title =~ s/\]\]//g;
 
-	my($result) =  $color . 
+	my($result) =  $color .
 		sprintf("%5d %-${Cols}.${Cols}s", $tid, $title) .
 		color();
 
@@ -323,7 +323,7 @@ sub check_empty {
 	my($children) = 0;
 	for my $ref ($pref->get_children()) {
 		next if $ref->get_completed();
-		
+
 		return color('PINK');
 		++$children;
 	}
@@ -339,7 +339,7 @@ sub check_done {
 
 	for my $ref ($pref->get_children()) {
 		next unless $ref->get_completed();
-		
+
 		return color('PURPLE');
 	}
 	return '';
@@ -482,7 +482,7 @@ sub project_live {
 		for my $cref ($ref->get_children()) {
 			$ref->get_live() |= project_live($cref);
 		}
-	
+
 		$ref->get_live() = ! task_filtered($ref);
 		return $ref->get_live();
 	}

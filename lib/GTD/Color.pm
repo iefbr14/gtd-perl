@@ -32,7 +32,7 @@ my %Fg_terminal = (
 	GREEN =>	"0;32",
 	BROWN =>	"0;33",		# dark yellow
 	NAVY =>		"0;34",		# dark blue
-	PURPLE =>	"0;35",	
+	PURPLE =>	"0;35",
 	CYAN =>		"0;36",
 	GREY =>		"0;37",
 	GRAY =>		"0;37",
@@ -41,7 +41,7 @@ my %Fg_terminal = (
 	PINK =>		"1;31",		# light red
 	LIME =>		"1;32",		# light green
 	YELLOW =>	"1;33",		# light brown
-	BLUE =>		"1;34",		
+	BLUE =>		"1;34",
 	MAGENTA =>	"1;35",		# light purple
 	AQUA =>		"1;36",		# light cyan
 	WHITE =>	"1;37",		# light grey :-)
@@ -54,7 +54,7 @@ my %Bg_terminal = (
 	GREEN =>	"42",
 	BROWN =>	"43",		# dark yellow
 	NAVY =>		"44",		# dark blue
-	PURPLE =>	"45",	
+	PURPLE =>	"45",
 	CYAN =>		"46",
 	GRAY =>		"47", GREY =>		"47",
 #light
@@ -62,7 +62,7 @@ my %Bg_terminal = (
 	PINK =>		"41",		# light red
 	LIME =>		"42",		# light green
 	YELLOW =>	"43",		# light brown
-	BLUE =>		"44",		
+	BLUE =>		"44",
 	MAGENTA =>	"45",		# light purple
 	AQUA =>		"46",		# light cyan
 	WHITE =>	"47",		# light grey :-)
@@ -140,7 +140,7 @@ sub guess_type {
 
 		$Type = 2;
 		return;
-	} 
+	}
 
 	if (defined $ENV{'HTTP_ACCEPT'}) {
 		$Type = 3;
@@ -160,7 +160,7 @@ sub color_ref {
 		print {$fd} color();
 		return;
 	}
-		
+
 	my($fg) = pick_color_fg($ref);
 #	my($bg) = pick_color_bg($ref);
 	my($bg) = '';

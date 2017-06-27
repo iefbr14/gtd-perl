@@ -53,7 +53,7 @@ sub Report_clean {	#-- clean unused categories
 
 	meta_filter('+all', '^tid', 'task');
 	my($done, $tickle, $type);
-	
+
 	for my $ref (meta_selected()) {
 		$done = $ref->is_completed();
 		if ($done) {
@@ -72,7 +72,7 @@ sub Report_clean {	#-- clean unused categories
 		$type = $ref->get_type();
 
 		# all values and visions are active
-		if ($type =~ /[mv]/) {	
+		if ($type =~ /[mv]/) {
 			set_active($ref);
 		}
 	}

@@ -103,7 +103,7 @@ sub check_task {
 	my($p_ref) = @_;
 	my($deps);
 
-	my($id) = $p_ref->get_tid(); 
+	my($id) = $p_ref->get_tid();
 	printf "X %d %s\n", $id, $p_ref->get_title() if $Debug;
 
 	if ($deps = $p_ref->get_depends()) {	# can't be focus

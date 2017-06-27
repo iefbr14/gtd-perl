@@ -151,7 +151,7 @@ sub up {
 
 		die "Stack fault: $id in @_\n";
 	}
-		
+
 
 	for my $pref ($ref->get_parents()) {
 		up($pref, $id, @_);

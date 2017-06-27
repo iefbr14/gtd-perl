@@ -95,7 +95,7 @@ sub init {
 	for my $report (get_reports()) {
 		push(@reports, $report, sub { &run_report($report) } );
 	}
-	
+
 	Menu($pkg, $w,
                 "File", [
                         "Connect",              \&connect,
@@ -135,7 +135,7 @@ sub init {
         );
 
 	my $tree;
-	$tree = $w->Scrolled('Tree', 
+	$tree = $w->Scrolled('Tree',
 		-scrollbars => "ose", 	# Onlyneeded South and but always East
 		-width => 80,
 		-height => 40,
@@ -150,8 +150,8 @@ sub init {
 #	$tree->tag_configure('p', -foreground => 'pink');
 #	$tree->tag_configure('a', -background => 'gray');
 #	$tree->tag_configure('n', -background => 'cyan');
-#	$tree->tag_configure('deleted', 
-	
+#	$tree->tag_configure('deleted',
+
 	walk_tree($pkg);
 }
 
@@ -201,13 +201,13 @@ sub hier_detail {
 	if ($Load_Completed && $done) {
 		# Don't do completed items
 	} elsif ($Load_Unplanned == 0 && $plan == 0) {
-		# Don't do project 
+		# Don't do project
 	} elsif ($Load_Project == 0 && $type eq 'p') {
-		# Don't do project 
+		# Don't do project
 	} elsif ($Load_Next_Actions == 0 && $type eq 'n') {
 		# Don't
 	} elsif ($Load_Actions == 0 && $type eq 'a') {
-		# Don't 
+		# Don't
 	} elsif ($Load_Someday == 0 && $ref->is_someday()) {
 		# Don't do someday unless -A
 	} else {
@@ -218,7 +218,7 @@ sub hier_detail {
 
 		if ($ref->is_hier()) {
 			$ptext .= "-($type)-";
-		} 
+		}
 
 		if ($name eq $desc or $desc eq '') {
 			$ptext .= $name;
@@ -228,8 +228,8 @@ sub hier_detail {
 #		my($text) = new Tk::Text($ptext, -forground => 'pink');
 
 		eval {
-			$tree->add($path, 
-				-text => $ptext, 
+			$tree->add($path,
+				-text => $ptext,
 				-data => $ref,
 			);
 		}; if ($@) {
@@ -244,7 +244,7 @@ sub connect {
 }
 
 sub hier_edit {
-	
+
         my($tree, $path) = @_;
 print "path: $path\n";
 	my $ref = $tree->infoData($path);

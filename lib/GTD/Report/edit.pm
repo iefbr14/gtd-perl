@@ -62,16 +62,16 @@ sub Report_edit {	#-- Edit listed actions/projects
 	if (@list == 0) {
 		die "No items to edit\n";
 	}
-    
+
 	umask(0077);
 	open(my $ofd, '>', "/tmp/todo.$$") or die;
 	for my $ref (@list) {
 		disp_dump($ofd, $ref);
 	}
 	close($ofd);
-   
+
 	system('vi', "/tmp/todo.$$");
- 
+
 	open(my $ifd, '<', "/tmp/todo.$$") or die;
 	while (<$ifd>) {
 		next if /^$/;

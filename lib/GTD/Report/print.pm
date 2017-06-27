@@ -56,8 +56,8 @@ use GTD::Option;
 my $Layout = 'Text';
 
 sub Report_print {	#-- display records in dump format based on format type
-	# everybody into the pool by id 
-	meta_filter('+any', '^tid', 'doit');	
+	# everybody into the pool by id
+	meta_filter('+any', '^tid', 'doit');
 
 	$Layout = ucfirst(lc(option('Layout', 'Text')));
 
@@ -103,7 +103,7 @@ sub print_ref {
 
 	title("Actions");
 
-	my(@children) =$ref->get_children(); 
+	my(@children) =$ref->get_children();
 
 	if (@children == 0) {
 		print "* [_] Plan and add tasks for $tid\n";
@@ -118,7 +118,7 @@ sub print_ref {
 	hr();
 
 	pre(<<"EOF");
-t,pri,s,n: $typename $tid -- pri:$priority$nextaction$someday 
+t,pri,s,n: $typename $tid -- pri:$priority$nextaction$someday
 cct:       $category $context $timeframe
 tags:      $tags
 
@@ -149,7 +149,7 @@ sub pre {
 	case 'Wiki' { print "<pre>$text</pre>\n\n"; }
 	case 'Html' { print "<pre> $text <preh1>\n"; }
 	case 'Man'  { print ".EX\n$text\n.EE\n"; }
-	} 
+	}
 }
 
 sub br {
@@ -158,7 +158,7 @@ sub br {
 	case 'Wiki' { print "<br>\n";}
 	case 'Html' { print "<br>\n"; }
 	case 'Man'  { print ".br\n"; }
-	} 
+	}
 }
 sub hr {
 	switch ($Layout) {
@@ -166,7 +166,7 @@ sub hr {
 	case 'Wiki' { print "------------------------------\n"; }
 	case 'Html' { print "<hr>\n"; }
 	case 'Man'  { print "\\l'6i\n"; }
-	} 
+	}
 }
 
 sub para {
@@ -179,7 +179,7 @@ sub para {
 	case 'Wiki' { print "== $text ==\n\n"; }
 	case 'Html' { print "<h1> $text </h1>\n"; }
 	case 'Man'  { print ".SH \"$text\"\n"; }
-	} 
+	}
 }
 
 sub title {
@@ -192,7 +192,7 @@ sub title {
 	case 'Wiki' { print "== $text ==\n\n"; }
 	case 'Html' { print "<h1> $text </h1>\n"; }
 	case 'Man'  { print ".SH \"$text\"\n"; }
-	} 
+	}
 }
 
 1;  # don't forget to return a true value from the file

@@ -35,7 +35,7 @@ sub new {
 	$walk->{detail} = $opt{'detail'} || \&show_detail;
 	$walk->{done}   = $opt{'done'}   || \&end_detail;
 	$walk->{pre}    = $opt{'pre'}    || sub {};
-	$walk->{seen} = {};		
+	$walk->{seen} = {};
 
 	bless $walk, $class;
 
@@ -160,7 +160,7 @@ sub detail {
 
 	unless ($type) {
 		#***BUG*** fixed: type was not set by new
-		confess "$tid: bad type '$type'\n"; 
+		confess "$tid: bad type '$type'\n";
 		return;
 	}
 	if (type_depth($type) > $depth) {

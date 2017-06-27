@@ -62,7 +62,7 @@ sub Report_fixcct {	#-- Fix Categories/Contexts/Time Frames
 
 		next unless $key =~ s/^(\d+)://;
 		$new_id =  $1;
-	
+
 		sql_fix_cct('category', $id, $new_id, $key);
 	}
 	report_header("Contexts");
@@ -72,7 +72,7 @@ sub Report_fixcct {	#-- Fix Categories/Contexts/Time Frames
 
 		next unless $key =~ s/^(\d+)://;
 		$new_id =  $1;
-	
+
 		sql_fix_cct('context', $id, $new_id, $key);
 	}
 	print "\n";
@@ -83,7 +83,7 @@ sub Report_fixcct {	#-- Fix Categories/Contexts/Time Frames
 
 		next unless $key =~ s/^(\d+)://;
 		$new_id =  $1;
-	
+
 		sql_fix_cct('timeframe', $id, $new_id, $key);
 	}
 	print "\n";

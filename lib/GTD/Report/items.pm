@@ -53,7 +53,7 @@ use GTD::Sort;
 
 sub Report_items {	#-- list titles for any filtered class (actions/projects etc)
 	# everybody into the pool by name
-	meta_filter('+any', '^title', 'item');	
+	meta_filter('+any', '^title', 'item');
 
 	my($name) = meta_desc(@_);
 	if ($name) {

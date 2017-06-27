@@ -10,7 +10,7 @@ BEGIN {
 	# set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
-	@EXPORT      = qw( 
+	@EXPORT      = qw(
 		&report_header &summary_children &display_summary
 		&display_mode &display_fd_task &display_task
 		&display_rgpa &display_hier
@@ -552,7 +552,7 @@ sub disp_wikiwalk {
 	my($done) =  $ref->is_completed();
 
 	$type = '?' unless defined $type{$type};
-	
+
 	my($level) = $ref->level();
 
 	print {$fd} '*' x $level;
@@ -587,7 +587,7 @@ sub disp_wiki {
 	my($done) =  $ref->is_completed();
 
 	$type = '?' unless defined $type{$type};
-	
+
 	print {$fd} '== ' if $type =~ /[ovm]/;
 	print {$fd} '=== ' if $type eq 'g';
 	print {$fd} '**' if $type eq 'a';
@@ -627,7 +627,7 @@ sub disp_html {
 	$title =~ s|\[\[(.+?)\]\]|<a href=/dev/index.php?$1>$1</a>|;
 
 	$type = '?' unless defined $type{$type};
-	
+
 	print {$fd} '<h2> ' if $type =~ /[ovm]/;
 	print {$fd} '<h3> ' if $type eq 'g';
 	print {$fd} '<ul>*' if $type eq 'a';
@@ -816,7 +816,7 @@ sub disp_doit_csv {
 	print {$fd} join("\t", $tid, $pri, $cat, $doit, $pname, $task, $desc), "\n";
 	#print join("\t", $tid, $pri, $cat, $task, $due, $desc), "\n";
 }
-	
+
 sub header_doit_norm {
 	return if $Count++;
 

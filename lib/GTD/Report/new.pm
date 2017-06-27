@@ -66,7 +66,7 @@ my $P_ref;
 #    new proj                          # type: proj
 #    new        I have to do this      # type: inbox (done)
 #    new task   I have to do this      # type: task (done)
-# and we mix in with a parent: 
+# and we mix in with a parent:
 #    new				# type: map parent
 #    new task				# type: is task
 #    new proj                           # type: is sub-project
@@ -82,7 +82,7 @@ sub Report_new {	#-- create a new action or project
 	meta_filter('+all', '^tid', 'none');
 
 	my($want) = '';
-		
+
 	if (@_) {
 		my($type_arg) = type_val($_[0]);
 		if ($type_arg) {
@@ -145,7 +145,7 @@ sub new_item {
 	$desc     = option("Desc") || '';
 
 	$category = option('Category') || '';
-	$note     = option('Note') || ''; 
+	$note     = option('Note') || '';
 
 	my($tid) = next_avail_task($type);
 	my $ref = GTD::Tasks->New($tid);
@@ -192,9 +192,9 @@ sub new_action {
 	$pri      = input("Priority", option('Priority')) || 4;
 	$desc     = prompt_desc("Desc", $desc);
 
-	
+
 #	$category = input("Category", option('Category'));
-	$note     = prompt_desc("Note", option('Note')); 
+	$note     = prompt_desc("Note", option('Note'));
 
 	my($tid) = next_avail_task('a');
 	my $ref = GTD::Tasks->New($tid);
@@ -245,7 +245,7 @@ sub new_project {
 	my($tid) = next_avail_task($type);
 	my $ref = GTD::Tasks->New($tid);
 
-	$ref->set_type($type); 
+	$ref->set_type($type);
 	$ref->set_nextaction('n');
 	$ref->set_isSomeday('n');
 
@@ -264,7 +264,7 @@ sub new_project {
 sub first {
 	my($text) = @_;
 	$First = "$text\n" .
-	 "  enter ^D to stop, entry not added\n" . 
+	 "  enter ^D to stop, entry not added\n" .
 	 "  use '.' to stop adding notes.\n";
 }
 

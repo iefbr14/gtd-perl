@@ -57,7 +57,7 @@ sub Report_bulklist { #-- Bulk List project for use in bulk load
   @cct	Category/Context/Timeframe
   *tag	Tag(s)
   #	comment
- or	
+ or
 	Blank line end of group
 
 =cut
@@ -74,7 +74,7 @@ use GTD::Option;
 my($Parent);
 my($Type);
 
-sub old_bulkload { 
+sub old_bulkload {
 	my($pid);
 	my($action, $parents, $desc);
 
@@ -145,7 +145,7 @@ sub find_hier {
 
 	for my $ref (meta_hier()) {
 		next unless $ref->get_title() eq $goal;
-	
+
 		my($type) = $ref->get_type();
 		my($tid) = $ref->get_tid();
 		warn "Found: something close($type) $tid: $goal\n";
@@ -201,7 +201,7 @@ sub add_action {
 }
 
 
-sub _report_hier {	
+sub _report_hier {
 	meta_filter('+active', '^title', 'bulk');
 
 	my($criteria) = meta_desc(@_);
@@ -234,7 +234,7 @@ sub hier_detail {
 
 	my($indent) = $ref->indent();
 	my($resource) = $ref->Project();
-	
+
 	$name = $ref->get_title() || '';
 	$pri  = $ref->get_priority();
 	$desc = display_summary($ref->get_description(), '', 1);
@@ -287,7 +287,7 @@ warn "depend: $depend dep_path $dep_path\n";
 
 	print {$fd} $indent, qq(  effort $effort\n) if $effort;
 	print {$fd} $indent, qq(  priority $tj_pri\n) if $tj_pri != 500;
-	
+
 #	print {$fd} $indent, qq(  start $start\n) if $start;
 	print {$fd} $indent, qq(  end   $we\n)   if $we;
 	print {$fd} $indent, qq(  complete  100\n)   if $done;
@@ -311,7 +311,7 @@ sub end_detail {
 
 	my($fd) = $planner->{fd};
 	my($indent) = $planner->indent();
-	
+
 
 	my($type) = $ref->get_type();
 
@@ -364,7 +364,7 @@ sub dep_path {
 ###############################################################################
 use GTD::Tasks;
 
-sub _report_actions {	
+sub _report_actions {
 	meta_filter('+live', '^title', 'bulk');
 	report_actions(1, 'Actions', meta_desc(@_));
 }
@@ -416,7 +416,7 @@ sub report_actions {
 			print '#', "=" x $cols, "\n" if $last_goal;
 			print "$gid:\tG:",$gref->get_title(),"\n";
 			$last_goal = $gid;
-		} 
+		}
 		print "$pid:\tP:", $pref->get_title(),"\n";
 
 		bulk_display('+', $pref->get_description());

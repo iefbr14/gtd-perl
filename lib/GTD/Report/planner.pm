@@ -123,7 +123,7 @@ sub hier_detail {
 
 # <task id="1" name="Task 1" note="" work="28800" start="20090319T000000Z" end="20090319T170000Z" work-start="20090319T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
 
-	print {$fd} $indent, qq(<task id="$tid" name="$name" note="$note" work="$work" ) , 
+	print {$fd} $indent, qq(<task id="$tid" name="$name" note="$note" work="$work" ) ,
 		qq(start="$start" end="$end" work-start="$ws" ),
 		qq(percent-complete="$per" priority="$pri" type="normal" scheduling="fixed-work">), "\n";
 
@@ -138,8 +138,8 @@ sub hier_detail {
 				$indent, "  </predecessors>\n",
 		}
 		$Pred{$user} = $tid;
-		
-	
+
+
 		my($context) = $ref->get_context();
 		my($cid);
 		if ($context) {

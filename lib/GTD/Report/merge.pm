@@ -49,7 +49,7 @@ use GTD::Meta;
 
 sub Report_merge { #-- Merge Projects (first list is receiver)
 	for my $slave_id (@_) {
-		die "Unknown project $slave_id\n" unless 
+		die "Unknown project $slave_id\n" unless
 			defined meta_find($slave_id);
 	}
 	my $master_id = shift @_;
@@ -145,7 +145,7 @@ sub merge_project {
 		($master->get_effort() || 0) +
 		($slave->get_effort() || 0)
 	);
-		
+
 	merge_first($master, $slave, 'resource');
 	merge_tag($master, $slave, 'depends');
 	merge_tag($master, $slave, 'tags');

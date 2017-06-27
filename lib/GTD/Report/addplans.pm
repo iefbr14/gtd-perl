@@ -134,7 +134,7 @@ sub iscomplex {
 
 	for my $ref (@_) {
 		# has a non action ie: complex child
-		return 1 if $ref->get_type() ne 'a';	
+		return 1 if $ref->get_type() ne 'a';
 	}
 	return 0;
 }

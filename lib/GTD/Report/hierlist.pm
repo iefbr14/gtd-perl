@@ -72,7 +72,7 @@ $tid, $pid,$cnt,$cat,     $parent,     $name,      $desc
 ##FILTER	next if $ref->filtered();
 
 		$cnt = $ref->count_children() || '';
-		
+
 		$cat = $ref->get_category() || '';
 		$name = $ref->get_title() || '';
 		$desc = $ref->get_description() || '';

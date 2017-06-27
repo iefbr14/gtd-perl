@@ -153,7 +153,7 @@ EOF
 * Update
 * Install
 * Implement
-* Set-up 
+* Set-up
 EOF
 
 #------------------------------------------------------------------------------
@@ -164,14 +164,14 @@ EOF
 * Fill.Out
 * Find
 * Purge
-* Look.Into 
+* Look.Into
 * Gather
 * Print
 * Take
 * Waiting for
 * Load
 * Draft
-* Email 
+* Email
 * Sort
 EOF
 
@@ -221,7 +221,7 @@ sub Report_help {	#-- Help on commands
 	}
 
 	print "? Don't understand help $help, try: help help\n";
-	
+
 }
 
 1;  # don't forget to return a true value from the file

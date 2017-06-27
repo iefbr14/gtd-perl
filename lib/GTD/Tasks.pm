@@ -66,7 +66,7 @@ sub all {
 }
 
 my $Max_todo = 0; 	# Last todo id (unique for all tables)
-our $Debug = 0; 
+our $Debug = 0;
 
 sub New {
 	my($class, $tid) = @_;
@@ -122,7 +122,7 @@ sub get_dirty {
 }
 
 sub set_dirty {
-	my($self, $field) = @_; 
+	my($self, $field) = @_;
 
 	$self->{_dirty}{$field} = 1;
 	return $self;
@@ -249,7 +249,7 @@ sub set_tid          {
 
 	if ($ref->is_dirty()) {
 		# make sure the rest of the object is clean
-		$ref->update();		
+		$ref->update();
 	}
 
 	GTD::Db::G_renumber($ref, $tid, $new);
@@ -282,7 +282,7 @@ sub disp_tags {
 
         return join(',', $ref->get_tags());
 }
-sub set_tags { 
+sub set_tags {
 	my($self) = shift @_;
 
 	$self->{_tags} = {};
@@ -294,7 +294,7 @@ sub set_tags {
 }
 
 #
-# dirty set 
+# dirty set
 #
 sub set_KEY { my($self, $key, $val) = @_;  return dset($key, $self, $val); }
 sub dset {
@@ -444,7 +444,7 @@ sub level {
 }
 
 sub get_state {
-	my($self) = @_; 
+	my($self) = @_;
 
 	my($state) = default($self->{state}, '-');
 
@@ -459,7 +459,7 @@ sub get_state {
 }
 
 sub Project {
-	my($self) = @_; 
+	my($self) = @_;
 
 	return new GTD::Project($self);
 }

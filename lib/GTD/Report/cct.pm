@@ -81,7 +81,7 @@ sub count_items {
 		for my $tag ($ref->get_tags()) {
 			count_item('tag', $type, $tag);
 		}
-			
+
 
 		$Types{$type}++;
 	}
@@ -89,7 +89,7 @@ sub count_items {
 
 sub count_item {
 	my($cct, $type, $value) = @_;
-	
+
 	if ($value) {
 		$Total{$cct}++;
 	} else {
@@ -130,7 +130,7 @@ sub report_counts {
 
 			printf "%4s ", $sk;
 		}
-	
+
 		printf "= %4d  %2d%s %s\n", $cnt, $id, $dup, $key;
 	}
 }

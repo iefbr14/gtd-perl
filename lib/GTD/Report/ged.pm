@@ -66,11 +66,11 @@ sub Report_ged {	#-- generate a gedcom file from gtd db
 		$Someday = 1;
 		meta_filter('+all', '^focus', 'none');
 		# 5 year plan everything plan
-		$ToFuture = pdate(get_today(5*365));	
+		$ToFuture = pdate(get_today(5*365));
 	} else {
 		meta_filter('+active', '^focus', 'none');
 		# don't care about start more > 3 months
-		$ToFuture = pdate(get_today(60));	
+		$ToFuture = pdate(get_today(60));
 	}
 	meta_argv(@_);
 	my($planner) = new GTD::Walk(
@@ -83,7 +83,7 @@ sub Report_ged {	#-- generate a gedcom file from gtd db
 	ged_header();
 
 	$planner->walk('m');
-	
+
 	ged_footer();
 }
 
@@ -122,7 +122,7 @@ sub hier_detail {
 	my($tid) = $ref->get_tid();
 
 	my($resource) = $ref->Project();
-	
+
 	$name = $ref->get_title() || '';
 	$tj_pri  = task_priority($ref);
 	$desc = display_summary($ref->get_description(), '', 1);
@@ -193,7 +193,7 @@ sub hier_detail {
    }
    if ($done) {
 	print {$fd} "  1 CONF\n";
-	print {$fd} "    2 DATE ", ged_date($doit),"\n";	
+	print {$fd} "    2 DATE ", ged_date($doit),"\n";
    }
    if ($due) {
 	print {$fd} "  1 GRAD\n";
@@ -201,7 +201,7 @@ sub hier_detail {
    }
    if ($done) {
 	print {$fd} "  1 DEAT\n";
-	print {$fd} "    2 DATE ", ged_date($done),"\n";	
+	print {$fd} "    2 DATE ", ged_date($done),"\n";
    }
 
 	my($sex) = $ref->is_nextaction() ? 'F' : 'M';
@@ -209,7 +209,7 @@ sub hier_detail {
 
 #	print {$fd} qq(   effort $effort\n) if $effort;
 #	print {$fd} qq(   priority $tj_pri\n) if $tj_pri;
-#	
+#
 #	print {$fd} qq(   start $start\n) if $start && $we eq '';
 #	print {$fd} qq(   maxend  $we\n)   if $we;
 #	print {$fd} qq(   complete  100\n)   if $done;
@@ -217,18 +217,18 @@ sub hier_detail {
 
    if ($done) {
 	print {$fd} "  1 BIRT\n";
-	print {$fd} "    1 DATE", ged_date($done),"\n";	
+	print {$fd} "    1 DATE", ged_date($done),"\n";
    }
 
     for my $pref ($ref->get_parents()) {
 	next if $pref->filtered();
 
-	print {$fd} "  1 FAMC ".id('F',$pref)."\n";	
+	print {$fd} "  1 FAMC ".id('F',$pref)."\n";
     }
 
 	my(@children) = get_active_children($ref);
     if (@children) {
-	print {$fd} "  1 FAMS ".id('F',$ref)."\n";	
+	print {$fd} "  1 FAMS ".id('F',$ref)."\n";
     }
 	print {$fd} "  1 CHAN\n";
 	print {$fd} "    2 DATE ", ged_date($moded), "\n";
@@ -243,8 +243,8 @@ sub end_detail {
 	return unless @children;
 
 	#=============== Family records only for parents ==========
-	print {$fd} "0 ".id('F',$ref)." FAM\n";	
-	print {$fd} "  1 MARR\n";	
+	print {$fd} "0 ".id('F',$ref)." FAM\n";
+	print {$fd} "  1 MARR\n";
 	my($sex) = $ref->is_nextaction() ? 'WIFE' : 'HUSB';
 	print {$fd} "  1 $sex ", id('I', $ref), "\n";
 	print {$fd} "  1 NCHI ", scalar(@children), "\n";

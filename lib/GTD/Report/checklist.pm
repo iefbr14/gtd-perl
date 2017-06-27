@@ -52,16 +52,16 @@ use GTD::Format;
 our $Debug = 0;
 
 sub Report_checklist {	#-- display a check list
-	meta_filter('+any', '^title', 'item');	
+	meta_filter('+any', '^title', 'item');
 #	meta_argv();
 	my ($p) = shift @_;
-	
+
 	my ($id);
 	if ($p) {
 		if ($p =~ /^\d+$/) {
 			list_records($id, "List: $p", meta_desc($p, @_));
 			return;
-		} 
+		}
 		if ($id = find_list($p)) {
 			list_records($id, "List: $p", meta_desc($p, @_));
 		} else {
@@ -120,7 +120,7 @@ sub disp_list {
 		print "pid: $pid tid: $tid => $title\n" if $Debug;
 
 		if ($owner) {
-			next if $pid != $owner;	
+			next if $pid != $owner;
 			printf ("%5d [_] %s\n", $tid, $title);
 		} else {
 			printf ("%5d %s\n", $tid, $title);

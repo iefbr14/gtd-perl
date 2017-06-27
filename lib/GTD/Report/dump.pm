@@ -51,8 +51,8 @@ use GTD::Format;
 
 
 sub Report_dump {	#-- dump records in edit format
-	# everybody into the pool by id 
-	meta_filter('+any', '^tid', 'dump');	
+	# everybody into the pool by id
+	meta_filter('+any', '^tid', 'dump');
 
 	my($name) = ucfirst(meta_desc(@_));	# some out
 	if ($name) {
@@ -102,7 +102,7 @@ sub list_dump {
 		next if $want_type && $type ne $want_type;
 
 ##FILTER	next if $ref->filtered();
-	
+
 		display_task($ref);
 	}
 }

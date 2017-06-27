@@ -71,7 +71,7 @@ sub Report_search {	#-- Search for items
 	for my $name (split(/,/, $_[0])) {
 		for my $ref (meta_selected()) {
 			next unless match_desc($ref, $name);
-			
+
 			display_task($ref);
 			$found = 1;
 		}

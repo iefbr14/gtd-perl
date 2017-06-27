@@ -60,7 +60,7 @@ my %Dep_info = (
 
 my %Dep_map;
 
-sub Report_renumber { #-- Renumber task Ids 
+sub Report_renumber { #-- Renumber task Ids
 	meta_filter('+any', '^tid', 'none');
 	my(@list) = meta_argv(@_);
 
@@ -73,8 +73,8 @@ sub Report_renumber { #-- Renumber task Ids
 	}
 }
 
-sub renumber_all { #-- Renumber task Ids 
-	## for i in qw(a s p g o v m) 
+sub renumber_all { #-- Renumber task Ids
+	## for i in qw(a s p g o v m)
 	renumb('a');	# Actions
  	renumb('s');	# Sub-Projects
 	renumb('p');	# Projects
@@ -202,7 +202,7 @@ sub renumb {
 			}
 		}
 	}
-	TASK: 
+	TASK:
 	for my $tid (@try) {
 		while ($min < $max) {
 			if ($inuse{$min}) {
@@ -272,7 +272,7 @@ sub dependent {
 		return $Dep_map{$id};
 	}
 	warn "Building Dep_map\n";
-		
+
 	my($pref, $pid, $depends);
 	for my $pref ( meta_all()) {
 		$depends = $pref->get_depends();
@@ -283,7 +283,7 @@ sub dependent {
 		}
 	}
 
-	
+
 	return $Dep_map{$id};
 }
 

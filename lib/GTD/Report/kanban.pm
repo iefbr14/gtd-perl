@@ -54,7 +54,7 @@ use GTD::Project;
 
 sub Report_kanban {	#-- report kanban of projects/actions
 	# counts use it and it give a context
-	meta_filter('+active', '^tid', 'simple');	
+	meta_filter('+active', '^tid', 'simple');
 
 	my(@args);
 	for my $arg (meta_argv(@_)) {
@@ -134,7 +134,7 @@ sub kanban_state {
 
 	$ref->set_state($state);
 }
-	
+
 sub check_hier {
 	my($count) = 0;
 
@@ -209,12 +209,12 @@ sub check_a_role {
 
 	for my $ick (@ick) {
 		print_color('CYAN');
-		print "I: "; display_task($ick, '(ick)'); 
+		print "I: "; display_task($ick, '(ick)');
 		print_color("");
 	}
 
 	for my $test (@test) {
-		print "T: "; display_task($test, '(test)'); 
+		print "T: "; display_task($test, '(test)');
 	}
 
 	for my $repo (@repo) {

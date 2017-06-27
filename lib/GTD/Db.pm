@@ -191,7 +191,7 @@ sub set {
 
 sub load_gtd {
 	my($ref, $row, $tid);
-	
+
 	my($XXX) = <<'EOF';
 +-------------+------------------+------+-----+---------+----------------+
 | Field       | Type             | Null | Key | Default | Extra          |
@@ -679,7 +679,7 @@ sub sac_create {
 	my($tid, $ref) = @_;
 
 	G_sql("insert into gtd_todo(todo_id) values(?)", $tid);
-	
+
 	for my $fld (keys %Key_type) {
 		next if $fld eq 'todo_id';
 		next unless $Key_type{$fld} & 0x10;	# in gtd_todo db
@@ -752,23 +752,23 @@ sub DB_init {
 
 	my($perf) = option('Perf', '');
 
-	warn "Start ".localtime()."\n" if $perf; 
+	warn "Start ".localtime()."\n" if $perf;
 
 	my($now, $dur);
 
 	$now = time;
 	load_meta();
-	$dur = time - $now; 
+	$dur = time - $now;
 	warn "Mid   ".localtime()." $dur\n" if $perf;
 
 	$now = time;
 	load_gtd();
-	$dur = time - $now; 
+	$dur = time - $now;
 	warn "End   ".localtime()." $dur\n" if $perf;
 
 	$now = time;
 	metafix();
-	$dur = time - $now; 
+	$dur = time - $now;
 	warn "Done  ".localtime()." $dur\n" if $perf;
 }
 
@@ -794,7 +794,7 @@ sub G_sql {
 		print "Failed sql: $sql ($rv)\n";
 		print "..........: $@";
 	}
-	
+
 	return $rv;
 }
 

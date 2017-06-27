@@ -16,7 +16,7 @@ usage: $0 [options] report-cmd [sub-options]
    used to set/query tasks in the gtd database.
 global options:
     -x      -- turn Debug on.
-    -X :    -- turn feature ':' debug on 
+    -X :    -- turn feature ':' debug on
     -u      -- Don't update database (for testing)
 
     -Z :    -- gtd database group (default: test)
@@ -30,7 +30,7 @@ global options:
     -A      -- All includes done
 
     -p :    -- set the priority (default 3; range 1..5)
-    -s :    -- set the title (subject) text 
+    -s :    -- set the title (subject) text
     -d :    -- set the description text
     -N :    -- set the note (result) text
 
@@ -48,7 +48,7 @@ X   -L      -- list format (use -oList instead)
     -r      -- reverse sort
 
 Page format
-   Html,Wiki 
+   Html,Wiki
    Man,Ms
 
 Meta Info:
@@ -58,7 +58,7 @@ Meta Info:
 	=Project -- Sets parents
 	NNNN (Project id) -- Sets parents
 	*Type (Sets type)
-	^sort^criteria	
+	^sort^criteria
 	+ or ~ attributes for filters
 
 Option

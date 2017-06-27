@@ -76,7 +76,7 @@ sub Report_review {	#-- Review all projects with actions
 	} else {
 		$desc = "= $desc =";
 	}
-		
+
 	reload();
 }
 
@@ -225,7 +225,7 @@ sub get_status {
 }
 
 
-sub _report_doit {	
+sub _report_doit {
 
 	$= = lines();
 	meta_filter('+a:live', '^doitdate', 'doit');
@@ -297,7 +297,7 @@ sub doit_priority {
 	my($ref, $priority) = @_;
 
 	if ($ref->get_priority() == $priority) {
-		print $ref->get_tid() . ': ' . $ref->get_description() . 
+		print $ref->get_tid() . ': ' . $ref->get_description() .
 			" already at priority $priority\n";
 		return;
 	}
@@ -369,7 +369,7 @@ $tid,  $pri, $cat,       $doit,    $desc
 			$note = "Outcome: $note" if $note;
 
 			$desc = join("\r", "G[$gid]: $gname",
-				  "P[$pid]: $pname", 
+				  "P[$pid]: $pname",
 					split("\n", $pdesc),
 				  "*[$tid] $task",
 					split("\n", $desc),
@@ -392,7 +392,7 @@ someday -- set them to someday
 now     -- set them to from someday
 
 f :    -- forward later : days
-p :    -- priorty : 
+p :    -- priorty :
 
 EOF
 #limit:  -- Set the doit limit to this number of items

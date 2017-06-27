@@ -6,7 +6,7 @@ rc
 
 =head1 USAGE
 
-rc 
+rc
 
 =head1 REQUIRED ARGUMENTS
 
@@ -14,7 +14,7 @@ rc
 
 =head1 DESCRIPTION
 
-rc is 
+rc is
 
 =head1 DIAGNOSTICS
 
@@ -234,7 +234,7 @@ print << 'EOF';
    ....      to run any current report
 EOF
 }
-   
+
 
 sub rc_up {
 	unless (defined $Pref) {
@@ -280,7 +280,7 @@ sub rc_filter {
 		print "Filter: $Filter\n";
 		return;
 	}
-	
+
 	print "Filter $Filter => $mode\n";
 
 	set_option('Filter', dash_null($mode));
@@ -296,7 +296,7 @@ sub rc_format {
 		print "Format $Format\n";
 		return;
 	}
-	
+
 	print "Format $Format => $mode\n";
 
 	set_option('Format', dash_null($mode));
@@ -312,7 +312,7 @@ sub rc_header {
 		print "Header $Header\n";
 		return;
 	}
-	
+
 	print "Header $Header => $mode\n";
 
 	set_option('Header', dash_null($mode));
@@ -385,7 +385,7 @@ sub load_task_ref {
 
 	$Prompt = "$Pid>";
 	set_option('Current', $Pid);
-		
+
 	print "$why($type): $Pid - $title\n";
 }
 
@@ -509,7 +509,7 @@ sub find_hier {
 
 	for my $ref (meta_hier()) {
 		next unless $ref->get_title() eq $goal;
-	
+
 		my($type) = $ref->get_type();
 		my($tid) = $ref->get_tid();
 		warn "Found: something close($type) $tid: $goal\n";
@@ -575,7 +575,7 @@ sub add_task {
 	$desc     = option("Desc") || $desc;
 
 	$category = option('Category') || '';
-	$note     = option('Note'); 
+	$note     = option('Note');
 
 	my $ref = GTD::Tasks->New(undef);
 

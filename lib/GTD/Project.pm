@@ -116,7 +116,7 @@ sub how {
 	my($ref) = $self->task();
 
 	my($effort) = $ref->get_effort();
-	if ($effort) { 
+	if ($effort) {
 		if ($effort eq '?') {
 			$effort = '';
 		} else {

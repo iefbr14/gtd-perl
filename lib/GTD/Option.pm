@@ -8,7 +8,7 @@ BEGIN {
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
 	@EXPORT      = qw(
-		option set_option 
+		option set_option
 		debug
 		load_report run_report
 		get_today
@@ -79,7 +79,7 @@ sub option_key {
 	}
 	return $key;
 }
-	
+
 sub set_option {
 	my($key, $val) = @_;
 
@@ -149,7 +149,7 @@ sub debug {
 #			warn "Debug GTD::Report::$what failed\n";
 #			return;
 #		}
-	}	
+	}
 }
 
 # load_report -- return 1 if it compile correctly
@@ -174,7 +174,7 @@ sub load_report {
 	return 1;
 }
 
-# run report but protect caller from report failure 
+# run report but protect caller from report failure
 sub run_report {
 	my($report) = shift @_;
 

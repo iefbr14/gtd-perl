@@ -54,7 +54,7 @@ sub Report_oocalc {	#-- Project Summary for a role
 	my @want = meta_argv(@_);
 
 	new_calc();
-	
+
 	my($roles) = load_roles();
 	for my $role (sort keys %$roles) {
 		display_role($role, $roles->{$role});
@@ -152,24 +152,24 @@ sub get_actions {
 
 	if (@next == 0) {	# no next actions
 		if (@doit == 0 && @some == 0 && @done == 0) {
-			# needs planning			
+			# needs planning
 			return ([ $gtitle, $pid, $ptitle,
-				'', "", '', 
+				'', "", '',
 				join(':', pnum($gref), pnum($pref), '0')
 				])
 			   if $pref->get_completed() or
 				$pref->is_someday();
 
 			return ([ $gtitle, $pid, $ptitle,
-				'-', "##   gtd plan $pid   ##", '.1', 
+				'-', "##   gtd plan $pid   ##", '.1',
 				join(':', pnum($gref), pnum($pref), '6')
 				]);
-				
+
 		} elsif (@doit == 0 && @some == 0) {
 			# is complete
 
 			return ([ $gtitle, $pid, $ptitle,
-				'', "", '', 
+				'', "", '',
 				join(':', pnum($gref), pnum($pref), '0')
 				])
 			   if $pref->get_completed();

@@ -82,7 +82,7 @@ sub Report_take {	#-- take listed actions/projects
 		}
 		print "Take $parent <= $child\n";
 	}
-}   
+}
 
 sub get_ancestors {
 	my($ref) = @_;

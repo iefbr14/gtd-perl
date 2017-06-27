@@ -46,7 +46,7 @@ sub rel_keys {
 
 	return @{$obj->{"_${rel}_keys"}};
 }
-	
+
 sub rel_vals {
 	my($rel, $obj) = @_;
 

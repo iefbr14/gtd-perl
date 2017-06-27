@@ -108,7 +108,7 @@ sub guess_remote {
 
 sub find_url {
 	my($ref) = @_;
-	
+
 	my($line) = $ref->get_title();
 	my($gtd_id) = $ref->get_tid();
 
@@ -120,7 +120,7 @@ sub find_url {
 		my($cli,$proj) = split(/\|/, $url, 2);
 		push(@urls, "CC $proj");
 	}
-		
+
 
 	###BUG### this should't be hard wired.
 	my($base) = "https://wiki.ss.org";

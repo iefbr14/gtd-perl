@@ -133,8 +133,8 @@ sub report_list {
 ##FILTER		next if $ref->filtered();
 
 			$tid = $ref->get_tid();
-			print join("\t", 
-				$gref->get_title(), 
+			print join("\t",
+				$gref->get_title(),
 				$pid, $pref->get_title(),
 				$tid, $ref->get_title(),
 				$ref->get_effort()
@@ -142,8 +142,8 @@ sub report_list {
 			$task_cnt++;
 		}
 		unless ($task_cnt) {
-			print join("\t", 
-				$gref->get_title(), 
+			print join("\t",
+				$gref->get_title(),
 				$pid, $pref->get_title(),
 				), "\n";
 		}
@@ -191,7 +191,7 @@ sub report_actions {
 		} elsif ($last_proj != $pid) {
 			print '#', "-" x $cols, "\n";
 			$last_proj = $pid;
-		} 
+		}
 
 		display_task($pref);
 		my $tasks = $Projects->{$pid};

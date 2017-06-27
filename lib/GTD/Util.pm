@@ -98,7 +98,7 @@ sub type_disp {
 	$type = '_'      if $ref->is_task();
 
 	return "<$type\>" if $ref->get_completed();
-	
+
 	return "}$type\{" if $ref->is_later();
 	return "{$type\}" if $ref->is_someday();
 	return "[$type\]" if $ref->is_nextaction();

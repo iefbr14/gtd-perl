@@ -50,11 +50,11 @@ use GTD::Meta;
 use GTD::Sort;
 use GTD::Format;
 
-sub Report_orphans {	#-- list all items without a parent 
+sub Report_orphans {	#-- list all items without a parent
 	meta_filter('+any', '^title', 'todo');
 
 	my(@list) = meta_pick(@_);
-	
+
 	report_header('Orphans', @_);
 
 	my($count) = 0;

@@ -59,7 +59,7 @@ my $Limit = 2;
 
 ### rethink totally
 ### REWRITE --- scan list for \d+ and put in work list
-### if work list is empty  
+### if work list is empty
 
 sub Report_doit {	#-- doit tracks which projects/actions have had movement
 	$Limit = option('Limit', 1);
@@ -105,7 +105,7 @@ sub Report_doit {	#-- doit tracks which projects/actions have had movement
 			$action = \&doit_done;
 			next;
 		}
-		
+
 		if ($arg eq 'someday') {
 			$action = \&doit_someday;
 			next;
@@ -174,7 +174,7 @@ sub doit_priority {
 	my($ref) = @_;
 
 	if ($ref->get_priority() == $Priority) {
-		print $ref->get_tid() . ': ' . $ref->get_description() . 
+		print $ref->get_tid() . ': ' . $ref->get_description() .
 			" already at priority $Priority\n";
 		return;
 	}
@@ -202,7 +202,7 @@ sub list_all {
 	&$action(@list);
 }
 
-		
+
 sub doit_list {
 	for my $ref (@_) {
 		my($date) = $ref->get_doit() || $ref->get_created();
@@ -224,7 +224,7 @@ done    -- set them to done
 someday -- set them to someday
 now     -- set them to from someday
 
-Options: 
+Options:
 
 pri :    -- Set priority
 limit :  -- Set the doit limit to this number of items

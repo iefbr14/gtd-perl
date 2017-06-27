@@ -86,8 +86,8 @@ sub apply_filters {
 		apply_walk_down($ref);
 	}
 
-	my($have_cct_filters) 
-	    = $Filter_Category 
+	my($have_cct_filters)
+	    = $Filter_Category
 	   || $Filter_Context
 	   || $Filter_Timeframe
 	   || %Filter_Tags;
@@ -445,7 +445,7 @@ sub proj_mask {
 
 	return if $mask & T_DONE;	# project tagged as done
 	return if $mask & T_FUTURE;	# project yet to start
-		
+
 	###BUG### propigate done upward
 	# check if all children are done
 #	for my $cref ($ref->get_children()) {
@@ -617,7 +617,7 @@ sub apply_ref_filters {
 			my($tid) = $ref->get_tid();
 			my($title) = $ref->get_title();
 			my($name) = $filter->{name};
-			warn "#?Filter($name): $reason apply $dir for $tid: $title\n"; 
+			warn "#?Filter($name): $reason apply $dir for $tid: $title\n";
 		}
 
 		next if substr($reason, 0, 1) eq '?';
@@ -839,7 +839,7 @@ sub filter_next {
 sub filter_active {
 	my($ref, $arg) = @_;
 
-	
+
 #	return '?' unless $ref->is_task();
 
 	my($mask) = task_mask($ref);
@@ -860,7 +860,7 @@ sub filter_active {
 sub filter_live {
 	my($ref, $arg) = @_;
 
-	
+
 #	return '?' unless $ref->is_task();
 
 	my($mask) = task_mask($ref);

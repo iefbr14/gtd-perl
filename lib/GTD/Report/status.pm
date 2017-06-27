@@ -59,7 +59,7 @@ my $Hours_next = 0;
 
 sub Report_status {	#-- report status of projects/actions
 	# counts use it and it give a context
-	meta_filter('+active', '^tid', 'none');	
+	meta_filter('+active', '^tid', 'none');
 
 	my $desc = meta_desc(@_);
 
@@ -67,7 +67,7 @@ sub Report_status {	#-- report status of projects/actions
 		report_detail();
 		return;
 	}
-	
+
 	$Hours_proj = $Hours_task = $Hours_next = 0;
 
 	my $hier = count_hier();
@@ -248,7 +248,7 @@ sub project_live {
 		for my $cref ($ref->get_children()) {
 			$ref->get_live() |= project_live($cref);
 		}
-	
+
 		$ref->get_live() = ! task_filtered($ref);
 		return $ref->get_live();
 	}
@@ -310,7 +310,7 @@ sub report_detail {
 			my $ck = lc(substr($class,0, 1));
 			my $val = $classes->{$ck};
 			$val ||= '';
-	
+
 			printf "   %7s", $val;
 		}
 		print "\n";

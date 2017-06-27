@@ -59,7 +59,7 @@ sub sort_mode {
 		return;
 	}
 
-	$mode =~ s/^\^//;	# default is asending 
+	$mode =~ s/^\^//;	# default is asending
 	if ($mode =~ s/^\~//) {	# desending
 		option('Reverse', 1);
 	}
@@ -81,7 +81,7 @@ sub sort_tasks {
 	if ($rev) {
 		return reverse sort { &$Sorter($a,$b) } @_;
 	}
-	
+
 	return sort { &$Sorter($a,$b) } @_;
 	## comment out prev line to Debug.
 	my(@list) =  sort { &$Sorter($a,$b) } @_;
@@ -169,7 +169,7 @@ sub by_task($$) {
 sub by_pri($$) {
 	my($a, $b) = @_;
 
-	# order by priority $order, created $order, due $order 
+	# order by priority $order, created $order, due $order
 
 	my($rc)	= $a->get_priority() <=> $b->get_priority()
 	||	  $a->get_created()  cmp $b->get_created()
@@ -216,7 +216,7 @@ sub sort_goal {
 		$ref = $ref->get_parent;
 		last if !defined $ref;
 	}
-	
+
 	$Sort_cache{$tid} = join("\t", @list);
 
 	return $Sort_cache{$tid};
@@ -247,13 +247,13 @@ sub Meta_key {
 		if ($g_ref) {
 			$g_title = lc_title($g_ref);
 		}
-	} 
-	$val = "$g_title\t$p_title\t$title\t$tid",  
+	}
+	$val = "$g_title\t$p_title\t$title\t$tid",
 	$Meta_key{$tid} = $val;
 	return $val;
 }
 
-# next   norm  some  done 
+# next   norm  some  done
 # 012345 12345 12345
 #  abcde fghij klmno z
 
@@ -307,7 +307,7 @@ sub by_focus($$) {
 	return calc_focus($a) cmp calc_focus($b);
 }
 
-# next   norm  some  done 
+# next   norm  some  done
 # 012345 12345 12345
 #  abcde fghij klmno z
 
@@ -328,7 +328,7 @@ sub calc_panic {
 		my $pri = calc_panic($child);
 		$val = $pri if $pri lt $val;
 	}
-	
+
 	$Panic_key{$tid} = $val;
 
 	return $val;

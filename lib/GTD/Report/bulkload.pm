@@ -50,7 +50,7 @@ package GTD::Report::bulkload;
   @cct	Category/Context/Timeframe
   *tag	Tag(s)
   #	comment
- or	
+ or
 	Blank line end of group
 
 =cut
@@ -143,7 +143,7 @@ sub Report_bulkload { #-- Create Projects/Actions items from a file
 			$pid = $pref->get_tid();
 			my($type) = $pref->get_type();
 			$parents->{$type} = $pid;
-			
+
 			print "Parent($type): $tid - ", $pref->get_title(), "\n";
 			next;
 		}
@@ -224,7 +224,7 @@ sub find_hier {
 
 	for my $ref (meta_hier()) {
 		next unless $ref->get_title() eq $goal;
-	
+
 		my($type) = $ref->get_type();
 		my($tid) = $ref->get_tid();
 		warn "Found: something close($type) $tid: $goal\n";
@@ -290,7 +290,7 @@ sub add_task {
 	$desc     = option("Desc") || $desc;
 
 	$category = option('Category') || '';
-	$note     = option('Note'); 
+	$note     = option('Note');
 
 	my $ref = GTD::Tasks->New(undef);
 
