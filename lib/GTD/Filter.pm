@@ -21,8 +21,8 @@ my @CCT_Filters = ();	# [ field, value, result-if-matched ]
 my $Today = get_today();
 my $Soon  = get_today(+7);
 
-my @Global_Filters;	# [ level, function, arg ] 
-my @Rule_Filters;	# [ level, function, arg ] 
+my @Global_Filters;	# [ level, function, arg ]
+my @Rule_Filters;	# [ level, function, arg ]
 our $Debug = 1;
 
 my $Default_level = 'm';
@@ -93,7 +93,7 @@ sub apply_filters {
 #
 #				my($reason) = &$func($ref, $arg);
 #			}
-#			
+#
 #			$ref->{_filtered} = $reason;
 #		}
 #		return;
@@ -128,13 +128,6 @@ sub apply_filters {
 		apply_walk_down($ref, '');
 	}
 
-<<<<<<< Updated upstream
-	my($have_cct_filters)
-	    = $Filter_Category
-	   || $Filter_Context
-	   || $Filter_Timeframe
-	   || %Filter_Tags;
-=======
 }
 
 sub apply_walk_down {
@@ -142,7 +135,6 @@ sub apply_walk_down {
 
 	if ($ref->{_filtered}) {
 		$reason = $ref->{_filtered};
->>>>>>> Stashed changes
 
 	} else {
 		# check for cct and use that if it exists
@@ -186,7 +178,6 @@ sub apply_cct_filters {
 	for my $filter (@CCT_Filters) {
 		my($field, $value, $result) = @$filter;
 
-		
 		my($match) = cct_match($ref, $field, $value);
 
 		return '' unless $match;
@@ -525,7 +516,7 @@ sub Add_cct {
 		push(@CCT_Filters, [ '*', '*', $reason ]);
 		return;
 	}
-		
+
 
 	my($Category) = GTD::CCT->Use('Category');
 	my($Context) = GTD::CCT->Use('Context');
@@ -608,90 +599,7 @@ sub map_filter_name {
 
 	my($level) = 'a';
 	if ($word =~ s/^([a-z])://) {
-<<<<<<< Updated upstream
-		$Default_level = $1;
-	}
-
-	return (\&filter_any, '=', '*')	if $word =~ /^any/i;
-	return (\&filter_any, '=', '=')	if $word =~ /^all/i;
-	return (\&filter_any, '=', 'l')	if $word =~ /^list/i;
-	return (\&filter_any, '=', 'h')	if $word =~ /^hier/i;
-	return (\&filter_any, '=', 't')	if $word =~ /^task/i;
-
-
-	return (\&filter_done, '>','')	if $word =~ /^done/i;
-	return (\&filter_some, '>','')	if $word =~ /^some/i;
-	return (\&filter_some, '>','')	if $word =~ /^maybe/i;
-
-	return (\&filter_task, '<','')	if $word =~ /^action/i;
-#	return (\&filter_next, '<','')	if $word =~ /^pure_next/i;
-# we need to re-thing this live-next vs next
-
-	return (\&filter_next, '><','')	if $word =~ /^next/i;
-	return (\&filter_active, '><','')	if $word =~ /^active/i;
-	return (\&filter_live, '><','')	if $word =~ /^live/i;
-	return (\&filter_dead, '><','')	if $word =~ /^dead/i;
-	return (\&filter_idle, '><','')	if $word =~ /^idle/i;
-
-	return (\&filter_wait, '<','')	if $word =~ /^wait/i;
-	return (\&filter_wait, '<','')	if $word =~ /^tickle/i;
-	return (\&filter_late, '<','')	if $word =~ /^late/i;
-	return (\&filter_due,  '<','')	if $word =~ /^due/i;
-
-	return (\&filter_slow, '<','')	if $word =~ /^slow/i;
-	return (\&filter_idea, '<','')	if $word =~ /^idea/i;
-
-
-	return 0;
-}
-
-sub apply_ref_filters {
-	my($ref) = @_;
-
-	my($reason) = $ref->{_filtered};
-
-	return $reason if $reason;
-
-	for my $filter (@Filters) {
-		my($func) = $filter->{func};
-		my($dir)  = $filter->{dir};
-		my($arg)  = $filter->{arg};
-
-		$reason = &$func($ref, $arg);
-
-		if ($Debug) {
-			my($tid) = $ref->get_tid();
-			my($title) = $ref->get_title();
-			my($name) = $filter->{name};
-			warn "#?Filter($name): $reason apply $dir for $tid: $title\n";
-		}
-
-		next if substr($reason, 0, 1) eq '?';
-
-		if ($dir eq '=') {
-			$ref->{_filtered} = $reason;
-			return;
-		}
-
-		if ($dir eq '!') {
-			$reason =~ tr/+-/-+/;
-			$ref->{_filtered} = $reason;
-			return;
-		}
-
-		if ($dir eq '<') {
-			filter_walk_up($ref, $reason);
-		} elsif ($dir eq '>') {
-			filter_walk_down($ref, $reason);
-		} elsif ($dir eq '<>') {
-			filter_walk_up_down($ref, $reason);
-		} elsif ($dir eq '><') {
-			filter_walk_down_up($ref, $reason);
-		}
-		return;
-=======
 		$level = $1;
->>>>>>> Stashed changes
 	}
 
 	return (\&filter_any, '*')	if $word =~ /^any/i;
@@ -857,13 +765,7 @@ sub filter_next {
 sub filter_active {
 	my($ref, $arg) = @_;
 
-<<<<<<< Updated upstream
-
-#	return '?' unless $ref->is_task();
-=======
-	
 #	return '' unless $ref->is_task();
->>>>>>> Stashed changes
 
 	my($mask) = task_mask($ref);
 
@@ -883,12 +785,7 @@ sub filter_active {
 sub filter_live {
 	my($ref, $arg) = @_;
 
-<<<<<<< Updated upstream
-
-#	return '?' unless $ref->is_task();
-=======
 #	return '' unless $ref->is_task();
->>>>>>> Stashed changes
 
 	my($mask) = task_mask($ref);
 

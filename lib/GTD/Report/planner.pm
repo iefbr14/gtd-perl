@@ -139,10 +139,6 @@ sub hier_detail {
 		}
 		$Pred{$user} = $tid;
 
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
 		my($context) = $ref->get_context();
 		my($cid);
 		if ($context) {
