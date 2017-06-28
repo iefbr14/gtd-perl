@@ -37,7 +37,6 @@ my %Tasks;		# all Todo items (including Hier)
 #
 #        live       	=> '$',		# bool
 #        mask       	=> '$',		# uint
-#        todo_only  	=> '$',		# bool
 #
 #        Tickledate 	=> '$',		# time.Time
 #        Timeframe  	=> '@',		# []time.Time
@@ -200,7 +199,6 @@ sub get_title        { my($self) = @_; return default($self->{task}, ''); }
 sub get_task         { die "call get title"; }
 sub get_tickledate   { my($self) = @_; return default($self->{tickledate}, ''); }
 sub get_timeframe    { my($self) = @_; return default($self->{timeframe}, ''); }
-sub get_todo_only    { my($self) = @_; return default($self->{_todo_only}, 0); }
 sub get_type         { my($self) = @_; return default($self->{type}, '?'); }
 
 sub get_resource     { my($self) = @_; return default($self->{resource}, ''); }
@@ -221,8 +219,6 @@ sub set_effort       {return dset('effort', @_); }
 sub set_state        {return dset('state', @_); }
 sub set_gtd_modified {return dset('gtd_modified', @_); }
 sub set_isSomeday    {return dset('isSomeday', @_); }
-sub set_later        {return dset('later', @_); }
-sub set_live         {return dset('live', @_); }
 sub set_mask         {return dset('mask', @_); }
 sub set_modified     {return dset('modified', @_); }
 sub set_nextaction   {return dset('nextaction', @_); }
@@ -231,7 +227,6 @@ sub set_priority     {return dset('priority', @_); }
 sub set_title        {return dset('task', @_); }
 sub set_tickledate   {return dset('tickledate', @_); }
 sub set_timeframe    {return dset('timeframe', @_); }
-sub set_todo_only    {return dset('_todo_only', @_); }
 sub set_type         {return dset('type', @_); }
 
 sub set_resource     {return dset('resource', @_); }
@@ -462,6 +457,51 @@ sub Project {
 	my($self) = @_;
 
 	return new GTD::Project($self);
+}
+
+sub ref_context {
+	my($ref) = @_;
+
+	my($context) = $ref->get_context();
+
+	return $context if $context;
+
+	for my $pref ($ref->get_parents()) {
+		$context = $pref->ref_context();
+
+		return $context if $context;
+	}
+	return '';
+}
+
+sub ref_category {
+	my($ref) = @_;
+
+	my($category) = $ref->get_category();
+
+	return $category if $category;
+
+	for my $pref ($ref->get_parents()) {
+		$category = $pref->ref_category();
+
+		return $category if $category;
+	}
+	return '';
+}
+
+sub ref_timeframe {
+	my($ref) = @_;
+
+	my($timeframe) = $ref->get_timeframe();
+
+	return $timeframe if $timeframe;
+
+	for my $pref ($ref->get_parents()) {
+		$timeframe = $pref->ref_timeframe();
+
+		return $timeframe if $timeframe;
+	}
+	return '';
 }
 
 1;  # don't forget to return a true value from the file

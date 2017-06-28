@@ -23,7 +23,7 @@ my $Soon  = get_today(+7);
 
 my @Global_Filters;	# [ level, function, arg ]
 my @Rule_Filters;	# [ level, function, arg ]
-our $Debug = 1;
+our $Debug = 0;
 
 my $Default_level = 'm';
 my $Default_filter = '+a:live';
@@ -180,15 +180,13 @@ sub apply_cct_filters {
 
 		my($match) = cct_match($ref, $field, $value);
 
-		return '' unless $match;
-
 		if ($Debug) {
-			warn "#=CCT($match) $field, $value $result",
-				$ref->get_tid(),
-				": ", $ref->get_title(), "\n";
+			printf "#CCT %-8.8s : %s==%s => %s %d: %s\n",
+				$match, $field , $value, $result,
+				$ref->get_tid(), $ref->get_title();
 		}
 
-		return $result;
+		return $result if $match;
 	}
 	return '';
 }
@@ -198,7 +196,7 @@ sub cct_match {
 
 	# wild card match any
 	if ($value eq '*') {
-		return '*';
+		return '*' if $ref->get_type() =~ /^[gpa]/;
 	}
 
 	if ($field eq 'tag') {
@@ -208,19 +206,20 @@ sub cct_match {
 	}
 
 	if ($field eq "context") {
-		return "context" if $ref->get_context() eq $value;
+		return "context" if $ref->ref_context() eq $value;
 	}
 
 	if ($field eq "timeframe") {
-		return "timeframe" if $ref->get_timeframe() eq $value;
+		return "timeframe" if $ref->ref_timeframe() eq $value;
 	}
 
 	if ($field eq "category") {
-		return "category" if $ref->get_category() eq $value;
+		return "category" if $ref->ref_category() eq $value;
 	}
 
 	return '';
 }
+
 
 ###======================================================================
 ###
@@ -556,32 +555,32 @@ sub Add_cct {
 	for my $key ($Context->keys()) {
 		next unless lc($key) eq lc($value);
 
-		warn "#-Set space context:  $key\n" if $Debug;
-		push(@CCT_Filters, [ 'context', $value, $reason ]);
+		warn "#-Set Space context:  $key\n" if $Debug;
+		push(@CCT_Filters, [ 'context', $key, $reason ]);
 		return;
 	}
 
 	for my $key ($Category->keys()) {
 		next unless lc($key) eq lc($value);
 
-		warn "#-Set category:       $key\n" if $Debug;
-		push(@CCT_Filters, [ 'context', $value, $reason ]);
+		warn "#-Set Category:       $key\n" if $Debug;
+		push(@CCT_Filters, [ 'context', $key, $reason ]);
 		return;
 	}
 
 	for my $key ($Timeframe->keys()) {
 		next unless lc($key) eq lc($value);
 
-		warn "#-Set time context:   $key\n" if $Debug;
-		push(@CCT_Filters, [ 'timeframe', $value, $reason ]);
+		warn "#-Set Time context:   $key\n" if $Debug;
+		push(@CCT_Filters, [ 'timeframe', $key, $reason ]);
 		return;
 	}
 
 	for my $key (GTD::CCT::keys('Tag')) {
 		next unless lc($key) eq lc($value);
 
-		warn "#-Set tag:            $key\n" if $Debug;
-		push(@CCT_Filters, [ 'tag', $value, $reason ]);
+		warn "#-Set Tag:            $key\n" if $Debug;
+		push(@CCT_Filters, [ 'tag', $key, $reason ]);
 		return;
 	}
 
