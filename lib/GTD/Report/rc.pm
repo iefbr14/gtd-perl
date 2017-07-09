@@ -131,6 +131,7 @@ sub rc {
 
 	###   :cmd  =>  rc command mode (noop here)
 	if ($line =~ s/^\://) {
+		print ": line => $line\n" if $Debug;
 		### continue this is redundent
 	}
 
@@ -168,7 +169,7 @@ sub rc {
 		return;
 	}
 
-	my($cmd, @args) = split(' ', $_);
+	my($cmd, @args) = split(' ', $line);
 
 	if ($line =~ s/^debug\s*//) {
 		if ($line) {

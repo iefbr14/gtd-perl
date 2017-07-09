@@ -216,7 +216,6 @@ sub set_description  {return dset('description', @_); }
 sub set_doit         {return dset('doit', @_); }
 sub set_due          {return dset('due', @_); }
 sub set_effort       {return dset('effort', @_); }
-sub set_state        {return dset('state', @_); }
 sub set_gtd_modified {return dset('gtd_modified', @_); }
 sub set_isSomeday    {return dset('isSomeday', @_); }
 sub set_mask         {return dset('mask', @_); }
@@ -286,6 +285,12 @@ sub set_tags {
 		$self->{_tags}{$tag}++;
 	}
 	return $self;
+}
+
+sub disp_type {
+	my($ref) = @_;
+
+	return GTD::Util::type_name($ref->get_type());
 }
 
 #
@@ -502,6 +507,64 @@ sub ref_timeframe {
 		return $timeframe if $timeframe;
 	}
 	return '';
+}
+
+
+#==============================================================================
+# Kanban states
+#------------------------------------------------------------------------------
+
+my %States = (
+	'-' => ['a', '-new-', ],		# never processed state.
+	'a' => ['b', 'Analysis Needed',	],
+	'b' => ['c', 'Being Analysed',	],
+	'c' => ['d', 'Completed Analysis', ],
+	'd' => ['f', 'Doing',		],
+	'f' => ['t', 'Finished Doing',	],
+	'i' => ['a', 'Ick',		],	# task stuck.
+	'r' => ['a', 'Reprocess',	],	# Reprint
+	't' => ['u', 'Test',		],
+	'u' => ['z', 'Update wiki',	],	# done, file paperwork
+	'w' => ['r', 'Waiting',		],	# Waiting on
+	'z' => ['z', 'Z all done',	], 	# should have a completed date
+);
+
+sub state_bump {
+	my($ref) = @_;
+
+	my ($state) = $ref->get_state();
+
+	return unless defined $States{$state};
+
+	my($new) = $States{$state}[0];
+
+	$ref->set_state($new);
+
+	##  doing          and action then
+	if ($new eq 'd' && $ref->get_type() eq 'a') {
+		# make sure its a next action
+		$ref->set_nextaction('y');
+	}
+	return $new;
+}
+
+sub state_name {
+	my($ref) = @_;
+
+	my ($state) = $ref->get_state();
+
+	return "???$state???" unless defined $States{$state};
+
+	return $States{$state}[1];
+}
+
+sub set_state        {
+	my($ref, $state) = @_;
+
+	unless (defined $States{$state}) {
+		return undef;
+	}
+	return dset('state', $ref, $state); 
 }
 
 1;  # don't forget to return a true value from the file

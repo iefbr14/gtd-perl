@@ -42,7 +42,7 @@ BEGIN {
 	# set the version for version checking
 	$VERSION     = 1.00;
 	@ISA         = qw(Exporter);
-	@EXPORT      = qw( &Report_kanban kanban_Bump kanban_state );
+	@EXPORT      = qw( &Report_kanban kanban_Bump kanban_State );
 }
 
 use GTD::Util;
@@ -84,7 +84,7 @@ sub Report_kanban {	#-- report kanban of projects/actions
 
 }
 
-sub kanban_bump {
+sub kanban_Bump {
 	my(@arg) = @_;
 
 	my($fail) = 0;
@@ -109,10 +109,10 @@ sub kanban_bump {
 	die "Nothing bunped due to errors\n" if $fail;
 
 	for my $ref (@list) {
-		my($new) = $ref->Bump();
+		my($new) = $ref->state_bump();
 
 		if ($new) {
-			my($name) = GTD::Project::state($new);
+			my($name) = $ref->state_name();
 
 			display_task($ref, "| now <<< $name >>>");
 		} else {
@@ -123,7 +123,7 @@ sub kanban_bump {
 	}
 }
 
-sub kanban_state {
+sub kanban_State {
 	my($tid, $state) = @_;
 
 	my($ref) = meta_find($tid);
@@ -132,7 +132,14 @@ sub kanban_state {
 		die "Task $tid doesn't exits\n";
 	}
 
-	$ref->set_state($state);
+	unless ($ref->set_state($state)) {
+		die "Invalid state ($state) to assign to task $tid\n";
+		return;
+	}
+
+	my($name) = $ref->state_name();
+
+	display_task($ref, "| now <<< $name >>>");
 }
 
 sub check_hier {
