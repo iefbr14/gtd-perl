@@ -238,13 +238,16 @@ const (
 	G_DONE   = 0x80000000 // has done items
 )
 
+func Reset() {
+}
+
 func Add_filter(rule string) {
 
 	fdebug("#-Parse filter: %s\n", rule)
 
 	if rule == "~~" {
 		fdebug("#-Filters reset\n")
-		Reset("")
+		Filter_reset("")
 		return
 	}
 

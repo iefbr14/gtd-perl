@@ -422,7 +422,14 @@ sub disp_print {
 }
 
 sub disp_dump {
-	my($fd, $ref) = @_;
+	my($fd, $ref, $note) = @_;
+
+
+	if ($note ne '') {
+		printf {$fd} "# %s\n", $note;
+	}
+
+	printf {$fd} ":load %s %d\n", $ref->disp_type(), $ref->get_tid();
 
 	my $val;
 	for my $key (@Order) {

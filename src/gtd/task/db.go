@@ -600,7 +600,7 @@ func DB_init(confname string) {
 			log.Printf("#-Using %s in Access.yaml\n", confname)
 		}
 	} else {
-		//		confname = "gtd"
+		// confname = "gtd"
 		confname = "gtdtest"
 	}
 

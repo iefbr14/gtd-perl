@@ -54,7 +54,7 @@ my(%Key_type) = (
 	description     => 0x21,
 	note            => 0x21,
 
-	category        => 0x11,
+	category        => 0x21,
 	children        => 0x01,
 
 	created         => 0x22,	# youngest

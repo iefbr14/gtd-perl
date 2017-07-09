@@ -460,6 +460,10 @@ sub set_tags {
 
 ?*/
 
+func (t *Task) Disp_type() string {
+	return Type_name(t.Type)
+}
+
 // Set_KEY -- access field indirectly by name
 func (t *Task) Set_KEY(key string, val string) {
 	//	my($warn_val) = $val || ''

@@ -160,10 +160,6 @@ func Argv(args []string) []string {
 		arg := args[0]
 		args = args[1:]
 
-		//? Hier::Filter::add_filter_tags()
-
-		//next unless defined $_;	 # option("Current") may be undef
-
 		if arg == "!." {
 			panic("Stopped.\n")
 		}
@@ -208,8 +204,8 @@ func Argv(args []string) []string {
 
 		// add include/exclude
 		if arg[0] == '-' || arg[0] == '+' {
-			task.Set_filter(arg)
-			next
+			//? task.Set_filter(arg)
+			continue
 		}
 
 		//	if ($Title) {

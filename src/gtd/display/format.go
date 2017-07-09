@@ -407,6 +407,7 @@ func disp_dump(fd io.Writer, t *task.Task, note string) {
 	if note != "" {
 		fmt.Printf("# %s\n", note)
 	}
+	fmt.Printf(":load %s %d\n", t.Disp_type(), t.Tid)
 
 	for _, key := range Order {
 		if key == "." {
@@ -439,6 +440,7 @@ func disp_dump(fd io.Writer, t *task.Task, note string) {
 	fmt.Fprintf(fd, "Parents:\t%s\n", t.Disp_parents())
 	fmt.Fprintf(fd, "Children:\t%s\n", t.Disp_children())
 	fmt.Fprint(fd, "=-=\n")
+	color.Nl(fd)
 }
 
 func Dump(fd io.Writer, t *task.Task) {

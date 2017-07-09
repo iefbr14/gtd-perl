@@ -80,11 +80,12 @@ my $Info = {};
 
 our $Debug = 0;
 
-sub Report_bulkload { #-- Create Projects/Actions items from a file
+sub Report_load { #-- Create Projects/Actions items from a file
 	my($pid);
 
 	my($action) = \&add_nothing;
 	my($desc) = '';
+	my($type) = '';
 
 	my($parents) = {};
 
@@ -92,6 +93,12 @@ sub Report_bulkload { #-- Create Projects/Actions items from a file
 		prompt('+>', '#');
 		last unless defined $_;
 
+		chomp;
+
+		if (s/^\:load\s*//) {
+			$type = type_val($_);
+			next;
+		}
 		if (/^debug/) {
 			$Debug = 1;
 			print "Debug on\n";

@@ -77,6 +77,11 @@ sub Report_edit {	#-- Edit listed actions/projects
 		next if /^$/;
 		next if /^#/;
 
+		if (/^:load/) {
+			# format compatible with blulk loader
+			next;
+		}
+
 		if (/^=-=$/) {
 			save($changed);
 			$changed = {};

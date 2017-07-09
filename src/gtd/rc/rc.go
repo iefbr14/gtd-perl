@@ -331,11 +331,13 @@ func rc_filter(args ...string) {
 	fmt.Printf("Filter %s => %s\n", Filter, mode)
 
 	option.Set("Filter", dash_null(mode))
-	if mode == "-" {
-		filter.Reset("")
-	} else {
-		filter.Reset(mode)
-	}
+	/*
+		if mode == "-" {
+			filter.Reset("")
+		} else {
+			filter.Reset(mode)
+		}
+	*/
 
 	Filter = mode
 }
