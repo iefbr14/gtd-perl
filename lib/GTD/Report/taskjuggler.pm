@@ -354,7 +354,7 @@ sub task_priority {
 
 	my($pf) = GTD::Sort::calc_focus($ref);
 
-	my($tj_pri) = substr($pf.'zzzzzz', 2, 3);
+	my($tj_pri) = substr($pf, -1, 1). substr($pf.'zzzzzz', 3, 2);
 	$pf =~ s/^(..)/$1./;
 
 	#         123451234512345

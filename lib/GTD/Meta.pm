@@ -65,7 +65,11 @@ sub meta_all {
 }
 
 sub meta_find {
-	return GTD::Tasks::find(@_);
+	my($task) = @_;
+
+	$task =~ s/:$//;
+		
+	return GTD::Tasks::find($task);
 }
 
 #==============================================================================

@@ -205,7 +205,9 @@ sub list_all {
 
 sub doit_list {
 	for my $ref (@_) {
-		my($date) = $ref->get_doit() || $ref->get_created();
+		my($date) = $ref->get_doit() ||
+			$ref->get_modified() ||
+			$ref->get_created();
 		display_task($ref, "{{doit|$date}}");
 
 		last if $Limit-- <= 0;

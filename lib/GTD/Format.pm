@@ -18,6 +18,8 @@ BEGIN {
 	);
 }
 
+use Carp qw(cluck);
+
 use GTD::Util;
 use GTD::Option;
 use GTD::Color;
@@ -424,7 +426,9 @@ sub disp_print {
 sub disp_dump {
 	my($fd, $ref, $note) = @_;
 
-
+	unless (defined $note) {
+		cluck "Note is undef in disp_dump\n";
+	}
 	if ($note ne '') {
 		printf {$fd} "# %s\n", $note;
 	}

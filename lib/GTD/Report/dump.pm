@@ -84,7 +84,7 @@ sub dump_list {
 			warn "#*** No task: $tid\n";
 			next;
 		}
-		display_task($ref);
+		display_task($ref, '');
 	}
 }
 

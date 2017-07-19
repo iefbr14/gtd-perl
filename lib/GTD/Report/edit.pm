@@ -66,7 +66,7 @@ sub Report_edit {	#-- Edit listed actions/projects
 	umask(0077);
 	open(my $ofd, '>', "/tmp/todo.$$") or die;
 	for my $ref (@list) {
-		disp_dump($ofd, $ref);
+		disp_dump($ofd, $ref, "");
 	}
 	close($ofd);
 
