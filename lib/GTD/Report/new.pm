@@ -79,7 +79,7 @@ my $P_ref;
 # the other is the prompter version with defaults
 #
 sub Report_new {	#-- create a new action or project
-	meta_filter('+all', '^tid', 'none');
+	meta_filter('+any', '^tid', 'none');
 
 	my($want) = '';
 

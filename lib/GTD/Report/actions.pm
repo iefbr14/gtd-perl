@@ -193,13 +193,13 @@ sub report_actions {
 			$last_proj = $pid;
 		}
 
-		display_task($pref);
+		display_task($pref, '');
 		my $tasks = $Projects->{$pid};
 
 		for my $ref (sort_tasks values %$tasks) {
 			next if $ref->filtered();
 
-			display_task($ref);
+			display_task($ref, '');
 		}
 	}
 }

@@ -103,7 +103,7 @@ sub list_dump {
 
 ##FILTER	next if $ref->filtered();
 
-		display_task($ref);
+		display_task($ref, '');
 	}
 }
 

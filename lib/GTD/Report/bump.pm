@@ -50,7 +50,7 @@ use GTD::Report::kanban;
 
 sub Report_bump {	#-- report kanban of projects/actions
 	# counts use it and it give a context
-	meta_filter('+active', '^tid', 'simple');
+	meta_filter('+all', '^tid', 'simple');
 
 	my(@args);
 	for my $arg (meta_argv(@_)) {

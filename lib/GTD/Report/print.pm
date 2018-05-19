@@ -111,7 +111,7 @@ sub print_ref {
 
 	for my $cref (@children) {
 		print "* [_] ";
-		display_task($cref);
+		display_task($cref, '');
 		br();
 	}
 

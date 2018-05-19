@@ -241,6 +241,7 @@ sub check_group {
 
 	my($color) = '';
 
+	# color based on state of children
 	if ($how == 1) {
 		$color = check_empty($ref);
 
@@ -257,19 +258,30 @@ sub check_group {
 		$color = check_want($ref) || check_empty($ref);
 	}
 
-	if ($state eq 'w' && color eq '') {
+	# color parent if no children
+	if ($state eq 'z' && $color eq '') {
+		# done and barried
+		$color = color('GREY');
+	}
+
+	if ($state eq 'w' && $color eq '') {
+		# waiting on wiki update
 		$color = color('CYAN');
 	}
 
-	if ($state eq 'i' && color eq '') {
+	if ($state eq 'i' && $color eq '') {
+		# ick, seems to be stuck
 		$color = color('CYAN');
 	}
 
-	if ($state eq 'r' && color eq '') {
+	if ($state eq 'r' && $color eq '') {
+		# reprocess, may be a pile of shit
 		$color = color('BROWN');
 	}
 
 	save_item($color, $ref, $board);
+
+	# if doing, add in first child to work doing.
 	if ($state eq 'd') {
 		grab_child($ref, $board);
 	}

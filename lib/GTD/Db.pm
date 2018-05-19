@@ -384,7 +384,7 @@ sub gtdmap {
 		unless ($val) {
 			die "Can't create gtd_todo with todo_id=$val for table $Table\n";
 		}
-		warn "Hard Need Create $val\n";
+		warn "Hard create gtd_todo $val\n";
 		$Current_ref = GTD::Tasks->New($val);
 		$Current_ref->{_todo_only} = 0x03;
 		sac_create($val, {});

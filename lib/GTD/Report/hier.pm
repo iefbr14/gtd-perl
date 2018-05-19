@@ -125,7 +125,7 @@ sub hier_detail {
 	my($self, $ref) = @_;
 
 	color_ref($ref);
-	display_task($ref);
+	display_task($ref, '');
 }
 
 sub hier_detail_old {

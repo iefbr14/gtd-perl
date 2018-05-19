@@ -58,7 +58,7 @@ my($Host);
 
 sub Report_url {	#-- open browser window for wiki and gtd
 	# Tasks filtered by goals
-	meta_filter('+g:live', '^title', 'task');
+	meta_filter('+any', '^title', 'task');
 
 	my($title) = join(' ', @_);
 

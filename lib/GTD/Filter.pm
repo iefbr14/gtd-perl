@@ -13,6 +13,8 @@ BEGIN {
 	@EXPORT      = qw( &filter_Add &add_filter );
 }
 
+use Carp qw(cluck);
+
 use GTD::Tasks;
 use GTD::Option;
 
@@ -21,12 +23,13 @@ my @CCT_Filters = ();	# [ field, value, result-if-matched ]
 my $Today = get_today();
 my $Soon  = get_today(+7);
 
-my @Global_Filters;	# [ level, function, arg ]
 my @Rule_Filters;	# [ level, function, arg ]
 our $Debug = 0;
 
 my $Default_level = 'm';
-my $Default_filter = '+a:live';
+my $Default_class = '*';
+my $Default_slice = '*';
+my $Default_active = '+a:live';
 
 sub filtered_reason {
 	my($ref) = @_;
@@ -53,7 +56,12 @@ sub filtered {
 sub tasks_matching_type {
 	my($type) = @_;
 
-	return grep { $_->get_type() eq $type } GTD::Tasks::all();
+	cluck("tasks_matching_type: type undefined ($type)") unless defined $type;
+
+	return grep { 
+	cluck("tasks_matching_type: type undefined ($type)") unless defined $type;
+	$_->get_type() eq $type 
+	} GTD::Tasks::all();
 }
 
 sub reset_filters {
@@ -62,16 +70,17 @@ sub reset_filters {
 	for my $ref (GTD::Tasks::all()) {
 		$ref->{_filtered} = '';
 	}
-	@Global_Filters = ();
 	@Rule_Filters = ();
 	@CCT_Filters = ();
 
-	$Default_filter = '+a:live';
+	$Default_class = '*';
+	$Default_slice = '*';
+	$Default_level = 'm';
+	$Default_active = '+a:live';
 }
 
 sub apply_filters {
 	#$Debug = option('Debug');
-
 
 	# learn about actions
 	for my $ref (tasks_matching_type('a')) {
@@ -83,37 +92,26 @@ sub apply_filters {
 		proj_mask($ref);
 	}
 
-#	if (scalar(@Global_Filters)) {
-#		# apply all Rule filters
-#
-#		for my $ref (GTD::Tasks::any)) {
-#			my($cct) = ....
-#			for my $filter (@Rule_Filters) {
-#				my($func) = $filter->{func};
-#
-#				my($reason) = &$func($ref, $arg);
-#			}
-#
-#			$ref->{_filtered} = $reason;
-#		}
-#		return;
+	
+	# apply default class
+#	for my $ref (GTD::Tasks::any()) {
 #	}
+
 
 	# apply default filter
 	if (scalar(@Rule_Filters) == 0) {
-		filter_Add($Default_filter);
+		filter_Add($Default_active);
 	}
 
 	# apply all Rule filters
 	for my $filter (@Rule_Filters) {
 		my($type) = $filter->{type};
 		my($func) = $filter->{func};
-		my($arg)  = $filter->{arg};
 
 		for my $ref (tasks_matching_type($type)) {
 			next if $ref->{_filtered};
 
-			my($reason) = &$func($ref, $arg);
+			my($reason) = &$func($ref);
 
 			$ref->{_filtered} = $reason;
 		}
@@ -285,7 +283,9 @@ use constant {
 					# or Due < week
 
 	Z_SLOW		=> 0x0300,	# priority == 4
-	Z_IDEA		=> 0x0400,	# priority == 5
+
+	Z_IDEA		=> 0x0400,	# priority >= 5
+					# or Due > year
 
 # composite (from A_)
 	T_NEXT		=> 0x1000,
@@ -397,18 +397,18 @@ sub dispflags {
 sub task_filter {
 	my($name, $dir, $will) = @_;
 
-	my($func, $arg) = map_filter_name($name);
+	my($func, $type) = map_filter_name($name);
 	unless (defined $func) {
 		warn "Warn unknown filter: $name\n";
 		return;
 	}
 
-	warn "#-Filter $name: $arg\n" if $Debug;
+	warn "#-Filter $name\n" if $Debug;
 
 	my($filter) = {
 		func => $func,
 		name => $name,
-		type  => $arg,
+		type => $type,
 		will => $will,
 		dir => $dir,
 	};
@@ -593,20 +593,45 @@ sub Add_cct {
 #******************************************************************************
 #******************************************************************************
 #******************************************************************************
+sub map_class_name {
+	my($word) = @_;
+
+	$word = lc($word); 
+
+	if ($word eq 'any') {
+		$Default_class = '%';
+		return 1;
+
+	} elsif ($word eq 'all') {
+		$Default_class = '*';
+		return 1;
+
+	} elsif ($word eq 'list') {
+		$Default_class = 'l';
+		return 1;
+
+	} elsif ($word eq 'hier') {
+		$Default_class = 'h';
+		return 1;
+
+	} elsif ($word eq 'task') {
+		$Default_class = 't';
+		return 1;
+
+	}
+	return 0;
+}
+
 sub map_filter_name {
 	my($word, $dir) = @_;
 
-	my($level) = 'a';
+	my($level) = '*';
 	if ($word =~ s/^([a-z])://) {
 		$level = $1;
 	}
 
-	return (\&filter_any, '*')	if $word =~ /^any/i;
-	return (\&filter_any, '=')	if $word =~ /^all/i;
-	return (\&filter_any, 'l')	if $word =~ /^list/i;
-	return (\&filter_any, 'h')	if $word =~ /^hier/i;
-	return (\&filter_any, 't')	if $word =~ /^task/i;
-
+	# ###BUG### filter_noop is a kludge
+	return (\&filter_noop, $level) if map_class_name($word, $level);
 
 	return (\&filter_done, $level)	if $word =~ /^done/i;
 	return (\&filter_some, $level)	if $word =~ /^some/i;
@@ -638,32 +663,32 @@ sub map_filter_name {
 # return ? if unknown
 
 sub filter_any {
-	my($ref, $arg) = @_;
+	my($ref) = @_;
 
+	my($arg) = $Default_class;
+
+	return "+any"  if $arg eq '%';
+	return "+all"  if $arg eq '*';
+	return "+task" if $arg eq 't' && $ref->is_task();
+	return "+hier" if $arg eq 'h' && $ref->is_hier();
+	return "+list" if $arg eq 'l' && $ref->is_list();
+	
 	my($type) = $ref->get_type();
 
-	if ($arg eq '*') {
-		return "+any=".$type;
-	}
-	if ($arg eq '=') {
-		return "+any=".$type unless $ref->is_list();
-	}
-	return "+any=$type" if $arg eq 't' && $ref->is_task();
-	return "+any=$type" if $arg eq 'h' && $ref->is_hier();
-	return "+any=$type" if $arg eq 'l' && $ref->is_list();
+	return "+is:".$type if $arg == $type;
 
 	return '';
 }
 
 sub filter_task {
-	my($ref, $arg) = @_;
+	my($ref) = @_;
 
 	return '' unless $ref->is_task();
 	return '+task';
 }
 
 sub filter_done {
-	my($ref, $arg) = @_;
+	my($ref) = @_;
 
 	return '+done' if $ref->is_completed();
 	return '';
@@ -671,7 +696,7 @@ sub filter_done {
 
 
 sub filter_pure_next {
-	my($ref, $arg) = @_;
+	my($ref) = @_;
 
 	return '' unless $ref->is_task();
 	return '+next' if $ref->get_nextaction() eq 'y';
@@ -680,14 +705,14 @@ sub filter_pure_next {
 
 
 sub filter_tickle {
-	my($ref, $arg) = @_;
+	my($ref) = @_;
 
 	return '+tickle' if $ref->get_tickle();
 	return '';
 }
 
 sub filter_wait {
-	my($ref, $arg) = @_;
+	my($ref) = @_;
 
 	my($type) = $ref->get_type();
 	return '+wait' if $type eq 'w';
@@ -696,7 +721,7 @@ sub filter_wait {
 
 
 sub filter_late {
-	my($ref, $arg) = @_;
+	my($ref) = @_;
 
 	my($due)  = $ref->get_due();
 	return '' unless $due;
@@ -709,7 +734,7 @@ sub filter_late {
 
 
 sub filter_due {
-	my($ref, $arg) = @_;
+	my($ref) = @_;
 
 	my($due)  = $ref->get_due();
 	return '' unless $due;
@@ -722,7 +747,7 @@ sub filter_due {
 
 
 sub filter_slow {
-	my($ref, $arg) = @_;
+	my($ref) = @_;
 
 	my($pri) = $ref->get_priority();
 	return '+slow' if $pri == 4;
@@ -731,7 +756,7 @@ sub filter_slow {
 
 
 sub filter_idea {
-	my($ref, $arg) = @_;
+	my($ref) = @_;
 
 	my($pri) = $ref->get_priority();
 	return '+idea' if $pri == 5;
@@ -740,7 +765,7 @@ sub filter_idea {
 
 
 sub filter_some {
-	my($ref, $arg) = @_;
+	my($ref) = @_;
 
 	my($mask) = task_mask($ref);
 	return '+some' if ($mask & T_MASK) == T_FUTURE;
@@ -748,21 +773,21 @@ sub filter_some {
 }
 
 sub filter_next {
-	my($ref, $arg) = @_;
+	my($ref) = @_;
 
 	my($mask) = task_mask($ref);
 
 	if ($ref->is_task()) {
 		return '+live=n' if ($mask & T_MASK) == T_NEXT;
 	} else {
-		return filter_live($ref, $arg);
+		return filter_live($ref);
 	}
 
 	return '';
 }
 
 sub filter_active {
-	my($ref, $arg) = @_;
+	my($ref) = @_;
 
 #	return '' unless $ref->is_task();
 
@@ -782,7 +807,7 @@ sub filter_active {
 }
 
 sub filter_live {
-	my($ref, $arg) = @_;
+	my($ref) = @_;
 
 #	return '' unless $ref->is_task();
 
@@ -801,13 +826,19 @@ sub filter_live {
 
 
 sub filter_dead {
-	my($ref, $arg) = @_;
+	my($ref) = @_;
 
 	return '' unless $ref->is_task();
 
 	my($mask) = task_mask($ref);
 	return '+dead=d' if ($mask & T_MASK) == T_DONE;
 	return '';
+}
+
+
+
+sub filter_noop {
+	return '+all';
 }
 
 1;

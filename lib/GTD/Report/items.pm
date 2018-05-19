@@ -81,7 +81,7 @@ sub list_items {	#-- List projects with waiting-fors
                 push(@list, $ref);
         }
         for my $ref (sort_tasks @list) {
-		display_task($ref);
+		display_task($ref, '');
         }
 }
 

@@ -63,7 +63,7 @@ sub Report_task {	#-- quick List by various methods
 	report_header('Tasks', $title);
 
 	for my $ref (sort_tasks @list) {
-		display_task($ref);
+		display_task($ref, '');
 	}
 }
 

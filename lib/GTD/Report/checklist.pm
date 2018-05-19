@@ -114,8 +114,12 @@ sub disp_list {
 
 	for my $ref (meta_matching_type($record_type)) {
 		my $tid = $ref->get_tid();
-		my $pid = $ref->get_parent()->get_tid();
 		my $title = $ref->get_title();
+		my $pid  = 0;
+
+		if ($ref->get_parent()) {
+			$pid = $ref->get_parent()->get_tid();
+		}
 
 		print "pid: $pid tid: $tid => $title\n" if $Debug;
 
@@ -125,38 +129,6 @@ sub disp_list {
 		} else {
 			printf ("%5d %s\n", $tid, $title);
 		}
-	}
-}
-
-### format:
-### 99	P:Title	[_] A:Title
-sub disp {
-	my($ref) = @_;
-
-	my($tid) = $ref->get_tid();
-
-	my($key) = action_disp($ref);
-
-	my $pri = $ref->get_priority();
-	my $type = uc($ref->get_type());
-
-	return "$type:$tid $key <$pri> $ref->get_title()";
-}
-
-sub by_task {
-	return $a->get_title() cmp $b->get_title()
-	    or $a->get_tid() <=> $b->get_tid();
-}
-
-sub bulk_display {
-	my($tag, $text) = @_;
-
-	return unless defined $text;
-	return if $text eq '';
-	return if $text eq '-';
-
-	for my $line (split("\n", $text)) {
-		print "$tag\t$line\n";
 	}
 }
 

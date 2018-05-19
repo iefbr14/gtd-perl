@@ -160,7 +160,7 @@ sub set {
 sub walk_down {
 	my($ref, $action) = @_;
 
-	display_task($ref);
+	display_task($ref, '');
 
 	my($level) = $ref->level();
 	for my $cref (sort_tasks $ref->get_children()) {
@@ -178,7 +178,7 @@ sub walk_up {
 	for my $cref (sort_tasks $t->get_parents()) {
 		walk_up($cref, $action);
 	}
-	display_task($t);
+	display_task($t, '');
 
 	&$action($t);
 }

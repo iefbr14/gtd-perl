@@ -62,7 +62,7 @@ sub Report_list {	#-- list titles for any filtered class (actions/projects etc)
 	report_header('List', $title);
 
 	for my $ref (sort_tasks @list) {
-		display_task($ref);
+		display_task($ref, '');
 	}
 }
 

@@ -115,7 +115,7 @@ sub lookat {
 	next unless defined $pref;
 	next if $pref->filtered();
 
-	display_task($ref);
+	display_task($ref, '');
 	get_status($ref);
 }
 

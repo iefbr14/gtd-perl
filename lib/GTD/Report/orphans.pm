@@ -66,7 +66,7 @@ sub Report_orphans {	#-- list all items without a parent
 
 		next if $ref->get_parent();	# Has a parent
 
-		display_task($ref);
+		display_task($ref, '');
 		++$count;
 	}
 

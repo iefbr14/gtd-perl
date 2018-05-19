@@ -62,27 +62,38 @@ sub Report_projects {	#-- List projects -- live, plan or someday
 	my($proj_cnt) = 0;
 	my($ref, $proj, %wanted, %counted, %actions);
 
-	# find all next and remember there projects
-	for my $ref (meta_matching_type('p')) {
+	my(@projects) = meta_matching_type('p');
 
-		my $pid = $ref->get_tid();
-		$wanted{$pid} = $ref;
-		$counted{$pid} = 0;
-		$actions{$pid} = 0;
-
-		for my $child ($ref->get_children()) {
-			$counted{$pid}++ unless $child->filtered();
-			$actions{$pid}++;
-
-			$work_load++ unless $child->filtered();
+	# note all parents so we don't include them latter.
+	my(%parent);
+	for my $ref (@projects) {
+		for my $pref ($ref->get_parents()) {
+			$parent{$pref->get_tid()}++;
 		}
 	}
+	# find all next and remember there projects
+#	for my $ref (@projects) {
+#
+#		my $pid = $ref->get_tid();
+#		$wanted{$pid} = $ref;
+#		$counted{$pid} = 0;
+#		$actions{$pid} = 0;
+#
+#		for my $child ($ref->get_children()) {
+#			$counted{$pid}++ unless $child->filtered();
+#			$actions{$pid}++;
+#
+#			$work_load++ unless $child->filtered();
+#		}
+#	}
 
-	for my $ref (meta_matching_type('p')) {
+	for my $ref (@projects) {
+		next if $parent{$ref->get_parent()};
 
 		my($work, $counts) = summary_children($ref);
 		$work_load += $work;
-		display_rgpa($ref, $counts);
+#		display_rgpa($ref, $counts);
+		display_task($ref, $counts);
 
 		++$proj_cnt;
 	}

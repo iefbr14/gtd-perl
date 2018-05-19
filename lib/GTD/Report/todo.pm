@@ -63,7 +63,7 @@ sub Report_todo {	#-- List high priority next actions
 		next unless $ref->is_task();	# only actions
 ##FILTER	next if $ref->filtered();		# other filterings
 
-		display_task($ref);
+		display_task($ref, '');
 
 		last if ++$count >= $limit;
 	}

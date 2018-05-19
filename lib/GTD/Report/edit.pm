@@ -54,7 +54,7 @@ use GTD::Format;
 sub Report_edit {	#-- Edit listed actions/projects
 	my($key, $val, $changed);
 
-	meta_filter('+all', '^tid', 'none');
+	meta_filter('+any', '^tid', 'none');
 
 	@_ = ( option('Current') )  if scalar(@_) == 0;
 

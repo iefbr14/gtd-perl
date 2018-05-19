@@ -265,7 +265,7 @@ sub rc_option {
 
 sub rc_print {
 	if (scalar(@_) == 0) {
-		display_task($Pref);
+		display_task($Pref, '');
 		return;
 	}
 
@@ -276,7 +276,7 @@ sub rc_print {
 			print "? not found: $ref\n";
 			next;
 		}
-		display_task($ref);
+		display_task($ref, '');
 	}
 }
 
@@ -496,7 +496,7 @@ sub rc_find_tasks {
 	for my $ref (GTD::Tasks::all()) {
 		my($title) = $ref->get_title();
 		if ($title =~ /$pattern/i) {
-			display_task($ref);
+			display_task($ref, '');
 		}
 	}
 }

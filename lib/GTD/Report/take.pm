@@ -56,7 +56,7 @@ my %Ancestors;
 sub Report_take {	#-- take listed actions/projects
 	my($key, $val, $changed);
 
-	meta_filter('+all', '^tid', 'none');
+	meta_filter('+any', '^tid', 'none');
 
 	my $parent = option('Current');
 	unless ($parent) {
