@@ -43,7 +43,7 @@ plan	hier items without children
 !endblock
 
 >---------------------------------------------------------------------------
->Category/Context/Timeframe/Tags filtering...
+> Class filters
 >---------------------------------------------------------------------------
 >	return (\&filter_any, '=', '*')	if $word =~ /^any/i;
 >	return (\&filter_any, '=', '=')	if $word =~ /^all/i;
@@ -51,6 +51,8 @@ plan	hier items without children
 >	return (\&filter_any, '=', 'h')	if $word =~ /^hier/i;
 >	return (\&filter_any, '=', 't')	if $word =~ /^task/i;
 >
+
+
 >
 >	return (\&filter_done, '>','')	if $word =~ /^done/i;
 >	return (\&filter_some, '>','')	if $word =~ /^some/i;
@@ -80,7 +82,7 @@ addplans        +live    p
 board		+active
 bulklist        +live
 cct		+all
-checklist	+any
+checklist	+list
 clean		+all
 doit		.+a:live
 doit            +live    a
@@ -143,4 +145,117 @@ dead
 live
 next
 wait
-cct
+
+All Reports:
+
+actions		+a:next		^focus		detail
+addplans	+live		^focus		plan
+board		+active		^age		simple
+bulklist	+active		^title		bulk
+bulklist	+live		^title		bulk
+bump		+active		^tid		simple
+cct		+all		^tid		simple
+checklist	+any		^title		item
+clean		+all		^tid		task
+doit		+a:live		^doitdate	rpga
+dump		+any		^tid		dump
+edit		+all		^tid		none
+focus		+next		^focus		simple
+ged		+all		^focus		none
+ged		+active		^focus		none
+gui		+all		^tid		simple
+hierlist	+p:live		^title		simple
+hier		+active		^title		hier
+items		+any		^title		item
+kanban		+active		^tid		simple
+list		+active		^title		title
+new		+all		^tid		none
+nextactions	+next		^title		none
+noop		+live		^tid		tid
+oocalc		+live		^tid		none
+orphans		+any		^title		todo
+planner		+active		^tid		none
+print		+any		^tid		doit
+projects	+p:next		^goaltask	simple
+purge		+dead		^tid		simple
+records		+active		^tid		simple
+renumber	+any		^tid		none
+review		+active		^doitdate	simple
+review		+wait		^doitdate	simple
+review		+a:live		^doitdate	doit
+search		+all		^title		simple
+spreadsheet	+active		^tid		none
+status		+active		^tid		none
+status		+all		^title		simple
+take		+all		^tid		none
+taskjuggler	+all		^focus		none
+taskjuggler	+all		^focus		none
+taskjuggler	+active		^focus		none
+task		+g:live		^title		task
+todo		+active		^priority	priority
+url		+g:live		^title		task
+walk		+all		^tid		simple
+
+Reports by class
+
+Detail:
+	actions		+a:next		^focus		detail
+	addplans	+live		^focus		plan
+	bulklist	+active		^title		bulk
+	bulklist	+live		^title		bulk
+	dump		+any		^tid		dump
+	items		+any		^title		item
+	list		+active		^title		title
+	nextactions	+next		^title		none
+
+	projects	+p:next		^goaltask	simple
+	task		+g:live		^title		task
+	todo		+active		^priority	priority
+	records		+active		^tid		simple
+	print		+any		^tid		doit
+	hierlist	+p:live		^title		simple
+	focus		+next		^focus		simple
+
+	doit		+a:live		^doitdate	rpga
+	review		+active		^doitdate	simple
+	review		+wait		^doitdate	simple
+	review		+a:live		^doitdate	doit
+
+
+Hier:
+	hier		+active		^title		hier
+
+	kanban		+active		^tid		simple
+	status		+active		^tid		none
+	status		+all		^title		simple
+
+Global:
+	board		+active		^age		simple
+	cct		+all		^tid		simple
+	gui		+all		^tid		simple
+	search		+any		^title		simple
+	walk		+any		^tid		simple
+
+
+	ged		+all		^focus		none
+	ged		+active		^focus		none
+	taskjuggler	+all		^focus		none
+	taskjuggler	+all		^focus		none
+	taskjuggler	+active		^focus		none
+	spreadsheet	+active		^tid		none
+	planner		+active		^tid		none
+	oocalc		+live		^tid		none
+
+Edit:
+	bump		+all		^tid		simple
+	edit		+any		^tid		none
+	new		+any		^tid		none
+	url		+any		^title		task
+	take		+any		^tid		none
+	renumber	+any		^tid		none
+	orphans		+any		^title		todo
+	checklist	+any		^title		item
+	clean		+all		^tid		task
+	noop		+live		^tid		tid
+
+	purge		+dead		^tid		simple
