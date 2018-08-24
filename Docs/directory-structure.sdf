@@ -1,0 +1,53 @@
+2018-Aug-24
+
+/home/drew/Hier/Docs
+
+* Directory structure
+
+> Documentation & test
+> Perl code
+> Go code
+
+* Documentation & test
+
+> Docs - General documentation
+> Programmer - Programmer's manual
+> User - User's manual
+
+> Test
+> profile - runtime profiling
+> t
+
+* Perl Support
+
+> lib - command line version
+> lib/GTD - base level libraries
+> lib/GTD/Report - all sub-commnads
+> Tk - Tk gui
+
+* Go Support
+
+> bin - golang binaries
+> src - source code
+> pkg - external packages used by go source
+
+* Go Source
+
+> src/gtd
+> src/gtd/report
+> src/gtd/gui
+> src/gtd/option
+> src/gtd/prompt
+> src/gtd/display
+> src/gtd/task
+> src/gtd/meta
+> src/gtd/cct
+> src/gtd/rconv
+> src/gtd/rc
+> src/gtd/color
+
+
+* Go Packages 
+
+> pkg/linux_amd64/golang.org/x/crypto/ssh
+> pkg/linux_amd64/github.com/chzyer/readline

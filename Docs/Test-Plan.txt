@@ -6,8 +6,8 @@
 [_] Document global options
 [_] Document meta-desc mode
 [_] Document meta-desc filtered meanings
-[_] Document sort-order options (NEW)
-[_] Document option hints(NEW)
+[_] Document sort-order options
+[_] Document option hints
 
 [_] Test Global options:
   [_]     -x      -- turn Debug on.
