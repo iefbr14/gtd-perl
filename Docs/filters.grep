@@ -1,0 +1,53 @@
+
+
+bump.pm:	meta_filter('+all', '^tid', 'simple');
+cct.pm:	meta_filter('+all', '^tid', 'simple');
+clean.pm:	meta_filter('+all', '^tid', 'task');
+ged.pm:		meta_filter('+all', '^focus', 'none');
+gui.pm:	meta_filter('+all', '^tid', 'simple');
+hier.pm:	meta_filter('+all', '^title', 'hier');
+search.pm:	meta_filter('+all', '^title', 'simple');
+status.pm:	meta_filter('+all', '^title', 'simple');
+taskjuggler.pm:	meta_filter('+all', '^focus', 'none');
+taskjuggler.pm:		meta_filter('+all', '^focus', 'none');
+walk.pm:	meta_filter('+all', '^tid', 'simple');
+
+
+checklist.pm:	meta_filter('+any', '^title', 'item');
+dump.pm:	meta_filter('+any', '^tid', 'dump');
+edit.pm:	meta_filter('+any', '^tid', 'none');
+items.pm:	meta_filter('+any', '^title', 'item');
+new.pm:	meta_filter('+any', '^tid', 'none');
+orphans.pm:	meta_filter('+any', '^title', 'todo');
+print.pm:	meta_filter('+any', '^tid', 'doit');
+renumber.pm:	meta_filter('+any', '^tid', 'none');
+take.pm:	meta_filter('+any', '^tid', 'none');
+url.pm:	meta_filter('+any', '^title', 'task');
+
+board.pm:	meta_filter('+active', '^age', 'simple');
+bulklist.pm:	meta_filter('+active', '^title', 'bulk');
+ged.pm:		meta_filter('+active', '^focus', 'none');
+kanban.pm:	meta_filter('+active', '^tid', 'simple');
+list.pm:	meta_filter('+active', '^title', 'title');
+planner.pm:	meta_filter('+active', '^tid', 'none');
+records.pm:	meta_filter('+active', '^tid', 'simple');
+review.pm:	meta_filter('+active', '^doitdate', 'simple');
+spreadsheet.pm:	meta_filter('+active', '^tid', 'none');
+status.pm:	meta_filter('+active', '^tid', 'none');
+taskjuggler.pm:		meta_filter('+active', '^focus', 'none');
+todo.pm:	meta_filter('+active', '^priority', 'priority');
+
+addplans.pm:	meta_filter('+live', '^focus', 'plan');
+bulklist.pm:	meta_filter('+live', '^title', 'bulk');
+doit.pm:	meta_filter('+a:live', '^doitdate', 'rpga');
+hierlist.pm:	meta_filter('+p:live', '^title', 'simple');
+noop.pm:	meta_filter('+live', '^tid', 'tid');
+oocalc.pm:	meta_filter('+live', '^tid', 'none');
+review.pm:	meta_filter('+a:live', '^doitdate', 'doit');
+task.pm:	meta_filter('+g:live', '^title', 'task');
+
+focus.pm:	meta_filter('+next', '^focus', 'simple');
+nextactions.pm:	meta_filter('+next', '^title', 'none');
+projects.pm:	meta_filter('+p:next', '^goaltask', 'simple');
+actions.pm:	meta_filter('+a:next', '^focus', 'detail');
+
