@@ -520,6 +520,7 @@ my %States = (
 	'b' => ['c', 'Being Analysed',	],
 	'c' => ['d', 'Completed Analysis', ],
 	'd' => ['f', 'Doing',		],
+	'e' => ['f', 'Eventually Doing', ],	# long project like reading lists
 	'f' => ['t', 'Finished Doing',	],
 	'i' => ['a', 'Ick',		],	# task stuck.
 	'r' => ['a', 'Reprocess',	],	# task needs to be rethought
