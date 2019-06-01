@@ -28,7 +28,6 @@ our $Debug = 0;
 
 my $Default_level = 'm';
 my $Default_class = '*';
-my $Default_slice = '*';
 my $Default_active = '+a:live';
 
 sub filtered_reason {
@@ -74,7 +73,6 @@ sub reset_filters {
 	@CCT_Filters = ();
 
 	$Default_class = '*';
-	$Default_slice = '*';
 	$Default_level = 'm';
 	$Default_active = '+a:live';
 }
@@ -303,7 +301,7 @@ use constant {
 
 };
 
-sub add_filter { return filer_Add(@_) }
+sub add_filter { return filter_Add(@_) }
 
 sub filter_Add {
 	my($rule) = @_;

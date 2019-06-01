@@ -69,10 +69,10 @@ sub Report_review {	#-- Review all projects with actions
 		$Mode = 'a';
 	} elsif (lc($desc) eq 'project') {
 		$Mode = 'p';
+	###BUG### what Report review in wait mode mean
 	} elsif (lc($desc) eq 'waiting') {
 		$Mode = 'w';
-		warn "Fooked, meta_filter reset report/sort";
-		meta_filter('+wait', '^doitdate', 'simple');
+		meta_filter('+all', '^doitdate', 'simple');
 	} else {
 		$desc = "= $desc =";
 	}
