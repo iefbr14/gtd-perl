@@ -55,7 +55,7 @@ use GTD::Format;
 my $Mask = 0;
 
 sub Report_hier {	#-- Hiericial List of Values/Visions/Roles...
-	meta_filter('+active', '^title', 'hier');
+	meta_filter('+all', '^title', 'hier');
 
 	$Mask  = option('Mask');
 
