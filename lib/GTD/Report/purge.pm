@@ -50,7 +50,7 @@ use GTD::Walk;
 use GTD::Meta;
 
 sub Report_purge {	#-- interactive purge completed work
-	meta_filter('+dead', '^tid', 'simple');
+	meta_filter('+all', '^tid', 'simple');
 
 	my($criteria) = meta_desc(@_);
 
@@ -58,7 +58,15 @@ sub Report_purge {	#-- interactive purge completed work
 		done   => \&end_detail,
 	);
 
-	die "Criteria $criteria ignore for purge (re-write purge)\n";
+	###BUG### Re-write purge
+	# add options to check for age of done.
+	#     default to 1 month for youngets (doit?)
+	# walk down all
+	# if has all done children 
+	#	-- note if note done.
+	#	--      else ask if delete -R
+	# 
+	die "Purge needs rewrite.\n";
 	$walk->walk('m');
 }
 
