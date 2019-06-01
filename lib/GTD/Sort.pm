@@ -253,31 +253,21 @@ sub Meta_key {
 	return $val;
 }
 
-# next   norm  some  done
-# 012345 12345 12345
-#  abcde fghij klmno z
+# next       norm       nextsome  someday    done
+# 0123456789 0123456789 123456789 0123456789
+#  ABCDEFGHI JKLMNOPQRS abcdefghi jklmnopqrs  z
 
 sub item_focus {
 	my($ref) = @_;
 
 	my($pri) = $ref->get_priority();
 
-	if ($ref->is_nextaction()) {
-				# cool	1-5  == abcde
-	} elsif ($ref->is_someday()) {
-		$pri += 10;	# slow 11-15 == jklmn
-	} else {
-		$pri += 5;	# ok    6-10 == fghij
-	}
+	return get_weighted_priority($ref) if $pri;
 
-	$pri = 1  if $pri < 1;
-	$pri = 15 if $pri > 15;
-
-	$pri = chr(ord('a') + $pri - 1);
-
-	$pri = 'z' if $ref->is_completed();
-
-	return $pri;
+	$pri = get_highest_priority($ref->childrend());
+	return $pri if $pri ne 'z';
+	
+	return get_highest_priority($ref->parents());
 }
 
 sub calc_focus {
@@ -352,6 +342,46 @@ sub lc_title {
 	$title =~ s/\]\]//g;
 
 	return lc($title);
+}
+
+sub get_highest_priority {
+	my(@list) = @_;
+
+	my $pri = 'z';
+	for my $ref (@list) {
+		my $ref_pri = get_weighted_priority($ref);
+
+		if ($ref_pri lt $pri) {
+			$pri = $ref_pri;
+		}
+	}
+	return $pri;
+}
+
+sub get_weighted_priority {
+	my($ref) = @_;
+
+	
+	my($pri) = $ref->get_priority();
+
+	$pri = 1  if $pri < 1;
+	$pri = 9  if $pri > 9;
+
+	if ($ref->is_nextaction()) {
+		# cool	1-5  == abcde
+	} else {
+		$pri += 10;	# JKLMNO    
+	}
+
+	$pri = chr(ord('A') + $pri - 1);
+
+	if ($ref->is_someday()) {
+		$pri = lc($pri);
+	}
+
+	$pri = 'z' if $ref->is_completed();
+
+	return $pri;
 }
 
 1;
