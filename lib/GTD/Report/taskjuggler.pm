@@ -352,14 +352,17 @@ sub old_task_priority {
 sub task_priority {
 	my($ref) = @_;
 
-	my($pf) = GTD::Sort::calc_focus($ref);
 
-	my($tj_pri) = substr($pf, -1, 1). substr($pf.'zzzzzz', 3, 2);
-	$pf =~ s/^(..)/$1./;
+#	my($pf) = GTD::Sort::calc_focus($ref);
+#	my($tj_pri) = substr($pf, -1, 1). substr($pf.'zzzzzz', 3, 2);
+#	$pf =~ s/^(..)/$1./;
+#
+#	#         123451234512345
+#	$tj_pri =~ tr{abcdefghijklmnoz}
+#                     {9987766544321000};
 
-	#         123451234512345
-	$tj_pri =~ tr{abcdefghijklmnoz}
-                     {9987766544321000};
+	my($pf) = GTD::Sort::calc_panic($ref);
+	my($tj_pri) = 1000 - (ord($pf) * 10); 
 
 	$tj_pri = 1000 if $tj_pri >= 1000;
 	$tj_pri = 1 if $tj_pri <= 0;
